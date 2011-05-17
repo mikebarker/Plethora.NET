@@ -1,0 +1,220 @@
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace Plethora.Windows.Forms
+{
+    [System.ComponentModel.DesignerCategory("Code")]
+    public class Popup : DropDownForm
+    {
+        #region Constructors
+
+        protected Popup(Control control)
+            : base(control)
+        {
+            //Validation
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+            InitializeComponent();
+
+            //Default values
+            this.AcceptOnDeactivate = false;
+        }
+        #endregion
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            // 
+            // Popup
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.ClientSize = new System.Drawing.Size(292, 266);
+            this.Name = "Popup";
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        #region Form Overrides
+
+        protected override void OnDeactivate(EventArgs e)
+        {
+            base.OnDeactivate(e);
+
+            if (AcceptOnDeactivate)
+                this.Accept();
+            else
+                this.Cancel();
+        }
+        #endregion
+
+        #region Properties
+
+        public bool AcceptOnDeactivate
+        {
+            get;
+            set;
+        }
+        #endregion
+
+        #region Public Methods
+
+        protected override void OnAccepted(EventArgs e)
+        {
+ 	        base.OnAccepted(e);
+            this.Close();
+        }
+
+        protected override void OnCancelled(EventArgs e)
+        {
+ 	        base.OnCancelled(e);
+            this.Close();
+        }
+        #endregion
+
+        #region Static Methods
+
+        #region TextBox
+
+        public static void TextBox(
+            Point location,
+            Size size,
+            Action<string> onAcceptCallback)
+        {
+            TextBox(location, size, onAcceptCallback, string.Empty, null);
+        }
+
+        public static void TextBox(
+            Point location,
+            Size size,
+            Action<string> onAcceptCallback,
+            string text,
+            string[] autoCompleteValues)
+        {
+            var textBox = new TextBox();
+            textBox.BorderStyle = BorderStyle.FixedSingle;
+            textBox.Size = size;
+            textBox.Text = text;
+
+            if (autoCompleteValues != null)
+            {
+                textBox.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                textBox.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                textBox.AutoCompleteCustomSource.AddRange(autoCompleteValues);
+            }
+
+            TextBox(textBox, location, () => onAcceptCallback(textBox.Text));
+        }
+
+        public static void TextBox(
+            TextBox textBox,
+            Point location,
+            Action onAcceptCallback)
+        {
+            Action<Popup> onPopupCreated = popup =>
+                {
+                    textBox.KeyDown += delegate(object sender, KeyEventArgs e)
+                        {
+                            switch (e.KeyCode)
+                            {
+                                case Keys.Enter:
+                                    popup.Accept();
+                                    break;
+                            }
+                        };
+                };
+
+
+            ShowPopup(textBox, location, onPopupCreated, onAcceptCallback, null);
+        }
+        #endregion
+
+        #region Calendar
+
+        public static void Calendar(
+            Point location,
+            Size size,
+            Action<DateTime> onAcceptCallback)
+        {
+            Calendar(location, size, onAcceptCallback, DateTime.Today);
+        }
+
+        public static void Calendar(
+            Point location,
+            Size size,
+            Action<DateTime> onAcceptCallback,
+            DateTime date)
+        {
+            var calendar = new MonthCalendar();
+            calendar.MaxSelectionCount = 1;
+            calendar.Size = size;
+            calendar.SetDate(date);
+
+            Calendar(calendar, location, () => onAcceptCallback(calendar.SelectionStart));
+        }
+
+        public static void Calendar(
+            MonthCalendar calendar,
+            Point location,
+            Action onAcceptCallback)
+        {
+            Action<Popup> onPopupCreated = popup =>
+                {
+                    calendar.DateSelected += delegate { popup.Accept(); };
+                };
+
+            var control = WrapWithBorder(calendar);
+            ShowPopup(control, location, onPopupCreated, onAcceptCallback, null);
+        }
+        #endregion
+
+        public static void ShowPopup(
+            Control control,
+            Point popuplocation,
+            Action<Popup> onPopupCreatedCallback,
+            Action onAcceptCallback,
+            Action onCancelCallback)
+        {
+            //Validation
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+
+            var popup = new Popup(control);
+            popup.Location = popuplocation;
+
+            if (onAcceptCallback != null)
+                popup.Accepted += delegate { onAcceptCallback(); };
+
+            if (onCancelCallback != null)
+                popup.Cancelled += delegate { onCancelCallback(); };
+
+            if (onPopupCreatedCallback != null)
+                onPopupCreatedCallback(popup);
+
+            popup.Show();
+        }
+
+        public static Control WrapWithBorder(Control control)
+        {
+            Panel panel = new Panel();
+            panel.Size = control.Size + new Size(2, 2);
+            panel.BorderStyle = BorderStyle.FixedSingle;
+            panel.Controls.Add(control);
+            control.SizeChanged += delegate { panel.Size = control.Size + new Size(2, 2); };
+
+            return panel;
+        }
+
+        #endregion
+    }
+}
