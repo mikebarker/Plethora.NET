@@ -1,0 +1,47 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms", "Plethora.Windows.Forms\Plethora.Windows.Forms.csproj", "{95839C43-2A34-4716-AEE5-59D68274FAC9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{42E2A847-0945-4351-A57E-591539FBBD57}"
+	ProjectSection(SolutionItems) = preProject
+		AssemblyInfo.Common.cs = AssemblyInfo.Common.cs
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Examples", "Plethora.Windows.Forms.Examples\Plethora.Windows.Forms.Examples.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common", "Plethora.Common\Plethora.Common.csproj", "{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing", "Plethora.Drawing\Plethora.Drawing.csproj", "{94C3CA39-7B10-408A-B342-8D15BC46F157}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing.Examples", "Plethora.Drawing.Examples\Plethora.Drawing.Examples.csproj", "{B1D27435-5EE9-4257-8956-C3A2792CAFEA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{95839C43-2A34-4716-AEE5-59D68274FAC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95839C43-2A34-4716-AEE5-59D68274FAC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95839C43-2A34-4716-AEE5-59D68274FAC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95839C43-2A34-4716-AEE5-59D68274FAC9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{212B1317-18FB-49D3-98DB-CE445FC7DE22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{212B1317-18FB-49D3-98DB-CE445FC7DE22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{212B1317-18FB-49D3-98DB-CE445FC7DE22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94C3CA39-7B10-408A-B342-8D15BC46F157}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94C3CA39-7B10-408A-B342-8D15BC46F157}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94C3CA39-7B10-408A-B342-8D15BC46F157}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94C3CA39-7B10-408A-B342-8D15BC46F157}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1D27435-5EE9-4257-8956-C3A2792CAFEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1D27435-5EE9-4257-8956-C3A2792CAFEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1D27435-5EE9-4257-8956-C3A2792CAFEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
