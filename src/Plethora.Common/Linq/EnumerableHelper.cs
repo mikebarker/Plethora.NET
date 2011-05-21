@@ -30,6 +30,19 @@ namespace Plethora.Linq
         /// </summary>
         private static bool IsCount<T>(this IEnumerable<T> source, int count, Func<int, int, bool> comparison)
         {
+            //Validity
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException("count", count,
+                    ResourceProvider.ArgMustBeGreaterThanEqualToZero("count"));
+
+            if (comparison == null)
+                throw new ArgumentNullException("comparison");
+
+
+            //short-cut ICollection
             if (source is ICollection<T>)
                 return comparison(((ICollection<T>)source).Count, count);
 
@@ -95,9 +108,14 @@ namespace Plethora.Linq
         /// </summary>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
+            //Validation
+            if (source == null)
+                throw new ArgumentNullException("source");
+
             if (action == null)
                 throw new ArgumentNullException("action");
 
+            
             foreach (T t in source)
             {
                 action(t);
@@ -109,8 +127,13 @@ namespace Plethora.Linq
         /// </summary>
         public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
         {
+            //Validation
+            if (source == null)
+                throw new ArgumentNullException("source");
+
             if (action == null)
                 throw new ArgumentNullException("action");
+
 
             int num = 0;
             foreach (T t in source)
@@ -131,14 +154,20 @@ namespace Plethora.Linq
         /// <returns>
         /// A single enumeration of tree elements.
         /// </returns>
+        /// <remarks>
+        /// Elements are returned in a 'pre-order' traversal style
+        /// (ie. parents are returned before their children).
+        /// </remarks>
         public static IEnumerable<TSource> Flatten<TSource>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TSource>> childSelector)
         {
-            return source.Concat(source.SelectMany(item => childSelector(item).Flatten(childSelector)));
+            return source.Concat(source.SelectMany(item => (item == null)
+                ? Enumerable.Empty<TSource>()
+                : childSelector(item).Flatten(childSelector)));
         }
 
         #endregion
 
-        #region ToSingularity
+        #region Singularity
 
         /// <summary>
         /// Returns an <see cref="IEnumerable{TResult}"/> containing a single element.

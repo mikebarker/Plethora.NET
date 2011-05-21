@@ -7,7 +7,7 @@ using Plethora.Properties;
 namespace Plethora
 {
     /// <summary>
-    /// Class which provides access to the standard resources with correct
+    /// Class which provides access to the standard resources with
     /// substitutions made.
     /// </summary>
     public static class ResourceProvider
@@ -86,6 +86,22 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'ArgMustBeGreaterThanEqualTo' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The argument of the string.</param>
+        /// <param name="value">The value of the string.</param>
+        /// <returns>
+        /// The 'ArgMustBeGreaterThanEqualTo' string with substitutions made.
+        /// </returns>
+        public static string ArgMustBeGreaterThanEqualTo(string arg, string value)
+        {
+            return StringFormat(Resources.ArgMustBeGreaterThanEqualTo,
+                                arg,
+                                value);
+        }
+
+        /// <summary>
         /// Returns the resource string 'ArgMustBeLessThan' with
         /// substitutions made.
         /// </summary>
@@ -97,6 +113,22 @@ namespace Plethora
         public static string ArgMustBeLessThan(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeLessThan,
+                                arg,
+                                value);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgMustBeLessThanEqualTo' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The argument of the string.</param>
+        /// <param name="value">The value of the string.</param>
+        /// <returns>
+        /// The 'ArgMustBeLessThanEqualTo' string with substitutions made.
+        /// </returns>
+        public static string ArgMustBeLessThanEqualTo(string arg, string value)
+        {
+            return StringFormat(Resources.ArgMustBeLessThanEqualTo,
                                 arg,
                                 value);
         }
@@ -161,6 +193,19 @@ namespace Plethora
         public static string ArgMustBeGreaterThanZero(string arg)
         {
             return ArgMustBeGreaterThan(arg, Resources.Zero);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgMustBeGreaterThan' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The argument of the string.</param>
+        /// <returns>
+        /// The 'ArgMustBeGreaterThan' string with substitutions made.
+        /// </returns>
+        public static string ArgMustBeGreaterThanEqualToZero(string arg)
+        {
+            return ArgMustBeGreaterThanEqualTo(arg, Resources.Zero);
         }
 
         /// <summary>

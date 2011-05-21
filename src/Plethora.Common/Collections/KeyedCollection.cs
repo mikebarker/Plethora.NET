@@ -363,6 +363,9 @@ namespace Plethora.Collections
 
         private TKey GetKey(T item)
         {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
             return keySelector(item);
         }
         #endregion

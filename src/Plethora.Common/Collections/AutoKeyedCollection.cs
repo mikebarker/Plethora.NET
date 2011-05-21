@@ -7,6 +7,12 @@ namespace Plethora.Collections
     /// A collection which is unique per item.
     /// </summary>
     /// <typeparam name="T">The type of the collection.</typeparam>
+    /// <remarks>
+    /// This class should only be used if the data type required must
+    /// inherit from the <see cref="KeyedCollection{TKey, T}"/> class or
+    /// implement the <see cref="IKeyedCollection{TKey,T}"/> interface.
+    /// Otherwise, consider using the standard .NET <see cref="HashSet{T}"/> class.
+    /// </remarks>
     /// <seealso cref="KeyedCollection{TKey,T}"/>
     /// <seealso cref="HashSet{T}"/>
     public class AutoKeyedCollection<T> : KeyedCollection<T, T>

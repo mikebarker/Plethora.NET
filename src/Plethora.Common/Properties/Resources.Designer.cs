@@ -115,11 +115,29 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be greater than or equal to {1}..
+        /// </summary>
+        internal static string ArgMustBeGreaterThanEqualTo {
+            get {
+                return ResourceManager.GetString("ArgMustBeGreaterThanEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; must be less than {1}..
         /// </summary>
         internal static string ArgMustBeLessThan {
             get {
                 return ResourceManager.GetString("ArgMustBeLessThan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be less than or equal to {1}..
+        /// </summary>
+        internal static string ArgMustBeLessThanEqualTo {
+            get {
+                return ResourceManager.GetString("ArgMustBeLessThanEqualTo", resourceCulture);
             }
         }
         
