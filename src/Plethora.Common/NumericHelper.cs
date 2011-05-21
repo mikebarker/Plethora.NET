@@ -15,8 +15,7 @@ namespace Plethora
         #region Translate
 
         /// <summary>
-        /// Translates a value between 0 and 1 to between a specified minimum and
-        /// maximum.
+        /// Translates a value within one range to within another.
         /// </summary>
         /// <param name="value">The value to be translated.</param>
         /// <param name="oldMin">The minimum value of the old range of 'value'.</param>
@@ -145,13 +144,17 @@ namespace Plethora
         public static int Wrap(int value, int min, int max)
         {
             //Validation
-            int range = max - min;
+            var range = max - min;
             if (range <= 0)
                 throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
 
             var valueRange = value - min;
+            valueRange = (valueRange % range);
 
-            return (valueRange % range) + min;
+            if (valueRange < 0)
+                valueRange += range;
+
+            return valueRange + min;
         }
 
         /// <summary>
@@ -177,23 +180,17 @@ namespace Plethora
         /// </example>
         public static decimal Wrap(decimal value, decimal min, decimal max)
         {
-            //Validation
-            decimal diff = max - min;
-            if (diff <= 0m)
+            var range = max - min;
+            if (range <= 0m)
                 throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
 
+            var valueRange = value - min;
+            valueRange = (valueRange % range);
 
-            while (value < min)
-            {
-                value += diff;
-            }
+            if (valueRange < 0m)
+                valueRange += range;
 
-            while (value > max)
-            {
-                value -= diff;
-            }
-
-            return value;
+            return valueRange + min;
         }
 
         /// <summary>
@@ -219,23 +216,17 @@ namespace Plethora
         /// </example>
         public static float Wrap(float value, float min, float max)
         {
-            //Validation
-            float diff = max - min;
-            if (diff <= 0.0f)
+            var range = max - min;
+            if (range <= 0.0f)
                 throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
 
+            var valueRange = value - min;
+            valueRange = (valueRange % range);
 
-            while (value < min)
-            {
-                value += diff;
-            }
+            if (valueRange < 0f)
+                valueRange += range;
 
-            while (value > max)
-            {
-                value -= diff;
-            }
-
-            return value;
+            return valueRange + min;
         }
 
         /// <summary>
@@ -261,23 +252,17 @@ namespace Plethora
         /// </example>
         public static double Wrap(double value, double min, double max)
         {
-            //Validation
-            double diff = max - min;
-            if (diff <= 0.0)
+            var range = max - min;
+            if (range <= 0.0)
                 throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
 
+            var valueRange = value - min;
+            valueRange = (valueRange % range);
 
-            while (value < min)
-            {
-                value += diff;
-            }
+            if (valueRange < 0.0)
+                valueRange += range;
 
-            while (value > max)
-            {
-                value -= diff;
-            }
-
-            return value;
+            return valueRange + min;
         }
         #endregion
 

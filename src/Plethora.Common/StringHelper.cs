@@ -29,9 +29,9 @@ namespace Plethora
                 if (whiteSpace == null)
                 {
                     List<char> whitespaceList = new List<char>(30);
-                    for (ushort i = 0; i < ushort.MaxValue; i++)
+                    for (char i = char.MinValue; i < char.MaxValue; i++)
                     {
-                        char whitespaceChar = (char)i;
+                        var whitespaceChar = i;
                         if (char.IsWhiteSpace(whitespaceChar))
                             whitespaceList.Add(whitespaceChar);
                     }
@@ -194,10 +194,6 @@ namespace Plethora
         /// </returns>
         public static int LastIndexNotOfAny(this string str, char[] values, int startIndex)
         {
-            //Validation
-            if (str == null)
-                throw new ArgumentNullException("str");
-
             return LastIndexNotOfAny(str, values, startIndex, startIndex + 1);
         }
 
@@ -236,10 +232,9 @@ namespace Plethora
                 throw new ArgumentOutOfRangeException("startIndex",
                     ResourceProvider.ArgMustBeBetween("startIndex", "0", "str.Length"));
 
-            if ((count < 0) || (count > startIndex))
+            if ((count < 0) || (startIndex - count < -1))
                 throw new ArgumentOutOfRangeException("count",
                     ResourceProvider.ArgMustBeBetween("count", "0", "startIndex"));
-
 
             IList valuesList = ArrayList.FixedSize(values);
 
@@ -254,7 +249,7 @@ namespace Plethora
         }
         #endregion
 
-        #region IndexOfWhitespace
+        #region IndexOfWhiteSpace
 
         /// <summary>
         /// Reports the index of the first occurrence of a whitespace character in
@@ -269,6 +264,10 @@ namespace Plethora
         /// </returns>
         public static int IndexOfWhiteSpace(this string str)
         {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
             return str.IndexOfAny(WhiteSpace);
         }
 
@@ -288,6 +287,10 @@ namespace Plethora
         /// </returns>
         public static int IndexOfWhiteSpace(this string str, int startIndex)
         {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
             return str.IndexOfAny(WhiteSpace, startIndex);
         }
 
@@ -311,11 +314,15 @@ namespace Plethora
         /// </returns>
         public static int IndexOfWhiteSpace(this string str, int startIndex, int count)
         {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
             return str.IndexOfAny(WhiteSpace, startIndex, count);
         }
         #endregion
 
-        #region LastIndexOfWhitespace
+        #region LastIndexOfWhiteSpace
 
         /// <summary>
         /// Reports the index of the last occurrence of a whitespace character in
@@ -330,6 +337,10 @@ namespace Plethora
         /// </returns>
         public static int LastIndexOfWhiteSpace(this string str)
         {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
             return str.LastIndexOfAny(WhiteSpace);
         }
 
@@ -349,6 +360,10 @@ namespace Plethora
         /// </returns>
         public static int LastIndexOfWhiteSpace(this string str, int startIndex)
         {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
             return str.LastIndexOfAny(WhiteSpace, startIndex);
         }
 
@@ -372,11 +387,15 @@ namespace Plethora
         /// </returns>
         public static int LastIndexOfWhiteSpace(this string str, int startIndex, int count)
         {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
             return str.LastIndexOfAny(WhiteSpace, startIndex, count);
         }
         #endregion
 
-        #region IndexNotOfWhitespace
+        #region IndexNotOfWhiteSpace
 
         /// <summary>
         /// Reports the index of the first occurrence of a non-whitespace character
@@ -389,7 +408,7 @@ namespace Plethora
         /// The index position of value if a non-whitespace character is found, or
         /// -1 if not.
         /// </returns>
-        public static int IndexNotOfWhitespace(this string str)
+        public static int IndexNotOfWhiteSpace(this string str)
         {
             return IndexNotOfAny(str, WhiteSpace);
         }
@@ -408,7 +427,7 @@ namespace Plethora
         /// The index position of value if a non-whitespace character is found, or
         /// -1 if not.
         /// </returns>
-        public static int IndexNotOfWhitespace(this string str, int startIndex)
+        public static int IndexNotOfWhiteSpace(this string str, int startIndex)
         {
             return IndexNotOfAny(str, WhiteSpace, startIndex);
         }
@@ -431,13 +450,13 @@ namespace Plethora
         /// The index position of value if a non-whitespace character is found, or
         /// -1 if not.
         /// </returns>
-        public static int IndexNotOfWhitespace(this string str, int startIndex, int count)
+        public static int IndexNotOfWhiteSpace(this string str, int startIndex, int count)
         {
             return IndexNotOfAny(str, WhiteSpace, startIndex, count);
         }
         #endregion
 
-        #region LastIndexNotOfWhitespace
+        #region LastIndexNotOfWhiteSpace
 
         /// <summary>
         /// Reports the index of the last occurrence of a non-whitespace character
@@ -450,7 +469,7 @@ namespace Plethora
         /// The index position of value if a non-whitespace character is found, or
         /// -1 if not.
         /// </returns>
-        public static int LastIndexNotOfWhitespace(this string str)
+        public static int LastIndexNotOfWhiteSpace(this string str)
         {
             return LastIndexNotOfAny(str, WhiteSpace);
         }
@@ -469,7 +488,7 @@ namespace Plethora
         /// The index position of value if a non-whitespace character is found, or
         /// -1 if not.
         /// </returns>
-        public static int LastIndexNotOfWhitespace(this string str, int startIndex)
+        public static int LastIndexNotOfWhiteSpace(this string str, int startIndex)
         {
             return LastIndexNotOfAny(str, WhiteSpace, startIndex);
         }
@@ -492,13 +511,29 @@ namespace Plethora
         /// The index position of value if a non-whitespace character is found, or
         /// -1 if not.
         /// </returns>
-        public static int LastIndexNotOfWhitespace(this string str, int startIndex, int count)
+        public static int LastIndexNotOfWhiteSpace(this string str, int startIndex, int count)
         {
             return LastIndexNotOfAny(str, WhiteSpace, startIndex, count);
         }
         #endregion
 
         #region IndexOfWord
+
+        /// <summary>
+        /// Reports the index of the beginning of the first word in the string.
+        /// </summary>
+        /// <param name="str">
+        /// The string in which to find the index of the beginning of the firstword.
+        /// </param>
+        /// <returns>
+        /// The index position of the beginning of the next word if found, or
+        /// -1 if not.
+        /// </returns>
+        /// <see cref="IndexOfWord(string,int,bool)"/>
+        public static int IndexOfWord(this string str)
+        {
+            return IndexOfWord(str, 0, true);
+        }
 
         /// <summary>
         /// Reports the index of the beginning of the next word in the string.
@@ -514,12 +549,7 @@ namespace Plethora
         /// The index position of the beginning of the next word if found, or
         /// -1 if not.
         /// </returns>
-        /// <remarks>
-        ///  <para>
-        ///   The start of a word is defined by a non-whitespace character occuring
-        ///   after a whitespace character. The first word begins at index 0.
-        ///  </para>
-        /// </remarks>
+        /// <see cref="IndexOfWord(string,int,bool)"/>
         public static int IndexOfWord(this string str, int startIndex)
         {
             return IndexOfWord(str, startIndex, true);
@@ -545,12 +575,8 @@ namespace Plethora
         /// </returns>
         /// <remarks>
         ///  <para>
-        ///   The start of a word is defined by a non-whitespace character occuring
-        ///   after a whitespace character. The first word begins at index 0.
-        ///  </para>
-        ///  <para>
-        ///   The end of a word is defined by a whitespace character occurring
-        ///   before a whitespace character.
+        ///   A 'word' in this context is defined as a sub-string consisting of the
+        ///   characters a-z, A-Z, 0-9, and underscore (_).
         ///  </para>
         /// </remarks>
         public static int IndexOfWord(this string str, int startIndex, bool findWordBeginning)
@@ -565,16 +591,16 @@ namespace Plethora
 
 
             Regex regex;
+            int indexOffset;
             if (findWordBeginning)
             {
-                if (startIndex == 0)
-                    return 0;
-
                 regex = BeginWordRegex;
+                indexOffset = 1;
             }
             else
             {
                 regex = EndWordRegex;
+                indexOffset = 0;
             }
 
             MatchCollection matches = regex.Matches(str, startIndex);
@@ -582,11 +608,34 @@ namespace Plethora
                 return -1;
 
             Match match = matches[0];
-            return match.Index + 1;
+            return match.Index + indexOffset;
         }
         #endregion
 
         #region LastIndexOfWord
+
+        /// <summary>
+        /// Reports the index of the beginning of the last word in the
+        /// string.
+        /// </summary>
+        /// <param name="str">
+        /// The string in which to find the index of the beginning of the
+        /// last word.
+        /// </param>
+        /// <returns>
+        /// The index position of the start of the last word if found, or
+        /// -1 if not.
+        /// </returns>
+        /// <see cref="LastIndexOfWord(string,int,bool)"/>
+        public static int LastIndexOfWord(this string str)
+        {
+            //Validation
+            if (str == null)
+                throw new ArgumentNullException("str");
+
+
+            return LastIndexOfWord(str, str.Length - 1, true);
+        }
 
         /// <summary>
         /// Reports the index of the beginning of the previous word in the
@@ -603,12 +652,7 @@ namespace Plethora
         /// The index position of the start of the previous word if found, or
         /// -1 if not.
         /// </returns>
-        /// <remarks>
-        ///  <para>
-        ///   The start of a word is defined by a non-whitespace character occuring
-        ///   after a whitespace character. The first word begins at index 0.
-        ///  </para>
-        /// </remarks>
+        /// <see cref="LastIndexOfWord(string,int,bool)"/>
         public static int LastIndexOfWord(this string str, int startIndex)
         {
             return LastIndexOfWord(str, startIndex, true);
@@ -635,12 +679,8 @@ namespace Plethora
         /// </returns>
         /// <remarks>
         ///  <para>
-        ///   The start of a word is defined by a non-whitespace character occuring
-        ///   after a whitespace character. The first word begins at index 0.
-        ///  </para>
-        ///  <para>
-        ///   The end of a word is defined by a whitespace character occurring
-        ///   before a whitespace character.
+        ///   A 'word' in this context is defined as a sub-string consisting of the
+        ///   characters a-z, A-Z, 0-9, and underscore (_).
         ///  </para>
         /// </remarks>
         public static int LastIndexOfWord(this string str, int startIndex, bool findWordBeginning)
@@ -655,25 +695,54 @@ namespace Plethora
 
 
             Regex regex;
+            int indexOffset;
             if (findWordBeginning)
             {
-                if (startIndex == 0)
-                    return 0;
-
                 regex = BeginWordRegex;
+                indexOffset = 1;
             }
             else
             {
                 regex = EndWordRegex;
+                indexOffset = 0;
             }
 
-            string tmp = str.Substring(0, startIndex - 1);
+            string tmp = str.Substring(0, startIndex + 1);
             MatchCollection matches = regex.Matches(tmp);
             if (matches.Count == 0)
                 return -1;
 
             Match match = matches[matches.Count - 1];
-            return match.Index + 1;
+
+            //Special case for finding the end of a word and not considering cropped text.
+            if ((!findWordBeginning) && (match.Index == tmp.Length-1))
+            {
+                //test if the original string contained an end-of-word at this location.
+                if (str.Length > tmp.Length)
+                {
+                    var nextChar = str[match.Index + 1];
+                    if (((nextChar >= 'a') && (nextChar <= 'z'))||
+                        ((nextChar >= 'A') && (nextChar <= 'Z')) ||
+                        ((nextChar == '_')))
+                    {
+                        if (matches.Count < 2)
+                            return -1;
+
+                        //Use the previous match
+                        match = matches[matches.Count - 2];
+                    }
+                    else
+                    {
+                        return match.Index;
+                    }
+                }
+                else
+                {
+                    return match.Index;
+                }
+            }
+
+            return match.Index + indexOffset;
         }
         #endregion
         #endregion
@@ -688,7 +757,7 @@ namespace Plethora
             get
             {
                 if (beginWordRegex == null)
-                    beginWordRegex = new Regex(@"(\s\S)");
+                    beginWordRegex = new Regex(@"(\W|^)\w", RegexOptions.Compiled);
                 return beginWordRegex;
             }
         }
@@ -701,7 +770,7 @@ namespace Plethora
             get
             {
                 if (endWordRegex == null)
-                    endWordRegex = new Regex(@"(\S\s)");
+                    endWordRegex = new Regex(@"\w(\W|$)", RegexOptions.Compiled);
                 return endWordRegex;
             }
         }
