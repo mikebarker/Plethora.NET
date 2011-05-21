@@ -42,161 +42,169 @@ namespace Plethora.ComponentModel
         }
         #endregion
 
-        #region SyncTask and AsyncTask
+        #region Exec
 
         /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread.
+        /// Extention method used to marshall the execution of an action to 
+        /// the thread required by an <see cref="ISynchronizeInvoke"/>.
         /// </summary>
         /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <remarks>
-        /// Method returns immediately without waiting for the task to complete.
-        /// </remarks>
+        /// <param name="task">The <see cref="Action{TSync}"/> to be executed.</param>
         /// <example>
         ///  <code>
-        ///    textBox1.AsyncTask(() => textBox1.Text = "Finished");
+        ///    textBox1.Exec(() => textBox1.Text = "hello");
         ///  </code>
         /// </example>
-        public static void AsyncTask<TSync>(
-            this TSync syncInvoke,
-            Action action)
+        public static void Exec<TSync>(this TSync syncInvoke, Action task)
             where TSync : ISynchronizeInvoke
         {
-            Action onComplete = () => { };
-            Action<Exception> onException = ex => { };
+            //Validation
+            if (syncInvoke == null)
+                throw new ArgumentNullException("syncInvoke");
 
-            AsyncTask(syncInvoke, action, onComplete, onException, 0);
+            if (task == null)
+                throw new ArgumentNullException("task");
+
+
+            if (syncInvoke.InvokeRequired)
+            {
+                syncInvoke.BeginInvoke(task, new object[0]);
+            }
+            else
+            {
+                task();
+            }
         }
 
         /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread, and waits for the
-        /// task to complete before returning.
+        /// Extention method used to marshall the execution of an action to 
+        /// the thread required by an <see cref="ISynchronizeInvoke"/>.
         /// </summary>
         /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <example>
-        ///  <code>
-        ///    textBox1.SyncTask(() => textBox1.Text = "Finished");
-        ///  </code>
-        /// </example>
-        public static void SyncTask<TSync>(
-            this TSync syncInvoke,
-            Action action)
-            where TSync : ISynchronizeInvoke
-        {
-            Action onComplete = () => { };
-            Action<Exception> onException = ex => { };
-
-            AsyncTask(syncInvoke, action, onComplete, onException, Timeout.Infinite);
-        }
-
-        /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread.
-        /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
-        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
-        /// <remarks>
-        /// Method returns immediately without waiting for the task to complete.
-        /// </remarks>
-        public static void AsyncTask<TSync>(
-            this TSync syncInvoke,
-            Action action,
-            Action onComplete)
-            where TSync : ISynchronizeInvoke
-        {
-            Action<Exception> onException = ex => { };
-
-            AsyncTask(syncInvoke, action, onComplete, onException, 0);
-        }
-
-        /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread, and waits for the
-        /// task to complete before returning.
-        /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
-        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
-        public static void SyncTask<TSync>(
-            this TSync syncInvoke,
-            Action action,
-            Action onComplete)
-            where TSync : ISynchronizeInvoke
-        {
-            Action<Exception> onException = ex => { };
-
-            AsyncTask(syncInvoke, action, onComplete, onException, Timeout.Infinite);
-        }
-
-        /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread.
-        /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
-        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
-        /// <param name="onException">The <see cref="Action{Exception}"/> executed if <paramref name="action"/> fails.</param>
-        /// <remarks>
-        /// Method returns immediately without waiting for the task to complete.
-        /// </remarks>
-        public static void AsyncTask<TSync>(
-            this TSync syncInvoke,
-            Action action,
-            Action onComplete,
-            Action<Exception> onException)
-            where TSync : ISynchronizeInvoke
-        {
-            AsyncTask(syncInvoke, action, onComplete, onException, 0);
-        }
-
-        /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread, and waits for the
-        /// task to complete before returning.
-        /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
-        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
-        /// <param name="onException">The <see cref="Action{Exception}"/> executed if <paramref name="action"/> fails.</param>
-        public static void SyncTask<TSync>(
-            this TSync syncInvoke,
-            Action action,
-            Action onComplete,
-            Action<Exception> onException)
-            where TSync : ISynchronizeInvoke
-        {
-            AsyncTask(syncInvoke, action, onComplete, onException, Timeout.Infinite);
-        }
-
-        /// <summary>
-        /// Executes a task asyncronously on the required synchronized thread.
-        /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
-        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
-        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
-        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
-        /// <param name="onException">The <see cref="Action{Exception}"/> executed if <paramref name="action"/> fails.</param>
+        /// <param name="task">The <see cref="Action{TSync}"/> to be executed.</param>
         /// <param name="millisecondsTimeout">
         /// The number of milliseconds to wait for the task to complete.
-        /// May be zero (0) to return immediately, or <see cref="Timeout.Infinite"/> (-1) to wait indefinitely.
+        /// Specify <see cref="Timeout.Infinite"/> to wai indefinitely.
         /// </param>
         /// <returns>
-        /// true if the task completes within the given timeout; otherwise, false.
+        /// true if the task completed within the required timeout; otherwise false.
         /// </returns>
         /// <remarks>
-        /// If called on the synchronized thread the task will be completed synchronously,
-        /// and <paramref name="millisecondsTimeout"/> will be ignored.
+        /// If no thread marshalling is required, the task is executed on the calling thread
+        /// and <paramref name="millisecondsTimeout"/> is ignorred.
         /// </remarks>
-        public static bool AsyncTask<TSync>(
+        /// <example>
+        ///  <code>
+        ///    textBox1.Exec(() => textBox1.Text = "hello", 10);
+        ///  </code>
+        /// </example>
+        public static bool Exec<TSync>(this TSync syncInvoke, Action task, int millisecondsTimeout)
+            where TSync : ISynchronizeInvoke
+        {
+            //Validation
+            if (syncInvoke == null)
+                throw new ArgumentNullException("syncInvoke");
+
+            if (task == null)
+                throw new ArgumentNullException("task");
+
+            if ((millisecondsTimeout < 0) && (millisecondsTimeout != Timeout.Infinite))
+                throw new ArgumentOutOfRangeException(
+                    "millisecondsTimeout",
+                    millisecondsTimeout,
+                    ResourceProvider.ArgTimeout("millisecondsTimeout"));
+
+
+            if (syncInvoke.InvokeRequired)
+            {
+                var result = syncInvoke.BeginInvoke(task, new object[0]);
+                return result.AsyncWaitHandle.WaitOne(millisecondsTimeout);
+            }
+            else
+            {
+                task();
+                return true;
+            }
+        }
+        #endregion
+
+        #region AsyncTask
+
+        /// <summary>
+        /// Executes a task asyncronously.
+        /// </summary>
+        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
+        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
+        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
+        /// <returns>
+        /// An <see cref="IAsyncResult"/> of the executing async task.
+        /// </returns>
+        /// <remarks>
+        /// Method returns immediately without waiting for the task to complete.
+        /// The task <paramref name="action"/> will be executed on a thread-pool thread.
+        /// </remarks>
+        public static IAsyncResult AsyncTask<TSync>(
+            this TSync syncInvoke,
+            Action action)
+            where TSync : ISynchronizeInvoke
+        {
+            Action onComplete = () => { };
+            Action<Exception> onException = ex => { };
+
+            return AsyncTask(syncInvoke, action, onComplete, onException);
+        }
+
+        /// <summary>
+        /// Executes a task asyncronously.
+        /// </summary>
+        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
+        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
+        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
+        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
+        /// <returns>
+        /// An <see cref="IAsyncResult"/> of the executing async task.
+        /// </returns>
+        /// <remarks>
+        /// Method returns immediately without waiting for the task to complete.
+        /// The task <paramref name="action"/> will be executed on a thread-pool thread.
+        /// <paramref name="onComplete"/> will be marshalled be to
+        /// the thread of the <see cref="syncInvoke"/>
+        /// </remarks>
+        public static IAsyncResult AsyncTask<TSync>(
+            this TSync syncInvoke,
+            Action action,
+            Action onComplete)
+            where TSync : ISynchronizeInvoke
+        {
+            Action<Exception> onException = ex => { };
+
+            return AsyncTask(syncInvoke, action, onComplete, onException);
+        }
+
+        /// <summary>
+        /// Executes a task asyncronously.
+        /// </summary>
+        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
+        /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
+        /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
+        /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
+        /// <param name="onException">The <see cref="Action{Exception}"/> executed if <paramref name="action"/> fails.</param>
+        /// <returns>
+        /// An <see cref="IAsyncResult"/> of the executing async task.
+        /// </returns>
+        /// <remarks>
+        /// Method returns immediately without waiting for the task to complete.
+        /// The task <paramref name="action"/> will be executed on a thread-pool thread.
+        /// <paramref name="onComplete"/> and <paramref name="onException"/> will be marshalled be to
+        /// the thread of the <see cref="syncInvoke"/>
+        /// </remarks>
+        public static IAsyncResult AsyncTask<TSync>(
             this TSync syncInvoke,
             Action action,
             Action onComplete,
-            Action<Exception> onException,
-            int millisecondsTimeout)
+            Action<Exception> onException)
             where TSync : ISynchronizeInvoke
         {
             //Validation
@@ -212,37 +220,26 @@ namespace Plethora.ComponentModel
             if (onException == null)
                 throw new ArgumentNullException("onException");
 
-            if (millisecondsTimeout < -1)
-                throw new ArgumentOutOfRangeException("millisecondsTimeout", millisecondsTimeout, "Timeout may not be negative; unless Timeout.Infinite (-1).");
 
-
-            Action task = delegate
+            Action wrappedAction = delegate
                 {
                     try
                     {
                         action();
-                        try
-                        { onComplete(); }
-                        catch
-                        { /* Do nothing */ }
                     }
                     catch(Exception ex)
                     {
-                        onException(ex);
+                        syncInvoke.Invoke(onException, new object[] { ex });
                     }
                 };
 
 
-            if (syncInvoke.InvokeRequired)
-            {
-                var asyncResult = syncInvoke.BeginInvoke(task, new object[0]);
-                return asyncResult.AsyncWaitHandle.WaitOne(millisecondsTimeout);
-            }
-            else
-            {
-                task();
-                return true;
-            }
+            AsyncCallback callback = delegate
+                {
+                    syncInvoke.Invoke(onComplete, new object[0]);
+                };
+
+            return wrappedAction.BeginInvoke(callback, null);
         }
         #endregion
     }

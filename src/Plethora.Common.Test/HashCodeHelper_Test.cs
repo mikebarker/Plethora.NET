@@ -11,7 +11,7 @@ namespace Plethora.Test
         private readonly float item4 = 4.0f;
         private readonly double item5 = 5.0;
         private readonly decimal item6 = 6m;
-        private readonly long item7 = 7l;
+        private readonly long item7 = 7L;
         private readonly int? item8 = null;
 
         [SetUp]
