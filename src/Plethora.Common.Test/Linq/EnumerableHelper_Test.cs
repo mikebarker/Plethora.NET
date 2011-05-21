@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Plethora.Test.ExtensionClasses;
+using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Linq.Test
 {

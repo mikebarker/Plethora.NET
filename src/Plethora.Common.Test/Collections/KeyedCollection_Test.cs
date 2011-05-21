@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Plethora.Test.ExtensionClasses;
+using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Collections.Test
 {
@@ -23,6 +23,172 @@ namespace Plethora.Collections.Test
             keyedCollection.Add(Amy_Cathson);
             //Jill_Dorrman not added
         }
+
+        #region Constructors
+
+        [Test]
+        public void ctor_KeySelector()
+        {
+            //exec
+            keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
+
+            //test
+            Assert.IsNotNull(keyedCollection);
+            Assert.AreEqual(0, keyedCollection.Count);
+        }
+
+        [Test]
+        public void ctor_KeySelector_Fail_Null()
+        {
+            try
+            {
+                //exec
+                keyedCollection = new KeyedCollection<long, Person>(null);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void ctor_KeySelectorEnumerable()
+        {
+            //setup
+            Person[] array = new[] {Bob_Jameson, Fred_Carlile, Amy_Cathson};
+
+            //exec
+            keyedCollection = new KeyedCollection<long, Person>(person => person.ID, array);
+
+            //test
+            Assert.IsNotNull(keyedCollection);
+            Assert.AreEqual(3, keyedCollection.Count);
+        }
+
+        [Test]
+        public void ctor_KeySelectorEnumerable_Fail_NullSelector()
+        {
+            //setup
+            Person[] array = new[] {Bob_Jameson, Fred_Carlile, Amy_Cathson};
+
+            try
+            {
+                //exec
+                keyedCollection = new KeyedCollection<long, Person>(null, array);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void ctor_KeySelectorEnumerable_Fail_NullEnumerable()
+        {
+            try
+            {
+                //exec
+                keyedCollection = new KeyedCollection<long, Person>(person => person.ID, (IEnumerable<Person>)null);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void ctor_KeySelectorEnumerableComparer()
+        {
+            //setup
+            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
+
+            //exec
+            keyedCollection = new KeyedCollection<long, Person>(person => person.ID, array, equalityComparer);
+
+            //test
+            Assert.IsNotNull(keyedCollection);
+            Assert.AreEqual(3, keyedCollection.Count);
+        }
+
+        [Test]
+        public void ctor_KeySelectorEnumerableComparer_Fail_NullSelector()
+        {
+            //setup
+            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
+
+            try
+            {
+                //exec
+                keyedCollection = new KeyedCollection<long, Person>(null, array, equalityComparer);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void ctor_KeySelectorEnumerableComparer_Fail_NullEnumerable()
+        {
+            //setup
+            EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
+
+            try
+            {
+                //exec
+                keyedCollection = new KeyedCollection<long, Person>(person => person.ID, null, equalityComparer);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void ctor_KeySelectorComparer()
+        {
+            //setup
+            EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
+
+            //exec
+            keyedCollection = new KeyedCollection<long, Person>(person => person.ID, equalityComparer);
+
+            //test
+            Assert.IsNotNull(keyedCollection);
+            Assert.AreEqual(0, keyedCollection.Count);
+        }
+
+        [Test]
+        public void ctor_KeySelectorComparer_Fail_NullSelector()
+        {
+            //setup
+            EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
+
+            try
+            {
+                //exec
+                keyedCollection = new KeyedCollection<long, Person>(null, equalityComparer);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+        #endregion
 
         #region Add
 
@@ -62,6 +228,26 @@ namespace Plethora.Collections.Test
             try
             {
                 keyedCollection.Add(Bob_Jameson);
+
+                Assert.Fail();
+            }
+            catch (ArgumentException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void Add_Fail_DifferentObjectSameKey()
+        {
+            //setup
+            long bobId = Bob_Jameson.ID;
+            Person Jane_Doe = new Person(bobId, "Doe", "Jane", new DateTime(1976, 03, 15));
+
+            try
+            {
+                //exec
+                keyedCollection.Add(Jane_Doe);
 
                 Assert.Fail();
             }

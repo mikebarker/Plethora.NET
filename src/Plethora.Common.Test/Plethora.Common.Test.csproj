@@ -47,12 +47,18 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="!ExtensionClasses\Person.cs" />
-    <Compile Include="!ExtensionClasses\TreeElement.cs" />
+    <Compile Include="!UtilityClasses\Person.cs" />
+    <Compile Include="!UtilityClasses\Style.cs" />
+    <Compile Include="!UtilityClasses\TreeElement.cs" />
     <Compile Include="!MockClasses\MockNumericHelperExtension.cs" />
     <Compile Include="!MockClasses\MockTextWriter.cs" />
+    <Compile Include="Collections\AutoKeyedCollection_Test.cs" />
+    <Compile Include="Collections\MergeJoin_Test.cs" />
+    <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
+    <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
     <Compile Include="HashCodeHelper_Test.cs" />
+    <Compile Include="!ExtensionClasses\HierarchyEx.cs" />
     <Compile Include="IO\MulticastWriter_Test.cs" />
     <Compile Include="Linq\EnumerableHelper_Test.cs" />
     <Compile Include="NumericHelper_Test.cs" />

@@ -7,6 +7,51 @@ namespace Plethora.Collections
     /// <summary>
     /// Presents a hierarchy of objects.
     /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   Searches the hierarchy of objects provided to return a required value.
+    ///   Of the values provided in the constructor, low-indexed items take
+    ///   preference over high-indexed items. Order can be reversed using the
+    ///   'highIndexPriority' arguments of the GetValue methods.
+    ///  </para>
+    ///  <para>
+    ///   For properties / methods returning a class, the hierarchy is searched until
+    ///   a non-null return value is found.
+    ///  </para>
+    ///  <para>
+    ///   For properties / methods returning a struct, the hierarchy is searched until
+    ///   the first value differing from specified default is found.
+    ///   Nullables may also be used, in which case the first non-null value is returned.
+    ///  </para>
+    /// </remarks>
+    /// <example>
+    /// This class is intended to be used to implement an interface, and for it
+    /// to represent a hierarchy of child objects from the same interface. Example:
+    ///  <code>
+    ///  <![CDATA[
+    ///   public interace IStyle
+    ///   {
+    ///      Color ForeColor { get; }
+    ///   }
+    ///   
+    ///   // Simple implementation of the interface
+    ///   public class Style : IStyle
+    ///   {
+    ///      ...
+    ///   }
+    /// 
+    ///   // Hierarchial implementation of the interface.
+    ///   public class StyleHierarchy : Hierarchy<IStyle>, IStyle
+    ///   {
+    ///      public Color ForeColor
+    ///      { 
+    ///        //Return the first non-transparent color
+    ///        get { return GetValue(style => style.ForeColor, Color.Transparent); }
+    ///      }
+    ///   }
+    ///  ]]>
+    ///  </code>
+    /// </example>
     public abstract class Hierarchy<T>
     {
         #region Fields

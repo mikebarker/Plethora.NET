@@ -17,14 +17,14 @@ using System.Security.Permissions;
 [assembly: AssemblyConfiguration("RELEASE")]
 #endif
 [assembly: AssemblyCompany("Optium ltd")]
-[assembly: AssemblyProduct("The Plethora Project")]
+[assembly: AssemblyProduct("The Plethora .NET Project")]
 [assembly: AssemblyCopyright("Copyright ©  2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
 // Version
-[assembly: AssemblyVersion("0.2.*")]
-[assembly: AssemblyFileVersion("0.2.1.0")]
+[assembly: AssemblyVersion("0.3.*")]
+[assembly: AssemblyFileVersion("0.3.0.0")]
 
 // Interoperability
 [assembly: ComVisible(false)]

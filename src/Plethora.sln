@@ -6,6 +6,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{42E2A847-0945-4351-A57E-591539FBBD57}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfo.Common.cs = AssemblyInfo.Common.cs
+		..\license.txt = ..\license.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Examples", "Plethora.Windows.Forms.Examples\Plethora.Windows.Forms.Examples.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
@@ -17,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing.Examples", "Plethora.Drawing.Examples\Plethora.Drawing.Examples.csproj", "{B1D27435-5EE9-4257-8956-C3A2792CAFEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Test", "Plethora.Common.Test\Plethora.Common.Test.csproj", "{285904D4-549B-4E66-B50D-4BE919B7FF3D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Example", "Plethora.Common.Example\Plethora.Common.Example.csproj", "{52069679-A947-4C6A-A89D-83294FFD6015}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -46,6 +49,9 @@ Global
 		{285904D4-549B-4E66-B50D-4BE919B7FF3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{285904D4-549B-4E66-B50D-4BE919B7FF3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{285904D4-549B-4E66-B50D-4BE919B7FF3D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52069679-A947-4C6A-A89D-83294FFD6015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52069679-A947-4C6A-A89D-83294FFD6015}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52069679-A947-4C6A-A89D-83294FFD6015}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

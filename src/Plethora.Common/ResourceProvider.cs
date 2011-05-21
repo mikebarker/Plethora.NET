@@ -238,6 +238,19 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'ArgTimeout' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The argument of the string.</param>
+        /// <returns>
+        /// The 'ArgTimeout' string with substitutions made.
+        /// </returns>
+        public static string ArgTimeout(string arg)
+        {
+            return StringFormat(Resources.ArgTimeout, arg, Resources.Zero, "Timeout.Infinite");
+        }
+
+        /// <summary>
         /// Returns the resource string 'BadEnum' with
         /// substitutions made.
         /// </summary>

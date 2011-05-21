@@ -160,6 +160,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be greater than or equal to &apos;{1}&apos;, or equal to &apos;{2}&apos;.
+        /// </summary>
+        internal static string ArgTimeout {
+            get {
+                return ResourceManager.GetString("ArgTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection..
         /// </summary>
         internal static string BadArrayBounds {
