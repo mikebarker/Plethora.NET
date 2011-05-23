@@ -36,7 +36,15 @@
     </Compile>
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
+    <Compile Include="MirrorClass.cs" />
     <Compile Include="EnumHelper.cs" />
+    <Compile Include="ExpressionAide\CachedExecutor.cs" />
+    <Compile Include="ExpressionAide\ExpressionDuplicator.cs" />
+    <Compile Include="ExpressionAide\ExpressionDuplicatorWithClosurePromotion.cs" />
+    <Compile Include="ExpressionAide\Grapher.cs" />
+    <Compile Include="ExpressionAide\LambdaExecutor.cs" />
+    <Compile Include="ExpressionAide\LambdaKeyer.cs" />
+    <Compile Include="ExpressionAide\Step.cs" />
     <Compile Include="Globalization\CultureExtensionUI.cs" />
     <Compile Include="Globalization\CultureExtensionProvider.cs" />
     <Compile Include="Globalization\CultureExtensionBase.cs" />
@@ -82,7 +90,10 @@
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
-  <Target Name="AfterBuild">
-  </Target>
   -->
+
+  <Target Name="AfterBuild">
+    <CallTarget Targets="CopyToSolutionOutput" Condition=" '$(Configuration)' == 'Release'" />
+  </Target>
+  <Import Project="$(ProjectDir)..\Plethora.PostBuild.Targets" />
 </Project>

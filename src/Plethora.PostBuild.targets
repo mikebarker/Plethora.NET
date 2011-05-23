@@ -1,0 +1,13 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <OutputFiles Include="$(OutputPath)**\*.*" />
+  </ItemGroup>
+  <Target Name="AfterBuild">
+    <Copy
+        Condition=" '$(Configuration)' == 'Release'"
+        DestinationFolder="$(ProjectDir)..\..\bin"
+        SourceFiles="@(OutputFiles)"
+        SkipUnchangedFiles="true"
+        />
+  </Target>
+</Project>

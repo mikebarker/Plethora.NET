@@ -187,6 +187,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The number of generic arguments provided does not match those of the calling method..
+        /// </summary>
+        internal static string GenericArgumentsMismatch {
+            get {
+                return ResourceManager.GetString("GenericArgumentsMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The system is not in a valid state to execute the operation..
         /// </summary>
         internal static string InvalidState {
@@ -201,6 +210,33 @@ namespace Plethora.Properties {
         internal static string NotSupported {
             get {
                 return ResourceManager.GetString("NotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The parameter type is a generic argument, but could not be found in the list provided..
+        /// </summary>
+        internal static string ParameterTypeNotInGenericList {
+            get {
+                return ResourceManager.GetString("ParameterTypeNotInGenericList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to MirrorClass was created for a static-only context..
+        /// </summary>
+        internal static string StaticOnlyMirror {
+            get {
+                return ResourceManager.GetString("StaticOnlyMirror", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; not found in assembly &apos;{1}&apos;..
+        /// </summary>
+        internal static string TypeNotFoundInAssembly {
+            get {
+                return ResourceManager.GetString("TypeNotFoundInAssembly", resourceCulture);
             }
         }
         
