@@ -51,10 +51,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsyncDemoForm.cs">
@@ -68,6 +66,7 @@
   <ItemGroup>
     <EmbeddedResource Include="AsyncDemoForm.resx">
       <DependentUpon>AsyncDemoForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

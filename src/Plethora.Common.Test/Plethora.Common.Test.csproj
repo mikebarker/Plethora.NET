@@ -47,6 +47,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="!ExtensionClasses\ExpressionDuplicatorEx.cs" />
+    <Compile Include="!ExtensionClasses\LambdaKeyerEx.cs" />
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="!UtilityClasses\Style.cs" />
     <Compile Include="!UtilityClasses\TreeElement.cs" />
@@ -57,6 +59,13 @@
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
+    <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
+    <Compile Include="ExpressionAide\ExpressionDuplicator_Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ExpressionAide\LambdaKeyer_Test.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="HashCodeHelper_Test.cs" />
     <Compile Include="!ExtensionClasses\HierarchyEx.cs" />
     <Compile Include="IO\MulticastWriter_Test.cs" />
