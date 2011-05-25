@@ -123,18 +123,6 @@
   <data name="ArgMustBeLessThan" xml:space="preserve">
     <value>'{0}' must be less than {1}.</value>
   </data>
-  <data name="ArgDimensionsMustMatch" xml:space="preserve">
-    <value>The dimensions of '{0}' and '{1}' must match.</value>
-  </data>
-  <data name="ArgIsNotSubclass" xml:space="preserve">
-    <value>{0} is not a subclass of {1}.</value>
-  </data>
-  <data name="ArgIsNotPublicProperty" xml:space="preserve">
-    <value>{0} does not contain a public property named '{1}' of return type string.</value>
-  </data>
-  <data name="NotSupported" xml:space="preserve">
-    <value>{0} is not valid in the current context.</value>
-  </data>
   <data name="Zero" xml:space="preserve">
     <value>zero</value>
   </data>
@@ -146,9 +134,6 @@
   </data>
   <data name="InvalidState" xml:space="preserve">
     <value>The system is not in a valid state to execute the operation.</value>
-  </data>
-  <data name="BadArrayBounds" xml:space="preserve">
-    <value>Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.</value>
   </data>
   <data name="ArgStringEmpty" xml:space="preserve">
     <value>'{0}' is an empty string.</value>

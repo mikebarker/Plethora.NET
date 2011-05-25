@@ -43,6 +43,20 @@ namespace Plethora.Globalization
         {
             return InnerExtension.GetOrdinalSuffix(number);
         }
+
+        /// <summary>
+        /// Gets the number in a written, human readable form.
+        /// </summary>
+        /// <param name="number">
+        /// The number for which the written form is required.
+        /// </param>
+        /// <returns>
+        /// The written form of the number provided.
+        /// </returns>
+        public string GetWordForm(int number)
+        {
+            return InnerExtension.GetWordForm(number);
+        }
         #endregion
 
         #region Private Members

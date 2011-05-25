@@ -18,7 +18,7 @@ namespace Plethora.ExpressionAide
         Expressions,
     }
 
-    public struct Step
+    internal struct Step
     {
         #region Fields
 

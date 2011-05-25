@@ -375,6 +375,27 @@ namespace Plethora
         }
         #endregion
 
+        #region Word Form
+
+        /// <summary>
+        /// Gets the number in a written, human readable form.
+        /// </summary>
+        /// <param name="number">
+        /// The number for which the written form is required.
+        /// </param>
+        /// <returns>
+        /// The written form of the number provided.
+        /// </returns>
+        /// <remarks>
+        /// This method is delegated to the <see cref="ICultureExtension"/> matching the current UI
+        /// culture.
+        /// </remarks>
+        public static string GetWordForm(int number)
+        {
+            return CultureExtensionUI.Instance.GetWordForm(number);
+        }
+        #endregion
+
         #region Roman Numerals
 
         /// <summary>

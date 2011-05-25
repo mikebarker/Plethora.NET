@@ -24,6 +24,11 @@ namespace Plethora.Test.MockClasses
         {
             return "a";
         }
+
+        public override string GetWordForm(int number)
+        {
+            return "b";
+        }
         #endregion
     }
 }
