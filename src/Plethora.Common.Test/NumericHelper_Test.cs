@@ -405,6 +405,51 @@ namespace Plethora.Test
         }
         #endregion
 
+        #region WordForm
+
+        [Test]
+        public void WordForm_Zero()
+        {
+            //exec
+            string wordForm = NumericHelper.GetWordForm(0);
+
+            //test
+            Assert.AreEqual("zero", wordForm);
+        }
+
+        [Test]
+        public void WordForm_One()
+        {
+            //exec
+            string wordForm = NumericHelper.GetWordForm(1);
+
+            //test
+            Assert.AreEqual("one", wordForm);
+        }
+
+        [Test]
+        public void WordForm_Negative()
+        {
+            //exec
+            string wordForm = NumericHelper.GetWordForm(-1);
+
+            //test
+            Assert.AreEqual("minus one", wordForm);
+        }
+
+        [Test]
+        public void WordForm_General()
+        {
+            //exec
+            string wordForm = NumericHelper.GetWordForm(1234567890);
+
+            //test
+            Assert.AreEqual(
+                "one billion, two hundred and thirty-four million, five hundred and sixty-seven thousand, eight hundred and ninety",
+                wordForm);
+        }
+        #endregion
+
         #region Roman Numerals
 
         [Test]

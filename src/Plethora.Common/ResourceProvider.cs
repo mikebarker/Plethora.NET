@@ -1,7 +1,4 @@
-using System.Diagnostics;
 using System.Globalization;
-using System.Text;
-using System.Reflection;
 using Plethora.Properties;
 
 namespace Plethora
@@ -15,54 +12,21 @@ namespace Plethora
         #region Public Static Methods
 
         /// <summary>
-        /// Returns the resource string 'ArgDimensionsMustMatch' with
-        /// substitutions made.
-        /// </summary>
-        /// <param name="arg0">The first argument of the string.</param>
-        /// <param name="arg1">The second argument of the string.</param>
-        public static string ArgDimensionsMustMatch(string arg0, string arg1)
-        {
-            return StringFormat(Resources.ArgDimensionsMustMatch, arg0, arg1);
-        }
-
-        /// <summary>
         /// Returns the resource string 'ArgInvalid' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the invalid argument.</param>
         public static string ArgInvalid(string arg)
         {
             return StringFormat(Resources.ArgInvalid, arg);
         }
 
         /// <summary>
-        /// Returns the resource string 'ArgIsNotPublicProperty' with
-        /// substitutions made.
-        /// </summary>
-        /// <param name="arg0">The first argument of the string.</param>
-        /// <param name="arg1">The second argument of the string.</param>
-        public static string ArgIsNotPublicProperty(string arg0, string arg1)
-        {
-            return StringFormat(Resources.ArgIsNotPublicProperty, arg0, arg1);
-        }
-
-        /// <summary>
-        /// Returns the resource string 'ArgIsNotSubclass' with
-        /// substitutions made.
-        /// </summary>
-        /// <param name="arg0">The first argument of the string.</param>
-        /// <param name="arg1">The second argument of the string.</param>
-        public static string ArgIsNotSubclass(string arg0, string arg1)
-        {
-            return StringFormat(Resources.ArgIsNotSubclass, arg0, arg1);
-        }
-
-        /// <summary>
         /// Returns the resource string 'ArgMustBeGreaterThan' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
-        /// <param name="value">The value of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="value">The value which the argument must be greater than.</param>
         public static string ArgMustBeGreaterThan(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeGreaterThan,
@@ -74,8 +38,8 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeGreaterThanEqualTo' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
-        /// <param name="value">The value of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="value">The value which the argument must be greater than, or equal to.</param>
         public static string ArgMustBeGreaterThanEqualTo(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeGreaterThanEqualTo,
@@ -87,8 +51,8 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeLessThan' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
-        /// <param name="value">The value of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="value">The value which the argument must be less than.</param>
         public static string ArgMustBeLessThan(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeLessThan,
@@ -100,8 +64,8 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeLessThanEqualTo' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
-        /// <param name="value">The value of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="value">The value which the argument must be less than, or equal to.</param>
         public static string ArgMustBeLessThanEqualTo(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeLessThanEqualTo,
@@ -113,7 +77,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeBetween' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
         public static string ArgMustBeBetween(string arg, int min, int max)
@@ -127,7 +91,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeBetween' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
         public static string ArgMustBeBetween(string arg, double min, double max)
@@ -141,7 +105,21 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeBetween' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="min">The minimum value of the argument.</param>
+        /// <param name="max">The maximum value of the argument.</param>
+        public static string ArgMustBeBetween(string arg, decimal min, decimal max)
+        {
+            return ArgMustBeBetween(arg,
+                                    min.ToString(CultureInfo.CurrentCulture),
+                                    max.ToString(CultureInfo.CurrentCulture));
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgMustBeBetween' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
         public static string ArgMustBeBetween(string arg, string min, string max)
@@ -153,7 +131,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeGreaterThan' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         public static string ArgMustBeGreaterThanZero(string arg)
         {
             return ArgMustBeGreaterThan(arg, Resources.Zero);
@@ -163,7 +141,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeGreaterThan' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         public static string ArgMustBeGreaterThanEqualToZero(string arg)
         {
             return ArgMustBeGreaterThanEqualTo(arg, Resources.Zero);
@@ -173,9 +151,9 @@ namespace Plethora
         /// Returns the resource string 'ArgPropertyInvalid' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         /// <param name="property">
-        /// The property of the argument which was invalid.
+        /// The name of the property of the argument which was invalid.
         /// </param>
         public static string ArgPropertyInvalid(string arg, string property)
         {
@@ -186,7 +164,7 @@ namespace Plethora
         /// Returns the resource string 'ArgStringEmpty' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         public static string ArgStringEmpty(string arg)
         {
             return StringFormat(Resources.ArgStringEmpty, arg);
@@ -196,7 +174,7 @@ namespace Plethora
         /// Returns the resource string 'ArgTimeout' with
         /// substitutions made.
         /// </summary>
-        /// <param name="arg">The argument of the string.</param>
+        /// <param name="arg">The name of the argument.</param>
         public static string ArgTimeout(string arg)
         {
             return StringFormat(Resources.ArgTimeout, arg, Resources.Zero, "Timeout.Infinite");
@@ -232,35 +210,21 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Returns the resource string 'NotSupported' with
-        /// substitutions made.
-        /// </summary>
-        /// <param name="arg0">The argument of the string.</param>
-        public static string MethodNotSupported(string arg0)
-        {
-            return StringFormat(Resources.NotSupported,
-              arg0);
-        }
-
-        /// <summary>
-        /// Returns the resource string 'NotSupported' with
-        /// substitutions made.
-        /// </summary>
-        public static string MethodNotSupported()
-        {
-            StackTrace stackTrace = new StackTrace(1, false);
-            StackFrame frame = stackTrace.GetFrame(0);
-
-            return MethodNotSupported(MethodFormat(frame.GetMethod()));
-        }
-
-        /// <summary>
         /// Returns the resource string 'ParameterTypeNotInGenericList' with
         /// substitutions made.
         /// </summary>
         public static string ParameterTypeNotInGenericList()
         {
             return Resources.ParameterTypeNotInGenericList;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'StaticOnlyMirror' with
+        /// substitutions made.
+        /// </summary>
+        public static string StaticOnlyMirror()
+        {
+            return Resources.StaticOnlyMirror;
         }
 
         /// <summary>
@@ -273,49 +237,9 @@ namespace Plethora
         {
             return StringFormat(Resources.TypeNotFoundInAssembly, type, assembly);
         }
-
-        /// <summary>
-        /// Returns the resource string 'StaticOnlyMirror' with
-        /// substitutions made.
-        /// </summary>
-        public static string StaticOnlyMirror()
-        {
-            return Resources.StaticOnlyMirror;
-        }
         #endregion
 
         #region Private Methods
-
-        /// <summary>
-        /// Formats a MethodBase a human readble string.
-        /// </summary>
-        /// <param name="method">The method to be formatted.</param>
-        /// <returns>
-        /// A string containing the human readble string representation of the
-        /// method.
-        /// </returns>
-        private static string MethodFormat(MethodBase method)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(method.Name);
-            sb.Append("(");
-
-            bool firstParameter = true;
-            ParameterInfo[] parameters = method.GetParameters();
-            foreach (ParameterInfo parameter in parameters)
-            {
-                if (firstParameter)
-                    firstParameter = false;
-                else
-                    sb.Append(", ");
-
-                sb.Append(parameter.ParameterType.Name);
-            }
-            sb.Append(")");
-
-            return sb.ToString();
-        }
 
         /// <summary>
         /// Returns the resource string 'ArgMustBeGreaterThan' with

@@ -61,38 +61,11 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The dimensions of &apos;{0}&apos; and &apos;{1}&apos; must match..
-        /// </summary>
-        internal static string ArgDimensionsMustMatch {
-            get {
-                return ResourceManager.GetString("ArgDimensionsMustMatch", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; was invalid..
         /// </summary>
         internal static string ArgInvalid {
             get {
                 return ResourceManager.GetString("ArgInvalid", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} does not contain a public property named &apos;{1}&apos; of return type string..
-        /// </summary>
-        internal static string ArgIsNotPublicProperty {
-            get {
-                return ResourceManager.GetString("ArgIsNotPublicProperty", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} is not a subclass of {1}..
-        /// </summary>
-        internal static string ArgIsNotSubclass {
-            get {
-                return ResourceManager.GetString("ArgIsNotSubclass", resourceCulture);
             }
         }
         
@@ -169,15 +142,6 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection..
-        /// </summary>
-        internal static string BadArrayBounds {
-            get {
-                return ResourceManager.GetString("BadArrayBounds", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The value &apos;{1}&apos; is not valid for the enum &apos;{0}&apos;..
         /// </summary>
         internal static string BadEnum {
@@ -201,15 +165,6 @@ namespace Plethora.Properties {
         internal static string InvalidState {
             get {
                 return ResourceManager.GetString("InvalidState", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} is not valid in the current context..
-        /// </summary>
-        internal static string NotSupported {
-            get {
-                return ResourceManager.GetString("NotSupported", resourceCulture);
             }
         }
         

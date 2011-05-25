@@ -2,7 +2,14 @@
 
 namespace Plethora
 {
-    public sealed class HashCodeHelper
+    /// <summary>
+    /// Class for generating reliable hash codes.
+    /// </summary>
+    /// <remarks>
+    /// The algorithms for generating these hash codes is taken from
+    /// the .NET implementation of anonymous classes.
+    /// </remarks>
+    public static class HashCodeHelper
     {
         #region Constants
 

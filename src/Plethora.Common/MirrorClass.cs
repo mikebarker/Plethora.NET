@@ -13,12 +13,12 @@ namespace Plethora
     /// </summary>
     /// <remarks>
     ///  <para>
-    ///   This class intended for use in unit tests. It allows for internal classes, and non-public
-    ///   methods to be accessed through an extension class.
+    ///   This class relies on calling method signatures, and should NOT be used for production
+    ///   code. Compiler or JIT optimisation may cause unexpected behaviour.
     ///  </para>
     ///  <para>
-    ///   This class relies on calling method signatures, and should not be used for production
-    ///   code. Compiler or JIT optimisation may cause unexpected behaviour.
+    ///   This class intended for use in unit tests. It allows for internal classes, and non-public
+    ///   methods to be accessed through an extension class.
     ///  </para>
     /// </remarks>
     /// <example>
@@ -123,7 +123,7 @@ namespace Plethora
                 throw new ArgumentNullException("assembly");
 
             if (fullName == null)
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException("fullName");
 
 
             Type reflectType = assembly.GetType(fullName);
@@ -140,7 +140,7 @@ namespace Plethora
                 throw new ArgumentNullException("assembly");
 
             if (fullName == null)
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException("fullName");
 
 
             Type reflectType = assembly.GetType(fullName);
@@ -258,7 +258,7 @@ namespace Plethora
         }
         #endregion
 
-        #region XParameters
+        #region XParameter
 
         /// <summary>
         /// Class which holds a method's paramter information.

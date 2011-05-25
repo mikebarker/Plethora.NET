@@ -37,7 +37,7 @@ namespace Plethora.ExpressionAide
         /// <summary>
         /// Initialises a new instance of the <see cref="LambdaExecutorBase{TLambda}"/> class.
         /// </summary>
-        protected LambdaExecutorBase(LambdaExpression dupe, IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
+        internal LambdaExecutorBase(LambdaExpression dupe, IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
         {
             this.dupeDelegate = dupe.Compile();
             this.path = FindMagicParameterPath(parameters);

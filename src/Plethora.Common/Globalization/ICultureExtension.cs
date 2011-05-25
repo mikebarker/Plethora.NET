@@ -26,5 +26,16 @@ namespace Plethora.Globalization
         /// The suffix for the numer provided.
         /// </returns>
         string GetOrdinalSuffix(int number);
+
+        /// <summary>
+        /// Gets the number in a written, human readable form.
+        /// </summary>
+        /// <param name="number">
+        /// The number for which the written form is required.
+        /// </param>
+        /// <returns>
+        /// The written form of the number provided.
+        /// </returns>
+        string GetWordForm(int number);
     }
 }

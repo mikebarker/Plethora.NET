@@ -13,8 +13,18 @@ namespace Plethora.Linq
         /// the enumeration only on demand, and only once.
         /// </summary>
         /// <remarks>
-        /// The reference to <paramref name="source"/> is release once the results
-        /// have been fully cached.
+        ///  <para>
+        ///   The reference to <paramref name="source"/> is release once the results
+        ///   have been fully cached.
+        ///  </para>
+        ///  <para>
+        ///   Provides an optimised way to concretise the result of a LINQ based query.
+        ///   If one concretises using ".ToList()" or ".ToArray()" the entire enumeration
+        ///   will execute once, however if part of the enumeration is not required this
+        ///   waste execution and memory resource.
+        ///   If one chooses not to concretise a LINQ query the entire enumeration may be
+        ///   executed mutiple times, wasting execution resource.
+        ///  </para>
         /// </remarks>
         public static IEnumerable<T> CacheResult<T>(this IEnumerable<T> source)
         {
@@ -155,7 +165,7 @@ namespace Plethora.Linq
         /// A single enumeration of tree elements.
         /// </returns>
         /// <remarks>
-        /// Elements are returned in a 'pre-order' traversal style
+        /// Elements are returned in 'pre-order' traversal style
         /// (ie. parents are returned before their children).
         /// </remarks>
         public static IEnumerable<TSource> Flatten<TSource>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TSource>> childSelector)

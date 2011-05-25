@@ -60,6 +60,12 @@ namespace Plethora.Globalization
         /// value, to provide a human readable form.
         /// </summary>
         public abstract string GetOrdinalSuffix(int number);
+
+
+        /// <summary>
+        /// Gets the number in a written, human readable form.
+        /// </summary>
+        public abstract string GetWordForm(int number);
         #endregion
     }
 }

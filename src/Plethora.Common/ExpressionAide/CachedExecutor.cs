@@ -5,6 +5,22 @@ using System.Threading;
 
 namespace Plethora.ExpressionAide
 {
+    /// <summary>
+    /// Class which provides the ability to execute an <see cref="Expression"/>, using
+    /// cached closure promotion.
+    /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   The compiled function of any expression encountered will be cached, ensuring
+    ///   that re-execusion does not require re-compiling the expression.
+    ///  </para>
+    ///  <para>
+    ///   Furthermore expressions which vary only the constant values are rewritten
+    ///   to allow the constant to be passed in as an extra parameter to the expresison.
+    ///   This allows multiple expressions to be represented by a single compiled
+    ///   function, improving execution times.
+    ///  </para>
+    /// </remarks>
     public static class CachedExecutor
     {
         #region Fields
@@ -63,7 +79,7 @@ namespace Plethora.ExpressionAide
 
         private static ILambdaExecutor GetExecutor(LambdaExpression lambdaExpression)
         {
-            string key = LambdaKeyer.GetKey(lambdaExpression);
+            var key = LambdaKeyer.GetKey(lambdaExpression);
 
             cacheLock.EnterUpgradeableReadLock();
             try
