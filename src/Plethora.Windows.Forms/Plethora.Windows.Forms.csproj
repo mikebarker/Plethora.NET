@@ -88,4 +88,8 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  <Target Name="AfterBuild">
+    <CallTarget Targets="CopyToSolutionOutput" Condition=" '$(Configuration)' == 'Release'" />
+  </Target>
+  <Import Project="$(ProjectDir)..\Plethora.PostBuild.Targets" />
 </Project>
