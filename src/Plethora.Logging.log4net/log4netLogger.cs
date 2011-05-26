@@ -24,12 +24,9 @@ namespace Plethora.Logging.log4net
 
         #region Overrides of Logger
 
-        protected override void Log(LogLevel logLevel, Exception exception, string message)
+        protected override void ForceLog(LogLevel logLevel, Exception exception, string message)
         {
             Level level = logLevel.ToLog4Net();
-            if (!innerLog.Logger.IsEnabledFor(level))
-                return;
-
             innerLog.Logger.Log(null, level, message, exception);
         }
 

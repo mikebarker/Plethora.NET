@@ -721,6 +721,38 @@ namespace Plethora.Linq.Test
         }
         #endregion
 
+        #region AsEnumerable
+
+        [Test]
+        public void AsEnumerable()
+        {
+            //Setup
+            IEnumerable<int> enumerable = Enumerable.Range(0, 10);
+            IEnumerator<int> enumerator = enumerable.GetEnumerator();
+
+            //Execute
+            IEnumerable<int> wrappedEnumerator = enumerator.AsEnumerable();
+
+            //Test
+            Assert.IsTrue(wrappedEnumerator.SequenceEqual(enumerable));
+        }
+
+        [Test]
+        public void AsEnumerable_Fail_Null()
+        {
+            IEnumerator<int> enumerator = null;
+
+            try
+            {
+                enumerator.AsEnumerable();
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+        #endregion
 
         #region Private Methods
 

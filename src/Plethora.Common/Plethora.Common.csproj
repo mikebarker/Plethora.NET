@@ -58,8 +58,13 @@
     <Compile Include="Globalization\ICultureExtension.cs" />
     <Compile Include="HashCodeHelper.cs" />
     <Compile Include="IO\MulticastWriter.cs" />
-    <Compile Include="Linq\EnumerableHelper.CacheEnumerable.cs" />
     <Compile Include="Linq\EnumerableHelper.cs" />
+    <Compile Include="Linq\EnumerableHelper.CacheEnumerable.cs">
+      <DependentUpon>EnumerableHelper.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\EnumerableHelper.EnumeratorWrapper.cs">
+      <DependentUpon>EnumerableHelper.cs</DependentUpon>
+    </Compile>
     <Compile Include="Collections\Heirarchy.cs" />
     <Compile Include="Collections\IKeyedCollection.cs" />
     <Compile Include="Collections\KeyedCollection.cs" />
@@ -84,8 +89,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
