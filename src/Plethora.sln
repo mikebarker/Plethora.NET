@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Test", "Ple
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Example", "Plethora.Common.Example\Plethora.Common.Example.csproj", "{52069679-A947-4C6A-A89D-83294FFD6015}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Logging.log4net", "Plethora.Logging.log4net\Plethora.Logging.log4net.csproj", "{A003AE53-E0AD-4F9A-A784-3F0B6D433085}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +54,10 @@ Global
 		{52069679-A947-4C6A-A89D-83294FFD6015}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{52069679-A947-4C6A-A89D-83294FFD6015}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52069679-A947-4C6A-A89D-83294FFD6015}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A003AE53-E0AD-4F9A-A784-3F0B6D433085}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A003AE53-E0AD-4F9A-A784-3F0B6D433085}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A003AE53-E0AD-4F9A-A784-3F0B6D433085}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A003AE53-E0AD-4F9A-A784-3F0B6D433085}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

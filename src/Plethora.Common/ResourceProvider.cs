@@ -201,6 +201,15 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'InvalidCast' with
+        /// substitutions made.
+        /// </summary>
+        public static string InvalidCast()
+        {
+            return Resources.InvalidCast;
+        }
+
+        /// <summary>
         /// Returns the resource string 'InvalidState' with
         /// substitutions made.
         /// </summary>

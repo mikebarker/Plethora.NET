@@ -160,6 +160,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Specified cast is not valid..
+        /// </summary>
+        internal static string InvalidCast {
+            get {
+                return ResourceManager.GetString("InvalidCast", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The system is not in a valid state to execute the operation..
         /// </summary>
         internal static string InvalidState {
