@@ -168,4 +168,7 @@
   <data name="InvalidCast" xml:space="preserve">
     <value>Specified cast is not valid.</value>
   </data>
+  <data name="AlreadyDisposed" xml:space="preserve">
+    <value>The target of invocation has already been disposed.</value>
+  </data>
 </root>

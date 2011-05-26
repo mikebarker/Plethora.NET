@@ -12,6 +12,14 @@ namespace Plethora
         #region Public Static Methods
 
         /// <summary>
+        /// Returns the resource string 'AlreadyDisposed'.
+        /// </summary>
+        public static string AlreadyDisposed()
+        {
+            return Resources.AlreadyDisposed;
+        }
+
+        /// <summary>
         /// Returns the resource string 'ArgInvalid' with
         /// substitutions made.
         /// </summary>

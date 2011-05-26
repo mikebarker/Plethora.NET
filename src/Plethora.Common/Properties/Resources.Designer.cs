@@ -61,6 +61,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The target of invocation has already been disposed..
+        /// </summary>
+        internal static string AlreadyDisposed {
+            get {
+                return ResourceManager.GetString("AlreadyDisposed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; was invalid..
         /// </summary>
         internal static string ArgInvalid {
