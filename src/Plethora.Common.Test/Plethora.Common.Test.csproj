@@ -49,6 +49,7 @@
   <ItemGroup>
     <Compile Include="!ExtensionClasses\ExpressionDuplicatorEx.cs" />
     <Compile Include="!ExtensionClasses\LambdaKeyerEx.cs" />
+    <Compile Include="!UtilityClasses\EmptyAsyncResult.cs" />
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="!UtilityClasses\Style.cs" />
     <Compile Include="!UtilityClasses\TreeElement.cs" />
@@ -59,6 +60,7 @@
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
+    <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
     <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
     <Compile Include="ExpressionAide\ExpressionDuplicator_Test.cs">
       <SubType>Code</SubType>

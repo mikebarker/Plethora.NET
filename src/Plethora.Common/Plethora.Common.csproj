@@ -37,6 +37,7 @@
     </Compile>
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
+    <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
     <Compile Include="Logging\Exceptions\IsLoggedException.cs" />
     <Compile Include="Logging\Exceptions\LoggedException.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -81,6 +82,7 @@
     </Compile>
     <Compile Include="ResourceProvider.cs" />
     <Compile Include="StringHelper.cs" />
+    <Compile Include="Threading\SynchronizeInvoke.cs" />
     <Compile Include="WeakReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
