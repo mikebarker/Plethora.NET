@@ -192,5 +192,21 @@ namespace Plethora.Linq
             return Enumerable.Repeat(element, 1);
         }
         #endregion
+
+        #region AsEnumerable
+
+        /// <summary>
+        /// Returns a wrapper, presenting an <see cref="IEnumerator{T}"/> as a <see cref="IEnumerable{T}"/>.
+        /// </summary>
+        /// <typeparam name="T">The data type of the elements.</typeparam>
+        /// <param name="enumerator">The enumerator.</param>
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> presenting the <see cref="IEnumerator{T}"/>.
+        /// </returns>
+        public static IEnumerable<T> AsEnumerable<T>(this IEnumerator<T> enumerator)
+        {
+            return new EnumeratorWrapper<T>(enumerator);
+        }
+        #endregion
     }
 }

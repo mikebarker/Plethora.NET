@@ -1,0 +1,102 @@
+﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{96CC92ED-DDC2-439E-8888-06E2506970E1}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Plethora.fqi</RootNamespace>
+    <AssemblyName>Plethora.fqi</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccAuxPath>
+    </SccAuxPath>
+    <SccProvider>
+    </SccProvider>
+    <SignAssembly>false</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\fqiKeyPair.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Trees\AvlMultiTree.cs" />
+    <Compile Include="Trees\AvlTree.cs" />
+    <Compile Include="Trees\BinaryTree.cs" />
+    <Compile Include="Trees\BinaryTree.Enumerators.cs">
+      <DependentUpon>BinaryTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trees\BinaryTree.Wrappers.cs">
+      <DependentUpon>BinaryTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trees\MultiTree.cs" />
+    <Compile Include="Trees\MultiTree.Enumerators.cs">
+      <DependentUpon>MultiTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trees\MultiTree.Wrappers.cs">
+      <DependentUpon>MultiTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trees\DeepTree.cs" />
+    <Compile Include="Trees\DeepTree.LeafLayer.cs">
+      <DependentUpon>DeepTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trees\DeepTree.MidLayer.cs">
+      <DependentUpon>DeepTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Trees\Grapher.cs" />
+    <Compile Include="Trees\IKeyLimitedEnumerator.cs" />
+    <Compile Include="Trees\ITree.cs" />
+    <Compile Include="LateRange.cs" />
+    <Compile Include="MultiIndexedCollection.cs" />
+    <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="ExpressionAnalyser.cs" />
+    <Compile Include="IIndexedEnumerable.cs" />
+    <Compile Include="IndexedEnumerable.cs" />
+    <Compile Include="PredicateExtensions.cs" />
+    <Compile Include="IIndexedEnumerableExtension.cs" />
+    <Compile Include="MultiIndexSpecification.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="IndexedCollection.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
+      <Name>Plethora.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild">
+    <CallTarget Targets="CopyToSolutionOutput" Condition=" '$(Configuration)' == 'Release'" />
+  </Target>
+  <Import Project="$(ProjectDir)..\Plethora.PostBuild.Targets" />
+</Project>
