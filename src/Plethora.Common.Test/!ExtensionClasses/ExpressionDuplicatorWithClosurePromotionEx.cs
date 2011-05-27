@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using Plethora.ExpressionAide;
 
@@ -59,16 +58,6 @@ namespace Plethora.Test.ExtensionClasses
             return (LambdaExecutor<T1, T2, T3, T4, TResult>)mirrorClass.Exec(
                 new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4), typeof(TResult) },
                 expr);
-        }
-        #endregion
-
-        #region DuplicateWithClosurePromotion
-
-        public LambdaExpression DuplicateWithClosurePromotion(
-            LambdaExpression expr,
-            out IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
-        {
-            return (LambdaExpression)mirrorClass.Exec(new Type[0], expr, parameters);
         }
         #endregion
     }

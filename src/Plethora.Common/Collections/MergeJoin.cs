@@ -6,43 +6,6 @@ namespace Plethora.Collections
 {
     public static class MergeJoin
     {
-        private sealed class EqualityComparerWrapper<T> : IEqualityComparer<T>
-        {
-            #region Fields
-
-            private readonly IComparer<T> innerComparer;
-            #endregion
-
-            #region Constructors
-
-            /// <summary>
-            /// Initialise a new instance of the <see cref="EqualityComparerWrapper{T}"/> class.
-            /// </summary>
-            public EqualityComparerWrapper(IComparer<T> comparer)
-            {
-                //Validation
-                if (comparer == null)
-                    throw new ArgumentNullException("comparer");
-
-                this.innerComparer = comparer;
-            }
-
-            #endregion
-
-            #region Implementation of IEqualityComparer<T>
-
-            public bool Equals(T x, T y)
-            {
-                return (innerComparer.Compare(x, y) == 0);
-            }
-
-            public int GetHashCode(T obj)
-            {
-                throw new NotSupportedException("GetHashCode(T obj) not supported.");
-            }
-            #endregion
-        }
-        
         private static T IdentityFunction<T>(this T item)
         {
             return item;
@@ -64,20 +27,6 @@ namespace Plethora.Collections
                 Comparer<T>.Default,
                 IdentityFunction,
                 EqualityComparer<T>.Default);
-        }
-
-        public static List<MergeItem<T, T>> FindMergeSet<T>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            IComparer<T> comparer)
-        {
-            return FindMergeSet(
-                leftSet,
-                rightSet,
-                IdentityFunction,
-                comparer,
-                IdentityFunction,
-                new EqualityComparerWrapper<T>(comparer));
         }
 
         public static List<MergeItem<TKey, T>> FindMergeSet<T, TKey>(
@@ -107,22 +56,6 @@ namespace Plethora.Collections
                 keyComparer,
                 IdentityFunction,
                 EqualityComparer<T>.Default);
-        }
-
-        public static List<MergeItem<TKey, T>> FindMergeSet<T, TKey>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            Func<T, TKey> keySelector,
-            IComparer<TKey> keyComparer,
-            IEqualityComparer<T> valueComparer)
-        {
-            return FindMergeSet(
-                leftSet,
-                rightSet,
-                keySelector,
-                keyComparer,
-                IdentityFunction,
-                valueComparer);
         }
 
         public static List<MergeItem<TKey, TValue>> FindMergeSet<T, TKey, TValue>(
@@ -170,30 +103,6 @@ namespace Plethora.Collections
                 rightSet,
                 Comparer<TKey>.Default,
                 EqualityComparer<TValue>.Default);
-        }
-
-        public static List<MergeItem<TKey, TValue>> FindMergeSet<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IComparer<TKey> keyComparer)
-        {
-            return FindMergeSet(
-                leftSet,
-                rightSet,
-                keyComparer,
-                EqualityComparer<TValue>.Default);
-        }
-
-        public static List<MergeItem<TKey, TValue>> FindMergeSet<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IEqualityComparer<TValue> valueEqualityComparer)
-        {
-            return FindMergeSet(
-                leftSet,
-                rightSet,
-                Comparer<TKey>.Default,
-                valueEqualityComparer);
         }
 
         public static List<MergeItem<TKey, TValue>> FindMergeSet<TKey, TValue>(
@@ -252,56 +161,8 @@ namespace Plethora.Collections
         /// <remarks>
         ///  <para>
         ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the elements, using the <paramref name="comparer"/> comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will return inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static List<MergeItem<T, T>> FindMergeSetPreOrdered<T>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            IComparer<T> comparer)
-        {
-            return FindMergeSetPreOrdered(
-                leftSet,
-                rightSet,
-                IdentityFunction,
-                comparer,
-                IdentityFunction,
-                new EqualityComparerWrapper<T>(comparer));
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
         ///   been pre-sorted by the return value from <paramref name="keySelector"/>, using
-        ///   the <paramref name="keyComparer"/> comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will return inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static List<MergeItem<TKey, T>> FindMergeSetPreOrdered<T, TKey>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            Func<T, TKey> keySelector,
-            IComparer<TKey> keyComparer)
-        {
-            return FindMergeSetPreOrdered(
-                leftSet,
-                rightSet,
-                keySelector,
-                keyComparer,
-                IdentityFunction,
-                EqualityComparer<T>.Default);
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the return value from <paramref name="keySelector"/>, using
-        ///   the default comparer.
+        ///   the default <typeparam name="TKey"/> comparer.
         ///  </para>
         ///  <para>
         ///   If this assumption is not met, the method will return inaccurate results.
@@ -335,16 +196,15 @@ namespace Plethora.Collections
             IEnumerable<T> leftSet,
             IEnumerable<T> rightSet,
             Func<T, TKey> keySelector,
-            IComparer<TKey> keyComparer,
-            IEqualityComparer<T> valueEqualityComparer)
+            IComparer<TKey> keyComparer)
         {
-            return FindMergeSet(
+            return FindMergeSetPreOrdered(
                 leftSet,
                 rightSet,
                 keySelector,
                 keyComparer,
                 IdentityFunction,
-                valueEqualityComparer);
+                EqualityComparer<T>.Default);
         }
 
         /// <remarks>
@@ -433,50 +293,6 @@ namespace Plethora.Collections
         public static List<MergeItem<TKey, TValue>> FindMergeSetPreOrdered<TKey, TValue>(
             IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
             IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IComparer<TKey> keyComparer)
-        {
-            return FindMergeSetPreOrdered(
-                leftSet,
-                rightSet,
-                keyComparer,
-                EqualityComparer<TValue>.Default);
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the <see cref="KeyValuePair{TKey,TValue}.Key"/>, using
-        ///   the default comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will return inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static List<MergeItem<TKey, TValue>> FindMergeSetPreOrdered<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IEqualityComparer<TValue> valueEqualityComparer)
-        {
-            return FindMergeSetPreOrdered(
-                leftSet,
-                rightSet,
-                Comparer<TKey>.Default,
-                valueEqualityComparer);
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the <see cref="KeyValuePair{TKey,TValue}.Key"/>, using
-        ///   the <paramref name="keyComparer"/> comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will return inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static List<MergeItem<TKey, TValue>> FindMergeSetPreOrdered<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
             IComparer<TKey> keyComparer,
             IEqualityComparer<TValue> valueEqualityComparer)
         {
@@ -525,29 +341,6 @@ namespace Plethora.Collections
                 (key, rValue) => onRightOnly(rValue));
         }
 
-        public static void Merge<T>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            IComparer<T> comparer,
-            Action<T> onMatch,
-            Action<T, T> onDifferent,
-            Action<T> onLeftOnly,
-            Action<T> onRightOnly)
-        {
-            Merge(
-                leftSet,
-                rightSet,
-                IdentityFunction,
-                comparer,
-                IdentityFunction,
-                new EqualityComparerWrapper<T>(comparer),
-
-                (key, value) => onMatch(value),
-                (key, lValue, rValue) => onDifferent(lValue, rValue),
-                (key, lValue) => onLeftOnly(lValue),
-                (key, rValue) => onRightOnly(rValue));
-        }
-
         public static void Merge<T, TKey>(
             IEnumerable<T> leftSet,
             IEnumerable<T> rightSet,
@@ -585,29 +378,6 @@ namespace Plethora.Collections
                 keyComparer,
                 IdentityFunction,
                 EqualityComparer<T>.Default,
-
-                onMatch, onDifferent, onLeftOnly, onRightOnly);
-        }
-
-        public static void Merge<T, TKey>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            Func<T, TKey> keySelector,
-            IComparer<TKey> keyComparer,
-            IEqualityComparer<T> valueComparer,
-
-            Action<TKey, T> onMatch,
-            Action<TKey, T, T> onDifferent,
-            Action<TKey, T> onLeftOnly,
-            Action<TKey, T> onRightOnly)
-        {
-            Merge(
-                leftSet,
-                rightSet,
-                keySelector,
-                keyComparer,
-                IdentityFunction,
-                valueComparer,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
         }
@@ -667,42 +437,6 @@ namespace Plethora.Collections
                 rightSet,
                 Comparer<TKey>.Default,
                 EqualityComparer<TValue>.Default,
-
-                onMatch, onDifferent, onLeftOnly, onRightOnly);
-        }
-
-        public static void Merge<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IComparer<TKey> keyComparer,
-            Action<TKey, TValue> onMatch,
-            Action<TKey, TValue, TValue> onDifferent,
-            Action<TKey, TValue> onLeftOnly,
-            Action<TKey, TValue> onRightOnly)
-        {
-            Merge(
-                leftSet,
-                rightSet,
-                keyComparer,
-                EqualityComparer<TValue>.Default,
-
-                onMatch, onDifferent, onLeftOnly, onRightOnly);
-        }
-
-        public static void Merge<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IEqualityComparer<TValue> valueEqualityComparer,
-            Action<TKey, TValue> onMatch,
-            Action<TKey, TValue, TValue> onDifferent,
-            Action<TKey, TValue> onLeftOnly,
-            Action<TKey, TValue> onRightOnly)
-        {
-            Merge(
-                leftSet,
-                rightSet,
-                Comparer<TKey>.Default,
-                valueEqualityComparer,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
         }
@@ -778,71 +512,8 @@ namespace Plethora.Collections
         /// <remarks>
         ///  <para>
         ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the elements, using the <paramref name="comparer"/> comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static void MergePreOrdered<T>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            IComparer<T> comparer,
-            Action<T> onMatch,
-            Action<T, T> onDifferent,
-            Action<T> onLeftOnly,
-            Action<T> onRightOnly)
-        {
-            MergePreOrdered(
-                leftSet,
-                rightSet,
-                IdentityFunction,
-                comparer,
-                IdentityFunction,
-                new EqualityComparerWrapper<T>(comparer),
-
-                (key, value) => onMatch(value),
-                (key, lValue, rValue) => onDifferent(lValue, rValue),
-                (key, lValue) => onLeftOnly(lValue),
-                (key, rValue) => onRightOnly(rValue));
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
         ///   been pre-sorted by the value from <paramref name="keySelector"/>, using
-        ///   the <paramref name="keyComparer"/> comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static void MergePreOrdered<T, TKey>(
-            IEnumerable<T> leftSet,
-            IEnumerable<T> rightSet,
-            Func<T, TKey> keySelector,
-            IComparer<TKey> keyComparer,
-            Action<TKey, T> onMatch,
-            Action<TKey, T, T> onDifferent,
-            Action<TKey, T> onLeftOnly,
-            Action<TKey, T> onRightOnly)
-        {
-            MergePreOrdered(
-                leftSet,
-                rightSet,
-                keySelector,
-                keyComparer,
-                IdentityFunction,
-                EqualityComparer<T>.Default,
-
-                onMatch, onDifferent, onLeftOnly, onRightOnly);
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the value from <paramref name="keySelector"/>, using
-        ///   the default comparer.
+        ///   the default <typeparam name="TKey"/> comparer.
         ///  </para>
         ///  <para>
         ///   If this assumption is not met, the method will inaccurate results.
@@ -883,19 +554,18 @@ namespace Plethora.Collections
             IEnumerable<T> rightSet,
             Func<T, TKey> keySelector,
             IComparer<TKey> keyComparer,
-            IEqualityComparer<T> valueEqualityComparer,
             Action<TKey, T> onMatch,
             Action<TKey, T, T> onDifferent,
             Action<TKey, T> onLeftOnly,
             Action<TKey, T> onRightOnly)
         {
-            Merge(
+            MergePreOrdered(
                 leftSet,
                 rightSet,
                 keySelector,
                 keyComparer,
                 IdentityFunction,
-                valueEqualityComparer,
+                EqualityComparer<T>.Default,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
         }
@@ -981,62 +651,6 @@ namespace Plethora.Collections
                 rightSet,
                 Comparer<TKey>.Default,
                 EqualityComparer<TValue>.Default,
-
-                onMatch, onDifferent, onLeftOnly, onRightOnly);
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the <see cref="KeyValuePair{TKey,TValue}.Key"/>, using
-        ///   the <paramref name="keyComparer"/> comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static void MergePreOrdered<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IComparer<TKey> keyComparer,
-            Action<TKey, TValue> onMatch,
-            Action<TKey, TValue, TValue> onDifferent,
-            Action<TKey, TValue> onLeftOnly,
-            Action<TKey, TValue> onRightOnly)
-        {
-            MergePreOrdered(
-                leftSet,
-                rightSet,
-                keyComparer,
-                EqualityComparer<TValue>.Default,
-
-                onMatch, onDifferent, onLeftOnly, onRightOnly);
-        }
-
-        /// <remarks>
-        ///  <para>
-        ///   Assumes that <paramref name="leftSet"/> and  <paramref name="rightSet"/> have 
-        ///   been pre-sorted by the <see cref="KeyValuePair{TKey,TValue}.Key"/>, using
-        ///   the default comparer.
-        ///  </para>
-        ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
-        ///  </para>
-        /// </remarks>
-        public static void MergePreOrdered<TKey, TValue>(
-            IEnumerable<KeyValuePair<TKey, TValue>> leftSet,
-            IEnumerable<KeyValuePair<TKey, TValue>> rightSet,
-            IEqualityComparer<TValue> valueEqualityComparer,
-            Action<TKey, TValue> onMatch,
-            Action<TKey, TValue, TValue> onDifferent,
-            Action<TKey, TValue> onLeftOnly,
-            Action<TKey, TValue> onRightOnly)
-        {
-            MergePreOrdered(
-                leftSet,
-                rightSet,
-                Comparer<TKey>.Default,
-                valueEqualityComparer,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
         }

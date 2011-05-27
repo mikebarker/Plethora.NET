@@ -3,6 +3,8 @@ using System.Linq;
 using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Plethora.Logging.Exceptions;
 
 namespace Plethora
 {
@@ -210,6 +212,9 @@ namespace Plethora
                 if (!methodPool.TryGetValue(hCallingMethod, out method))
                 {
                     method = GetMirroredMethodGenericDefinition(type, callingMethod);
+                    if (method == null)
+                        throw new MethodNotFoundException(ResourceProvider.MethodNotFound());
+
                     methodPool.Add(hCallingMethod, method);
                 }
             }
@@ -226,124 +231,47 @@ namespace Plethora
                 ? AllStaticBindings
                 : AllInstanceBindings;
 
-            int callingParameterCount = callingMethod.GetParameters().Length;
-            int callingGenericArgCount = callingMethod.GetGenericArguments().Length;
+            ParameterInfo[] callingParameters = callingMethod.GetParameters();
+            Type[] callingGenericArgs = callingMethod.GetGenericArguments();
+
+            var callingParameterTypes = callingParameters.Select(param => param.ParameterType).ToList();
 
             //Get a list of potential methods (matching by name, no. of arguments and no. of generic parameters)
             var potentialMethods = type.GetMethods(bindings)
-                .Where(method => string.Equals(method.Name, callingMethod.Name))
-                .Where(method => method.GetParameters().Length == callingParameterCount)
-                .Where(method => method.GetGenericArguments().Length == callingGenericArgCount);
+                .Where(method =>
+                    string.Equals(method.Name, callingMethod.Name) &&
+                    (method.GetParameters().Length == callingParameters.Length) &&
+                    (method.GetGenericArguments().Length == callingGenericArgs.Length));
 
             MethodInfo matchedMethod = null;
-            var callingXParams = XParameter.GetXParameters(callingMethod);
             foreach (var potentialMethod in potentialMethods)
             {
-                var potentialXParams = XParameter.GetXParameters(potentialMethod);
+                MethodInfo typedPotentialMethod;
+                try
+                {
+                    typedPotentialMethod = potentialMethod.IsGenericMethodDefinition
+                        ? potentialMethod.MakeGenericMethod(callingGenericArgs)
+                        : potentialMethod;
+                }
+                catch (ArgumentException)
+                {
+                    continue;
+                }
 
-                bool result = Enumerable.SequenceEqual(callingXParams, potentialXParams);
-                if (result)
+                var typedParameterTypes = typedPotentialMethod.GetParameters().Select(param => param.ParameterType);
+                if (Enumerable.SequenceEqual(callingParameterTypes, typedParameterTypes))
                 {
                     matchedMethod = potentialMethod;
                     break;
                 }
             }
 
-            return matchedMethod;
+            return matchedMethod;            
         }
 
         protected static object InvokeMethod(MethodInfo method, object obj, params object[] args)
         {
             return method.Invoke(obj, args);
-        }
-        #endregion
-
-        #region XParameter
-
-        /// <summary>
-        /// Class which holds a method's paramter information.
-        /// Either:
-        ///  (a) the parameter's type is stored.
-        /// - or -
-        ///  (b) if the paramter's type is a generic argument type, 
-        ///      the index of the generic argument is stored.
-        /// </summary>
-        private class XParameter : IEquatable<XParameter>
-        {
-            #region Fields
-
-            private readonly Type parameterType;
-            private readonly int genericArgumentIndex;
-            #endregion
-
-            #region Constructors
-
-            private XParameter(Type parameterType, Type[] genericArgs)
-            {
-                //initialise
-                this.parameterType = null;
-                this.genericArgumentIndex = -1;
-
-                if (parameterType.IsGenericParameter)
-                {
-                    int index = Array.IndexOf(genericArgs, parameterType);
-                    if (index < 0)
-                        throw new ArgumentException(ResourceProvider.ParameterTypeNotInGenericList());
-
-                    genericArgumentIndex = index;
-                }
-                else
-                {
-                    this.parameterType = parameterType;
-                }
-            }
-            #endregion
-
-            #region Implementation of IEquatable<XParameter>
-
-            public bool Equals(XParameter other)
-            {
-                if (other == null)
-                    return false;
-
-                return
-                    (this.parameterType == other.parameterType) &&
-                    (this.genericArgumentIndex == other.genericArgumentIndex);
-            }
-            #endregion
-
-            #region Overrides of Object
-
-            public override bool Equals(object obj)
-            {
-                if (!(obj is XParameter))
-                    return false;
-
-                return this.Equals((XParameter)obj);
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCodeHelper.GetHashCode(parameterType, genericArgumentIndex);
-            }
-            #endregion
-
-            #region Factory Methods
-
-            public static IEnumerable<XParameter> GetXParameters(MethodBase method)
-            {
-                return GetXParameters(method.GetGenericArguments(), method.GetParameters());
-            }
-
-            public static IEnumerable<XParameter> GetXParameters(Type[] genericArgs, IEnumerable<ParameterInfo> parameters)
-            {
-                var xParameters = parameters
-                    .Select(parameter => new XParameter(parameter.ParameterType, genericArgs))
-                    .ToList();
-
-                return xParameters;
-            }
-            #endregion
         }
         #endregion
     }
@@ -395,6 +323,28 @@ namespace Plethora
             MethodInfo mirroredMethod = GetMirroredMethod(typeof(T), callingMethod, genericArguments);
 
             return InvokeMethod(mirroredMethod, null, args);
+        }
+        #endregion
+    }
+
+    [Serializable]
+    public class MethodNotFoundException : IsLoggedException
+    {
+        #region Constructors
+
+        public MethodNotFoundException(string message)
+            : base(message)
+        {
+        }
+
+        public MethodNotFoundException(string message, Exception innerException)
+            : base(message, innerException)
+        {
+        }
+
+        protected MethodNotFoundException(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        {
         }
         #endregion
     }

@@ -21,6 +21,26 @@ namespace Plethora.ExpressionAide
     ///   function, improving execution times.
     ///  </para>
     /// </remarks>
+    /// <example>
+    ///  This class can be used when ever an expression is required to be executed.
+    ///  <code>
+    /// <![CDATA[
+    ///      SomeClass instance;
+    ///      //...
+    ///      Expression<Func<T1, T2, TResult>> expression = (item1, item2) => 
+    ///          (item1 == instance.Field1) && (item2 == instance.Field2);
+    /// 
+    ///      instance = new SomeClass();
+    /// 
+    ///      //Render the same result as:
+    ///      // var func = expression.Compile();
+    ///      // bool result = func(42, "this");
+    ///      bool result = expression.Exec(42, "this");
+    /// ]]>
+    ///  </code>
+    ///  In the above example, the result of the compiled expression are cached (after
+    ///  the closure has been promoted). This speeds up subsequent executions.
+    /// </example>
     public static class CachedExecutor
     {
         #region Fields

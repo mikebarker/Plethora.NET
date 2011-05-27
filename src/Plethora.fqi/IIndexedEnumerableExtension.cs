@@ -68,7 +68,7 @@ namespace Plethora.fqi
             {
                 //No suitable index
                 // Use the IEnuemrable<T>.Where extension method.
-                return multiIndexEnumerable.AsEnumerable().Where(t => CachedExecutor.Execute(expr, t)).AsIndexedEnumerable();
+                return multiIndexEnumerable.AsEnumerable().Where(t => expr.Execute(t)).AsIndexedEnumerable();
             }
 
             return highScoreIndex.Where(expr, restrictions);

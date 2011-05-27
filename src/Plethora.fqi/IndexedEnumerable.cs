@@ -28,7 +28,7 @@ namespace Plethora.fqi
         public IndexedEnumerable(IIndexedEnumerable<T> indexedEnumerable, Expression<Func<T, bool>> expr, IDictionary<string, INamedLateRange> memberRanges)
         {
             this.innerIndexedEnumerable = indexedEnumerable;
-            this.predicate = t => CachedExecutor.Execute(expr, t);
+            this.predicate = t => expr.Execute(t);
 
             //Get restrictive ranges for refined selection
             this.ranges = GetRelevantRanges(memberRanges, indexedEnumerable, this.SupportsOutOfOrderIndexing);
