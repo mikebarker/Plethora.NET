@@ -72,6 +72,10 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Windows.Forms\TextBox\NullableDecimalTextBox.cs" />
+    <Compile Include="Windows.Forms\TextBox\DecimalTextBox.cs" />
+    <Compile Include="Windows.Forms\TextBox\RealTextBox.cs" />
+    <Compile Include="Windows.Forms\TextBox\IntegerTextBox.cs" />
     <Compile Include="Windows.Forms\TextBox\DateTimeTextBox.cs" />
     <Compile Include="Windows.Forms\TextBox\NullableIntegerTextBox.cs" />
     <Compile Include="Windows.Forms\TextBox\NullableRealTextBox.cs" />

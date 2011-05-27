@@ -23,7 +23,8 @@ namespace Plethora.Format
 	/// </typeparam>
 	/// <seealso cref="NumericFormatParser{T}"/>
 	[CLSCompliant(false)]
-	public class NullableNumericFormatParser<T> : Component, IFormatParserPartial<Nullable<T>>, ICloneable
+    [System.ComponentModel.DesignerCategory("Code")]
+    public class NullableNumericFormatParser<T> : Component, IFormatParserPartial<Nullable<T>>, ICloneable
 		where T : struct, IFormattable, IConvertible, IComparable
 	{
         #region Static Members
