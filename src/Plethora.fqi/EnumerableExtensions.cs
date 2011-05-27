@@ -81,7 +81,7 @@ namespace Plethora.fqi
             /// </summary>
             public IIndexedEnumerable<T> FilterBy(Expression<Func<T, bool>> expr)
             {
-                return this.AsEnumerable().Where(t => CachedExecutor.Execute(expr, t)).AsIndexedEnumerable();
+                return this.AsEnumerable().Where(t => expr.Execute(t)).AsIndexedEnumerable();
             }
 
             /// <summary>

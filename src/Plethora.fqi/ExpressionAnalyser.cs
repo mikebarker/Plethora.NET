@@ -253,7 +253,7 @@ namespace Plethora.fqi
                 try
                 {
                     var lambda = Expression.Lambda(expression);
-                    func = (() => CachedExecutor.Execute(lambda));
+                    func = (() => lambda.Execute());
                     return true;
                 }
                 catch (Exception)

@@ -187,6 +187,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The method was not found in the reflected type..
+        /// </summary>
+        internal static string MethodNotFound {
+            get {
+                return ResourceManager.GetString("MethodNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The parameter type is a generic argument, but could not be found in the list provided..
         /// </summary>
         internal static string ParameterTypeNotInGenericList {

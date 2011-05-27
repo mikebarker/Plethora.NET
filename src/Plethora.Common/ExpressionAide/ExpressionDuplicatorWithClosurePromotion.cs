@@ -5,8 +5,6 @@ using System.Linq.Expressions;
 
 namespace Plethora.ExpressionAide
 {
-    //TODO: Closure promotion should work on variables and constants.
-
     /// <summary>
     /// Class which allows expressions to be duplicated and promotes closures to parameters.
     /// </summary>

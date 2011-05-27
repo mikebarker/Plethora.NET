@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using NUnit.Framework;
 using Plethora.Test.ExtensionClasses;
@@ -15,37 +14,6 @@ namespace Plethora.ExpressionAide.Test
         public void SetUp()
         {
             duplicator = new ExpressionDuplicatorWithClosurePromotionEx();
-        }
-
-        [Test]
-        public void DuplicateWithOutClosure()
-        {
-            //Setup
-            Expression<Func<int>> expression = () => 9;
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> h;
-
-            //Execute
-            var duplicate = duplicator.DuplicateWithClosurePromotion(expression, out h);
-
-            //Test
-            Assert.AreNotSame(expression, duplicate);
-            Assert.AreEqual(expression.GetType(), duplicate.GetType());
-        }
-
-        [Test]
-        public void DuplicateWithClosure()
-        {
-            //Setup
-            int i = 9;
-            Expression<Func<int>> expression = () => i;
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> h;
-
-            //Execute
-            var duplicate = duplicator.DuplicateWithClosurePromotion(expression, out h);
-
-            //Test
-            Assert.AreNotSame(expression, duplicate);
-            Assert.AreNotEqual(expression.GetType(), duplicate.GetType());
         }
 
         [Test]
@@ -94,7 +62,7 @@ namespace Plethora.ExpressionAide.Test
 
             int otherExecuteResult = executor.Execute(otherExpression);
 
-            Assert.AreNotEqual(origResult, otherResult);
+            Assert.AreNotEqual(origResult, otherExecuteResult);
             Assert.AreEqual(otherResult, otherExecuteResult);
         }
 

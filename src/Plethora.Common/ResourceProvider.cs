@@ -218,8 +218,7 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Returns the resource string 'InvalidState' with
-        /// substitutions made.
+        /// Returns the resource string 'InvalidState'.
         /// </summary>
         public static string InvalidState()
         {
@@ -227,8 +226,15 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Returns the resource string 'ParameterTypeNotInGenericList' with
-        /// substitutions made.
+        /// Returns the resource string 'MethodNotFound'.
+        /// </summary>
+        public static string MethodNotFound()
+        {
+            return Resources.MethodNotFound;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ParameterTypeNotInGenericList'.
         /// </summary>
         public static string ParameterTypeNotInGenericList()
         {

@@ -54,6 +54,7 @@
     <Compile Include="Trees\BinaryTree.Wrappers.cs">
       <DependentUpon>BinaryTree.cs</DependentUpon>
     </Compile>
+    <Compile Include="Trees\Helpers\TreeGrapher.cs" />
     <Compile Include="Trees\MultiTree.cs" />
     <Compile Include="Trees\MultiTree.Enumerators.cs">
       <DependentUpon>MultiTree.cs</DependentUpon>
@@ -68,7 +69,6 @@
     <Compile Include="Trees\DeepTree.MidLayer.cs">
       <DependentUpon>DeepTree.cs</DependentUpon>
     </Compile>
-    <Compile Include="Trees\Grapher.cs" />
     <Compile Include="Trees\IKeyLimitedEnumerator.cs" />
     <Compile Include="Trees\ITree.cs" />
     <Compile Include="LateRange.cs" />

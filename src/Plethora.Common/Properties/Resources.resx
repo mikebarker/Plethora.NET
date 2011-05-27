@@ -171,4 +171,7 @@
   <data name="AlreadyDisposed" xml:space="preserve">
     <value>The target of invocation has already been disposed.</value>
   </data>
+  <data name="MethodNotFound" xml:space="preserve">
+    <value>The method was not found in the reflected type.</value>
+  </data>
 </root>
