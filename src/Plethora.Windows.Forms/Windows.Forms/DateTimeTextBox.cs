@@ -85,7 +85,7 @@ namespace Plethora.Windows.Forms
         /// Gets and sets the default format to be used to display dates.
         /// </summary>
         [Browsable(true)]
-        [Category("Appearance")]
+        [Category(ControlAttributes.Category.Appearance)]
         [DefaultValue(DateFormat_DefaultValue)]
         [Description("The default format to be used to display dates.")]
         public string DateFormat

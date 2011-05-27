@@ -1,7 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Plethora.ComponentModel;
 using Plethora.Drawing;
 
 namespace Plethora.Windows.Forms
@@ -29,7 +28,7 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// Raised when the control is triple-clicked.
         /// </summary>
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         [Description("Raised when the control is triple-clicked.")]
         public event MouseEventHandler MouseTripleClick
         {
@@ -53,7 +52,7 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// Raised when the control is triple-clicked.
         /// </summary>
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         [Description("Raised when the control is triple-clicked.")]
         public event EventHandler TripleClick
         {
@@ -84,7 +83,7 @@ namespace Plethora.Windows.Forms
         /// Raised when the value of <see cref="SelectAllOnTripleClick"/> has changed.
         /// </summary>
         [Browsable(true)]
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         public event EventHandler SelectAllOnTripleClickChanged
         {
             add { base.Events.AddHandler(SelectAllOnTripleClickChanged_EventKey, value); }
@@ -100,7 +99,7 @@ namespace Plethora.Windows.Forms
         /// when the user Triple clicks.
         /// </summary>
         [Browsable(true)]
-        [Category("Behaviour")]
+        [Category(ControlAttributes.Category.Behavior)]
         [DefaultValue(SELECTALLONTRIPLECLICK_DEFAULT)]
         [Description("If true the textbox's entire text will be selected on Triple click.")]
         public bool SelectAllOnTripleClick

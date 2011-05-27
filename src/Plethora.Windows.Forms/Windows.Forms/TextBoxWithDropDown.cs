@@ -51,7 +51,7 @@ namespace Plethora.Windows.Forms
         /// Raised when the value of <see cref="DropDownControl"/> has changed.
         /// </summary>
         [Browsable(true)]
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         public event EventHandler DropDownControlChanged
         {
             add { this.dropDownHelper.DropDownControlChanged += value; }

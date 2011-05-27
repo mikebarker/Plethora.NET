@@ -28,7 +28,7 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// Raises when a date is double-clicked.
         /// </summary>
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         [Description("Occurs when a date is double-clicked.")]
         public event EventHandler DateDoubleClick
         {
