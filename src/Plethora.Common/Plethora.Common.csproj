@@ -38,6 +38,7 @@
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
+    <Compile Include="IChangeable.cs" />
     <Compile Include="Logging\Exceptions\IsLoggedException.cs" />
     <Compile Include="Logging\Exceptions\LoggedException.cs" />
     <Compile Include="Logging\ILogger.cs" />
@@ -91,6 +92,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
