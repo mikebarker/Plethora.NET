@@ -49,22 +49,15 @@
     <Compile Include="EditMode.cs" />
     <Compile Include="Format\IFormatParser.cs" />
     <Compile Include="Format\IFormatParserPartial.cs" />
-    <Compile Include="Format\NullableNumericFormatParser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Format\NumericFormatParser.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Format\NullableNumericFormatParser.cs" />
+    <Compile Include="Format\NumericFormatParser.cs" />
     <Compile Include="IO\TextBoxWriter.cs" />
     <Compile Include="Win32\Win32Msg.cs" />
     <Compile Include="Windows.Forms\ControlAttributes.cs" />
     <Compile Include="Windows.Forms\ControlHelper.cs" />
-    <Compile Include="Windows.Forms\DropDownForm.cs">
-    </Compile>
-    <Compile Include="Windows.Forms\MonthCalendarEx.cs">
-    </Compile>
-    <Compile Include="Windows.Forms\Popup.cs">
-    </Compile>
+    <Compile Include="Windows.Forms\DropDownForm.cs" />
+    <Compile Include="Windows.Forms\MonthCalendarEx.cs" />
+    <Compile Include="Windows.Forms\Popup.cs" />
     <Compile Include="Drawing\ToolboxBitmapEx.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

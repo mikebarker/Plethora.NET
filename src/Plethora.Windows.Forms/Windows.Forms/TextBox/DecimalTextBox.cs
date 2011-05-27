@@ -531,9 +531,6 @@ namespace Plethora.Windows.Forms
         /// </example>
 		protected virtual bool ValidateValue(Decimal validateValue, bool partial)
         {
-			if (validateValue == null)
-                return true;
-
             if (partial)
             {
                 //NOTE: Must allow for the user to type in the value, so can't simply
