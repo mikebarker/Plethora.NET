@@ -27,12 +27,13 @@ namespace Plethora.Format
 	/// </typeparam>
 	/// <seealso cref="NullableNumericFormatParser{T}"/>
 	[CLSCompliant(false)]
+    [System.ComponentModel.DesignerCategory("Code")]
 	public class NumericFormatParser<T> : Component, IFormatParserPartial<T>, ICloneable
 		where T : IFormattable, IConvertible, IComparable
 	{
 		#region Static Members
 
-		private readonly static NumericFormatParser<T> defaultFormatParser = new NumericFormatParser<T>();
+		private readonly static NumericFormatParser<T> defaultFormatParser;
 
 		/// <summary>
 		/// Gets the default <see cref="NumericFormatParser{T}"/>.
@@ -112,6 +113,7 @@ namespace Plethora.Format
         static NumericFormatParser()
         {
             tryParse = GetTryParseDelegate();
+            defaultFormatParser = new NumericFormatParser<T>();
         }
 
 		/// <summary>
@@ -121,7 +123,7 @@ namespace Plethora.Format
 		/// The default formatting string is utilised to format values.
 		/// </remarks>
 		public NumericFormatParser()
-			: this(DEFAULT_FORMAT, CultureInfo.CurrentCulture, DEFAULT_STYLES)
+			: this(DEFAULT_FORMAT, CultureInfo.CurrentUICulture, DEFAULT_STYLES)
 		{
 		}
 
@@ -135,7 +137,7 @@ namespace Plethora.Format
 		/// Thrown if <paramref name="format"/> is 'null'.
 		/// </exception>
 		public NumericFormatParser(string format)
-			: this(format, CultureInfo.CurrentCulture, DEFAULT_STYLES)
+            : this(format, CultureInfo.CurrentUICulture, DEFAULT_STYLES)
 		{
 		}
 
@@ -178,7 +180,7 @@ namespace Plethora.Format
 		///   value.
 		/// </exception>
 		public NumericFormatParser(string format, NumberStyles styles)
-			: this(format, CultureInfo.CurrentCulture, styles)
+            : this(format, CultureInfo.CurrentUICulture, styles)
 		{
 		}
 
