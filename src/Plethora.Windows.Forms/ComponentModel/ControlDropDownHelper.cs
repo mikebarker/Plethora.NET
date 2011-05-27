@@ -66,7 +66,7 @@ namespace Plethora.ComponentModel
         /// Raised when the value of <see cref="DropDownLocationProvider"/> has changed.
         /// </summary>
         [Browsable(true)]
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         public event EventHandler DropDownLocationProviderChanged
         {
             add { base.Events.AddHandler(DropDownLocationProviderChanged_EventKey, value); }
@@ -113,7 +113,7 @@ namespace Plethora.ComponentModel
         /// Raised when the value of <see cref="DropDownControl"/> has changed.
         /// </summary>
         [Browsable(true)]
-        [Category("Action")]
+        [Category(ControlAttributes.Category.Action)]
         public event EventHandler DropDownControlChanged
         {
             add { base.Events.AddHandler(DropDownControlChanged_EventKey, value); }
