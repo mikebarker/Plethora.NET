@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Plethora.Linq
@@ -27,6 +28,11 @@ namespace Plethora.Linq
             /// </param>
             internal EnumeratorWrapper(IEnumerator<T> enumerator)
             {
+                //Validation
+                if (enumerator == null)
+                    throw new ArgumentNullException("enumerator");
+
+
                 this.enumerator = enumerator;
             }
             #endregion
