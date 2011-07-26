@@ -18,13 +18,10 @@ namespace Plethora.Format
         /// <param name="value">
         /// The value of type <typeparamref name="T"/> to be converted.
         /// </param>
-        /// <param name="state">
-        /// An optional object containing the state of the calling object.
-        /// </param>
         /// <returns>
         /// The string equivalent of 'value'.
         /// </returns>
-        string Format(T value, object state);
+        string Format(T value);
 
         /// <summary>
         /// Converts the string representation of a number to its equivalent

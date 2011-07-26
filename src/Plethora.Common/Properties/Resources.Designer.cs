@@ -124,6 +124,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be of type {1}..
+        /// </summary>
+        internal static string ArgMustBeOfType {
+            get {
+                return ResourceManager.GetString("ArgMustBeOfType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The property &apos;{1}&apos; of the parameter &apos;{0}&apos; is not valid..
         /// </summary>
         internal static string ArgPropertyInvalid {

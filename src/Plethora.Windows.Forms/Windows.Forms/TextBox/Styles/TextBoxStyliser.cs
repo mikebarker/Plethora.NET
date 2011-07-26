@@ -6,11 +6,10 @@ using System.Windows.Forms;
 namespace Plethora.Windows.Forms.Styles
 {
     /// <summary>
-    /// A component which can be used to apply styles to a TextBox which
-    /// implements <see cref="IValueTextBox"/>
+    /// A class used to apply styles to a <see cref="TextBox"/>.
     /// </summary>
-    [Designer(typeof(TextBoxStyliser.Designer))]
-    public partial class TextBoxStyliser : Component, ICloneable
+    [TypeConverter(typeof(TextBoxStyliser.Converter))]
+    public partial class TextBoxStyliser
     {
         #region Static Members
 
@@ -34,248 +33,9 @@ namespace Plethora.Windows.Forms.Styles
 
         #region Fields
 
-        private Dictionary<IValueTextBox, TextBoxStyle> textBoxStyles =
-            new Dictionary<IValueTextBox, TextBoxStyle>();
-        #endregion
+        private readonly HashSet<TextBox> textBoxes = new HashSet<TextBox>();
 
-        #region Constructors
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="TextBoxStyliser"/> class.
-        /// </summary>
-        public TextBoxStyliser()
-        {
-            this.NegativeStyleChanged += new EventHandler(style_Changed);
-            this.PositiveStyleChanged += new EventHandler(style_Changed);
-            this.ZeroStyleChanged += new EventHandler(style_Changed);
-            this.NullStyleChanged += new EventHandler(style_Changed);
-        }
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="TextBoxStyliser"/> class.
-        /// </summary>
-        /// <param name="positiveStyle">The style to be applied when the value is positive.</param>
-        /// <param name="negativeStyle">The style to be applied when the value is negative.</param>
-        /// <param name="zeroStyle">The style to be applied when the value is zero.</param>
-        /// <param name="nullStyle">The style to be applied when the value is null.</param>
-        public TextBoxStyliser(
-            TextBoxStyle positiveStyle,
-            TextBoxStyle negativeStyle,
-            TextBoxStyle zeroStyle,
-            TextBoxStyle nullStyle)
-            : this()
-        {
-            //Validation
-            if (positiveStyle == null)
-                throw new ArgumentNullException("positiveStyle");
-
-            if (negativeStyle == null)
-                throw new ArgumentNullException("negativeStyle");
-
-            if (zeroStyle == null)
-                throw new ArgumentNullException("zeroStyle");
-
-            if (nullStyle == null)
-                throw new ArgumentNullException("nullStyle");
-
-
-            this.PositiveStyle = positiveStyle;
-            this.NegativeStyle = negativeStyle;
-            this.ZeroStyle = zeroStyle;
-            this.NullStyle = nullStyle;
-        }
-        #endregion
-
-        #region Properties
-
-        #region PositiveStyle Property
-
-        /// <summary>
-        /// Raised when <see cref="PositiveStyle"/> changes.
-        /// </summary>
-        /// <seealso cref="PositiveStyle"/>
-        public event EventHandler PositiveStyleChanged;
-
-        private TextBoxStyle positiveStyle = null;
-
-        /// <summary>
-        /// Gets and sets the style to be applied when a text box's value is positive.
-        /// </summary>
-        [Browsable(true)]
-        [Category("Appearance")]
-        [Description("The style to be applied when a text box's value is positive.")]
-        public TextBoxStyle PositiveStyle
-        {
-            get { return positiveStyle; }
-            set
-            {
-                if (value == positiveStyle)
-                    return;
-
-                if (positiveStyle != null)
-                    UnwireStyle(positiveStyle);
-
-                positiveStyle = value;
-                OnPositiveStyleChanged();
-
-                if (positiveStyle != null)
-                    WireStyle(positiveStyle);
-            }
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PositiveStyleChanged"/> event.
-        /// </summary>
-        protected void OnPositiveStyleChanged()
-        {
-            EventHandler handlers = this.PositiveStyleChanged;
-            if (handlers != null)
-                handlers(this, EventArgs.Empty);
-        }
-
-        #endregion
-
-        #region NegativeStyle Property
-
-        /// <summary>
-        /// Raised when <see cref="NegativeStyle"/> changes.
-        /// </summary>
-        /// <seealso cref="NegativeStyle"/>
-        public event EventHandler NegativeStyleChanged;
-
-        private TextBoxStyle negativeStyle = null;
-
-        /// <summary>
-        /// Gets and sets the style to be applied when the text box's value is negative.
-        /// </summary>
-        [Browsable(true)]
-        [Category("Appearance")]
-        [Description("The style to be applied when the text box's value is negative.")]
-        public TextBoxStyle NegativeStyle
-        {
-            get { return negativeStyle; }
-            set
-            {
-                if (value == negativeStyle)
-                    return;
-
-                if (negativeStyle != null)
-                    UnwireStyle(negativeStyle);
-
-                negativeStyle = value;
-                OnNegativeStyleChanged();
-
-                if (negativeStyle != null)
-                    WireStyle(negativeStyle);
-            }
-        }
-
-        /// <summary>
-        /// Raises the <see cref="NegativeStyleChanged"/> event.
-        /// </summary>
-        protected void OnNegativeStyleChanged()
-        {
-            EventHandler handlers = this.NegativeStyleChanged;
-            if (handlers != null)
-                handlers(this, EventArgs.Empty);
-        }
-
-        #endregion
-
-        #region ZeroStyle Property
-
-        /// <summary>
-        /// Raised when <see cref="ZeroStyle"/> changes.
-        /// </summary>
-        /// <seealso cref="ZeroStyle"/>
-        public event EventHandler ZeroStyleChanged;
-
-        private TextBoxStyle zeroStyle = null;
-
-        /// <summary>
-        /// Gets and sets the style to be applied when the text box's value is zero.
-        /// </summary>
-        [Browsable(true)]
-        [Category("Appearance")]
-        [Description("The style to be applied when the text box's value is zero.")]
-        public TextBoxStyle ZeroStyle
-        {
-            get { return zeroStyle; }
-            set
-            {
-                if (value == zeroStyle)
-                    return;
-
-                if (zeroStyle != null)
-                    UnwireStyle(zeroStyle);
-
-                zeroStyle = value;
-                OnZeroStyleChanged();
-
-                if (zeroStyle != null)
-                    WireStyle(zeroStyle);
-            }
-        }
-
-        /// <summary>
-        /// Raises the <see cref="ZeroStyleChanged"/> event.
-        /// </summary>
-        protected void OnZeroStyleChanged()
-        {
-            EventHandler handlers = this.ZeroStyleChanged;
-            if (handlers != null)
-                handlers(this, EventArgs.Empty);
-        }
-
-        #endregion
-
-        #region NullStyle Property
-
-        /// <summary>
-        /// Raised when <see cref="NullStyle"/> changes.
-        /// </summary>
-        /// <seealso cref="NullStyle"/>
-        public event EventHandler NullStyleChanged;
-
-        private TextBoxStyle nullStyle = null;
-
-        /// <summary>
-        /// Gets and sets the style to be applied when the text box's value is null.
-        /// </summary>
-        [Browsable(true)]
-        [Category("Appearance")]
-        [Description("The style to be applied when the text box's value is null.")]
-        public TextBoxStyle NullStyle
-        {
-            get { return nullStyle; }
-            set
-            {
-                if (value == nullStyle)
-                    return;
-
-                if (nullStyle != null)
-                    UnwireStyle(nullStyle);
-
-                nullStyle = value;
-                OnNullStyleChanged();
-
-                if (nullStyle != null)
-                    WireStyle(nullStyle);
-            }
-        }
-
-        /// <summary>
-        /// Raises the <see cref="NullStyleChanged"/> event.
-        /// </summary>
-        protected void OnNullStyleChanged()
-        {
-            EventHandler handlers = this.NullStyleChanged;
-            if (handlers != null)
-                handlers(this, EventArgs.Empty);
-        }
-
-        #endregion
-
+        private EventHandlerList events;
         #endregion
 
         #region Public Methods
@@ -284,24 +44,20 @@ namespace Plethora.Windows.Forms.Styles
         /// Register a TextBox with this <see cref="TextBoxStyliser"/>.
         /// </summary>
         /// <param name="textBox">
-        /// The <see cref="IValueTextBox"/> to be registered
-        /// with this instance.
+        /// The <see cref="TextBox"/> to be registered with this instance.
         /// </param>
-        public void RegisterTextBox(IValueTextBox textBox)
+        public virtual void RegisterTextBox(TextBox textBox)
         {
             //Validation
             if (textBox == null)
                 throw new ArgumentNullException("textBox");
 
-            if (!(textBox is TextBox))
-                throw new ArgumentException("textBox must be a TextBox which implements IValueTextBox.");
 
-
-            if (!textBoxStyles.ContainsKey(textBox))
+            if (!textBoxes.Contains(textBox))
             {
-                textBoxStyles.Add(textBox, TextBoxStyle.CreateStyle(textBox as TextBox));
+                textBoxes.Add(textBox);
                 Stylise(textBox);
-                WireTextBox(textBox);
+                WireTextBoxEvents(textBox);
             }
         }
 
@@ -309,27 +65,19 @@ namespace Plethora.Windows.Forms.Styles
         /// Deregister a TextBox from this <see cref="TextBoxStyliser"/>.
         /// </summary>
         /// <param name="textBox">
-        /// The <see cref="IValueTextBox"/> to be deregistered
-        /// with this instance.
+        /// The <see cref="TextBox"/> to be deregistered with this instance.
         /// </param>
-        public void DeregisterTextBox(IValueTextBox textBox)
+        public virtual void DeregisterTextBox(TextBox textBox)
         {
             //Validation
             if (textBox == null)
                 throw new ArgumentNullException("textBox");
 
-            if (!(textBox is TextBox))
-                throw new ArgumentException("textBox must be a TextBox which implements IValueTextBox.");
 
-
-            if (textBoxStyles.ContainsKey(textBox))
+            if (textBoxes.Contains(textBox))
             {
-                TextBoxStyle defaultStyle = GetDefaultStyle(textBox);
-
-                UnwireTextBox(textBox);
-                textBoxStyles.Remove(textBox);
-
-                TextBoxStyle.ApplyStyles(textBox as TextBox, defaultStyle);
+                UnwireTextBoxEvents(textBox);
+                textBoxes.Remove(textBox);
             }
         }
         #endregion
@@ -341,9 +89,9 @@ namespace Plethora.Windows.Forms.Styles
             StyliseAllRegisteredTextBoxes();
         }
 
-        void textBox_ValueChanged(object sender, EventArgs e)
+        void textBox_TextChanged(object sender, EventArgs e)
         {
-            IValueTextBox textBox = sender as IValueTextBox;
+            TextBox textBox = sender as TextBox;
             if (textBox == null)
                 return;
 
@@ -352,7 +100,7 @@ namespace Plethora.Windows.Forms.Styles
 
         void textBox_HandleDestroyed(object sender, EventArgs e)
         {
-            IValueTextBox textBox = sender as IValueTextBox;
+            TextBox textBox = sender as TextBox;
             if (textBox == null)
                 return;
 
@@ -361,7 +109,25 @@ namespace Plethora.Windows.Forms.Styles
 
         #endregion
 
-        #region Private Methods
+        #region Protected Members
+
+        /// <summary>
+        /// Gets the list of event handlers that are attached to this class.
+        /// </summary>
+        /// <value>
+        /// An <see cref="EventHandlerList"/> that provides the delegates for this component
+        /// </value>
+        protected EventHandlerList Events
+        {
+            get
+            {
+                if (this.events == null)
+                {
+                    this.events = new EventHandlerList();
+                }
+                return this.events;
+            }
+        }
 
         /// <summary>
         /// Wire the events of a TextBox to this styliser.
@@ -369,10 +135,10 @@ namespace Plethora.Windows.Forms.Styles
         /// <param name="textBox">
         /// The TextBox to be wired.
         /// </param>
-        private void WireTextBox(IValueTextBox textBox)
+        protected virtual void WireTextBoxEvents(TextBox textBox)
         {
-            ((TextBox)textBox).HandleDestroyed += new EventHandler(textBox_HandleDestroyed);
-            textBox.ValueChanged += new EventHandler(textBox_ValueChanged);
+            textBox.HandleDestroyed += new EventHandler(textBox_HandleDestroyed);
+            textBox.TextChanged += new EventHandler(textBox_TextChanged);
         }
 
         /// <summary>
@@ -381,10 +147,10 @@ namespace Plethora.Windows.Forms.Styles
         /// <param name="textBox">
         /// The TextBox to be unwired.
         /// </param>
-        private void UnwireTextBox(IValueTextBox textBox)
+        protected virtual void UnwireTextBoxEvents(TextBox textBox)
         {
-            textBox.ValueChanged -= new EventHandler(textBox_ValueChanged);
-            ((TextBox)textBox).HandleDestroyed -= new EventHandler(textBox_HandleDestroyed);
+            textBox.TextChanged -= new EventHandler(textBox_TextChanged);
+            textBox.HandleDestroyed -= new EventHandler(textBox_HandleDestroyed);
         }
 
         /// <summary>
@@ -393,7 +159,7 @@ namespace Plethora.Windows.Forms.Styles
         /// <param name="style">
         /// The TextBoxStyle to be wired.
         /// </param>
-        private void WireStyle(TextBoxStyle style)
+        protected virtual void WireStyleEvents(TextBoxStyle style)
         {
             style.BackColorChanged += new EventHandler(style_Changed);
             style.ForeColorChanged += new EventHandler(style_Changed);
@@ -406,7 +172,7 @@ namespace Plethora.Windows.Forms.Styles
         /// <param name="style">
         /// The TextBoxStyle to be unwired.
         /// </param>
-        private void UnwireStyle(TextBoxStyle style)
+        protected virtual void UnwireStyleEvents(TextBoxStyle style)
         {
             style.BackColorChanged += new EventHandler(style_Changed);
             style.ForeColorChanged += new EventHandler(style_Changed);
@@ -417,9 +183,9 @@ namespace Plethora.Windows.Forms.Styles
         /// Applies the appripriate style to all text boxes registered with the
         /// styliser.
         /// </summary>
-        private void StyliseAllRegisteredTextBoxes()
+        protected void StyliseAllRegisteredTextBoxes()
         {
-            foreach (IValueTextBox textBox in textBoxStyles.Keys)
+            foreach (TextBox textBox in textBoxes)
             {
                 Stylise(textBox);
             }
@@ -430,81 +196,86 @@ namespace Plethora.Windows.Forms.Styles
         /// <see cref="IValueTextBox"/>.
         /// </summary>
         /// <param name="textBox">
-        /// The <see cref="IValueTextBox"/> to which the style
-        /// is to be applied.
+        /// The <see cref="TextBox"/> to which the style is to be applied.
         /// </param>
-        private void Stylise(IValueTextBox textBox)
+        private void Stylise(TextBox textBox)
         {
-            TextBoxStyle defaultStyle = GetDefaultStyle(textBox);
+            TextBoxStyle style = GetRequiredStyle(textBox);
 
-            IComparable value = textBox.Value;
-            if (value == null)
+            if (style != null)
             {
-                TextBoxStyle.ApplyStyles(textBox as TextBox, this.NullStyle, defaultStyle);
-            }
-            else
-            {
-                int result;
-                if (NumericHelper.TypeSafeComparisonToZero(value, out result))
-                {
-                    if (result > 0)
-                    {
-                        TextBoxStyle.ApplyStyles(textBox as TextBox, this.PositiveStyle, defaultStyle);
-                    }
-                    else if (result < 0)
-                    {
-                        TextBoxStyle.ApplyStyles(textBox as TextBox, this.NegativeStyle, defaultStyle);
-                    }
-                    else if (result == 0)
-                    {
-                        TextBoxStyle.ApplyStyles(textBox as TextBox, this.ZeroStyle, defaultStyle);
-                    }
-                }
+                style.ApplyStyle(textBox);
             }
         }
 
-        /// <summary>
-        /// Gets the default style for a textBox.
-        /// </summary>
-        /// <param name="textBox">
-        /// The text box for which the default style is required.
-        /// </param>
-        /// <returns>
-        /// The default style for the text box; or 'null' one could not be
-        /// found.
-        /// </returns>
-        private TextBoxStyle GetDefaultStyle(IValueTextBox textBox)
+        protected virtual TextBoxStyle GetRequiredStyle(TextBox textBox)
         {
-            TextBoxStyle defaultStyle = null;
-            if (this.textBoxStyles.ContainsKey(textBox))
-                defaultStyle = this.textBoxStyles[textBox];
+            return null;
+        }
+        #endregion
+    }
 
-            return defaultStyle;
+    /// <summary>
+    /// A <see cref="TextBoxStyliser"/> presented as a component.
+    /// </summary>
+    /// <remarks>
+    /// If <see cref="TextBoxStyliser"/> implemented the <see cref="IComponent"/> interface,
+    /// or inheritted from the <see cref="Component"/> class, the
+    /// <see cref="System.ComponentModel.Design.Serialization.InstanceDescriptor"/> used in the
+    /// converter (see <see cref="Plethora.ComponentModel.DefaultReferenceConverter"/>) would not
+    /// render the default instance correctly, due to code access security (cas) permissions.
+    /// </remarks>
+    public class TextBoxStyliserComponent : TextBoxStyliser, IComponent
+    {
+        #region Fields
+
+        private readonly Component component = new Component();
+        #endregion
+
+        #region Constructors
+
+        public TextBoxStyliserComponent()
+        {
+        }
+
+        public TextBoxStyliserComponent(IContainer container)
+            : this()
+        {
+            container.Add(this);
         }
         #endregion
 
-        #region ICloneable Members
+        #region Implementation of IDisposable
 
         /// <summary>
-        /// Creates a new object that is a copy of the current instance.
+        /// Performs application-defined tasks associated with freeing, releasing,
+        /// or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            component.Dispose();
+        }
+        #endregion
+
+        #region Implementation of IComponent
+
+        /// <summary>
+        /// Gets or sets the <see cref="ISite"/> associated with the <see cref="IComponent"/>.
         /// </summary>
         /// <returns>
-        /// A new object that is a copy of this instance.
+        /// The <see cref="ISite"/> object associated with the component;
+        /// or null, if the component does not have a site.
         /// </returns>
-        public object Clone()
+        public ISite Site
         {
-            return this.MemberwiseClone();
+            get { return component.Site; }
+            set { component.Site = value; }
         }
 
-        /// <summary>
-        /// Creates a new object that is a copy of the current instance.
-        /// </summary>
-        /// <returns>
-        /// A new object that is a copy of this instance.
-        /// </returns>
-        object ICloneable.Clone()
+        public event EventHandler Disposed
         {
-            return this.Clone();
+            add { component.Disposed += value; }
+            remove { component.Disposed -= value; }
         }
 
         #endregion

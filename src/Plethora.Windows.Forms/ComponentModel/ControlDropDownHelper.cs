@@ -269,7 +269,7 @@ namespace Plethora.ComponentModel
                 return;
 
             var activeForm = Form.ActiveForm;
-            if (activeForm != this.dropDownForm)
+            if ((activeForm != this.dropDownForm) && (activeForm != this.dropDownForm.Owner))
             {
                 HideDropDown();
             }

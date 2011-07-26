@@ -1,11 +1,11 @@
 using System;
 
-namespace Plethora.Windows.Forms.Styles
+namespace Plethora.Windows.Forms
 {
     /// <summary>
-    /// Interface to be implemented by a TextBox which represents a value.
+    /// Interface to be implemented by a class which provides a value.
     /// </summary>
-    public interface IValueTextBox
+    public interface IComparableValueProvider
     {
         #region Events
 

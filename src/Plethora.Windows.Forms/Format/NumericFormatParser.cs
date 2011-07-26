@@ -217,12 +217,6 @@ namespace Plethora.Format
 			if (provider == null)
 				throw new ArgumentNullException("provider");
 
-			if (Enum.IsDefined(typeof(NumberStyles), styles))
-				throw new ArgumentOutOfRangeException("styles", styles,
-					string.Format("The value '{1}' is not valid for the enum '{0}'.",
-					typeof(NumberStyles),
-					styles));
-
 
             this.FormatString = format;
 			this.provider = provider;
@@ -270,13 +264,10 @@ namespace Plethora.Format
 		/// <param name="value">
 		/// The value to be formatted as a string.
 		/// </param>
-		/// <param name="state">
-		/// Ignorred.
-		/// </param>
-		/// <returns>
+        /// <returns>
 		/// The string equivalent of <paramref name="value"/>.
 		/// </returns>
-		public virtual string Format(T value, object state)
+		public virtual string Format(T value)
 		{
 			double multiplier;
 			bool suffixFound;

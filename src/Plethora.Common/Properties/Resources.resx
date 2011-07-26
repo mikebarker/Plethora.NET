@@ -174,4 +174,7 @@
   <data name="MethodNotFound" xml:space="preserve">
     <value>The method was not found in the reflected type.</value>
   </data>
+  <data name="ArgMustBeOfType" xml:space="preserve">
+    <value>'{0}' must be of type {1}.</value>
+  </data>
 </root>

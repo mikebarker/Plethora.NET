@@ -208,35 +208,17 @@ namespace Plethora.Format
 		/// <param name="value">
 		/// The value to be formatted as a string.
 		/// </param>
-		/// <param name="state">
-		/// 'true' if null values of <paramref name="value"/> should be formatted
-		/// as an empty string; 'false' if null values of <paramref name="value"/>
-		/// should be formatted according to the property of
-		/// <see cref="NullString"/>.
-		/// </param>
 		/// <returns>
 		/// The string equivalent of <paramref name="value"/>.
 		/// </returns>
-		public virtual string Format(Nullable<T> value, object state)
-		{
-			if (value.HasValue)
-			{
-				return innerNumericFormatParser.Format(value.Value, state);
-			}
-			else
-			{
-				bool nullAsEmpty = true;
-				if (state is bool)
-					nullAsEmpty = (bool)state;
+		public virtual string Format(Nullable<T> value)
+        {
+            return (!value.HasValue)
+                ? this.NullString
+                : innerNumericFormatParser.Format(value.Value);
+        }
 
-				if (nullAsEmpty)
-					return string.Empty;
-				else
-					return this.NullString;
-			}
-		}
-
-        /// <summary>
+	    /// <summary>
         /// Converts the string representation of a number to its equivalent
         /// numeric value. A return value indicates whether the operation succeeded.
         /// </summary>
