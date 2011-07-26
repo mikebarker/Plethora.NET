@@ -1,10 +1,3 @@
-//------------------------------------------------------------------------------
-//     Copyright 2007 The ChocolateBox Project.
-//     All rights reserved.
-//
-//     Refer to the Licence.txt distributed with this file for licencing terms.
-//------------------------------------------------------------------------------
-
 using System;
 using System.ComponentModel;
 using System.Drawing;

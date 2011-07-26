@@ -1,3 +1,4 @@
+using System;
 using System.Globalization;
 using Plethora.Properties;
 
@@ -153,6 +154,17 @@ namespace Plethora
         public static string ArgMustBeGreaterThanEqualToZero(string arg)
         {
             return ArgMustBeGreaterThanEqualTo(arg, Resources.Zero);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgMustBeOfType' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="type">The required type of the argument.</param>
+        public static string ArgMustBeOfType(string arg, Type type)
+        {
+            return StringFormat(Resources.ArgMustBeOfType, arg, type.Name);
         }
 
         /// <summary>

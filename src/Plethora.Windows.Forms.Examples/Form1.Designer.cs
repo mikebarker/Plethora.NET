@@ -1,4 +1,6 @@
-﻿namespace Plethora.Windows.Forms.Examples
+﻿using System;
+
+namespace Plethora.Windows.Forms.Examples
 {
     partial class Form1
     {
@@ -28,14 +30,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.textBoxEx1 = new Plethora.Windows.Forms.TextBoxEx();
+            this.integerTextBox1 = new Plethora.Windows.Forms.IntegerTextBox();
+            this.numericTextBoxStyliserComponent1 = new Plethora.Windows.Forms.Styles.NumericTextBoxStyliserComponent(this.components);
             this.dateTimeTextBox1 = new Plethora.Windows.Forms.DateTimeTextBox();
-            this.nullableIntegerTextBox1 = new Plethora.Windows.Forms.NullableIntegerTextBox();
             this.SuspendLayout();
             // 
             // label1
@@ -84,6 +89,16 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(192, 235);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(80, 17);
+            this.checkBox1.TabIndex = 8;
+            this.checkBox1.Text = "checkBox1";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            // 
             // textBoxEx1
             // 
             this.textBoxEx1.Location = new System.Drawing.Point(113, 12);
@@ -92,35 +107,47 @@
             this.textBoxEx1.TabIndex = 0;
             this.textBoxEx1.Text = "Triple click to select all text.";
             // 
+            // integerTextBox1
+            // 
+            this.integerTextBox1.Location = new System.Drawing.Point(113, 53);
+            this.integerTextBox1.MaxValue = ((long)(9223372036854775807));
+            this.integerTextBox1.MinValue = ((long)(-9223372036854775808));
+            this.integerTextBox1.Name = "integerTextBox1";
+            this.integerTextBox1.Size = new System.Drawing.Size(144, 20);
+            this.integerTextBox1.Styliser = Plethora.Windows.Forms.Styles.NumericTextBoxStyliser.Default;
+            this.integerTextBox1.TabIndex = 1;
+            this.integerTextBox1.Text = "0";
+            this.integerTextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            // 
+            // numericTextBoxStyliserComponent1
+            // 
+            this.numericTextBoxStyliserComponent1.NegativeStyle = null;
+            this.numericTextBoxStyliserComponent1.PositiveStyle = null;
+            this.numericTextBoxStyliserComponent1.ZeroStyle = null;
+            // 
             // dateTimeTextBox1
             // 
             this.dateTimeTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.dateTimeTextBox1.DateFormat = "yyyy-MM-dd";
             this.dateTimeTextBox1.Location = new System.Drawing.Point(113, 116);
+            this.dateTimeTextBox1.MaxValue = new System.DateTime(9999, 12, 31, 23, 59, 59, 999);
+            this.dateTimeTextBox1.MinValue = new System.DateTime(((long)(0)));
             this.dateTimeTextBox1.Name = "dateTimeTextBox1";
             this.dateTimeTextBox1.Size = new System.Drawing.Size(159, 20);
             this.dateTimeTextBox1.TabIndex = 2;
-            // 
-            // nullableIntegerTextBox1
-            // 
-            this.nullableIntegerTextBox1.Location = new System.Drawing.Point(113, 53);
-            this.nullableIntegerTextBox1.Name = "nullableIntegerTextBox1";
-            this.nullableIntegerTextBox1.Size = new System.Drawing.Size(144, 20);
-            this.nullableIntegerTextBox1.TabIndex = 1;
-            this.nullableIntegerTextBox1.Text = "0";
-            this.nullableIntegerTextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.dateTimeTextBox1.Text = "6/7/2011";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 264);
+            this.Controls.Add(this.checkBox1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxEx1);
-            this.Controls.Add(this.nullableIntegerTextBox1);
+            this.Controls.Add(this.integerTextBox1);
             this.Controls.Add(this.dateTimeTextBox1);
             this.Controls.Add(this.button1);
             this.Name = "Form1";
@@ -139,7 +166,9 @@
         private DateTimeTextBox dateTimeTextBox1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label4;
-        private NullableIntegerTextBox nullableIntegerTextBox1;
+        private IntegerTextBox integerTextBox1;
+        private System.Windows.Forms.CheckBox checkBox1;
+        private Plethora.Windows.Forms.Styles.NumericTextBoxStyliserComponent numericTextBoxStyliserComponent1;
 
 
     }
