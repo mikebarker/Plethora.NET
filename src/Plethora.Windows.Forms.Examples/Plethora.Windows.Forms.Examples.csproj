@@ -48,6 +48,10 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
+      <Name>Plethora.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plethora.Windows.Forms\Plethora.Windows.Forms.csproj">
       <Project>{95839C43-2A34-4716-AEE5-59D68274FAC9}</Project>
       <Name>Plethora.Windows.Forms</Name>

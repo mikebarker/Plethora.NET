@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -7,7 +8,7 @@ namespace Plethora.Windows.Forms.Styles
 {
     /// <summary>
     /// A component which can be used to apply styles to a TextBox which
-    /// implements <see cref="IComparableValueProvider"/>
+    /// implements <see cref="IValueProvider"/>
     /// </summary>
     [TypeConverter(typeof(NumericTextBoxStyliser.Converter))]
     public partial class NumericTextBoxStyliser : TextBoxStyliser
@@ -27,7 +28,18 @@ namespace Plethora.Windows.Forms.Styles
                 // creation of new objects.
                 if (instance == null)
                 {
-                    Interlocked.CompareExchange(ref instance, new NumericTextBoxStyliser(), null);
+                    var positiveStyle = new TextBoxStyle();
+                    var negativeStyle = new TextBoxStyle { ForeColor = Color.Red };
+                    var zeroStyle = new TextBoxStyle { ForeColor = SystemColors.ControlLight };
+                    var nullStyle = new TextBoxStyle { BackColor = SystemColors.ControlLight };
+
+                    var defaultStyliser = new NumericTextBoxStyliser();
+                    defaultStyliser.PositiveStyle = positiveStyle;
+                    defaultStyliser.NegativeStyle = negativeStyle;
+                    defaultStyliser.ZeroStyle = zeroStyle;
+                    defaultStyliser.NullStyle = nullStyle;
+
+                    Interlocked.CompareExchange(ref instance, defaultStyliser, null);
                 }
 
                 return instance;
@@ -60,6 +72,7 @@ namespace Plethora.Windows.Forms.Styles
         [Browsable(true)]
         [Category("Appearance")]
         [Description("The style to be applied when a text box's value is positive.")]
+        [DefaultValue(null)]
         public TextBoxStyle PositiveStyle
         {
             get { return positiveStyle; }
@@ -115,6 +128,7 @@ namespace Plethora.Windows.Forms.Styles
         [Browsable(true)]
         [Category("Appearance")]
         [Description("The style to be applied when the text box's value is negative.")]
+        [DefaultValue(null)]
         public TextBoxStyle NegativeStyle
         {
             get { return negativeStyle; }
@@ -170,6 +184,7 @@ namespace Plethora.Windows.Forms.Styles
         [Browsable(true)]
         [Category("Appearance")]
         [Description("The style to be applied when the text box's value is zero.")]
+        [DefaultValue(null)]
         public TextBoxStyle ZeroStyle
         {
             get { return zeroStyle; }
@@ -202,6 +217,62 @@ namespace Plethora.Windows.Forms.Styles
         }
 
         #endregion
+
+        #region NullStyle Property
+
+        private static readonly object NullStyleChanged_EventKey = new object();
+
+        /// <summary>
+        /// Raised when <see cref="NullStyle"/> changes.
+        /// </summary>
+        /// <seealso cref="NullStyle"/>
+        public event EventHandler NullStyleChanged
+        {
+            add { base.Events.AddHandler(NullStyleChanged_EventKey, value); }
+            remove { base.Events.RemoveHandler(NullStyleChanged_EventKey, value); }
+        }
+
+        private TextBoxStyle nullStyle = null;
+
+        /// <summary>
+        /// Gets and sets the style to be applied when the text box's value is null.
+        /// </summary>
+        [Browsable(true)]
+        [Category("Appearance")]
+        [Description("The style to be applied when the text box's value is null.")]
+        [DefaultValue(null)]
+        public TextBoxStyle NullStyle
+        {
+            get { return nullStyle; }
+            set
+            {
+                if (value == nullStyle)
+                    return;
+
+                if (nullStyle != null)
+                    UnwireStyleEvents(nullStyle);
+
+                nullStyle = value;
+                OnNullStyleChanged();
+
+                if (nullStyle != null)
+                    WireStyleEvents(nullStyle);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="NullStyleChanged"/> event.
+        /// </summary>
+        protected void OnNullStyleChanged()
+        {
+            StyliseAllRegisteredTextBoxes();
+
+            EventHandler handlers = (EventHandler)base.Events[NullStyleChanged_EventKey];
+            if (handlers != null)
+                handlers(this, EventArgs.Empty);
+        }
+
+        #endregion
         #endregion
 
         #region Public Methods
@@ -218,9 +289,8 @@ namespace Plethora.Windows.Forms.Styles
             if (textBox == null)
                 throw new ArgumentNullException("textBox");
 
-            //TODO: message
-            if (!(textBox is IComparableValueProvider))
-                throw new InvalidCastException("");
+            if (!(textBox is IValueProvider))
+                throw new InvalidCastException(ResourceProvider.ArgMustBeOfType("textBox", typeof(IValueProvider)));
 
 
             base.RegisterTextBox(textBox);
@@ -238,9 +308,8 @@ namespace Plethora.Windows.Forms.Styles
             if (textBox == null)
                 throw new ArgumentNullException("textBox");
 
-            //TODO: message
-            if (!(textBox is IComparableValueProvider))
-                throw new InvalidCastException("");
+            if (!(textBox is IValueProvider))
+                throw new InvalidCastException(ResourceProvider.ArgMustBeOfType("textBox", typeof (IValueProvider)));
 
 
             base.DeregisterTextBox(textBox);
@@ -249,16 +318,19 @@ namespace Plethora.Windows.Forms.Styles
 
         protected override TextBoxStyle GetRequiredStyle(TextBox textBox)
         {
-            var style = GetRequiredStyle((IComparableValueProvider)textBox);
+            var style = GetRequiredStyle((IValueProvider)textBox);
             if (style != null)
                 return style;
 
             return base.GetRequiredStyle(textBox);
         }
 
-        protected virtual TextBoxStyle GetRequiredStyle(IComparableValueProvider numericTextBox)
+        protected virtual TextBoxStyle GetRequiredStyle(IValueProvider numericTextBox)
         {
-            IComparable value = numericTextBox.Value;
+            object value = numericTextBox.Value;
+
+            if (value == null)
+                return nullStyle;
 
             int compareResult;
             if (NumericHelper.TypeSafeComparisonToZero(value, out compareResult))
@@ -326,12 +398,14 @@ namespace Plethora.Windows.Forms.Styles
         /// The <see cref="ISite"/> object associated with the component;
         /// or null, if the component does not have a site.
         /// </returns>
+        [Browsable(false)]
         public ISite Site
         {
             get { return component.Site; }
             set { component.Site = value; }
         }
 
+        [Browsable(false)]
         public event EventHandler Disposed
         {
             add { component.Disposed += value; }

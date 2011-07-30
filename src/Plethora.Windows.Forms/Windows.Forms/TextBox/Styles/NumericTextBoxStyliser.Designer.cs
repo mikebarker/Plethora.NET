@@ -143,9 +143,28 @@ namespace Plethora.Windows.Forms.Styles
                 get
                 {
                     DesignerVerbCollection verbs = new DesignerVerbCollection();
-                    verbs.Add(new DesignerVerb("Add positive style", new EventHandler(AddPositiveStyle)));
-                    verbs.Add(new DesignerVerb("Add negative style", new EventHandler(AddNegativeStyle)));
-                    verbs.Add(new DesignerVerb("Add zero style", new EventHandler(AddZeroStyle)));
+                    if (this.styliser != null)
+                    {
+                        if (this.styliser.PositiveStyle == null)
+                            verbs.Add(new DesignerVerb("Add positive style", new EventHandler(AddPositiveStyle)));
+                        else
+                            verbs.Add(new DesignerVerb("Remove positive style", new EventHandler(RemovePositiveStyle)));
+
+                        if (this.styliser.NegativeStyle == null)
+                            verbs.Add(new DesignerVerb("Add negative style", new EventHandler(AddNegativeStyle)));
+                        else
+                            verbs.Add(new DesignerVerb("Remove negative style", new EventHandler(RemoveNegativeStyle)));
+
+                        if (this.styliser.ZeroStyle == null)
+                            verbs.Add(new DesignerVerb("Add zero style", new EventHandler(AddZeroStyle)));
+                        else
+                            verbs.Add(new DesignerVerb("Remove zero style", new EventHandler(RemoveZeroStyle)));
+
+                        if (this.styliser.NullStyle == null)
+                            verbs.Add(new DesignerVerb("Add null style", new EventHandler(AddNullStyle)));
+                        else
+                            verbs.Add(new DesignerVerb("Remove null style", new EventHandler(RemoveNullStyle)));
+                    }
                     return verbs;
                 }
             }
@@ -178,6 +197,37 @@ namespace Plethora.Windows.Forms.Styles
             {
                 if ((this.styliser != null) && (this.styliser.ZeroStyle == null))
                     this.styliser.ZeroStyle = new TextBoxStyle();
+            }
+
+            private void AddNullStyle(object sender, EventArgs e)
+            {
+                if ((this.styliser != null) && (this.styliser.NullStyle == null))
+                    this.styliser.NullStyle = new TextBoxStyle();
+            }
+
+
+            private void RemovePositiveStyle(object sender, EventArgs e)
+            {
+                if (this.styliser != null)
+                    this.styliser.PositiveStyle = null;
+            }
+
+            private void RemoveNegativeStyle(object sender, EventArgs e)
+            {
+                if (this.styliser != null)
+                    this.styliser.NegativeStyle = null;
+            }
+
+            private void RemoveZeroStyle(object sender, EventArgs e)
+            {
+                if (this.styliser != null)
+                    this.styliser.ZeroStyle = null;
+            }
+
+            private void RemoveNullStyle(object sender, EventArgs e)
+            {
+                if (this.styliser != null)
+                    this.styliser.NullStyle = null;
             }
 
             #endregion

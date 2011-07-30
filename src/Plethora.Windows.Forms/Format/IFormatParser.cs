@@ -1,3 +1,5 @@
+using System;
+
 namespace Plethora.Format
 {
     /// <summary>
@@ -7,8 +9,17 @@ namespace Plethora.Format
     /// The type for which this interface defines the parsing and formatting
     /// functionality.
     /// </typeparam>
-    public interface IFormatParser<T> : IChangeable
+    public interface IFormatParser<T>
     {
+        #region Events
+
+        /// <summary>
+        /// Sends a notification when the properties of the <see cref="IFormatParser{T}"/>
+        /// have changed.
+        /// </summary>
+        event EventHandler Changed;
+        #endregion
+
         #region Methods
 
         /// <summary>

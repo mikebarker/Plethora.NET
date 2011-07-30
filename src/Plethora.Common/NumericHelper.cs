@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Text;
 using System.Text.RegularExpressions;
 using Plethora.Globalization;
@@ -570,12 +571,13 @@ namespace Plethora
         /// <returns>
         /// true if the comparison could be conducted safely; else false.
         /// </returns>
-        public static bool TypeSafeComparisonToZero(IComparable value, out int result)
+        public static bool TypeSafeComparisonToZero(object value, out int result)
         {
             try
             {
+                //Create an instance of the same type as value, which represents zero (if possible)
                 object zero = Convert.ChangeType(0, value.GetType());
-                result = value.CompareTo(zero);
+                result = Comparer.Default.Compare(value, zero);
                 return true;
             }
             catch (InvalidCastException)

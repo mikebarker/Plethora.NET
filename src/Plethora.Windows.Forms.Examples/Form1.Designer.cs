@@ -31,6 +31,8 @@ namespace Plethora.Windows.Forms.Examples
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            Plethora.Windows.Forms.Styles.TextBoxStyle textBoxStyle1 = new Plethora.Windows.Forms.Styles.TextBoxStyle();
+            Plethora.Windows.Forms.Styles.TextBoxStyle textBoxStyle2 = new Plethora.Windows.Forms.Styles.TextBoxStyle();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -39,8 +41,8 @@ namespace Plethora.Windows.Forms.Examples
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.textBoxEx1 = new Plethora.Windows.Forms.TextBoxEx();
             this.integerTextBox1 = new Plethora.Windows.Forms.IntegerTextBox();
-            this.numericTextBoxStyliserComponent1 = new Plethora.Windows.Forms.Styles.NumericTextBoxStyliserComponent(this.components);
             this.dateTimeTextBox1 = new Plethora.Windows.Forms.DateTimeTextBox();
+            this.numericTextBoxStyliserComponent1 = new Plethora.Windows.Forms.Styles.NumericTextBoxStyliserComponent(this.components);
             this.SuspendLayout();
             // 
             // label1
@@ -114,16 +116,10 @@ namespace Plethora.Windows.Forms.Examples
             this.integerTextBox1.MinValue = ((long)(-9223372036854775808));
             this.integerTextBox1.Name = "integerTextBox1";
             this.integerTextBox1.Size = new System.Drawing.Size(144, 20);
-            this.integerTextBox1.Styliser = Plethora.Windows.Forms.Styles.NumericTextBoxStyliser.Default;
+            this.integerTextBox1.Styliser = this.numericTextBoxStyliserComponent1;
             this.integerTextBox1.TabIndex = 1;
             this.integerTextBox1.Text = "0";
             this.integerTextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            // 
-            // numericTextBoxStyliserComponent1
-            // 
-            this.numericTextBoxStyliserComponent1.NegativeStyle = null;
-            this.numericTextBoxStyliserComponent1.PositiveStyle = null;
-            this.numericTextBoxStyliserComponent1.ZeroStyle = null;
             // 
             // dateTimeTextBox1
             // 
@@ -135,6 +131,15 @@ namespace Plethora.Windows.Forms.Examples
             this.dateTimeTextBox1.Size = new System.Drawing.Size(159, 20);
             this.dateTimeTextBox1.TabIndex = 2;
             this.dateTimeTextBox1.Text = "6/7/2011";
+            // 
+            // numericTextBoxStyliserComponent1
+            // 
+            textBoxStyle1.BackColor = System.Drawing.Color.Empty;
+            textBoxStyle1.ForeColor = System.Drawing.Color.Red;
+            this.numericTextBoxStyliserComponent1.NegativeStyle = textBoxStyle1;
+            textBoxStyle2.BackColor = System.Drawing.SystemColors.ControlLight;
+            textBoxStyle2.ForeColor = System.Drawing.Color.Empty;
+            this.numericTextBoxStyliserComponent1.ZeroStyle = textBoxStyle2;
             // 
             // Form1
             // 

@@ -33,9 +33,9 @@ namespace Plethora.Windows.Forms
         [Category(ControlAttributes.Category.Appearance)]
         [DefaultValue(null)]
         [Description("The styliser which governs the style of this text box.")]
-        public new virtual NullableNumericTextBoxStyliser Styliser
+        public new virtual NumericTextBoxStyliser Styliser
         {
-            get { return (NullableNumericTextBoxStyliser)StyliserInternal; }
+            get { return (NumericTextBoxStyliser)StyliserInternal; }
             set { StyliserInternal = value; }
         }
 
@@ -44,7 +44,7 @@ namespace Plethora.Windows.Forms
             get { return base.StyliserInternal; }
             set
             {
-                if ((value != null) && !(value is NullableNumericTextBoxStyliser))
+                if ((value != null) && !(value is NumericTextBoxStyliser))
                     throw new InvalidCastException(ResourceProvider.InvalidCast());
 
                 base.StyliserInternal = value;

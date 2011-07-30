@@ -230,7 +230,10 @@ namespace Plethora.Windows.Forms
                 styliser = value;
 
                 if (styliser != null)
-                    styliser.RegisterTextBox(this);
+                {
+                    if (!this.IsDesignMode())
+                        styliser.RegisterTextBox(this);
+                }
 
                 OnStyliserChanged();
             }

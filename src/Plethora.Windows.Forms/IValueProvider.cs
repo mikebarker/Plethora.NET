@@ -1,11 +1,11 @@
 using System;
 
-namespace Plethora.Windows.Forms
+namespace Plethora
 {
     /// <summary>
-    /// Interface to be implemented by a class which provides a value.
+    /// Interface which provides a value, and notification of when the value has changed.
     /// </summary>
-    public interface IComparableValueProvider
+    public interface IValueProvider
     {
         #region Events
 
@@ -21,8 +21,7 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// The value represented by the TextBox
         /// </summary>
-        IComparable Value { get; }
-
+        object Value { get; }
         #endregion
     }
 }

@@ -5,6 +5,8 @@ using System.Windows.Forms;
 
 namespace Plethora.Windows.Forms.Styles
 {
+    //TODO: Known issue: memory leak, as text box references are held.
+
     /// <summary>
     /// A class used to apply styles to a <see cref="TextBox"/>.
     /// </summary>
@@ -33,7 +35,9 @@ namespace Plethora.Windows.Forms.Styles
 
         #region Fields
 
-        private readonly HashSet<TextBox> textBoxes = new HashSet<TextBox>();
+        //Serves as the list of registered text boxes, as well as recording their associated default styles.
+        private Dictionary<TextBox, TextBoxStyle> textBoxStyles =
+            new Dictionary<TextBox, TextBoxStyle>();
 
         private EventHandlerList events;
         #endregion
@@ -53,9 +57,9 @@ namespace Plethora.Windows.Forms.Styles
                 throw new ArgumentNullException("textBox");
 
 
-            if (!textBoxes.Contains(textBox))
+            if (!textBoxStyles.ContainsKey(textBox))
             {
-                textBoxes.Add(textBox);
+                textBoxStyles.Add(textBox, TextBoxStyle.CreateStyle(textBox));
                 Stylise(textBox);
                 WireTextBoxEvents(textBox);
             }
@@ -74,10 +78,14 @@ namespace Plethora.Windows.Forms.Styles
                 throw new ArgumentNullException("textBox");
 
 
-            if (textBoxes.Contains(textBox))
+            if (textBoxStyles.ContainsKey(textBox))
             {
+                TextBoxStyle defaultStyle = GetDefaultStyle(textBox);
+
                 UnwireTextBoxEvents(textBox);
-                textBoxes.Remove(textBox);
+                textBoxStyles.Remove(textBox);
+
+                defaultStyle.ApplyStyle(textBox);
             }
         }
         #endregion
@@ -161,9 +169,7 @@ namespace Plethora.Windows.Forms.Styles
         /// </param>
         protected virtual void WireStyleEvents(TextBoxStyle style)
         {
-            style.BackColorChanged += new EventHandler(style_Changed);
-            style.ForeColorChanged += new EventHandler(style_Changed);
-            style.FontChanged += new EventHandler(style_Changed);
+            style.Changed += new EventHandler(style_Changed);
         }
 
         /// <summary>
@@ -174,43 +180,56 @@ namespace Plethora.Windows.Forms.Styles
         /// </param>
         protected virtual void UnwireStyleEvents(TextBoxStyle style)
         {
-            style.BackColorChanged += new EventHandler(style_Changed);
-            style.ForeColorChanged += new EventHandler(style_Changed);
-            style.FontChanged += new EventHandler(style_Changed);
+            style.Changed += new EventHandler(style_Changed);
         }
 
         /// <summary>
-        /// Applies the appripriate style to all text boxes registered with the
+        /// Applies the appropriate style to all text boxes registered with the
         /// styliser.
         /// </summary>
         protected void StyliseAllRegisteredTextBoxes()
         {
-            foreach (TextBox textBox in textBoxes)
+            foreach (TextBox textBox in textBoxStyles.Keys)
             {
                 Stylise(textBox);
             }
         }
 
         /// <summary>
-        /// Applies the appropriate style to the
-        /// <see cref="IValueTextBox"/>.
+        /// Applies the appropriate style to the <see cref="TextBox"/>.
         /// </summary>
         /// <param name="textBox">
         /// The <see cref="TextBox"/> to which the style is to be applied.
         /// </param>
         private void Stylise(TextBox textBox)
         {
-            TextBoxStyle style = GetRequiredStyle(textBox);
-
-            if (style != null)
-            {
-                style.ApplyStyle(textBox);
-            }
+            TextBoxStyle.ApplyStyles(textBox,
+                GetRequiredStyle(textBox),
+                GetDefaultStyle(textBox));
         }
 
         protected virtual TextBoxStyle GetRequiredStyle(TextBox textBox)
         {
             return null;
+        }
+
+        /// <summary>
+        /// Gets the default style for a textBox.
+        /// </summary>
+        /// <param name="textBox">
+        /// The text box for which the default style is required.
+        /// </param>
+        /// <returns>
+        /// The default style for the text box; or 'null' one could not be
+        /// found.
+        /// </returns>
+        protected TextBoxStyle GetDefaultStyle(TextBox textBox)
+        {
+            TextBoxStyle defaultStyle;
+            if (!this.textBoxStyles.TryGetValue(textBox, out defaultStyle))
+                return null;
+
+            return defaultStyle;
         }
         #endregion
     }
