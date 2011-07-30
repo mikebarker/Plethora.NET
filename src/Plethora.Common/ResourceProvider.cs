@@ -221,6 +221,15 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'GenericArgMustBeIComparable' with
+        /// substitutions made.
+        /// </summary>
+        public static string GenericArgMustBeIComparable()
+        {
+            return Resources.GenericArgMustBeIComparable;
+        }
+
+        /// <summary>
         /// Returns the resource string 'InvalidCast' with
         /// substitutions made.
         /// </summary>
