@@ -177,4 +177,7 @@
   <data name="ArgMustBeOfType" xml:space="preserve">
     <value>'{0}' must be of type {1}.</value>
   </data>
+  <data name="GenericArgMustBeIComparable" xml:space="preserve">
+    <value>Generic argument must implement IComparable or IComparable&lt;T&gt;; or be an instance of Nullable&lt;T&gt; where T is IComparable or IComparable&lt;T&gt;</value>
+  </data>
 </root>

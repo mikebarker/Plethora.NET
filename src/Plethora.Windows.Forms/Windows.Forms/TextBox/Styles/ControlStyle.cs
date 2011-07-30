@@ -436,6 +436,11 @@ namespace Plethora.Windows.Forms.Styles
         /// </param>
         public virtual void ApplyStyle(Control control)
         {
+            //Validation
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+
             if (this.ForeColor != Color.Empty)
                 control.ForeColor = this.ForeColor;
 
@@ -492,6 +497,11 @@ namespace Plethora.Windows.Forms.Styles
         /// <param name="control">The control from which to copy property values.</param>
         public virtual void GetPropertyValues(Control control)
         {
+            //Validation
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+
             this.ForeColor = control.ForeColor;
             this.BackColor = control.BackColor;
             this.FontName = control.Font.Name;
@@ -511,6 +521,11 @@ namespace Plethora.Windows.Forms.Styles
         /// </param>
         public virtual void OverrideUnsetValues(ControlStyle style)
         {
+            //Validation
+            if (style == null)
+                throw new ArgumentNullException("style");
+
+
             if (style.ForeColor == Color.Empty)
                 style.ForeColor = this.ForeColor;
 
@@ -562,6 +577,11 @@ namespace Plethora.Windows.Forms.Styles
         public static void ApplyStyles<TStyle>(Control control, params TStyle[] styles)
             where TStyle : ControlStyle, new()
         {
+            //Validation
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+
             var combinedStyle = CombineStyles(styles);
             if (combinedStyle != null)
                 combinedStyle.ApplyStyle(control);
@@ -571,9 +591,6 @@ namespace Plethora.Windows.Forms.Styles
             where TStyle : ControlStyle, new()
         {
             if (styles == null)
-                return null;
-
-            if (styles.Length == 0)
                 return null;
 
             TStyle rtnStyle = null;

@@ -328,17 +328,28 @@ namespace Plethora.Collections
 
         #region Public Methods
 
-        public void TrimExcess()
+        /// <summary>
+        /// Removes garbage-collected entries from the dictionary.
+        /// </summary>
+        /// <returns>
+        /// true if 'dead' entries were found and space was reclaimed; otherwise false.
+        /// </returns>
+        public bool TrimExcess()
         {
             var deadKeyList = innerDictionary
                 .Where(pair => !pair.Key.IsAlive)
                 .Select(pair => pair.Key)
                 .ToList();
 
+            if (deadKeyList.Count == 0)
+                return false;
+
             foreach (var deadKey in deadKeyList)
             {
                 innerDictionary.Remove(deadKey);
             }
+
+            return true;
         }
         #endregion
 

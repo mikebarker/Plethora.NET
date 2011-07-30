@@ -1,12 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 using System.Windows.Forms;
+using Plethora.Collections;
+using Timer = System.Threading.Timer;
 
 namespace Plethora.Windows.Forms.Styles
 {
-    //TODO: Known issue: memory leak, as text box references are held.
-
     /// <summary>
     /// A class used to apply styles to a <see cref="TextBox"/>.
     /// </summary>
@@ -36,10 +36,18 @@ namespace Plethora.Windows.Forms.Styles
         #region Fields
 
         //Serves as the list of registered text boxes, as well as recording their associated default styles.
-        private Dictionary<TextBox, TextBoxStyle> textBoxStyles =
-            new Dictionary<TextBox, TextBoxStyle>();
+        private readonly WeakKeyDictionary<TextBox, TextBoxStyle> textBoxStyles =
+            new WeakKeyDictionary<TextBox, TextBoxStyle>();
 
         private EventHandlerList events;
+        #endregion
+
+        #region Constructors
+
+        public TextBoxStyliser()
+        {
+            this.stylesCleanupTimer = new Timer(stylesCleanup, null, LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
+        }
         #endregion
 
         #region Public Methods
@@ -56,12 +64,14 @@ namespace Plethora.Windows.Forms.Styles
             if (textBox == null)
                 throw new ArgumentNullException("textBox");
 
-
-            if (!textBoxStyles.ContainsKey(textBox))
+            lock (textBoxStyles)
             {
-                textBoxStyles.Add(textBox, TextBoxStyle.CreateStyle(textBox));
-                Stylise(textBox);
-                WireTextBoxEvents(textBox);
+                if (!textBoxStyles.ContainsKey(textBox))
+                {
+                    textBoxStyles.Add(textBox, TextBoxStyle.CreateStyle(textBox));
+                    Stylise(textBox);
+                    WireTextBoxEvents(textBox);
+                }
             }
         }
 
@@ -78,15 +88,18 @@ namespace Plethora.Windows.Forms.Styles
                 throw new ArgumentNullException("textBox");
 
 
-            if (textBoxStyles.ContainsKey(textBox))
+            TextBoxStyle defaultStyle;
+            lock (textBoxStyles)
             {
-                TextBoxStyle defaultStyle = GetDefaultStyle(textBox);
-
-                UnwireTextBoxEvents(textBox);
-                textBoxStyles.Remove(textBox);
-
-                defaultStyle.ApplyStyle(textBox);
+                if (textBoxStyles.TryGetValue(textBox, out defaultStyle))
+                {
+                    UnwireTextBoxEvents(textBox);
+                    textBoxStyles.Remove(textBox);
+                }
             }
+
+            if (defaultStyle != null)
+                defaultStyle.ApplyStyle(textBox);
         }
         #endregion
 
@@ -189,9 +202,12 @@ namespace Plethora.Windows.Forms.Styles
         /// </summary>
         protected void StyliseAllRegisteredTextBoxes()
         {
-            foreach (TextBox textBox in textBoxStyles.Keys)
+            lock (textBoxStyles)
             {
-                Stylise(textBox);
+                foreach (TextBox textBox in textBoxStyles.Keys)
+                {
+                    Stylise(textBox);
+                }
             }
         }
 
@@ -226,77 +242,49 @@ namespace Plethora.Windows.Forms.Styles
         protected TextBoxStyle GetDefaultStyle(TextBox textBox)
         {
             TextBoxStyle defaultStyle;
-            if (!this.textBoxStyles.TryGetValue(textBox, out defaultStyle))
-                return null;
-
+            lock (textBoxStyles)
+            {
+                if (!this.textBoxStyles.TryGetValue(textBox, out defaultStyle))
+                    return null;
+            }
             return defaultStyle;
         }
         #endregion
-    }
 
-    /// <summary>
-    /// A <see cref="TextBoxStyliser"/> presented as a component.
-    /// </summary>
-    /// <remarks>
-    /// If <see cref="TextBoxStyliser"/> implemented the <see cref="IComponent"/> interface,
-    /// or inheritted from the <see cref="Component"/> class, the
-    /// <see cref="System.ComponentModel.Design.Serialization.InstanceDescriptor"/> used in the
-    /// converter (see <see cref="Plethora.ComponentModel.DefaultReferenceConverter"/>) would not
-    /// render the default instance correctly, due to code access security (cas) permissions.
-    /// </remarks>
-    public class TextBoxStyliserComponent : TextBoxStyliser, IComponent
-    {
-        #region Fields
+        #region Private Members
 
-        private readonly Component component = new Component();
-        #endregion
+        #region textBoxStyles Cleanup
 
-        #region Constructors
+        private const int LOW_ACTIVITY_TIMER = 5 * 60 * 1000; // 5 min
+        private const int HIGH_ACTIVITY_TIMER = 2 * 1000;     // 2 sec
 
-        public TextBoxStyliserComponent()
+        private readonly Timer stylesCleanupTimer;
+        private int inCleanUp = 0;
+
+        private void stylesCleanup(object state)
         {
-        }
+            if (Interlocked.CompareExchange(ref inCleanUp, 1, 0) != 0)
+                return;
 
-        public TextBoxStyliserComponent(IContainer container)
-            : this()
-        {
-            container.Add(this);
-        }
-        #endregion
+            try
+            {
+                bool anyCleanup;
+                lock(textBoxStyles)
+                {
+                    anyCleanup = textBoxStyles.TrimExcess();
+                }
 
-        #region Implementation of IDisposable
-
-        /// <summary>
-        /// Performs application-defined tasks associated with freeing, releasing,
-        /// or resetting unmanaged resources.
-        /// </summary>
-        public void Dispose()
-        {
-            component.Dispose();
+                if (anyCleanup)
+                    stylesCleanupTimer.Change(HIGH_ACTIVITY_TIMER, HIGH_ACTIVITY_TIMER);
+                else
+                    stylesCleanupTimer.Change(LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
+            }
+            finally
+            {
+                inCleanUp = 0;
+            }
         }
         #endregion
-
-        #region Implementation of IComponent
-
-        /// <summary>
-        /// Gets or sets the <see cref="ISite"/> associated with the <see cref="IComponent"/>.
-        /// </summary>
-        /// <returns>
-        /// The <see cref="ISite"/> object associated with the component;
-        /// or null, if the component does not have a site.
-        /// </returns>
-        public ISite Site
-        {
-            get { return component.Site; }
-            set { component.Site = value; }
-        }
-
-        public event EventHandler Disposed
-        {
-            add { component.Disposed += value; }
-            remove { component.Disposed -= value; }
-        }
-
         #endregion
     }
 }

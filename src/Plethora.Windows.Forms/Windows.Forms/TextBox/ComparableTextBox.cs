@@ -7,8 +7,6 @@ using Plethora.Win32;
 
 namespace Plethora.Windows.Forms
 {
-    //TODO: Write a designer to set default styliser
-
     /// <summary>
     /// TextBox which restricts user input to values of a type derived from <see cref="IComparable"/>.
     /// </summary>
@@ -47,8 +45,7 @@ namespace Plethora.Windows.Forms
             if (typeof(IComparable).IsAssignableFrom(type))
                 return;
 
-            //TODO: error message
-            throw new InvalidCastException("Generic argument must implement IComparable, IComparable<T>, or inherit from Nullable<IComparable<T>>, or Nullable<IComparable>");
+            throw new InvalidCastException(ResourceProvider.GenericArgMustBeIComparable());
         }
         #endregion
 
