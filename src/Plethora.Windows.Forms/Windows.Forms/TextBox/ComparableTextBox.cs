@@ -24,7 +24,7 @@ namespace Plethora.Windows.Forms
     [DefaultBindingProperty("Value")]
     [DefaultEvent("ValueChanged")]
     [DefaultProperty("Value")]
-    public abstract class ComparableTextBox<T> : RestrictedTextBox, IComparableValueProvider
+    public abstract class ComparableTextBox<T> : RestrictedTextBox, IValueProvider
     {
         #region Static Methods
 
@@ -300,9 +300,9 @@ namespace Plethora.Windows.Forms
             }
         }
 
-        IComparable IComparableValueProvider.Value
+        object IValueProvider.Value
         {
-            get { return this.Value as IComparable; }
+            get { return this.Value; }
         }
 
         /// <summary>

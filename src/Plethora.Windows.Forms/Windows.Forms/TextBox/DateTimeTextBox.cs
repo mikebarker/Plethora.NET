@@ -8,7 +8,15 @@ using Plethora.Format;
 namespace Plethora.Windows.Forms
 {
     [System.ComponentModel.DesignerCategory("Code")]
-    public class DateTimeTextBox : ComparableTextBox<DateTime>
+    public class DateTimeTextBox : DateTimeTextBoxBase
+    {
+    }
+
+    /// <summary>
+    /// Intermediate class required to "fool" the designers to construct the <see cref="DateTimeTextBox"/>.
+    /// </summary>
+    [Browsable(false)]
+    public class DateTimeTextBoxBase : ComparableTextBox<DateTime>
     {
         #region Fields
 
@@ -22,9 +30,9 @@ namespace Plethora.Windows.Forms
         #region Constructors
 
         /// <summary>
-        /// Initialise a new instance of the <see cref="DateTimeTextBox"/> class.
+        /// Initialise a new instance of the <see cref="DateTimeTextBoxBase"/> class.
         /// </summary>
-        public DateTimeTextBox()
+        public DateTimeTextBoxBase()
         {
             this.FormatParser = DateTimeFormatParser.Default;
 

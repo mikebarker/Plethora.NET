@@ -54,6 +54,7 @@
     <Compile Include="Format\NullableNumericFormatParser.cs" />
     <Compile Include="Format\NumericFormatParser.cs" />
     <Compile Include="IO\TextBoxWriter.cs" />
+    <Compile Include="IValueProvider.cs" />
     <Compile Include="Win32\Win32Msg.cs" />
     <Compile Include="Windows.Forms\ControlAttributes.cs" />
     <Compile Include="Windows.Forms\ControlHelper.cs" />
@@ -78,14 +79,7 @@
     <Compile Include="Windows.Forms\TextBox\NullableIntegerTextBox.cs" />
     <Compile Include="Windows.Forms\TextBox\NullableRealTextBox.cs" />
     <Compile Include="Windows.Forms\TextBox\RestrictedTextBox.cs" />
-    <Compile Include="Windows.Forms\TextBox\Styles\NullableNumericTextBoxStyliser.cs" />
-    <Compile Include="Windows.Forms\TextBox\Styles\NullableNumericTextBoxStyliser.Converter.cs">
-      <DependentUpon>NullableNumericTextBoxStyliser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Windows.Forms\TextBox\Styles\NullableNumericTextBoxStyliser.Designer.cs">
-      <DependentUpon>NullableNumericTextBoxStyliser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Windows.Forms\TextBox\Styles\IValueTextBox.cs" />
+    <Compile Include="Windows.Forms\TextBox\Styles\ControlStyle.cs" />
     <Compile Include="Windows.Forms\TextBox\Styles\NumericTextBoxStyliser.cs" />
     <Compile Include="Windows.Forms\TextBox\Styles\NumericTextBoxStyliser.Converter.cs">
       <DependentUpon>NumericTextBoxStyliser.cs</DependentUpon>
@@ -94,7 +88,6 @@
       <DependentUpon>NumericTextBoxStyliser.cs</DependentUpon>
     </Compile>
     <Compile Include="Windows.Forms\TextBox\Styles\TextBoxStyle.cs">
-      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Windows.Forms\TextBox\Styles\TextBoxStyliser.cs" />
     <Compile Include="Windows.Forms\TextBox\Styles\TextBoxStyliser.Converter.cs">
