@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Text;
 using Plethora.Properties;
 
 namespace Plethora
@@ -21,6 +22,14 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'ArgAddingDuplicate'.
+        /// </summary>
+        public static string ArgAddingDuplicate()
+        {
+            return Resources.ArgAddingDuplicate;
+        }
+
+        /// <summary>
         /// Returns the resource string 'ArgInvalid' with
         /// substitutions made.
         /// </summary>
@@ -28,6 +37,17 @@ namespace Plethora
         public static string ArgInvalid(string arg)
         {
             return StringFormat(Resources.ArgInvalid, arg);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgInvaliadOffsetLength' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="offsetArg">The name of the offset argument.</param>
+        /// <param name="lengthArg">The name of the length argument.</param>
+        public static string ArgInvaliadOffsetLength(string offsetArg, string lengthArg)
+        {
+            return StringFormat(Resources.ArgInvaliadOffsetLength, offsetArg, lengthArg);
         }
 
         /// <summary>
@@ -165,6 +185,29 @@ namespace Plethora
         public static string ArgMustBeOfType(string arg, Type type)
         {
             return StringFormat(Resources.ArgMustBeOfType, arg, type.Name);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgMustBeOneOf' with
+        /// substitutions made.
+        /// </summary>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="values">The valid values allowed for the argument.</param>
+        public static string ArgMustBeOneOf(string arg, params object[] values)
+        {
+            StringBuilder sb = new StringBuilder();
+            bool isFirst = true;
+            foreach (var value in values)
+            {
+                if (isFirst)
+                    isFirst = false;
+                else
+                    sb.Append(", ");
+
+                sb.Append(value);
+            }
+
+            return StringFormat(Resources.ArgMustBeOneOf, arg, sb.ToString());
         }
 
         /// <summary>

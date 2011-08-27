@@ -70,6 +70,24 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The item already exists in the collection..
+        /// </summary>
+        internal static string ArgAddingDuplicate {
+            get {
+                return ResourceManager.GetString("ArgAddingDuplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offset and length were out of bounds for the collection or &apos;{1}&apos; is greater than the number of elements from &apos;{0}&apos; to the end of the source collection..
+        /// </summary>
+        internal static string ArgInvaliadOffsetLength {
+            get {
+                return ResourceManager.GetString("ArgInvaliadOffsetLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; was invalid..
         /// </summary>
         internal static string ArgInvalid {
@@ -129,6 +147,15 @@ namespace Plethora.Properties {
         internal static string ArgMustBeOfType {
             get {
                 return ResourceManager.GetString("ArgMustBeOfType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be one of {1}..
+        /// </summary>
+        internal static string ArgMustBeOneOf {
+            get {
+                return ResourceManager.GetString("ArgMustBeOneOf", resourceCulture);
             }
         }
         
