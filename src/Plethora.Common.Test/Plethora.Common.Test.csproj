@@ -39,6 +39,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
@@ -61,6 +63,7 @@
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
+    <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
     <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
     <Compile Include="ExpressionAide\ExpressionDuplicatorWithClosurePromotion_Test.cs" />
