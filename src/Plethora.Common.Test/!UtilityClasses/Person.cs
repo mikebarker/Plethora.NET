@@ -1,9 +1,28 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Plethora.Test.UtilityClasses
 {
     public class Person
     {
+        public class NameComparer : IComparer<Person>
+        {
+            #region Implementation of IComparer<Person>
+
+            public int Compare(Person x, Person y)
+            {
+                int result;
+                result = string.Compare(x.FamilyName, y.FamilyName);
+                if (result != 0)
+                    return result;
+
+                result = string.Compare(x.GivenName, y.GivenName);
+                return result;
+            }
+
+            #endregion
+        }
+
         private static long lastId = 0;
 
         private readonly long id;
@@ -52,5 +71,9 @@ namespace Plethora.Test.UtilityClasses
             get { return dateOfBirth.Year - DateTime.Now.Year; }
         }
 
+        public override string ToString()
+        {
+            return "Person [" + ID + ": " + FamilyName + ", " + GivenName + "]";
+        }
     }
 }

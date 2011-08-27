@@ -51,9 +51,9 @@ namespace Plethora.Collections
         public SortedList(DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
         {
             //Validation
-            if ((duplicatesPolicy != DuplicatesPolicy.Allow) ||
-                (duplicatesPolicy != DuplicatesPolicy.Ignor) ||
-                (duplicatesPolicy != DuplicatesPolicy.Replace) ||
+            if ((duplicatesPolicy != DuplicatesPolicy.Allow) &&
+                (duplicatesPolicy != DuplicatesPolicy.Ignor) &&
+                (duplicatesPolicy != DuplicatesPolicy.Replace) &&
                 (duplicatesPolicy != DuplicatesPolicy.Error))
             {
                 throw new ArgumentOutOfRangeException("duplicatesPolicy", duplicatesPolicy,
@@ -123,6 +123,11 @@ namespace Plethora.Collections
         /// </returns>
         public int Add(T item)
         {
+            //Validation
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+
             int index = this.BinarySearch(item);
 
             if (index >= 0)
@@ -172,6 +177,9 @@ namespace Plethora.Collections
         /// <param name="item">The object to locate in the <see cref="ICollection{T}"/>.</param>
         public bool Contains(T item)
         {
+            if (item == null)
+                throw new ArgumentNullException("item");
+
             int index = this.BinarySearch(item);
             return (index >= 0);
         }
@@ -328,6 +336,11 @@ namespace Plethora.Collections
 
         public int BinarySearch(int index, int count, T item)
         {
+            //Validation
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+
             int result = this.innerList.BinarySearch(index, count, item, comparer);
             return result;
         }
