@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
@@ -351,6 +352,281 @@ namespace Plethora.Test.Collections
                 Assert.Fail();
             }
             catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+        #endregion
+
+        #region CopyTo
+
+        [Test]
+        public void CopyTo()
+        {
+            //setup
+            Person[] array = new Person[3];
+
+            //exec
+            sortedList.CopyTo(array, 0);
+
+            //test
+            Assert.AreEqual(0, Array.IndexOf(array, Fred_Carlile));
+            Assert.AreEqual(1, Array.IndexOf(array, Amy_Cathson));
+            Assert.AreEqual(2, Array.IndexOf(array, Bob_Jameson));
+        }
+
+        [Test]
+        public void CopyTo_NonZero()
+        {
+            //setup
+            Person[] array = new Person[5];
+
+            //exec
+            sortedList.CopyTo(array, 2);
+
+            //test
+            Assert.AreEqual(2, Array.IndexOf(array, Fred_Carlile));
+            Assert.AreEqual(3, Array.IndexOf(array, Amy_Cathson));
+            Assert.AreEqual(4, Array.IndexOf(array, Bob_Jameson));
+        }
+        #endregion
+
+        #region Count
+
+        [Test]
+        public void Count()
+        {
+            //exec
+            int count = sortedList.Count;
+
+            //test
+            Assert.AreEqual(3, count);
+        }
+        #endregion
+
+        #region GetEnumerator
+
+        [Test]
+        public void GetEnumerator()
+        {
+            //exec
+            var enumerator = sortedList.GetEnumerator();
+
+            //test
+            Assert.IsNotNull(enumerator);
+
+            int i = 0;
+            foreach (var person in sortedList)
+            {
+                if ((person != Bob_Jameson) &&
+                    (person != Fred_Carlile) &&
+                    (person != Amy_Cathson))
+                {
+                    Assert.Fail("Invalid person in itteration.");
+                }
+                i++;
+            }
+            Assert.AreEqual(3, i);
+        }
+        #endregion
+
+        #region IsReadOnly
+
+        [Test]
+        public void IsReadOnly()
+        {
+            //exec
+            bool isReadonly = ((IList<Person>)sortedList).IsReadOnly;
+
+            //test
+            Assert.IsFalse(isReadonly);
+        }
+        #endregion
+
+        #region Remove
+
+        [Test]
+        public void Remove_InCollection()
+        {
+            //exec
+            bool result = sortedList.Remove(Bob_Jameson);
+
+            //test
+            Assert.IsTrue(result);
+            Assert.AreEqual(2, sortedList.Count);
+        }
+
+        [Test]
+        public void Remove_NotInCollection()
+        {
+            //exec
+            bool result = sortedList.Remove(Jill_Dorrman);
+
+            //test
+            Assert.IsFalse(result);
+            Assert.AreEqual(3, sortedList.Count);
+        }
+
+        [Test]
+        public void Remove_Fail_Null()
+        {
+            try
+            {
+                //exec
+                sortedList.Remove(null);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+        #endregion
+
+        #region RemoveAt
+
+        [Test]
+        public void RemoveAt_InCollection()
+        {
+            //exec
+            sortedList.RemoveAt(1);
+
+            //test
+            Assert.AreEqual(2, sortedList.Count);
+            Assert.AreEqual(Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Bob_Jameson, sortedList[1]);
+        }
+
+        [Test]
+        public void RemoveAt_Fail_TooLarge()
+        {
+            try
+            {
+                //exec
+                sortedList.RemoveAt(5);
+
+                Assert.Fail();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void RemoveAt_Fail_Negative()
+        {
+            try
+            {
+                //exec
+                sortedList.RemoveAt(-2);
+
+                Assert.Fail();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+        #endregion
+
+        #region RemoveAll
+
+        [Test]
+        public void RemoveAll()
+        {
+            //exec
+            int count = sortedList.RemoveAll(person => person.FamilyName.StartsWith("C"));
+
+            //test
+            Assert.AreEqual(2, count);
+            Assert.AreEqual(1, sortedList.Count);
+        }
+
+        [Test]
+        public void RemoveAll_None()
+        {
+            //exec
+            int count = sortedList.RemoveAll(person => false);
+
+            //test
+            Assert.AreEqual(0, count);
+            Assert.AreEqual(3, sortedList.Count);
+        }
+
+        [Test]
+        public void RemoveAll_Fail_Null()
+        {
+            try
+            {
+                //exec
+                sortedList.RemoveAll(null);
+
+                Assert.Fail();
+            }
+            catch (ArgumentNullException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+        #endregion
+
+        #region RemoveRange
+
+        [Test]
+        public void RemoveRange()
+        {
+            //exec
+            sortedList.RemoveRange(0, 2);
+
+            //test
+            Assert.AreEqual(1, sortedList.Count);
+        }
+
+        [Test]
+        public void RemoveRange_Fail_IndexInvalid()
+        {
+            try
+            {
+                //exec
+                sortedList.RemoveRange(-1, 2);
+
+                Assert.Fail();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void RemoveRange_Fail_CountInvalid()
+        {
+            try
+            {
+                //exec
+                sortedList.RemoveRange(0, -2);
+
+                Assert.Fail();
+            }
+            catch (ArgumentOutOfRangeException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void RemoveRange_Fail_IndexCountInvalid()
+        {
+            try
+            {
+                //exec
+                sortedList.RemoveRange(1, 5);
+
+                Assert.Fail();
+            }
+            catch (ArgumentException ex)
             {
                 Assert.IsNotNull(ex);
             }
