@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 namespace Plethora.Collections
 {
     /// <summary>
-    /// A list in which he elements are sorted according to the comparer provided.
+    /// A list in which the elements are sorted according to the comparer provided.
     /// </summary>
     /// <typeparam name="T">
     /// The data type of the elements in the list
@@ -304,7 +304,7 @@ namespace Plethora.Collections
         }
         #endregion
 
-        #region Emunlation of List<T>
+        #region Emulation of List<T>
 
         public void AddRange(IEnumerable<T> enumerable)
         {
@@ -443,7 +443,7 @@ namespace Plethora.Collections
 
             //List not necessarily unique. Find first matching item using linear search
             int nextIndexOf = indexOf - 1;
-            while ((nextIndexOf > 0) && (comparer.Compare(item, this[nextIndexOf]) == 0))
+            while ((nextIndexOf >= index) && (comparer.Compare(item, this[nextIndexOf]) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf--;

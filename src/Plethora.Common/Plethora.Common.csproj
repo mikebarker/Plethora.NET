@@ -40,6 +40,7 @@
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
+    <Compile Include="IO\TextReaderHelper.cs" />
     <Compile Include="Linq\List.cs" />
     <Compile Include="Logging\Exceptions\IsLoggedException.cs" />
     <Compile Include="Logging\Exceptions\LoggedException.cs" />
