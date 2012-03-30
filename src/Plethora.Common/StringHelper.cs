@@ -28,13 +28,27 @@ namespace Plethora
             {
                 if (whiteSpace == null)
                 {
-                    List<char> whitespaceList = new List<char>(30);
+                    List<char> whitespaceList = new List<char>(32);
+
+                    //The loop should include the upper bound char.MaxValue
+                    // (i.e. the test should be i <= char.MaxValue) but since when i
+                    // reaches char.MaxValue then i++ will result in char.MinValue, for
+                    // which the test condition will evaluate to true. This will result in
+                    // an infinite loop.
+                    // Therefore the test for i == char.MaxValue is done outside the loop.
+                    //
+                    // One could say that char.MaxValue is constant and is not a whitespace
+                    // character, and therefore exclude it here. However, that would make this
+                    // function dependant on the implementation of char.
                     for (char i = char.MinValue; i < char.MaxValue; i++)
                     {
-                        var whitespaceChar = i;
-                        if (char.IsWhiteSpace(whitespaceChar))
-                            whitespaceList.Add(whitespaceChar);
+                        if (char.IsWhiteSpace(i))
+                            whitespaceList.Add(i);
                     }
+
+                    if (char.IsWhiteSpace(char.MaxValue))
+                        whitespaceList.Add(char.MaxValue);
+
                     whiteSpace = whitespaceList.ToArray();
                 }
 

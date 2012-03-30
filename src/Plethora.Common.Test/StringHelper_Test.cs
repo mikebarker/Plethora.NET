@@ -14,8 +14,9 @@ namespace Plethora.Test
         //                                       0 1234567890123456789 0123456789012345
         private const string lotsOfWhiteSpace = " \t  lots  of  white \t space.     ";
 
-        //First character not in this set should be 'a'.
-        //Last character not in this set should be 'r'.
+        //For the variable s above:
+        // the first character not in this set should be 'a'.
+        // the last character not in this set should be 'r'.
         private readonly char[] notOfAny = new[] { 'T', 'h', 'i', 's', ' ', 't', 'n', 'g', '.' };
 
         #region WhiteSpace
