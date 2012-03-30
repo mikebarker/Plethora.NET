@@ -36,8 +36,8 @@ namespace Plethora.StringFormat
         /// 
         /// TODO: Known issues: 
         ///  <list>
-        ///   <item>Named items within doubled braces are still replaced, when they should not be.</item>
         ///   <item>Whitespace may not occur within the format item identifier.</item>
+        ///   <item>Named items within doubled braces are still replaced, when they should not be.</item>
         ///  </list>
         /// </remarks>
         public static string ReplaceNamedFormat(this string format, string name, int index)
