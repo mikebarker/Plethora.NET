@@ -11,6 +11,88 @@ namespace Plethora.fqi.Example
     {
         static readonly Random rnd = new Random(173);
 
+        static void Profile()
+        {
+            const int ELEMENT_COUNT = 1000000;
+            const int LOOKUPS = 10000;
+
+            Console.WriteLine("Generating random Price elements.");
+
+            //Keep generation of price objects outside the population loop so that
+            // population times are not skewed by creation time
+            List<Price> collection = new List<Price>(ELEMENT_COUNT);
+            for (int i = 0; i < ELEMENT_COUNT; i++)
+            {
+                var price = Price.GenerateRandom();
+
+                collection.Add(price);
+            }
+
+#if USE_INDEX
+            var spec = new MultiIndexSpecification<Price>();
+            spec
+                .AddIndex(false, p => p.PriceDate).Then(p => p.Currency);
+
+            var prices = new MultiIndexedCollection<Price>(spec);
+#else
+            var prices = new List<Price>();
+#endif
+            Console.WriteLine("Utilising collection type {0}.", prices.GetType().Name);
+            Console.WriteLine();
+            Console.WriteLine("Adding {0} objects to collection.", ELEMENT_COUNT);
+
+            DateTime start0 = DateTime.Now;
+            foreach (var price in collection)
+            {
+                prices.Add(price);
+            }
+            DateTime stop0 = DateTime.Now;
+            TimeSpan duration0 = stop0 - start0;
+
+
+            Console.WriteLine("Add Duration: {0}", duration0.ToString());
+            Console.WriteLine();
+
+            Console.WriteLine("Press any key...");
+            Console.ReadKey(true);
+            Console.WriteLine("Go...");
+
+            Console.WriteLine();
+            Console.WriteLine("Executing {0} random lookups over {1} objects...", LOOKUPS, ELEMENT_COUNT);
+
+            //Again, keep constructions outside from the loop to prevent
+            // skewing of results
+            PriceArg arg = new PriceArg(); //Pick a price at random
+            var f = prices.Where(r => (r.PriceDate == arg.PriceDate)).Where(r => (r.Currency == arg.Currency));
+
+            DateTime start2 = DateTime.Now;
+            for (int i = 0; i < LOOKUPS; i++)
+            {
+                int c = rnd.Next(0, ELEMENT_COUNT);
+                arg.Currency = collection[c].Currency;
+                arg.PriceDate = collection[c].PriceDate;
+
+                var g = f.First();
+            }
+            DateTime stop2 = DateTime.Now;
+            TimeSpan duration2 = stop2 - start2;
+
+            Console.WriteLine("Random lookup duration: {0}", duration2.ToString());
+            Console.WriteLine();
+        }
+
+        /// <summary>
+        /// The main entry point for the application.
+        /// </summary>
+        [STAThread]
+        static void Main()
+        {
+            Profile();
+
+            Console.WriteLine("Press any key...");
+            Console.ReadKey(true);
+        }
+
         class Price
         {
             public long InstrumentId { get; private set; }
@@ -68,87 +150,6 @@ namespace Plethora.fqi.Example
         {
             public DateTime PriceDate { get; set; }
             public string Currency { get; set; }
-        }
-
-        static void Profile()
-        {
-            const int ELEMENT_COUNT = 100000;
-            const int LOOKUPS = 10000;
-
-            Console.WriteLine("Generating random Price elements.");
-
-            //Keep generation of price objects outside the population loop so that
-            // population times are not skewed by creation time
-            List<Price> collection = new List<Price>(ELEMENT_COUNT);
-            for (int i = 0; i < ELEMENT_COUNT; i++)
-            {
-                var price = Price.GenerateRandom();
-
-                collection.Add(price);
-            }
-
-#if USE_INDEX
-            var spec = new MultiIndexSpecification<Price>();
-            spec
-                .AddIndex(false, p => p.PriceDate).Then(p => p.Currency);
-
-            var prices = new MultiIndexedCollection<Price>(spec);
-#else
-            var prices = new List<Price>();
-#endif
-            Console.WriteLine("Utilising collection type {0}.", prices.GetType().Name);
-            Console.WriteLine();
-            Console.WriteLine("Adding {0} objects to collection.", ELEMENT_COUNT);
-
-            DateTime start0 = DateTime.Now;
-            foreach (var price in collection)
-            {
-                prices.Add(price);
-            }
-            DateTime stop0 = DateTime.Now;
-            TimeSpan duration0 = stop0 - start0;
-
-
-            Console.WriteLine("Add Duration: {0}", duration0.ToString());
-            Console.WriteLine();
-            Console.WriteLine("Press any key...");
-            Console.ReadKey(true);
-            Console.WriteLine("Go...");
-
-
-            //Again, keep constructions outside from the loop to prevent
-            // skewing of results
-            PriceArg arg = new PriceArg(); //Pick a price at random
-            var f = prices.Where(r => (r.PriceDate == arg.PriceDate)).Where(r => (r.Currency == arg.Currency));
-
-            DateTime start2 = DateTime.Now;
-            for (int i = 0; i < LOOKUPS; i++)
-            {
-                int c = rnd.Next(0, ELEMENT_COUNT);
-                arg.Currency = collection[c].Currency;
-                arg.PriceDate = collection[c].PriceDate;
-
-                var g = f.First();
-            }
-            DateTime stop2 = DateTime.Now;
-            TimeSpan duration2 = stop2 - start2;
-
-            Console.WriteLine();
-            Console.WriteLine("Executed {0} random lookups over {1} objects.", LOOKUPS, ELEMENT_COUNT);
-            Console.WriteLine("Random lookup duration: {0}", duration2.ToString());
-            Console.WriteLine();
-        }
-
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
-        {
-            Profile();
-
-            Console.WriteLine("Press any key...");
-            Console.ReadKey(true);
         }
 
     }

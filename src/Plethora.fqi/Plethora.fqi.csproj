@@ -45,6 +45,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IIndexSpecification.cs" />
+    <Compile Include="SingleIndexSpecification.cs" />
     <Compile Include="Trees\AvlMultiTree.cs" />
     <Compile Include="Trees\AvlTree.cs" />
     <Compile Include="Trees\BinaryTree.cs" />

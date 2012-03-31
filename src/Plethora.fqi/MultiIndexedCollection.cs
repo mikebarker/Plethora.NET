@@ -21,16 +21,32 @@ namespace Plethora.fqi
         /// <summary>
         /// Initialises a new instance of the <see cref="MultiIndexedCollection{T}"/> class.
         /// </summary>
-        public MultiIndexedCollection(IEnumerable<IIndexSpecification> multiIndexSpec)
+        public MultiIndexedCollection(MultiIndexSpecification<T> multiIndexSpec)
+            : this((IEnumerable<IIndexSpecification>)multiIndexSpec)
         {
-            if (multiIndexSpec == null)
-                throw new ArgumentNullException("multiIndexSpec");
+        }
 
-            if (multiIndexSpec.Count() == 0)
-                throw new ArgumentException("multiIndexSpec must contain at least one index.", "multiIndexSpec");
+        /// <summary>
+        /// Initialises a new instance of the <see cref="MultiIndexedCollection{T}"/> class.
+        /// </summary>
+        public MultiIndexedCollection(SingleIndexSpecification<T> indexSpec)
+            : this(Enumerable.Repeat((IIndexSpecification)indexSpec, 1))
+        {
+        }
+
+        /// <summary>
+        /// Initialises a new instance of the <see cref="MultiIndexedCollection{T}"/> class.
+        /// </summary>
+        private MultiIndexedCollection(IEnumerable<IIndexSpecification> indexSpecifications)
+        {
+            if (indexSpecifications == null)
+                throw new ArgumentNullException("indexSpecifications");
+
+            if (!indexSpecifications.Any())
+                throw new ArgumentException("indexSpecifications must contain at least one index.", "indexSpecifications");
 
 
-            foreach (var index in multiIndexSpec)
+            foreach (var index in indexSpecifications)
             {
                 indices.Add(new IndexedCollection<T>(index.IsUnique, index.IndexExpressions.ToArray()));
             }
