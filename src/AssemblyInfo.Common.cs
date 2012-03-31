@@ -24,7 +24,7 @@ using System.Security.Permissions;
 
 // Version
 [assembly: AssemblyVersion("0.8.*")]
-[assembly: AssemblyFileVersion("0.8.0.1")]
+[assembly: AssemblyFileVersion("0.8.1.0")]
 
 // Interoperability
 [assembly: ComVisible(false)]
