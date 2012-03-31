@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi.Example", "Ple
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi.Test", "Plethora.fqi.Tests\Plethora.fqi.Test.csproj", "{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache", "Plethora.Cache\Plethora.Cache.csproj", "{C80DB42E-C7EA-4CF4-9F23-564F86983D01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache.Example", "Plethora.Cache.Example\Plethora.Cache.Example.csproj", "{F8B5E73A-8AD4-430C-951D-26C77E0603FC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -79,6 +83,14 @@ Global
 		{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C80DB42E-C7EA-4CF4-9F23-564F86983D01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C80DB42E-C7EA-4CF4-9F23-564F86983D01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C80DB42E-C7EA-4CF4-9F23-564F86983D01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C80DB42E-C7EA-4CF4-9F23-564F86983D01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
