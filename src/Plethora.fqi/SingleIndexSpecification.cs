@@ -15,25 +15,23 @@ namespace Plethora.fqi
     /// This fluid interface allows indices to be defined as follows:
     /// <code>
     /// <![CDATA[
-    /// var indexSpecification = new MultiIndexSpecification<DateTime>()
-    ///     .AddIndex(true, dt => dt.Year).Then(dt => dt.Month).Then(dt => dt.Day)
-    ///     .AddIndex(false, dt => dt.Hour).Then(dt => dt.Minute).Then (dt=> dt.Second);
+    /// var indexSpecification = new SingleIndexSpecification<DateTime>()
+    ///     .AddIndex(true, dt => dt.Year).Then(dt => dt.Month).Then(dt => dt.Day);
     /// ]]>
     /// </code>
     /// In this example the index specification states that a unique index is declared on the
-    /// Year, Month and Day of the underlying data, and a second non-unique index is declared
-    /// on the Hour, Minute and Second values.
+    /// Year, Month and Day of the underlying data.
     /// </example>
     /// </remarks>
     /// <seealso cref="SingleIndexSpecification{T}"/>
-    public class MultiIndexSpecification<T> : IEnumerable<IIndexSpecification>
+    public class SingleIndexSpecification<T> : IIndexSpecification, IEnumerable<IIndexSpecification>
     {
-        /// <seealso cref="MultiIndexSpecification{T}"/>
+        /// <seealso cref="SingleIndexSpecification{T}"/>
         public class IndexSpecification : IIndexSpecification
         {
             #region Fields
 
-            private readonly MultiIndexSpecification<T> parent;
+            private readonly SingleIndexSpecification<T> parent;
             private readonly List<LambdaExpression> indexExpressions = new List<LambdaExpression>();
             private readonly bool isUnique;
             #endregion
@@ -43,7 +41,7 @@ namespace Plethora.fqi
             /// <summary>
             /// Initialises a new instance of the <see cref="IndexSpecification"/> class.
             /// </summary>
-            internal IndexSpecification(bool unique, MultiIndexSpecification<T> parent, LambdaExpression expression)
+            internal IndexSpecification(bool unique, SingleIndexSpecification<T> parent, LambdaExpression expression)
             {
                 this.parent = parent;
                 this.isUnique = unique;
@@ -53,29 +51,6 @@ namespace Plethora.fqi
             #endregion
 
             #region Public Methods
-
-            /// <summary>
-            /// Declares a new index, with top level property.
-            /// </summary>
-            /// <typeparam name="TProperty">The return type of the indexed property.</typeparam>
-            /// <param name="propertyExpressions">The expression usde to retrieve the property value.</param>
-            /// <returns>A fluid index declaration interface.</returns>
-            public IndexSpecification AddIndex<TProperty>(Expression<Func<T, TProperty>> propertyExpressions)
-            {
-                return this.parent.AddIndex(propertyExpressions);
-            }
-
-            /// <summary>
-            /// Declares a new index, with top level property.
-            /// </summary>
-            /// <typeparam name="TProperty">The return type of the indexed property.</typeparam>
-            /// <param name="unique">true if the index is to be unique across all properties in the specification; else false.</param>
-            /// <param name="propertyExpressions">The expression usde to retrieve the property value.</param>
-            /// <returns>A fluid index declaration interface.</returns>
-            public IndexSpecification AddIndex<TProperty>(bool unique, Expression<Func<T, TProperty>> propertyExpressions)
-            {
-                return this.parent.AddIndex(unique, propertyExpressions);
-            }
 
             /// <summary>
             /// Identifies the next indexed property in an index.
@@ -113,7 +88,7 @@ namespace Plethora.fqi
 
         #region Fields
 
-        private readonly List<IndexSpecification> indices = new List<IndexSpecification>();
+        private IndexSpecification index;
         #endregion
 
         #region Public Methods
@@ -127,10 +102,13 @@ namespace Plethora.fqi
         /// <remarks>The index created is not unique.</remarks>
         public IndexSpecification AddIndex<TProperty>(Expression<Func<T, TProperty>> propertyExpressions)
         {
-            var index = new IndexSpecification(DEFAULT_UNIQUE, this, propertyExpressions);
-            this.indices.Add(index);
+            //Validation
+            if (this.index != null)
+                throw new InvalidOperationException("Index has already been added.");
 
-            return index;
+
+            this.index = new IndexSpecification(DEFAULT_UNIQUE, this, propertyExpressions);
+            return this.index;
         }
 
         /// <summary>
@@ -142,10 +120,13 @@ namespace Plethora.fqi
         /// <returns>A fluid index declaration interface.</returns>
         public IndexSpecification AddIndex<TProperty>(bool unique, Expression<Func<T, TProperty>> propertyExpressions)
         {
-            var index = new IndexSpecification(unique, this, propertyExpressions);
-            this.indices.Add(index);
+            //Validation
+            if (this.index != null)
+                throw new InvalidOperationException("Index has already been added.");
 
-            return index;
+
+            this.index = new IndexSpecification(unique, this, propertyExpressions);
+            return this.index;
         }
         #endregion
 
@@ -159,10 +140,10 @@ namespace Plethora.fqi
         /// </returns>
         IEnumerator<IIndexSpecification> IEnumerable<IIndexSpecification>.GetEnumerator()
         {
-            if (this.indices.Count == 0)
-                throw new InvalidOperationException("Indices have not been added.");
+            if (this.index == null)
+                throw new InvalidOperationException("Index has not been added.");
 
-            return this.indices.OfType<IIndexSpecification>().GetEnumerator();
+            return Enumerable.Repeat(this.index, 1).OfType<IIndexSpecification>().GetEnumerator();
         }
 
         /// <summary>
@@ -174,6 +155,37 @@ namespace Plethora.fqi
         IEnumerator IEnumerable.GetEnumerator()
         {
             return ((IEnumerable<IIndexSpecification>)this).GetEnumerator();
+        }
+        #endregion
+
+        #region Implementation of IIndexSpecification
+
+        /// <summary>
+        /// A list of expressions which retrieve the indexed properties from the underlying data.
+        /// </summary>
+        public IEnumerable<LambdaExpression> IndexExpressions
+        {
+            get
+            {
+                if (this.index == null)
+                    throw new InvalidOperationException("Index has not been added.");
+
+                return ((IIndexSpecification) this.index).IndexExpressions;
+            }
+        }
+
+        /// <summary>
+        /// true if the index is unique across the properties given by <see cref="IIndexSpecification.IndexExpressions"/>.
+        /// </summary>
+        public bool IsUnique
+        {
+            get
+            {
+                if (this.index == null)
+                    throw new InvalidOperationException("Index has not been added.");
+
+                return ((IIndexSpecification)this.index).IsUnique;
+            }
         }
         #endregion
     }
