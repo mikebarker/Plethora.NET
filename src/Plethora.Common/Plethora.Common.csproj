@@ -87,7 +87,9 @@
     <Compile Include="ResourceProvider.cs" />
     <Compile Include="StringFormat\StringFormatHelper.cs" />
     <Compile Include="StringHelper.cs" />
+    <Compile Include="Threading\AggregateWaitHandle.cs" />
     <Compile Include="Threading\SynchronizeInvoke.cs" />
+    <Compile Include="Timing\OperationTimeout.cs" />
     <Compile Include="WeakReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -96,6 +98,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

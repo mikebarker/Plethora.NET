@@ -39,6 +39,8 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
@@ -78,6 +80,7 @@
     <Compile Include="NumericHelper_Test.cs" />
     <Compile Include="StringFormat\StringFormatHelper_Test.cs" />
     <Compile Include="StringHelper_Test.cs" />
+    <Compile Include="Timing\OperationTimeout_Test.cs" />
     <Compile Include="WeakReference_Test.cs" />
   </ItemGroup>
   <ItemGroup>
