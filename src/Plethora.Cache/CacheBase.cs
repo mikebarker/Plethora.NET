@@ -206,12 +206,14 @@ namespace Plethora.Cache
         }
 
 
+        #region Fields
+
         private readonly ReaderWriterLockSlim requestsLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private readonly List<Request> submittedRequests = new List<Request>();
 
         private readonly ReaderWriterLockSlim dataLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private readonly List<TData> data = new List<TData>();
-
+        #endregion
 
         protected IEnumerable<TData> GetData(TArgument argument, int millisecondsTimeout)
         {
@@ -322,9 +324,18 @@ namespace Plethora.Cache
             dataAsyncResult.AsyncWaitHandle.WaitOne();
 
             //The data should now have been cached filter the cache to find the requested data.
-            var requiredData = FilterDataSetByArgument(
-                this.data,
-                dataAsyncResult.OriginatingArgument.Singularity());
+            IEnumerable<TData> requiredData;
+            dataLock.EnterReadLock();
+            try
+            {
+                requiredData = FilterDataSetByArgument(
+                    this.data,
+                    dataAsyncResult.OriginatingArgument.Singularity());
+            }
+            finally
+            {
+                dataLock.ExitReadLock();
+            }
 
             //Use the .CacheResult() linq method to ensure complex filtering is only evaluated once.
             return requiredData.CacheResult();
@@ -384,6 +395,9 @@ namespace Plethora.Cache
             dataLock.EnterWriteLock();
             try
             {
+                int size = this.data.Count + loadedData.Count;
+                if (this.data.Capacity < size)
+                    this.data.Capacity = size;
                 this.data.AddRange(loadedData);
             }
             finally
@@ -453,6 +467,7 @@ namespace Plethora.Cache
 
             List<TArgument> argumentList = new List<TArgument> {newArgument};
 
+            //UpgradableReadLock already taken on requestsLock
             foreach (var submittedRequest in this.submittedRequests)
             {
                 //Get the estimated capacity
