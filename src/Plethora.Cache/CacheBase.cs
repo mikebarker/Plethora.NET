@@ -8,6 +8,7 @@ using Plethora.Timing;
 
 namespace Plethora.Cache
 {
+    //TODO: Optimise: Use better classes than lists for the requests and data
     public abstract class CacheBase<TData, TArgument>
         where TArgument : IArgument<TData, TArgument>
     {
