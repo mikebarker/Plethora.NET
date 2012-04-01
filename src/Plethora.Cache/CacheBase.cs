@@ -388,60 +388,76 @@ namespace Plethora.Cache
             requestsLock.EnterWriteLock();
             try
             {
+                List<Request> remainingRequests;
+                List<Request> nextRemainingRequests = submittedRequests;
+
+                //Remove the requests first then the data.
+                foreach (TArgument dropArgument in arguments)
+                {
+                    remainingRequests = nextRemainingRequests;
+
+                    int count = remainingRequests.Count;
+                    int capacity = count + (count >> 2); // Add 25%
+                    nextRemainingRequests = new List<Request>(capacity);
+
+                    //Drop (dividing where necesasary) any requests which pertain to the
+                    // drop arguments
+                    foreach (Request originalRequest in remainingRequests)
+                    {
+                        IEnumerable<TArgument> remainingArgs;
+                        if (originalRequest.Argument.IsOverlapped(dropArgument, out remainingArgs))
+                        {
+                            //The request must complete before it can "divided".
+                            // It must also complete before the dataLock is taken for
+                            // data removal, otherwise a race condition develops where the 
+                            // retrieved data for the request may only be inserted after
+                            // the delete has occurred. Which would result in data existing
+                            // in the cache without a corresponding request.
+                            // Therefore WaitOne() can not be called inside the
+                            // "if (remainingArgs != null)" block
+                            originalRequest.CompleteWaitHandle.WaitOne();
+
+                            //Create remainder requests from the remainder args, duplicating the state
+                            // of the orginal argument
+                            if (remainingArgs != null)
+                            {
+                                foreach (TArgument remainingArg in remainingArgs)
+                                {
+                                    Request remainingRequest = new Request(remainingArg);
+
+                                    //Test if the original request had been successful, or failed
+                                    Exception ex = originalRequest.Exception;
+                                    if (originalRequest.Exception == null)
+                                        remainingRequest.Success();
+                                    else
+                                        remainingRequest.Fail(ex);
+
+                                    nextRemainingRequests.Add(remainingRequest);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            nextRemainingRequests.Add(originalRequest);
+                        }
+                    }
+                }
+
+                this.submittedRequests = nextRemainingRequests;
+
+                //All WaitOne() calls on the requests must be completed before locking the data
+                // as this could otherwise result in a deadlock (where this thread holds the
+                // write-lock on data, and is waiting for the request to complete... and another
+                // thread is waiting for the write lock on data before marking the request as
+                // complete).
                 dataLock.EnterWriteLock();
                 try
                 {
-                    List<Request> remainingRequests;
-                    List<Request> nextRemainingRequests = submittedRequests;
-
-                    //Remove the requests first then the data.
                     foreach (TArgument dropArgument in arguments)
                     {
-                        remainingRequests = nextRemainingRequests;
-
-                        int count = remainingRequests.Count;
-                        int capacity = count + (count >> 2); // Add 25%
-                        nextRemainingRequests = new List<Request>(capacity);
-
-                        //Drop (dividing where necesasary) any requests which pertain to the
-                        // drop arguments
-                        foreach (Request originalRequest in remainingRequests)
-                        {
-                            originalRequest.CompleteWaitHandle.WaitOne();
-
-                            IEnumerable<TArgument> remainingArgs;
-                            if (originalRequest.Argument.IsOverlapped(dropArgument, out remainingArgs))
-                            {
-                                //Create remainder requests from the remainder args, duplicating the state
-                                // of the orginal argument
-                                if (remainingArgs != null)
-                                {
-                                    foreach (TArgument remainingArg in remainingArgs)
-                                    {
-                                        Request remainingRequest = new Request(remainingArg);
-
-                                        //Test if the original request had been successful, or failed
-                                        Exception ex = originalRequest.Exception;
-                                        if (originalRequest.Exception == null)
-                                            remainingRequest.Success();
-                                        else
-                                            remainingRequest.Fail(ex);
-
-                                        nextRemainingRequests.Add(remainingRequest);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                nextRemainingRequests.Add(originalRequest);
-                            }
-                        }
-
                         //Drop the data
                         data.RemoveAll(dropArgument.IsDataIncluded);
                     }
-
-                    this.submittedRequests = nextRemainingRequests;
                 }
                 finally
                 {
