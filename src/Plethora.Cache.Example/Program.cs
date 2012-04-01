@@ -12,11 +12,25 @@ namespace Plethora.Cache.Example
         {
             SimpleCache simpleCache = new SimpleCache();
 
-            var data0 = simpleCache.GetFoo(1);
-            var data1 = simpleCache.GetFoo(1);
-            var data2 = simpleCache.GetFoo(2);
+            Foo foo;
+            foo = simpleCache.GetFoo(1);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
 
-            int a = 0;
+            foo = simpleCache.GetFoo(1);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+
+            foo = simpleCache.GetFoo(2);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+
+            foo = simpleCache.GetFoo(1);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+
+            foo = simpleCache.GetFoo(2);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+
+            Console.WriteLine();
+            Console.WriteLine("Press any key...");
+            Console.ReadKey(true);
         }
     }
 }
