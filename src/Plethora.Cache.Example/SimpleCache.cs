@@ -15,6 +15,12 @@ namespace Plethora.Cache
             return foos.Single();
         }
 
+        public void DropFooFromCache(int id)
+        {
+            List<FooArg> fooArgs = new List<FooArg> {new FooArg(id)};
+            DropData(fooArgs);
+        }
+
         #region Overrides of CacheBase<Foo,FooArg>
 
         protected override IEnumerable<Foo> GetDataFromSource(
