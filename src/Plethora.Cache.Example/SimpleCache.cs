@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Plethora.Cache
 {
@@ -9,19 +10,19 @@ namespace Plethora.Cache
 
         public Foo GetFoo(int id)
         {
-            FooArg fooArg = new FooArg(id);
-            var foos = GetData(fooArg, 5000);
+            List<FooArg> fooArgs = new List<FooArg> {new FooArg(id)};
+            var foos = GetData(fooArgs, 5000);
             return foos.Single();
         }
 
         #region Overrides of CacheBase<Foo,FooArg>
 
-        protected override IEnumerable<Foo> GetDataFromSource(FooArg arguments, int millisecondsTimeout)
+        protected override IEnumerable<Foo> GetDataFromSource(
+            IEnumerable<FooArg> arguments, int millisecondsTimeout)
         {
-            return new List<Foo>
-                       {
-                           fooSource.GetFoo(arguments.Id)
-                       };
+            return arguments
+                .Select(arg => fooSource.GetFoo(arg.Id))
+                .ToList();
         }
 
         #endregion
@@ -91,6 +92,8 @@ namespace Plethora.Cache
 
         public Foo GetFoo(int id)
         {
+            Thread.Sleep(3000);
+
             return new Foo(id, myFoos[id]);
         }
     }

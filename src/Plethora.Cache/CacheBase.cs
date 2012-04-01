@@ -78,16 +78,19 @@ namespace Plethora.Cache
             private AggregateWaitHandle aggregateHandle;
             private readonly IEnumerable<Request> requests;
             private readonly CacheBase<TData, TArgument> parent;
-            private readonly TArgument originatingArgument;
+            private readonly IEnumerable<TArgument> originatingArguments;
             #endregion
 
             #region Constructor
 
-            public GetDataAsyncResult(CacheBase<TData, TArgument> parent, IEnumerable<Request> requests, TArgument originatingArgument)
+            public GetDataAsyncResult(
+                CacheBase<TData, TArgument> parent,
+                IEnumerable<Request> requests,
+                IEnumerable<TArgument> originatingArguments)
             {
                 this.parent = parent;
                 this.requests = requests;
-                this.originatingArgument = originatingArgument;
+                this.originatingArguments = originatingArguments;
             }
             #endregion
 
@@ -103,9 +106,9 @@ namespace Plethora.Cache
                 get { return requests; }
             }
 
-            public TArgument OriginatingArgument
+            public IEnumerable<TArgument> OriginatingArguments
             {
-                get { return originatingArgument; }
+                get { return originatingArguments; }
             }
             #endregion
 
@@ -215,13 +218,41 @@ namespace Plethora.Cache
         private readonly List<TData> data = new List<TData>();
         #endregion
 
-        protected IEnumerable<TData> GetData(TArgument argument, int millisecondsTimeout)
+        #region Entry Methods
+
+        /// <summary>
+        /// Retrieves data from the cache or if data is not available within the cache it is
+        /// retrieved from the source and cached.
+        /// </summary>
+        /// <param name="arguments">The <typeparamref name="TArgument"/>s representing the data required.</param>
+        /// <param name="millisecondsTimeout">
+        /// The time in milliseconds to wait for the operation to complete, otherwise a
+        /// <see cref="TimeoutException"/> is thrown. Specify <see cref="Timeout.Infinite"/> (-1) for
+        /// no timeout.
+        /// </param>
+        /// <returns>
+        /// The data requested, as described by <paramref name="arguments"/>.
+        /// </returns>
+        protected IEnumerable<TData> GetData(IEnumerable<TArgument> arguments, int millisecondsTimeout)
         {
-            var asyncResult = BeginGetData(argument, millisecondsTimeout);
+            var asyncResult = BeginGetData(arguments, millisecondsTimeout);
             return EndGetData(asyncResult);
         }
 
-        protected IAsyncResult BeginGetData(TArgument argument, int millisecondsTimeout)
+        /// <summary>
+        /// Begin the retrieval of data from the cache or if data is not available within the cache it is
+        /// retrieved from the source and cached.
+        /// </summary>
+        /// <param name="arguments">The <typeparamref name="TArgument"/>s representing the data required.</param>
+        /// <param name="millisecondsTimeout">
+        /// The time in milliseconds to wait for the operation to complete, otherwise a
+        /// <see cref="TimeoutException"/> is thrown. Specify <see cref="Timeout.Infinite"/> (-1) for
+        /// no timeout.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IAsyncResult"/> which can be passed to <see cref="EndGetData"/>.
+        /// </returns>
+        protected IAsyncResult BeginGetData(IEnumerable<TArgument> arguments, int millisecondsTimeout)
         {
             OperationTimeout timeout = new OperationTimeout(millisecondsTimeout);
 
@@ -231,7 +262,7 @@ namespace Plethora.Cache
             requestsLock.EnterUpgradeableReadLock();
             try
             {
-                GetRequests(argument, out submitted, out required);
+                GetRequests(arguments, out submitted, out required);
 
                 if (required.Count != 0)
                 {
@@ -268,10 +299,20 @@ namespace Plethora.Cache
                 //This should not occur
                 throw new InvalidOperationException("Neither submitted nor required returned any results.");
 
-            var asyncResult = new GetDataAsyncResult(this, requests, argument);
+            var asyncResult = new GetDataAsyncResult(this, requests, arguments);
             return asyncResult;
         }
 
+        /// <summary>
+        /// Ends the retrieval of data from the cache or if data is not available within the cache it is
+        /// retrieved from the source and cached.
+        /// </summary>
+        /// <param name="asyncResult">
+        /// A <see cref="IAsyncResult"/> as returned from <see cref="BeginGetData"/>.
+        /// </param>
+        /// <returns>
+        /// The data requested, as described by 'arguments' in <see cref="BeginGetData"/>.
+        /// </returns>
         protected IEnumerable<TData> EndGetData(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
@@ -330,7 +371,7 @@ namespace Plethora.Cache
             {
                 requiredData = FilterDataSetByArgument(
                     this.data,
-                    dataAsyncResult.OriginatingArgument.Singularity());
+                    dataAsyncResult.OriginatingArguments);
             }
             finally
             {
@@ -340,7 +381,56 @@ namespace Plethora.Cache
             //Use the .CacheResult() linq method to ensure complex filtering is only evaluated once.
             return requiredData.CacheResult();
         }
+        #endregion
 
+        #region Virtual and Abstract Methods
+
+        /// <summary>
+        /// Fetches the required data from the data source.
+        /// </summary>
+        /// <param name="arguments">The <typeparamref name="TArgument"/>s describing the data required.</param>
+        /// <param name="millisecondsTimeout">
+        /// The operation timeout in milliseconds. <see cref="Timeout.Infinite"/> (-1) for no timeout.
+        /// </param>
+        /// <returns>
+        /// An <see cref="IEnumerable{TData}"/> containing the data required from the source, as described
+        /// by <paramref name="arguments"/>.
+        /// </returns>
+        /// <remarks>
+        ///  <para>
+        ///   This method may return more data than that requested, or the exact data only. Further internal
+        ///   filtering is conducted on the data returned before committing it to the cache.
+        ///  </para>
+        ///  <para>
+        ///   The <see cref="IEnumerable{TData}"/> returned from this method may return a data stream, and
+        ///   does not need to be concretised at the point of return. Each element of the enumeration will
+        ///   be queried once only. i.e. A forward-only cursor maybe used to retrieve data.
+        ///  </para>
+        /// </remarks>
+        protected abstract IEnumerable<TData> GetDataFromSource(IEnumerable<TArgument> arguments, int millisecondsTimeout);
+
+        /// <summary>
+        /// Tests whether an exception indicates that a subsiquent matching query may succeed.
+        /// </summary>
+        /// <param name="ex">The exeption to be tested.</param>
+        /// <returns>
+        /// True if the exception is recoverable; else false.
+        /// </returns>
+        /// <remarks>
+        /// The default implementation will return true for <see cref="TimeoutException"/> as the source
+        /// may be more responsive in future calls (e.g. unresponsive due to load, where load is expected
+        /// to decrease).
+        /// </remarks>
+        protected virtual bool IsExceptionRecoverable(Exception ex)
+        {
+            if (ex is TimeoutException)
+                return true;
+
+            return false;
+        }
+        #endregion
+
+        #region Private Methods
 
         private void CacheDataForRequests(object obj)
         {
@@ -362,6 +452,9 @@ namespace Plethora.Cache
             try
             {
                 loadedData = GetDataForRequests(requests, timeout).ToList();
+
+                //Final test on the timeout. Once this try block is exited, all
+                // data should committed, and the requests marked successful.
                 timeout.ThrowIfElapsed();
             }
             catch (Exception ex)
@@ -412,69 +505,50 @@ namespace Plethora.Cache
             }
         }
 
-        private IEnumerable<TData> GetDataForRequests(IEnumerable<Request> requests, OperationTimeout timeout)
+        private IEnumerable<TData> GetDataForRequests(
+            IEnumerable<Request> requests,
+            OperationTimeout timeout)
         {
-            //Call JoinForLoad to allow the multi calls to the source to be collapsed into
-            // fewer calls.
-            var loadArgs = JoinForLoad(requests.Select(request => request.Argument));
+            IEnumerable<TData> returnedData = GetDataFromSource(
+                requests.Select(request => request.Argument),
+                timeout.RemainingThrowIfElapsed);
+            timeout.ThrowIfElapsed();
 
-            //TODO: Parrallel-ise the calls to the source. (Unless there is only 1 load Arg)
-            IEnumerable<TData> returnData = null;
-            foreach (var loadArg in loadArgs)
-            {
-                var dataForArg = GetDataFromSource(loadArg, timeout.RemainingThrowIfElapsed);
-                timeout.ThrowIfElapsed();
-
-                if (dataForArg != null)
-                {
-                    if (returnData == null)
-                        returnData = dataForArg;
-                    else
-                        returnData = returnData.Concat(dataForArg);
-                }
-            }
+            //Ensure that each element of the data is retrieved once only.
+            returnedData = returnedData.CacheResult();
 
             //More data may be returned than was required. Filter the data to enure
             // only the data requested is returned.
-            IEnumerable<TData> dataforRequests = FilterDataSetByArgument(returnData, requests.Select(request => request.Argument));
+            IEnumerable<TData> dataforRequests = FilterDataSetByArgument(
+                returnedData,
+                requests.Select(request => request.Argument));
             timeout.ThrowIfElapsed();
 
             return dataforRequests;
         }
-
-        protected abstract IEnumerable<TData> GetDataFromSource(TArgument argument, int millisecondsTimeout);
-
-
-        protected virtual IEnumerable<TArgument> JoinForLoad(IEnumerable<TArgument> arguments)
-        {
-            return arguments;
-        }
-
-        protected virtual bool IsExceptionRecoverable(Exception ex)
-        {
-            if (ex is TimeoutException)
-                return true;
-
-            return false;
-        }
-
+        
         private void GetRequests(
-            TArgument newArgument,
+            IEnumerable<TArgument> newArguments,
             out List<Request> submitted,
             out List<Request> required)
         {
             submitted = new List<Request>();
 
-            List<TArgument> argumentList = new List<TArgument> {newArgument};
+            IEnumerable<TArgument> argumentList = newArguments;
+
+            //Attempt to estimate the capacity required
+            int nextCapacity = 4; // Default
+            if (argumentList is ICollection<TArgument>)
+            {
+                //Get the estimated capacity
+                int count = ((ICollection<TArgument>)argumentList).Count;
+                nextCapacity = count + (count >> 2); // add 25% to the capcacity
+            }
 
             //UpgradableReadLock already taken on requestsLock
             foreach (var submittedRequest in this.submittedRequests)
             {
-                //Get the estimated capacity
-                int count = argumentList.Count;
-                int capacity = count + (count >> 2); // add 25% to the capcacity
-
-                var nextArgumentList = new List<TArgument>(capacity);
+                var nextArgumentList = new List<TArgument>(nextCapacity);
 
                 foreach (var argument in argumentList)
                 {
@@ -492,6 +566,9 @@ namespace Plethora.Cache
                     }
                 }
 
+                int count = nextArgumentList.Count;
+                nextCapacity = count + (count >> 2); // add 25% to the capacity
+
                 argumentList = nextArgumentList;
             }
 
@@ -506,5 +583,7 @@ namespace Plethora.Cache
             return dataSet
                 .Where(dataItem => filterArguments.Any(filter => filter.IsDataIncluded(dataItem)));
         }
+
+        #endregion
     }
 }
