@@ -212,7 +212,7 @@ namespace Plethora.Cache
         #region Fields
 
         private readonly ReaderWriterLockSlim requestsLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-        private readonly List<Request> submittedRequests = new List<Request>();
+        private List<Request> submittedRequests = new List<Request>();
 
         private readonly ReaderWriterLockSlim dataLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
         private readonly List<TData> data = new List<TData>();
@@ -380,6 +380,77 @@ namespace Plethora.Cache
 
             //Use the .CacheResult() linq method to ensure complex filtering is only evaluated once.
             return requiredData.CacheResult();
+        }
+
+        protected void DropData(IEnumerable<TArgument> arguments)
+        {
+            requestsLock.EnterWriteLock();
+            try
+            {
+                dataLock.EnterWriteLock();
+                try
+                {
+                    List<Request> remainingRequests;
+                    List<Request> nextRemainingRequests = submittedRequests;
+
+                    //Remove the requests first then the data.
+                    foreach (TArgument dropArgument in arguments)
+                    {
+                        remainingRequests = nextRemainingRequests;
+
+                        int count = remainingRequests.Count;
+                        int capacity = count + (count >> 2); // Add 25%
+                        nextRemainingRequests = new List<Request>(capacity);
+
+                        //Drop (dividing where necesasary) any requests which pertain to the
+                        // drop arguments
+                        foreach (Request originalRequest in remainingRequests)
+                        {
+                            originalRequest.CompleteWaitHandle.WaitOne();
+
+                            IEnumerable<TArgument> remainingArgs;
+                            if (originalRequest.Argument.IsOverlapped(dropArgument, out remainingArgs))
+                            {
+                                //Create remainder requests from the remainder args, duplicating the state
+                                // of the orginal argument
+                                if (remainingArgs != null)
+                                {
+                                    foreach (TArgument remainingArg in remainingArgs)
+                                    {
+                                        Request remainingRequest = new Request(remainingArg);
+
+                                        //Test if the original request had been successful, or failed
+                                        Exception ex = originalRequest.Exception;
+                                        if (originalRequest.Exception == null)
+                                            remainingRequest.Success();
+                                        else
+                                            remainingRequest.Fail(ex);
+
+                                        nextRemainingRequests.Add(remainingRequest);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                nextRemainingRequests.Add(originalRequest);
+                            }
+                        }
+
+                        //Drop the data
+                        data.RemoveAll(dropArgument.IsDataIncluded);
+                    }
+
+                    this.submittedRequests = nextRemainingRequests;
+                }
+                finally
+                {
+                    dataLock.ExitWriteLock();
+                }
+            }
+            finally
+            {
+                requestsLock.ExitWriteLock();
+            }
         }
         #endregion
 

@@ -28,6 +28,15 @@ namespace Plethora.Cache.Example
             foo = simpleCache.GetFoo(2);
             Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
 
+            simpleCache.DropFooFromCache(2);
+
+            foo = simpleCache.GetFoo(1);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+
+            foo = simpleCache.GetFoo(2);
+            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+
+
             Console.WriteLine();
             Console.WriteLine("Press any key...");
             Console.ReadKey(true);
