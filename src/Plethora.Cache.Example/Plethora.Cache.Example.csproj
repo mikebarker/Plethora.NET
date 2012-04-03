@@ -39,14 +39,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ComplexExample\ComplexProgram.cs" />
+    <Compile Include="ComplexExample\Price.cs" />
+    <Compile Include="ComplexExample\PriceArg.cs" />
+    <Compile Include="ComplexExample\PriceCache.cs" />
+    <Compile Include="ComplexExample\PriceSource.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="SimpleCache.cs" />
+    <Compile Include="SimpleExample\Foo.cs" />
+    <Compile Include="SimpleExample\SimpleProgram.cs" />
+    <Compile Include="SimpleExample\SimpleCache.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Cache\Plethora.Cache.csproj">
       <Project>{C80DB42E-C7EA-4CF4-9F23-564F86983D01}</Project>
       <Name>Plethora.Cache</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="_readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

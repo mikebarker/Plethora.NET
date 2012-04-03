@@ -1,4 +1,6 @@
 ﻿using System;
+using Plethora.Cache.Example.ComplexExample;
+using Plethora.Cache.Example.SimpleExample;
 
 namespace Plethora.Cache.Example
 {
@@ -10,32 +12,34 @@ namespace Plethora.Cache.Example
         [STAThread]
         static void Main()
         {
-            SimpleCache simpleCache = new SimpleCache();
+            Console.WriteLine("Select which example to run:");
+            Console.WriteLine("\t1. Simple demo");
+            Console.WriteLine("\t2. Comnplex demo");
 
-            Foo foo;
-            foo = simpleCache.GetFoo(1);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+            int result;
+            bool isValid = false;
+            do
+            {
+                ConsoleKeyInfo x = Console.ReadKey(true);
 
-            foo = simpleCache.GetFoo(1);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
+                if (int.TryParse(x.KeyChar.ToString(), out result))
+                {
+                    isValid =
+                        (result == 1) ||
+                        (result == 2);
+                }
+            } while (!isValid);
 
-            foo = simpleCache.GetFoo(2);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
-
-            foo = simpleCache.GetFoo(1);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
-
-            foo = simpleCache.GetFoo(2);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
-
-            simpleCache.DropFooFromCache(2);
-
-            foo = simpleCache.GetFoo(1);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
-
-            foo = simpleCache.GetFoo(2);
-            Console.WriteLine("Foo: Id={0}; Value={1}", foo.Id, foo.Value);
-
+            Console.Clear();
+            switch (result)
+            {
+                case 1:
+                    SimpleProgram.Run();
+                    break;
+                case 2:
+                    ComplexProgram.Run();
+                    break;
+            }
 
             Console.WriteLine();
             Console.WriteLine("Press any key...");
