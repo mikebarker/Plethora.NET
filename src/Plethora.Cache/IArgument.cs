@@ -44,10 +44,13 @@ namespace Plethora.Cache
         ///   argument can be returned as null or as an empty enumeration.
         ///  </para>
         ///  <para>
-        ///   The return value is ignored in the case where false is returned, as there is no overlap.
+        ///   The output value of <paramref name="notInB"/> is ignored in the case where false is returned,
+        ///   as there is no overlap.
         ///  </para>
         /// </param>
-        /// <returns></returns>
+        /// <returns>
+        /// true if the <see cref="IArgument{TData,TArgument}"/>s overlap in the key-space they represent.
+        /// </returns>
         /// <remarks>
         ///  If one considers the aruments which represent the following sets over the key space:
         ///  <code>
