@@ -84,6 +84,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Reflection\Generic.cs" />
     <Compile Include="ResourceProvider.cs" />
     <Compile Include="StringFormat\StringFormatHelper.cs" />
     <Compile Include="StringHelper.cs" />

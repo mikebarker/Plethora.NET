@@ -255,6 +255,15 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'CollectionReadonly' with
+        /// substitutions made.
+        /// </summary>
+        public static string CollectionReadonly()
+        {
+            return StringFormat(Resources.CollectionReadonly);
+        }
+
+        /// <summary>
         /// Returns the resource string 'GenericArgumentsMismatch' with
         /// substitutions made.
         /// </summary>

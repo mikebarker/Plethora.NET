@@ -9,7 +9,15 @@ namespace Plethora.Collections
     /// <typeparam name="T">The type of the collection.</typeparam>
     public interface IKeyedCollection<TKey, T> : ICollection<T>
     {
-        void Upsert(T item);
+        /// <summary>
+        /// Performs an insert if the item does not exist (by key) in the collection;
+        /// else replaces the item in the list.
+        /// </summary>
+        /// <param name="item">The element to be inserted or updated.</param>
+        /// <returns>
+        /// true if <paramref name="item"/> was added; false if it was updated.
+        /// </returns>
+        bool Upsert(T item);
 
         bool ContainsKey(TKey key);
         bool RemoveKey(TKey key);

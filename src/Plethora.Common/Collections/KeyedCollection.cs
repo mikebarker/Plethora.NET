@@ -307,10 +307,12 @@ namespace Plethora.Collections
 
         #region Implementation of IKeyedCollection<TKey,T>
 
-        public void Upsert(T item)
+        public bool Upsert(T item)
         {
             var key = GetKey(item);
+            bool result = this.innerDictionary.ContainsKey(key);
             this.innerDictionary[key] = item;
+            return !result;
         }
 
         /// <summary>

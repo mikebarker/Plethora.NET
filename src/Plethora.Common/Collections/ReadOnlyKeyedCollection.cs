@@ -72,7 +72,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to add to the <see cref="ICollection{T}"/>.</param>
         void ICollection<T>.Add(T item)
         {
-            throw new NotSupportedException("Collection is read-only.");
+            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Plethora.Collections
         /// </summary>
         void ICollection<T>.Clear()
         {
-            throw new NotSupportedException("Collection is read-only.");
+            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
         bool ICollection<T>.Remove(T item)
         {
-            throw new NotSupportedException("Collection is read-only.");
+            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
         }
 
         /// <summary>
@@ -150,9 +150,9 @@ namespace Plethora.Collections
 
         #region Implementation of IKeyedCollection<TKey,T>
 
-        void IKeyedCollection<TKey, T>.Upsert(T item)
+        bool IKeyedCollection<TKey, T>.Upsert(T item)
         {
-            throw new NotSupportedException("Collection is read-only.");
+            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
         }
 
         /// <summary>
@@ -169,7 +169,7 @@ namespace Plethora.Collections
 
         bool IKeyedCollection<TKey, T>.RemoveKey(TKey key)
         {
-            throw new NotSupportedException("Collection is read-only.");
+            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
         }
 
         public bool TryGetValue(TKey key, out T item)
