@@ -37,6 +37,7 @@
     </Compile>
     <Compile Include="Collections\DuplicatesPolicy.cs" />
     <Compile Include="Collections\SortedList.cs" />
+    <Compile Include="Collections\SortedByKeyList.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />

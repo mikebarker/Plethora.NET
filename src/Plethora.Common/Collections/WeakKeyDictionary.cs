@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Plethora.Collections
 {
@@ -13,13 +14,13 @@ namespace Plethora.Collections
     /// <typeparam name="TValue">The type of the dictionary's value.</typeparam>
     public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : class
-        where TValue : class
     {
-        private class WeakKey : WeakReference<TKey>
+        private class WeakKey : WeakReference<TKey>, IEquatable<WeakKey>
         {
             #region Fields
 
             private readonly int hashCode;
+            private readonly IEqualityComparer<TKey> comparer;
             #endregion
 
             #region Constructors
@@ -30,20 +31,69 @@ namespace Plethora.Collections
             public WeakKey(TKey target, IEqualityComparer<TKey> comparer)
                 : base(target)
             {
-                //Capture the hash code to prevent it changing when the
+                //validation
+                if (target == null)
+                    throw new ArgumentNullException("target");
+
+                if (comparer == null)
+                    throw new ArgumentNullException("comparer");
+
+
+                //Capture the hash code to prevent it changing if the
                 // target is garbage collected.
                 this.hashCode = comparer.GetHashCode(target);
+                this.comparer = comparer;
             }
             #endregion
 
-            #region Overrides of Object
+            #region Implementation of IEquatable<WeakKeyDictionary<TKey,TValue>.WeakKey>
+
+            public bool Equals(WeakKey other)
+            {
+                if (other == null)
+                    return false;
+
+                if (ReferenceEquals(this, other))
+                    return true;
+
+                if (this.hashCode != other.hashCode)
+                    return false;
+
+                return this.comparer.Equals(this.Target, other.Target);
+            }
+
+            #endregion
+
+            #region Object Overrides
+
+            public override bool Equals(object obj)
+            {
+                if (obj is WeakKey)
+                {
+                    var other = (WeakKey)obj;
+                    return this.Equals(other);
+                }
+
+                return false;
+            }
 
             public override int GetHashCode()
             {
-                return hashCode;
+                return this.hashCode;
+            }
+
+            public override string ToString()
+            {
+                object target = this.Target;
+                string targetToString = (target == null)
+                    ? "<dead>"
+                    : target.ToString();
+
+                return string.Format("WeakKey [{0}]", targetToString);
             }
             #endregion
         }
+
 
         private class WeakKeyComparer : IEqualityComparer<WeakKey>
         {
@@ -88,14 +138,13 @@ namespace Plethora.Collections
 
             public bool Equals(WeakKey weakKeyX, WeakKey weakKeyY)
             {
-                var keyX = weakKeyX.Target;
-                var keyY = weakKeyY.Target;
+                if ((weakKeyX == null) && (weakKeyY == null))
+                    return true;
 
-                //Dead targets are not considered equal
-                if ((keyX == null) || (keyY == null))
+                if ((weakKeyX == null) || (weakKeyY == null))
                     return false;
 
-                return this.innerComparer.Equals(keyX, keyY);
+                return weakKeyX.Equals(weakKeyY);
             }
 
             public int GetHashCode(WeakKey weakKey)
@@ -318,7 +367,7 @@ namespace Plethora.Collections
         /// Gets a fast estimate of the value of <see cref="Count"/>.
         /// </summary>
         /// <remarks>
-        /// This will always return a high estimate (or correct value) of the count.
+        /// This will always return an estimate greater then or equal to the exact count.
         /// </remarks>
         public int EstimateCount
         {
@@ -353,10 +402,69 @@ namespace Plethora.Collections
         }
         #endregion
 
+        #region PrivateMethods
+
         private WeakKey GetWeakKey(TKey key)
         {
             return new WeakKey(key, this.weakKeyComparer.InnerComparer);
         }
+        #endregion
+
+
+/*
+        private class AutoCleanup
+        {
+            #region Fields
+
+            private const int LOW_ACTIVITY_TIMER = 5 * 60 * 1000; // 5 min
+            private const int HIGH_ACTIVITY_TIMER = 2 * 1000;     // 2 sec
+
+            private readonly Timer cleanupTimer;
+            private readonly WeakKeyDictionary<TKey, TValue> dictionary;
+            private int inCleanUp = 0;
+            #endregion
+
+            #region Constructors
+
+            public AutoCleanup(WeakKeyDictionary<TKey, TValue> dictionary)
+            {
+                //validation
+                if (dictionary == null)
+                    throw new ArgumentNullException("dictionary");
+
+                this.dictionary = dictionary;
+                this.cleanupTimer = new Timer(Cleanup, null, LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
+            }
+            #endregion
+
+            #region Private Methods
+
+            private void Cleanup(object state)
+            {
+                if (Interlocked.CompareExchange(ref inCleanUp, 1, 0) != 0)
+                    return;
+
+                try
+                {
+                    bool anyCleanup;
+                    lock(dictionary)
+                    {
+                        anyCleanup = dictionary.TrimExcess();
+                    }
+
+                    if (anyCleanup)
+                        cleanupTimer.Change(HIGH_ACTIVITY_TIMER, HIGH_ACTIVITY_TIMER);
+                    else
+                        cleanupTimer.Change(LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
+                }
+                finally
+                {
+                    inCleanUp = 0;
+                }
+            }
+            #endregion
+        }
+*/
     }
 
 }

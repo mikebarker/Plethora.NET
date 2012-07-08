@@ -5,18 +5,13 @@ using System.Collections.ObjectModel;
 
 namespace Plethora.Collections
 {
-    /// <summary>
-    /// A list in which the elements are sorted according to the comparer provided.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The data type of the elements in the list
-    /// </typeparam>
-    public class SortedList<T> : IList<T>
+    public class SortedByKeyList<T, TKey> : IList<T>
     {
         #region Fields
 
+        private readonly Func<T, TKey> getKeyFunc;
         private readonly List<T> innerList;
-        private readonly IComparer<T> comparer;
+        private readonly IComparer<TKey> comparer;
         private readonly DuplicatesPolicy duplicatesPolicy;
         #endregion
 
@@ -27,30 +22,35 @@ namespace Plethora.Collections
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/> and using the
         /// default comparer for <typeparamref name="T"/>.
         /// </summary>
-        public SortedList()
-            : this(DuplicatesPolicy.Error, Comparer<T>.Default)
+        /// <param name="getKeyFunc">The function which gets the key for an element.</param>
+        public SortedByKeyList(Func<T, TKey> getKeyFunc)
+            : this(getKeyFunc, DuplicatesPolicy.Error, Comparer<TKey>.Default)
         {
-            
         }
 
         /// <summary>
         /// Initializes a new instance of <see cref="SortedList{T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/>.
         /// </summary>
-        /// <param name="comparer">The comparer used to sort the list.</param>
-        public SortedList(IComparer<T> comparer)
-            : this(DuplicatesPolicy.Error, comparer)
+        /// <param name="getKeyFunc">The function which gets the key for an element.</param>
+        /// <param name="comparer">The comparer used to sort the list by key.</param>
+        public SortedByKeyList(Func<T, TKey> getKeyFunc, IComparer<TKey> comparer)
+            : this(getKeyFunc, DuplicatesPolicy.Error, comparer)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of <see cref="SortedList{T}"/>.
         /// </summary>
+        /// <param name="getKeyFunc">The function which gets the key for an element.</param>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
-        /// <param name="comparer">The comparer used to sort the list.</param>
-        public SortedList(DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
+        /// <param name="comparer">The comparer used to sort the list by key.</param>
+        public SortedByKeyList(Func<T, TKey> getKeyFunc, DuplicatesPolicy duplicatesPolicy, IComparer<TKey> comparer)
         {
             //Validation
+            if (getKeyFunc == null)
+                throw new ArgumentNullException("getKeyFunc");
+
             if ((duplicatesPolicy != DuplicatesPolicy.Allow) &&
                 (duplicatesPolicy != DuplicatesPolicy.Ignor) &&
                 (duplicatesPolicy != DuplicatesPolicy.Replace) &&
@@ -64,6 +64,7 @@ namespace Plethora.Collections
                 throw new ArgumentNullException("comparer");
 
 
+            this.getKeyFunc = getKeyFunc;
             this.duplicatesPolicy = duplicatesPolicy;
             this.comparer = comparer;
             this.innerList = new List<T>();
@@ -72,11 +73,12 @@ namespace Plethora.Collections
         /// <summary>
         /// Initializes a new instance of <see cref="SortedList{T}"/>.
         /// </summary>
+        /// <param name="getKeyFunc">The function which gets the key for an element.</param>
         /// <param name="enumerable">The collection whose elements are to be copied to the sorted list.</param>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
-        /// <param name="comparer">The comparer used to sort the list.</param>
-        public SortedList(IEnumerable<T> enumerable, DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
-            : this(duplicatesPolicy, comparer)
+        /// <param name="comparer">The comparer used to sort the list the key.</param>
+        public SortedByKeyList(Func<T, TKey> getKeyFunc, IEnumerable<T> enumerable, DuplicatesPolicy duplicatesPolicy, IComparer<TKey> comparer)
+            : this(getKeyFunc, duplicatesPolicy, comparer)
         {
             this.AddRange(enumerable);
         }
@@ -128,7 +130,8 @@ namespace Plethora.Collections
                 throw new ArgumentNullException("item");
 
 
-            int index = this.BinarySearch(item);
+            TKey key = this.getKeyFunc(item);
+            int index = this.BinarySearch(key);
 
             if (index >= 0)
             {
@@ -175,12 +178,29 @@ namespace Plethora.Collections
         /// true if <paramref name="item"/> is found in the <see cref="ICollection{T}"/>; otherwise, false.
         /// </returns>
         /// <param name="item">The object to locate in the <see cref="ICollection{T}"/>.</param>
-        public bool Contains(T item)
+        bool ICollection<T>.Contains(T item)
         {
             if (item == null)
                 throw new ArgumentNullException("item");
 
-            int index = this.BinarySearch(item);
+            TKey key = this.getKeyFunc(item);
+            return this.Contains(key);
+        }
+
+        /// <summary>
+        /// Determines whether the <see cref="ICollection{T}"/> contains a specific value.
+        /// </summary>
+        /// <returns>
+        /// true if an item with the <paramref name="key"/> is found in the <see cref="ICollection{T}"/>; otherwise, false.
+        /// </returns>
+        /// <param name="key">The key of the object to locate in the <see cref="ICollection{T}"/>.</param>
+        public bool Contains(TKey key)
+        {
+            if (key == null)
+                throw new ArgumentNullException("key");
+
+
+            int index = this.BinarySearch(key);
             return (index >= 0);
         }
 
@@ -220,9 +240,24 @@ namespace Plethora.Collections
         /// original <see cref="ICollection{T}"/>.
         /// </returns>
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
-        public bool Remove(T item)
+        bool ICollection<T>.Remove(T item)
         {
-            int index = this.BinarySearch(item);
+            TKey key = this.getKeyFunc(item);
+            return Remove(key);
+        }
+
+        /// <summary>
+        /// Removes the first occurrence of a specific object from the <see cref="ICollection{T}"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the item identified by <paramref name="key"/> was successfully removed from the
+        /// <see cref="ICollection{T}"/>; otherwise, false. This method also returns false if no
+        /// item with a matching key is not found in the <see cref="ICollection{T}"/>.
+        /// </returns>
+        /// <param name="key">The key of the object to remove from the <see cref="ICollection{T}"/>.</param>
+        public bool Remove(TKey key)
+        {
+            int index = this.BinarySearch(key);
             if (index < 0)
                 return false;
 
@@ -264,9 +299,10 @@ namespace Plethora.Collections
         /// <param name="item">
         /// The object to locate in the <see cref="IList{T}"/>.
         /// </param>
-        public int IndexOf(T item)
+        int IList<T>.IndexOf(T item)
         {
-            return this.IndexOf(item, 0, this.innerList.Count);
+            TKey key = this.getKeyFunc(item);
+            return this.IndexOf(key, 0, this.innerList.Count);
         }
 
         void IList<T>.Insert(int index, T item)
@@ -323,27 +359,56 @@ namespace Plethora.Collections
             return this.innerList.AsReadOnly();
         }
 
-        public int BinarySearch(T item)
+        public int BinarySearch(TKey key)
         {
-            return this.BinarySearch(0, this.innerList.Count, item);
+            return this.BinarySearch(0, this.innerList.Count, key);
         }
 
-        public int BinarySearch(int index, T item)
+        public int BinarySearch(int index, TKey key)
         {
             int count = this.innerList.Count - index;
-            return this.BinarySearch(index, count, item);
+            return this.BinarySearch(index, count, key);
         }
 
-        public int BinarySearch(int index, int count, T item)
+        public int BinarySearch(int index, int count, TKey searchKey)
         {
             //Validation
-            if (item == null)
-                throw new ArgumentNullException("item");
+            if (index < 0)
+                throw new ArgumentOutOfRangeException("index", index, ResourceProvider.ArgMustBeGreaterThanZero("index"));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException("count", count, ResourceProvider.ArgMustBeGreaterThanZero("count"));
+
+            if ((this.innerList.Count - index) < count)
+                throw new ArgumentException(ResourceProvider.ArgInvaliadOffsetLength("index", "count"));
+            
+            if (searchKey == null)
+                throw new ArgumentNullException("searchKey");
 
 
-            int result = this.innerList.BinarySearch(index, count, item, comparer);
-            return result;
+            int low = index;
+            int high = (index + count) - 1;
+
+            while(low <= high)
+            {
+                int mid = (low + ((high - low) >> 1));
+
+                T midItem = this.innerList[mid];
+                TKey midKey = this.getKeyFunc(midItem);
+
+                int result = this.comparer.Compare(midKey, searchKey);
+
+                if (result == 0)
+                    return mid;
+                else if (result < 0)
+                    low = mid + 1;
+                else // (result > 0)
+                    high = mid - 1;
+            }
+
+            return ~low;
         }
+
 
         public int Capacity
         {
@@ -426,15 +491,20 @@ namespace Plethora.Collections
             return this.innerList.GetRange(index, count);
         }
 
-        public int IndexOf(T item, int index)
+        public int IndexOf(TKey key)
         {
-            int count = this.innerList.Count - index;
-            return this.IndexOf(item, 0, count);
+            return this.IndexOf(key, 0, this.innerList.Count);
         }
 
-        public int IndexOf(T item, int index, int count)
+        public int IndexOf(TKey key, int index)
         {
-            int indexOf = this.BinarySearch(index, count, item);
+            int count = this.innerList.Count - index;
+            return this.IndexOf(key, index, count);
+        }
+
+        public int IndexOf(TKey key, int index, int count)
+        {
+            int indexOf = this.BinarySearch(index, count, key);
             if (indexOf < 0)
                 return -1;
 
@@ -443,7 +513,7 @@ namespace Plethora.Collections
 
             //List not necessarily unique. Find first matching item using linear search
             int nextIndexOf = indexOf - 1;
-            while ((nextIndexOf >= index) && (comparer.Compare(item, this[nextIndexOf]) == 0))
+            while ((nextIndexOf >= index) && (comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf--;
@@ -452,20 +522,20 @@ namespace Plethora.Collections
             return indexOf;
         }
 
-        public int LastIndexOf(T item)
+        public int LastIndexOf(TKey key)
         {
-            return this.LastIndexOf(item, 0, this.innerList.Count);
+            return this.LastIndexOf(key, 0, this.innerList.Count);
         }
 
-        public int LastIndexOf(T item, int index)
+        public int LastIndexOf(TKey key, int index)
         {
             int count = this.innerList.Count - index;
-            return this.LastIndexOf(item, index, count);
+            return this.LastIndexOf(key, index, count);
         }
 
-        public int LastIndexOf(T item, int index, int count)
+        public int LastIndexOf(TKey key, int index, int count)
         {
-            int indexOf = this.BinarySearch(index, count, item);
+            int indexOf = this.BinarySearch(index, count, key);
             if (indexOf < 0)
                 return -1;
 
@@ -475,7 +545,7 @@ namespace Plethora.Collections
             //List not necessarily unique. Find last matching item using linear search
             int nextIndexOf = indexOf + 1;
             int maxIndex = index + count;
-            while ((nextIndexOf <= maxIndex) && (comparer.Compare(item, this[nextIndexOf]) == 0))
+            while ((nextIndexOf <= maxIndex) && (comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf++;
@@ -528,10 +598,11 @@ namespace Plethora.Collections
             get { return this.duplicatesPolicy; }
         }
 
-        public IComparer<T> Comparer
+        public IComparer<TKey> Comparer
         {
             get { return this.comparer; }
         }
         #endregion
+
     }
 }

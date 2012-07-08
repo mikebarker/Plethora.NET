@@ -46,7 +46,7 @@ namespace Plethora.Windows.Forms.Styles
 
         public TextBoxStyliser()
         {
-            this.stylesCleanupTimer = new Timer(stylesCleanup, null, LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
+            this.stylesCleanupTimer = new Timer(StylesCleanup, null, LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
         }
         #endregion
 
@@ -261,7 +261,7 @@ namespace Plethora.Windows.Forms.Styles
         private readonly Timer stylesCleanupTimer;
         private int inCleanUp = 0;
 
-        private void stylesCleanup(object state)
+        private void StylesCleanup(object state)
         {
             if (Interlocked.CompareExchange(ref inCleanUp, 1, 0) != 0)
                 return;
