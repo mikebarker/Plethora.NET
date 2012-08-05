@@ -1,13 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms", "Plethora.Windows.Forms\Plethora.Windows.Forms.csproj", "{95839C43-2A34-4716-AEE5-59D68274FAC9}"
-EndProject
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{42E2A847-0945-4351-A57E-591539FBBD57}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfo.Common.cs = AssemblyInfo.Common.cs
 		..\license.txt = ..\license.txt
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms", "Plethora.Windows.Forms\Plethora.Windows.Forms.csproj", "{95839C43-2A34-4716-AEE5-59D68274FAC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Examples", "Plethora.Windows.Forms.Examples\Plethora.Windows.Forms.Examples.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
 EndProject
