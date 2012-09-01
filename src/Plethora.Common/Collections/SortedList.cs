@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Plethora.Collections
 {
@@ -9,8 +10,10 @@ namespace Plethora.Collections
     /// A list in which the elements are sorted according to the comparer provided.
     /// </summary>
     /// <typeparam name="T">
-    /// The data type of the elements in the list
+    /// The data type of the elements in the list.
     /// </typeparam>
+    [DebuggerDisplay("Count = {Count}")]
+    [Serializable]
     public class SortedList<T> : IList<T>
     {
         #region Fields
