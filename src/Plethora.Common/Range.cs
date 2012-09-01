@@ -1,51 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Plethora
+﻿namespace Plethora
 {
     public struct Range<T>
     {
         #region Fields
 
         private readonly T min;
+        private readonly bool minInclusive;
         private readonly T max;
-        private readonly IComparer<T> comparer;
+        private readonly bool maxInclusive;
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initialises a new instance of <see cref="Range{T}"/>.
+        /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
-        /// <param name="min">The minimum value to be represented by the range.</param>
-        /// <param name="max">The maximum value to be represented by the range.</param>
         public Range(T min, T max)
-            : this(min, max, Comparer<T>.Default)
+            : this(min, max, true, true)
         {
-            if (Comparer<T>.Default.Compare(min, max) == 0)
-                throw new ArgumentException(ResourceProvider.ArgMustBeLessThanEqualTo("min", "max"));
-
-            this.min = min;
-            this.max = max;
         }
 
         /// <summary>
-        /// Initialises a new instance of <see cref="Range{T}"/>.
+        /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
-        /// <param name="min">The minimum value to be represented by the range.</param>
-        /// <param name="max">The maximum value to be represented by the range.</param>
-        /// <param name="comparer">The <see cref="IComparer{T}"/> to be used to compare items in the range.</param>
-        public Range(T min, T max, IComparer<T> comparer)
+        public Range(T min, T max, bool minInclusive, bool maxInclusive)
         {
-            if (comparer == null)
-                throw new ArgumentNullException("comparer");
+            //Can't validate min <= max, because the comparer to be used is unknown.
 
-            if (comparer.Compare(min, max) > 0)  // min > max
-                throw new ArgumentException(ResourceProvider.ArgMustBeLessThanEqualTo("min", "max"));
 
             this.min = min;
+            this.minInclusive = minInclusive;
             this.max = max;
-            this.comparer = comparer;
+            this.maxInclusive = maxInclusive;
         }
         #endregion
 
@@ -60,6 +46,14 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Gets a flag indicating whether the minimum value is included in the range.
+        /// </summary>
+        public bool MinInclusive
+        {
+            get { return minInclusive; }
+        }
+
+        /// <summary>
         /// Gets the maximum value represented by the <see cref="Range{T}"/>.
         /// </summary>
         public T Max
@@ -68,21 +62,11 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Gets the <see cref="IComparer{T}"/> used to compare items over the range.
+        /// Gets a flag indicating whether the maximum value is included in the range.
         /// </summary>
-        public IComparer<T> Comparer
+        public bool MaxInclusive
         {
-            get { return comparer; }
-        }
-        #endregion
-
-        #region Public Methods
-
-        public bool IsValueInRange(T value)
-        {
-            return
-                (comparer.Compare(min, value) <= 0) &&
-                (comparer.Compare(value, max) <= 0);
+            get { return maxInclusive; }
         }
         #endregion
     }

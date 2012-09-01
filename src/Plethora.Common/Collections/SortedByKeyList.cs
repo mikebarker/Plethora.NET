@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Plethora.Collections
 {
-    public class SortedByKeyList<T, TKey> : IList<T>
+    [DebuggerDisplay("Count = {Count}")]
+    [Serializable]
+    public class SortedByKeyList<TKey, T> : IList<T>
     {
         #region Fields
 
@@ -582,6 +585,11 @@ namespace Plethora.Collections
 
         #region Public Methods
 
+        public TKey GetKey(T item)
+        {
+            return getKeyFunc(item);
+        }
+
         public bool IsUnique
         {
             get
@@ -603,6 +611,5 @@ namespace Plethora.Collections
             get { return this.comparer; }
         }
         #endregion
-
     }
 }

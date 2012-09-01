@@ -80,10 +80,12 @@
     <Compile Include="!MockClasses\MockNumericHelperExtension.cs" />
     <Compile Include="!MockClasses\MockTextWriter.cs" />
     <Compile Include="Collections\AutoKeyedCollection_Test.cs" />
+    <Compile Include="Collections\ListIndexItterator_Test.cs" />
     <Compile Include="Collections\MergeJoin_Test.cs" />
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
+    <Compile Include="Collections\SortedByKeyListHelper_Test.cs" />
     <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
     <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
