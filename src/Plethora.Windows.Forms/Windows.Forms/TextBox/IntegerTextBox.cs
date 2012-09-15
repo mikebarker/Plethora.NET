@@ -23,6 +23,7 @@ namespace Plethora.Windows.Forms
     /// Intermediate class required to "fool" the designers to construct the <see cref="IntegerTextBox"/>.
     /// </summary>
     [Browsable(false)]
+    [ToolboxItem(false)]
     public class IntegerTextBoxBase : NumericTextBox<Int64>
     {
         #region Overrides of ComparableTextBox<Int64>

@@ -70,13 +70,13 @@ namespace Plethora.Windows.Forms
 
         protected override void OnAccepted(EventArgs e)
         {
- 	        base.OnAccepted(e);
+             base.OnAccepted(e);
             this.Close();
         }
 
         protected override void OnCancelled(EventArgs e)
         {
- 	        base.OnCancelled(e);
+             base.OnCancelled(e);
             this.Close();
         }
         #endregion
@@ -85,6 +85,12 @@ namespace Plethora.Windows.Forms
 
         #region TextBox
 
+        /// <summary>
+        /// Displays a text box in a popup.
+        /// </summary>
+        /// <param name="location">The location of the pop up.</param>
+        /// <param name="size">The size if the pop up.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
         public static void TextBox(
             Point location,
             Size size,
@@ -93,6 +99,14 @@ namespace Plethora.Windows.Forms
             TextBox(location, size, onAcceptCallback, string.Empty, null);
         }
 
+        /// <summary>
+        /// Displays a text box in a popup.
+        /// </summary>
+        /// <param name="location">The location of the pop up.</param>
+        /// <param name="size">The size if the pop up.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
+        /// <param name="text">The initial text to be displayed in the pop up.</param>
+        /// <param name="autoCompleteValues">A set of auto completion values.</param>
         public static void TextBox(
             Point location,
             Size size,
@@ -115,6 +129,12 @@ namespace Plethora.Windows.Forms
             TextBox(textBox, location, () => onAcceptCallback(textBox.Text));
         }
 
+        /// <summary>
+        /// Displays a text box in a popup.
+        /// </summary>
+        /// <param name="textBox">The text box to be displayed.</param>
+        /// <param name="location">The location of the pop up.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
         public static void TextBox(
             TextBox textBox,
             Point location,
@@ -140,6 +160,12 @@ namespace Plethora.Windows.Forms
 
         #region Calendar
 
+        /// <summary>
+        /// Displays a calendar in a popup.
+        /// </summary>
+        /// <param name="location">The location of the pop up.</param>
+        /// <param name="size">The size if the pop up.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
         public static void Calendar(
             Point location,
             Size size,
@@ -148,6 +174,13 @@ namespace Plethora.Windows.Forms
             Calendar(location, size, onAcceptCallback, DateTime.Today);
         }
 
+        /// <summary>
+        /// Displays a calendar in a popup.
+        /// </summary>
+        /// <param name="location">The location of the pop up.</param>
+        /// <param name="size">The size if the pop up.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
+        /// <param name="date">The initial date selected in the calendar.</param>
         public static void Calendar(
             Point location,
             Size size,
@@ -162,6 +195,12 @@ namespace Plethora.Windows.Forms
             Calendar(calendar, location, () => onAcceptCallback(calendar.SelectionStart));
         }
 
+        /// <summary>
+        /// Displays a calendar in a popup.
+        /// </summary>
+        /// <param name="calendar">The calendar control to be displayed.</param>
+        /// <param name="location">The location of the pop up.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
         public static void Calendar(
             MonthCalendar calendar,
             Point location,
@@ -177,6 +216,15 @@ namespace Plethora.Windows.Forms
         }
         #endregion
 
+
+        /// <summary>
+        /// Displays a control in a popup.
+        /// </summary>
+        /// <param name="control">The control to be displayed in the popup.</param>
+        /// <param name="popuplocation">The location of the pop up.</param>
+        /// <param name="onPopupCreatedCallback">Callback called when the popup is created.</param>
+        /// <param name="onAcceptCallback">The action to be taken when the value of the pop up is accepted.</param>
+        /// <param name="onCancelCallback">The action to be taken when the value of the pop up is cancelled.</param>
         public static void ShowPopup(
             Control control,
             Point popuplocation,

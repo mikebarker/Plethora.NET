@@ -6,7 +6,7 @@ namespace Plethora.Windows.Forms.Styles
     public partial class NumericTextBoxStyliser
     {
         [HostProtection(SecurityAction.LinkDemand, SharedState = true)]
-        public class Converter : DefaultReferenceConverter
+        public new class Converter : DefaultReferenceConverter
         {
             public Converter()
                 : base(typeof(NumericTextBoxStyliser), "Default", true)

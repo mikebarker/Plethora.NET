@@ -353,7 +353,7 @@ namespace Plethora
         /// </returns>
         private static string StringFormat(string format, params object[] args)
         {
-            return string.Format(CultureInfo.CurrentUICulture, format, args);
+            return string.Format(CultureInfo.CurrentCulture, format, args);
         }
         #endregion
     }

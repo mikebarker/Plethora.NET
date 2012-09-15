@@ -3,152 +3,138 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using Plethora.Windows.Forms;
 
 namespace Plethora.Format
 {
-	/// <summary>
-	/// Format and parser for numeric data types.
-	/// </summary>
-	[CLSCompliant(false)]
+    /// <summary>
+    /// Format and parser for numeric data types.
+    /// </summary>
+    [CLSCompliant(false)]
     [System.ComponentModel.DesignerCategory("Code")]
-	public class DateTimeFormatParser : Component, IFormatParserPartial<DateTime>, ICloneable
-	{
-		#region Static Members
+    public class DateTimeFormatParser : Component, IFormatParserPartial<DateTime>, ICloneable
+    {
+        #region Static Members
 
-		private readonly static DateTimeFormatParser defaultFormatParser;
+        private static readonly DateTimeFormatParser defaultFormatParser = new DateTimeFormatParser();
 
-		/// <summary>
-		/// Gets the default <see cref="DateTimeFormatParser"/>.
-		/// </summary>
-		public static DateTimeFormatParser Default
-		{
-			get { return defaultFormatParser; }
-		}
-		#endregion
-
-		#region Fields
-
-		private readonly bool initialised = false;
-		#endregion
+        /// <summary>
+        /// Gets the default <see cref="DateTimeFormatParser"/>.
+        /// </summary>
+        public static DateTimeFormatParser Default
+        {
+            get { return defaultFormatParser; }
+        }
+        #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Called the first time the class is accessed.
+        /// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
         /// </summary>
-        static DateTimeFormatParser()
+        /// <remarks>
+        /// The default formatting string is utilised to format values.
+        /// </remarks>
+        public DateTimeFormatParser()
+            : this(DEFAULT_FORMAT, CultureInfo.CurrentCulture, DEFAULT_STYLES)
         {
-            defaultFormatParser = new DateTimeFormatParser();
         }
 
-		/// <summary>
-		/// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
-		/// </summary>
-		/// <remarks>
-		/// The default formatting string is utilised to format values.
-		/// </remarks>
-		public DateTimeFormatParser()
-			: this(DEFAULT_FORMAT, CultureInfo.CurrentUICulture, DEFAULT_STYLES)
-		{
-		}
+        /// <summary>
+        /// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
+        /// </summary>
+        /// <param name="format">
+        /// The formatting string used to format values.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown if <paramref name="format"/> is 'null'.
+        /// </exception>
+        public DateTimeFormatParser(string format)
+            : this(format, CultureInfo.CurrentCulture, DEFAULT_STYLES)
+        {
+        }
 
-		/// <summary>
-		/// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
-		/// </summary>
-		/// <param name="format">
-		/// The formatting string used to format values.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		/// Thrown if <paramref name="format"/> is 'null'.
-		/// </exception>
-		public DateTimeFormatParser(string format)
-            : this(format, CultureInfo.CurrentUICulture, DEFAULT_STYLES)
-		{
-		}
+        /// <summary>
+        /// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
+        /// </summary>
+        /// <param name="format">
+        /// The formatting string used to format values.
+        /// </param>
+        /// <param name="provider">
+        /// The IFormatProvider to be used in the Parse and TryParse methods.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///  <para>
+        ///   Thrown if <paramref name="format"/> is 'null'.
+        ///  </para>
+        ///  <para>
+        ///   Thrown if <paramref name="provider"/> is 'null'.
+        ///  </para>
+        /// </exception>
+        public DateTimeFormatParser(string format, IFormatProvider provider)
+            : this(format, provider, DEFAULT_STYLES)
+        {
+        }
 
-		/// <summary>
-		/// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
-		/// </summary>
-		/// <param name="format">
-		/// The formatting string used to format values.
-		/// </param>
-		/// <param name="provider">
-		/// The IFormatProvider to be used in the Parse and TryParse methods.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///  <para>
-		///   Thrown if <paramref name="format"/> is 'null'.
-		///  </para>
-		///  <para>
-		///   Thrown if <paramref name="provider"/> is 'null'.
-		///  </para>
-		/// </exception>
-		public DateTimeFormatParser(string format, IFormatProvider provider)
-			: this(format, provider, DEFAULT_STYLES)
-		{
-		}
+        /// <summary>
+        /// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
+        /// </summary>
+        /// <param name="format">
+        /// The formatting string used to format values.
+        /// </param>
+        /// <param name="styles">
+        /// The NumberStyles to be used in the Parse and TryParse methods.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///   Thrown if <paramref name="format"/> is 'null'.
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///   Thrown if <paramref name="styles"/> is not a valid 'NumberStyles'
+        ///   value.
+        /// </exception>
+        public DateTimeFormatParser(string format, DateTimeStyles styles)
+            : this(format, CultureInfo.CurrentCulture, styles)
+        {
+        }
 
-		/// <summary>
-		/// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
-		/// </summary>
-		/// <param name="format">
-		/// The formatting string used to format values.
-		/// </param>
-		/// <param name="styles">
-		/// The NumberStyles to be used in the Parse and TryParse methods.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///   Thrown if <paramref name="format"/> is 'null'.
-		/// </exception>
-		/// <exception cref="ArgumentOutOfRangeException">
-		///   Thrown if <paramref name="styles"/> is not a valid 'NumberStyles'
-		///   value.
-		/// </exception>
-		public DateTimeFormatParser(string format, DateTimeStyles styles)
-            : this(format, CultureInfo.CurrentUICulture, styles)
-		{
-		}
+        /// <summary>
+        /// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
+        /// </summary>
+        /// <param name="format">
+        /// The formatting string used to format values.
+        /// </param>
+        /// <param name="provider">
+        /// The IFormatProvider to be used in the Parse and TryParse methods.
+        /// </param>
+        /// <param name="styles">
+        /// The NumberStyles to be used in the Parse and TryParse methods.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        ///  <para>
+        ///   Thrown if <paramref name="format"/> is 'null'.
+        ///  </para>
+        ///  <para>
+        ///   Thrown if <paramref name="provider"/> is 'null'.
+        ///  </para>
+        /// </exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        ///   Thrown if <paramref name="styles"/> is not a valid 'NumberStyles'
+        ///   value.
+        /// </exception>
+        public DateTimeFormatParser(string format, IFormatProvider provider, DateTimeStyles styles)
+        {
+            //Validation
+            if (format == null)
+                throw new ArgumentNullException("format");
 
-		/// <summary>
-		/// Initialise a new instance of the <see cref="NumericFormatParser{T}"/> class.
-		/// </summary>
-		/// <param name="format">
-		/// The formatting string used to format values.
-		/// </param>
-		/// <param name="provider">
-		/// The IFormatProvider to be used in the Parse and TryParse methods.
-		/// </param>
-		/// <param name="styles">
-		/// The NumberStyles to be used in the Parse and TryParse methods.
-		/// </param>
-		/// <exception cref="ArgumentNullException">
-		///  <para>
-		///   Thrown if <paramref name="format"/> is 'null'.
-		///  </para>
-		///  <para>
-		///   Thrown if <paramref name="provider"/> is 'null'.
-		///  </para>
-		/// </exception>
-		/// <exception cref="ArgumentOutOfRangeException">
-		///   Thrown if <paramref name="styles"/> is not a valid 'NumberStyles'
-		///   value.
-		/// </exception>
-		public DateTimeFormatParser(string format, IFormatProvider provider, DateTimeStyles styles)
-		{
-			//Validation
-			if (format == null)
-				throw new ArgumentNullException("format");
-
-			if (provider == null)
-				throw new ArgumentNullException("provider");
+            if (provider == null)
+                throw new ArgumentNullException("provider");
 
 
             this.FormatString = format;
-			this.provider = provider;
-			this.styles = styles;
-
-            this.initialised = true;
-		}
+            this.provider = provider;
+            this.styles = styles;
+        }
 
         private DateTimeFormatParser(DateTimeFormatParser numericFormatParser)
         {
@@ -160,56 +146,54 @@ namespace Plethora.Format
             this.FormatString = numericFormatParser.FormatString;
             this.provider = numericFormatParser.Provider;
             this.styles = numericFormatParser.Styles;
-
-            this.initialised = true;
         }
-		#endregion
+        #endregion
 
-		#region IFormatParserPartial<T> Members
+        #region IFormatParserPartial<T> Members
 
-		/// <summary>
-		/// Raised when the properties of the <see cref="IFormatParser{T}"/> are changed.
-		/// </summary>
-		public event EventHandler Changed;
+        /// <summary>
+        /// Raised when the properties of the <see cref="IFormatParser{T}"/> are changed.
+        /// </summary>
+        public event EventHandler Changed;
 
-		/// <summary>
-		/// Converts the <see cref="DateTime"/> value to its equivalent string
-		/// representation.
-		/// </summary>
-		/// <param name="value">
-		/// The value to be formatted as a string.
-		/// </param>
-		/// <returns>
-		/// The string equivalent of <paramref name="value"/>.
-		/// </returns>
-		public virtual string Format(DateTime value)
-		{
-			return value.ToString(this.FormatString, this.Provider);
-		}
+        /// <summary>
+        /// Converts the <see cref="DateTime"/> value to its equivalent string
+        /// representation.
+        /// </summary>
+        /// <param name="value">
+        /// The value to be formatted as a string.
+        /// </param>
+        /// <returns>
+        /// The string equivalent of <paramref name="value"/>.
+        /// </returns>
+        public virtual string Format(DateTime value)
+        {
+            return value.ToString(this.FormatString, this.Provider);
+        }
 
-		/// <summary>
-		/// Converts the string representation of a number to its equivalent
-		/// Double value. A return value indicates whether the operation succeeded.
-		/// </summary>
-		/// <param name="s">A string containing the value to convert.</param>
-		/// <param name="result">
-		///  <para>
-		///   When this method returns, contains the Double value equivalent to the
-		///   string contained in 's', if the conversion succeeded.
-		///  </para>
-		///  <para>
-		///   Each implementation defines its own return value for 'result' in the
-		///   case where the conversion was not successful. Usually this will be 0
-		///   for numeric values, and 'null' for reference types.
-		///  </para>
-		/// </param>
-		/// <returns>
-		/// 'true' if 's' was converted successfully; otherwise, 'false'.
-		/// </returns>
-		public virtual bool TryParse(string s, out DateTime result)
-		{
-			return DateTime.TryParse(s, this.Provider, this.Styles, out result);
-		}
+        /// <summary>
+        /// Converts the string representation of a number to its equivalent
+        /// Double value. A return value indicates whether the operation succeeded.
+        /// </summary>
+        /// <param name="s">A string containing the value to convert.</param>
+        /// <param name="result">
+        ///  <para>
+        ///   When this method returns, contains the Double value equivalent to the
+        ///   string contained in 's', if the conversion succeeded.
+        ///  </para>
+        ///  <para>
+        ///   Each implementation defines its own return value for 'result' in the
+        ///   case where the conversion was not successful. Usually this will be 0
+        ///   for numeric values, and 'null' for reference types.
+        ///  </para>
+        /// </param>
+        /// <returns>
+        /// 'true' if 's' was converted successfully; otherwise, 'false'.
+        /// </returns>
+        public virtual bool TryParse(string s, out DateTime result)
+        {
+            return DateTime.TryParse(s, this.Provider, this.Styles, out result);
+        }
 
         /// <summary>
         /// Determines whether a string representation of a number can be converted
@@ -270,171 +254,159 @@ namespace Plethora.Format
         }
         #endregion
 
-		#region Properties
+        #region Properties
 
-		#region FormatString Property
+        #region FormatString Property
 
-		/// <summary>
-		/// Raised when <see cref="FormatString"/> changes.
-		/// </summary>
-		/// <seealso cref="FormatString"/>
-		public event EventHandler FormatStringChanged;
+        /// <summary>
+        /// Raised when <see cref="FormatString"/> changes.
+        /// </summary>
+        /// <seealso cref="FormatString"/>
+        public event EventHandler FormatStringChanged;
 
-		/// <summary>
-		/// The default value of <see cref="FormatString"/>.
-		/// </summary>
-		protected internal const string DEFAULT_FORMAT = "d";
+        /// <summary>
+        /// The default value of <see cref="FormatString"/>.
+        /// </summary>
+        protected internal const string DEFAULT_FORMAT = "d";
 
         private string formatString = DEFAULT_FORMAT;
 
         /// <summary>
-		/// Gets and sets the format string for this
-		/// <see cref="NumericFormatParser{T}"/>.
-		/// </summary>
-		[Browsable(true)]
-		[Category("Behaviour")]
-		[Description("The format string for this formatter.")]
-		public string FormatString
-		{
+        /// Gets and sets the format string for this
+        /// <see cref="NumericFormatParser{T}"/>.
+        /// </summary>
+        [Browsable(true)]
+        [Category(ControlAttributes.Category.Behavior)]
+        [Description("The format string for this formatter.")]
+        public string FormatString
+        {
             get { return formatString; }
-			set
-			{
+            set
+            {
                 if (string.Equals(value, formatString))
-					return;
+                    return;
 
                 this.formatString = value;
-				OnFormatStringChanged();
-			}
-		}
+                OnFormatStringChanged();
+            }
+        }
 
-		/// <summary>
-		/// Raises the <see cref="FormatStringChanged"/> event.
-		/// </summary>
-		protected void OnFormatStringChanged()
-		{
-			if (!initialised)
-				return;
-
-			EventHandler handlers = this.FormatStringChanged;
-			if (handlers != null)
-				handlers(this, EventArgs.Empty);
+        /// <summary>
+        /// Raises the <see cref="FormatStringChanged"/> event.
+        /// </summary>
+        protected virtual void OnFormatStringChanged()
+        {
+            EventHandler handlers = this.FormatStringChanged;
+            if (handlers != null)
+                handlers(this, EventArgs.Empty);
 
             OnChanged();
-		}
-		#endregion
+        }
+        #endregion
 
-		#region Provider Property
+        #region Provider Property
 
-		/// <summary>
-		/// Raised when <see cref="Provider"/> changes.
-		/// </summary>
-		/// <seealso cref="Provider"/>
-		public event EventHandler ProviderChanged;
+        /// <summary>
+        /// Raised when <see cref="Provider"/> changes.
+        /// </summary>
+        /// <seealso cref="Provider"/>
+        public event EventHandler ProviderChanged;
 
-		private IFormatProvider provider = null;
+        private IFormatProvider provider = null;
 
-		/// <summary>
-		/// Gets and sets the provider for this <see cref="NumericFormatParser{T}"/>
-		/// </summary>
-		[Browsable(false)]
-		public virtual IFormatProvider Provider
-		{
-			get { return provider; }
-			set
-			{
-				if (value == provider)
-					return;
+        /// <summary>
+        /// Gets and sets the provider for this <see cref="NumericFormatParser{T}"/>
+        /// </summary>
+        [Browsable(false)]
+        public virtual IFormatProvider Provider
+        {
+            get { return provider; }
+            set
+            {
+                if (value == provider)
+                    return;
 
-				provider = value;
-				OnProviderChanged();
-			}
-		}
+                provider = value;
+                OnProviderChanged();
+            }
+        }
 
-		/// <summary>
-		/// Raises the <see cref="ProviderChanged"/> event.
-		/// </summary>
-		protected void OnProviderChanged()
-		{
-			if (!initialised)
-				return;
-
-			EventHandler handlers = this.ProviderChanged;
-			if (handlers != null)
-				handlers(this, EventArgs.Empty);
+        /// <summary>
+        /// Raises the <see cref="ProviderChanged"/> event.
+        /// </summary>
+        protected virtual void OnProviderChanged()
+        {
+            EventHandler handlers = this.ProviderChanged;
+            if (handlers != null)
+                handlers(this, EventArgs.Empty);
 
             OnChanged();
         }
 
-		#endregion
+        #endregion
 
-		#region Styles Property
+        #region Styles Property
 
-		/// <summary>
-		/// Raised when <see cref="Styles"/> changes.
-		/// </summary>
-		/// <seealso cref="Styles"/>
-		public event EventHandler StylesChanged;
+        /// <summary>
+        /// Raised when <see cref="Styles"/> changes.
+        /// </summary>
+        /// <seealso cref="Styles"/>
+        public event EventHandler StylesChanged;
 
-	    /// <summary>
-	    /// The default value of <see cref="Styles"/>.
-	    /// </summary>
-	    protected internal const DateTimeStyles DEFAULT_STYLES = DateTimeStyles.None;
+        /// <summary>
+        /// The default value of <see cref="Styles"/>.
+        /// </summary>
+        protected internal const DateTimeStyles DEFAULT_STYLES = DateTimeStyles.None;
 
-		private DateTimeStyles styles = DEFAULT_STYLES;
+        private DateTimeStyles styles = DEFAULT_STYLES;
 
-		/// <summary>
-		/// Gets and sets the NumberStyle to be used by this <see cref="NumericFormatParser{T}"/>
-		/// </summary>
-		[Browsable(true)]
-		[Category("Behaviour")]
-		[DefaultValue(DEFAULT_STYLES)]
-		[Description("The NumberStyle to be used by this NumericFormatParser.")]
-		public virtual DateTimeStyles Styles
-		{
-			get { return styles; }
-			set
-			{
-				if (value == styles)
-					return;
+        /// <summary>
+        /// Gets and sets the NumberStyle to be used by this <see cref="NumericFormatParser{T}"/>
+        /// </summary>
+        [Browsable(true)]
+        [Category(ControlAttributes.Category.Behavior)]
+        [DefaultValue(DEFAULT_STYLES)]
+        [Description("The NumberStyle to be used by this NumericFormatParser.")]
+        public virtual DateTimeStyles Styles
+        {
+            get { return styles; }
+            set
+            {
+                if (value == styles)
+                    return;
 
-				styles = value;
-				OnStylesChanged();
-			}
-		}
+                styles = value;
+                OnStylesChanged();
+            }
+        }
 
-		/// <summary>
-		/// Raises the <see cref="StylesChanged"/> event.
-		/// </summary>
-		protected void OnStylesChanged()
-		{
-			if (!initialised)
-				return;
-
-			EventHandler handlers = this.StylesChanged;
-			if (handlers != null)
-				handlers(this, EventArgs.Empty);
+        /// <summary>
+        /// Raises the <see cref="StylesChanged"/> event.
+        /// </summary>
+        protected virtual void OnStylesChanged()
+        {
+            EventHandler handlers = this.StylesChanged;
+            if (handlers != null)
+                handlers(this, EventArgs.Empty);
 
             OnChanged();
         }
 
-		#endregion
+        #endregion
 
-		#endregion
+        #endregion
 
         #region Protected Methods
 
         /// <summary>
-		/// Raises the <see cref="Changed"/>.
-		/// </summary>
-		protected virtual void OnChanged()
-		{
-			if (!initialised)
-				return;
-
-			EventHandler handlers = this.Changed;
-			if (handlers != null)
-				handlers(this, EventArgs.Empty);
-		}
+        /// Raises the <see cref="Changed"/>.
+        /// </summary>
+        protected virtual void OnChanged()
+        {
+            EventHandler handlers = this.Changed;
+            if (handlers != null)
+                handlers(this, EventArgs.Empty);
+        }
 
         /// <summary>
         /// Tests if the partial representation of a numeric value can be considered
@@ -452,21 +424,20 @@ namespace Plethora.Format
         }
         #endregion
 
-		#region Private Methods
+        #region Private Methods
 
         protected bool ValidatePartialDateTime(string partialDateTime)
         {
+            return true;
+
+            //TODO: Too restrictive (can't parse "12 Sep 2012")
             if ((styles & DateTimeStyles.AllowLeadingWhite) == DateTimeStyles.AllowLeadingWhite)
                 partialDateTime = partialDateTime.TrimStart();
 
             if ((styles & DateTimeStyles.AllowTrailingWhite) == DateTimeStyles.AllowTrailingWhite)
                 partialDateTime = partialDateTime.TrimEnd();
 
-            bool allowWhiteSpace = false;
-            if ((styles & DateTimeStyles.AllowInnerWhite) == DateTimeStyles.AllowInnerWhite)
-            {
-                allowWhiteSpace = true;
-            }
+            bool allowWhiteSpace = (styles & DateTimeStyles.AllowInnerWhite) == DateTimeStyles.AllowInnerWhite;
 
             string[] portions = null;
             foreach (var separator in DateTimeSeparators)
@@ -665,7 +636,7 @@ namespace Plethora.Format
             }
             else
             {
-                partialMonth = partialMonth.ToUpper(CultureInfo.CurrentUICulture);
+                partialMonth = partialMonth.ToUpper(CultureInfo.CurrentCulture);
                 return MonthNames
                     .Any(monthName => monthName.StartsWith(partialMonth));
             }
@@ -770,28 +741,28 @@ namespace Plethora.Format
         }
 
 
-	    private static List<string> monthNames;
-	    private static IEnumerable<string> MonthNames
-	    {
-	        get
-	        {
+        private static List<string> monthNames;
+        private static IEnumerable<string> MonthNames
+        {
+            get
+            {
                 if (monthNames == null)
-	            {
-	                monthNames = new List<string>(24);
+                {
+                    monthNames = new List<string>(24);
 
                     var dateTimeFormatInfo = DateTimeFormatInfo.CurrentInfo;
-	                var uiCulture = CultureInfo.CurrentUICulture;
-	                for (int i = 1; i < 12; i++)
-	                {
+                    var uiCulture = CultureInfo.CurrentCulture;
+                    for (int i = 1; i < 12; i++)
+                    {
                         monthNames.Add(dateTimeFormatInfo.GetMonthName(i).ToUpper(uiCulture));
                         monthNames.Add(dateTimeFormatInfo.GetAbbreviatedMonthName(i).ToUpper(uiCulture));
-	                }
+                    }
 
                     monthNames.TrimExcess();
-	            }
+                }
                 return monthNames;
-	        }
-	    }
+            }
+        }
 
         private static List<string> dateSeparators;
         private static IEnumerable<string> DateSeparators
@@ -816,5 +787,5 @@ namespace Plethora.Format
 
         private readonly static char[] DateTimeSeparators = new[] { 'Z', 'T', ' ' };
         #endregion
-	}
+    }
 }

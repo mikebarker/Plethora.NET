@@ -145,7 +145,7 @@ namespace Plethora.ComponentModel.Test
         public void MultipleExecutions()
         {
             //setup
-            const int ITTERATIONS = 64;
+            const int ITTERATIONS = 16;
             var stopwatch = new Stopwatch();
 
             var asyncResultList = new List<IAsyncResult>(ITTERATIONS);

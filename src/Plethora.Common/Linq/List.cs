@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
+using Plethora.Collections;
 
 namespace Plethora.Linq
 {
@@ -48,99 +48,9 @@ namespace Plethora.Linq
 
         #region SubList
 
-        private class SubListEnumerator<T> : IEnumerator<T>
-        {
-            #region Fields
-
-            private readonly IList<T> source;
-            private readonly int index;
-            private readonly int count;
-
-            private int currentIndex;
-            private T current;
-            #endregion
-
-            #region Constructors
-
-            public SubListEnumerator(IList<T> source, int index, int count)
-            {
-                //Validation
-                if (source == null)
-                    throw new ArgumentNullException("source");
-
-                if (index < 0)
-                    throw new ArgumentOutOfRangeException("index", index,
-                                                          ResourceProvider.ArgMustBeGreaterThanEqualToZero("index"));
-
-                if (count < 0)
-                    throw new ArgumentOutOfRangeException("count", count,
-                                                          ResourceProvider.ArgMustBeGreaterThanEqualToZero("count"));
-
-                if (index + count > source.Count)
-                    throw new ArgumentException(ResourceProvider.ArgInvaliadOffsetLength("index", "count"));
-
-                this.source = source;
-                this.count = count;
-                this.index = index;
-                Reset();
-            }
-            #endregion
-
-            #region Implementation of IDisposable
-
-            public void Dispose()
-            {
-                this.Reset();
-            }
-            #endregion
-
-            #region Implementation of IEnumerator
-
-            public bool MoveNext()
-            {
-                int newIndex;
-                if (currentIndex == -1)
-                    newIndex = index;
-                else
-                    newIndex = currentIndex + 1;
-
-                if (newIndex >= index + count)
-                {
-                    current = default(T);
-                    return false;
-                }
-
-                currentIndex = newIndex;
-                current = source[currentIndex];
-                return true;
-            }
-
-            public void Reset()
-            {
-                this.currentIndex = -1;
-                this.current = default(T);
-            }
-
-            object IEnumerator.Current
-            {
-                get { return this.Current; }
-            }
-
-            #endregion
-
-            #region Implementation of IEnumerator<T>
-
-            public T Current
-            {
-                get { return this.current; }
-            }
-
-            #endregion
-        }
-
         public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index, int count)
         {
-            return new SubListEnumerator<TSource>(source, index, count).AsEnumerable();
+            return new ListIndexItterator<TSource>(source, index, count);
         }
         #endregion
     }

@@ -23,12 +23,9 @@ using System.Security.Permissions;
 [assembly: AssemblyCulture("")]
 
 // Version
-[assembly: AssemblyVersion("0.8.*")]
-[assembly: AssemblyFileVersion("0.8.3.0")]
+[assembly: AssemblyVersion("0.9.*")]
+[assembly: AssemblyFileVersion("0.9.0.0")]
 
 // Interoperability
 [assembly: ComVisible(false)]
 [assembly: CLSCompliant(true)]
-
-// Permissions
-[assembly: SecurityPermission(SecurityAction.RequestMinimum)]

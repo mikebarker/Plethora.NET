@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?> 
 <log4net>
-	<appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
-		<layout type="Logging.Extensions.DynamicPatternLayout,Logging.Core" />
-		<filter type="Logging.Extensions.DynamicLevelFilter,Logging.Core" />
-	</appender>
-	
-	<root>
-		<appender-ref ref="ConsoleAppender" />
-	</root>
+    <appender name="ConsoleAppender" type="log4net.Appender.ConsoleAppender">
+        <layout type="Logging.Extensions.DynamicPatternLayout,Logging.Core" />
+        <filter type="Logging.Extensions.DynamicLevelFilter,Logging.Core" />
+    </appender>
+    
+    <root>
+        <appender-ref ref="ConsoleAppender" />
+    </root>
 </log4net>

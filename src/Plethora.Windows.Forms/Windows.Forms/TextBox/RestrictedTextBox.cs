@@ -13,6 +13,7 @@ namespace Plethora.Windows.Forms
     /// When inheriting from this class the <see cref="ValidateText"/> method
     /// should be overridden with a suitable method.
     /// </remarks>
+    [ToolboxItem(false)]
     public class RestrictedTextBox : TextBoxEx
     {
         #region Constants

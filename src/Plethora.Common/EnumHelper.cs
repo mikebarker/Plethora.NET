@@ -27,7 +27,7 @@ namespace Plethora
         /// <returns>
         /// The description for an enum.
         /// </returns>
-        public static string Description(Enum value)
+        public static string Description(this Enum value)
         {
             return Description(value, DEFAULT_SEPARATOR);
         }
@@ -45,7 +45,7 @@ namespace Plethora
         /// The description for an enum. If the enum has the FlagAttribute set
         /// multiple values are return separated by 'separator', if required.
         /// </returns>
-        public static string Description(Enum value, string separator)
+        public static string Description(this Enum value, string separator)
         {
             //Validation
             if (separator == null)
@@ -96,11 +96,13 @@ namespace Plethora
             {
                 long lngFlagValue = Convert.ToInt64(flagValue, CultureInfo.CurrentCulture);
 
+                //Elements with exactly match will not be broken down to individual flags
                 if (lngValue == lngFlagValue)
                 {
                     string description = DescriptionNoFlags((Enum)flagValue);
                     return new string[] { description };
                 }
+                //Each individual flag which is set returns, unless an exact is found
                 else if ((lngFlagValue != 0) && ((lngValue & lngFlagValue) == lngFlagValue))
                 {
                     string description = DescriptionNoFlags((Enum)flagValue);

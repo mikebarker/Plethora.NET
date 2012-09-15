@@ -98,7 +98,7 @@ namespace Plethora.fqi.Trees
         {
             AvlNode parent = ((AvlNode)node).Parent;
 
- 	        base.RemoveNode(node);
+             base.RemoveNode(node);
 
             if (parent == null)
                 this.BalanceNode(this.Root, false);
