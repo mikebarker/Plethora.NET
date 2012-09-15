@@ -70,7 +70,7 @@ namespace Plethora.Windows.Forms.Styles
         /// Gets and sets the style to be applied when a text box's value is positive.
         /// </summary>
         [Browsable(true)]
-        [Category("Appearance")]
+        [Category(ControlAttributes.Category.Appearance)]
         [Description("The style to be applied when a text box's value is positive.")]
         [DefaultValue(null)]
         public TextBoxStyle PositiveStyle
@@ -126,7 +126,7 @@ namespace Plethora.Windows.Forms.Styles
         /// Gets and sets the style to be applied when the text box's value is negative.
         /// </summary>
         [Browsable(true)]
-        [Category("Appearance")]
+        [Category(ControlAttributes.Category.Appearance)]
         [Description("The style to be applied when the text box's value is negative.")]
         [DefaultValue(null)]
         public TextBoxStyle NegativeStyle
@@ -182,7 +182,7 @@ namespace Plethora.Windows.Forms.Styles
         /// Gets and sets the style to be applied when the text box's value is zero.
         /// </summary>
         [Browsable(true)]
-        [Category("Appearance")]
+        [Category(ControlAttributes.Category.Appearance)]
         [Description("The style to be applied when the text box's value is zero.")]
         [DefaultValue(null)]
         public TextBoxStyle ZeroStyle
@@ -238,7 +238,7 @@ namespace Plethora.Windows.Forms.Styles
         /// Gets and sets the style to be applied when the text box's value is null.
         /// </summary>
         [Browsable(true)]
-        [Category("Appearance")]
+        [Category(ControlAttributes.Category.Appearance)]
         [Description("The style to be applied when the text box's value is null.")]
         [DefaultValue(null)]
         public TextBoxStyle NullStyle

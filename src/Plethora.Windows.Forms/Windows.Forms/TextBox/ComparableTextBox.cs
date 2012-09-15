@@ -79,6 +79,7 @@ namespace Plethora.Windows.Forms
         /// Gets or sets the current text in the text box.
         /// </summary>
         /// <seealso cref="Value"/>
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public override string Text
         {
             get { return base.Text; }
@@ -149,6 +150,16 @@ namespace Plethora.Windows.Forms
                         SetTextFromValue();
                         SelectAll();
                         isTextUnChanged = true;
+                        keyMessageHandled = true;
+                        break;
+
+                    case Keys.Enter:
+                        bool isValid = TrySetValueFromText();
+                        if (isValid)
+                        {
+                            SelectAll();
+                            isTextUnChanged = true;
+                        }
                         keyMessageHandled = true;
                         break;
                 }
@@ -273,7 +284,7 @@ namespace Plethora.Windows.Forms
         [Category(ControlAttributes.Category.Data)]
         [DefaultValue(0)]
         [Description("The value represented by the text of this text box.")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Visible)]
         [RefreshProperties(RefreshProperties.All)]
         public virtual T Value
         {

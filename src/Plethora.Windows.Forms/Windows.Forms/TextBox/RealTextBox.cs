@@ -23,6 +23,7 @@ namespace Plethora.Windows.Forms
     /// Intermediate class required to "fool" the designers to construct the <see cref="RealTextBox"/>.
     /// </summary>
     [Browsable(false)]
+    [ToolboxItem(false)]
     public class RealTextBoxBase : NumericTextBox<Double>
     {
         #region Overrides of ComparableTextBox<Double>

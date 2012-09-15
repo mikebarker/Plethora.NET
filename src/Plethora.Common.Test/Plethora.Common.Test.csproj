@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Plethora.Test</RootNamespace>
     <AssemblyName>Plethora.Common.Test</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -31,6 +31,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -88,6 +89,7 @@
     <Compile Include="Collections\SortedByKeyListHelper_Test.cs" />
     <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
+    <Compile Include="EnumHelper_Test.cs" />
     <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
     <Compile Include="ExpressionAide\ExpressionDuplicatorWithClosurePromotion_Test.cs" />
     <Compile Include="ExpressionAide\ExpressionDuplicator_Test.cs">

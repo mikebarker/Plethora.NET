@@ -8,16 +8,16 @@ using Plethora.Format;
 namespace Plethora.Windows.Forms
 {
     [System.ComponentModel.DesignerCategory("Code")]
-    public class DateTimeTextBox : DateTimeTextBoxBase
+    public class NullableDateTimeTextBox : NullableDateTimeTextBoxBase
     {
     }
 
     /// <summary>
-    /// Intermediate class required to "fool" the designers to construct the <see cref="DateTimeTextBox"/>.
+    /// Intermediate class required to "fool" the designers to construct the <see cref="NullableDateTimeTextBox"/>.
     /// </summary>
     [Browsable(false)]
     [ToolboxItem(false)]
-    public class DateTimeTextBoxBase : ComparableTextBox<DateTime>
+    public class NullableDateTimeTextBoxBase : ComparableTextBox<Nullable<DateTime>>
     {
         #region Fields
 
@@ -33,9 +33,9 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// Initialise a new instance of the <see cref="DateTimeTextBoxBase"/> class.
         /// </summary>
-        public DateTimeTextBoxBase()
+        public NullableDateTimeTextBoxBase()
         {
-            this.FormatParser = DateTimeFormatParser.Default;
+            this.FormatParser = NullableDateTimeFormatParser.Default;
 
             InitializeComponent();
 
@@ -80,13 +80,13 @@ namespace Plethora.Windows.Forms
         }
         #endregion
 
-        #region Overrides of ComparableTextBox<DateTime>
+        #region Overrides of ComparableTextBox<Nullable<DateTime>>
 
         /// <summary>
-        /// Validate partial values of <see cref="DateTime"/>, allowing for the user to type in the value.
+        /// Validate partial values of <see cref="DateTime"/>?, allowing for the user to type in the value.
         /// </summary>
         /// <param name="validateValue">
-        /// The <see cref="DateTime"/> value to be validated.
+        /// The <see cref="DateTime"/>? value to be validated.
         /// </param>
         /// <returns>
         /// 'true' if the value represents a valid, partial value of <see cref="DateTime"/>; else 'false'.
@@ -95,7 +95,7 @@ namespace Plethora.Windows.Forms
         /// Consider the case where <see cref="ComparableTextBox{T}.MinValue"/> is 25. The user wants to
         /// type the number 347. As the user types 3 this function must return true.
         /// </example>
-        protected override bool ValidateValuePartial(DateTime validateValue)
+        protected override bool ValidateValuePartial(Nullable<DateTime> validateValue)
         {
             return true;
         }
@@ -103,7 +103,7 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// Gets the minimum value for the type <see cref="DateTime"/>.
         /// </summary>
-        protected override DateTime MinOfT
+        protected override Nullable<DateTime> MinOfT
         {
             get { return DateTime.MinValue; }
         }
@@ -111,7 +111,7 @@ namespace Plethora.Windows.Forms
         /// <summary>
         /// Gets the maximum value for the type <see cref="DateTime"/>.
         /// </summary>
-        protected override DateTime MaxOfT
+        protected override Nullable<DateTime> MaxOfT
         {
             get { return DateTime.MaxValue; }
         }
@@ -234,6 +234,10 @@ namespace Plethora.Windows.Forms
                     HideDropDown();
                     break;
 
+                case Keys.Enter:
+                    HideDropDown();
+                    break;
+
                 default:
                     ShowDropDown();
                     break;
@@ -242,9 +246,9 @@ namespace Plethora.Windows.Forms
 
         protected override void OnValueChanged()
         {
-            if (!isSelfUpdating)
+            if ((!isSelfUpdating) && (this.Value.HasValue))
             {
-                this.calendar.SelectionStart = this.Value;
+                this.calendar.SelectionStart = this.Value.Value;
             }
 
             base.OnValueChanged();

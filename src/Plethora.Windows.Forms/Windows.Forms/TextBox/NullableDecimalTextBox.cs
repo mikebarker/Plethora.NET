@@ -23,6 +23,7 @@ namespace Plethora.Windows.Forms
     /// Intermediate class required to "fool" the designers to construct the <see cref="NullableDecimalTextBox"/>.
     /// </summary>
     [Browsable(false)]
+    [ToolboxItem(false)]
     public class NullableDecimalTextBoxBase : NullableNumericTextBox<Decimal>
     {
         #region Overrides of ComparableTextBox<Double>
