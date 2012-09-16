@@ -143,6 +143,17 @@ namespace Plethora.Test.ComponentModel
         #endregion
 
         [Test]
+        public void Invoke()
+        {
+            //exec
+            object result = synchronizeInvoke.Invoke(new Func<int>(GetNextInt), null);
+
+            //test
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result is int);
+        }
+
+        [Test]
         public void MultipleExecutions()
         {
             //setup

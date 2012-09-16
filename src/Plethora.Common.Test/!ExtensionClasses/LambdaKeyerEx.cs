@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Plethora.ExpressionAide;
 
-namespace Plethora.Test._ExtensionClasses
+namespace Plethora.Test.ExtensionClasses
 {
     static class LambdaKeyerEx
     {

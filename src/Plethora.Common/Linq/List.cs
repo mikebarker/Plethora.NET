@@ -4,7 +4,7 @@ using Plethora.Collections;
 
 namespace Plethora.Linq
 {
-    public static class List
+    public static class ListHelper
     {
         #region BinarySearch
 
