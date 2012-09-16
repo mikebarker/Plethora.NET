@@ -1,7 +1,8 @@
 using System;
 using NUnit.Framework;
+using Plethora.fqi;
 
-namespace Plethora.fqi.Test
+namespace Plethora.Test.fqi
 {
     [TestFixture]
     public class PredicateExtensions_Test

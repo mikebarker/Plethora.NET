@@ -1,7 +1,7 @@
 using System.IO;
 using System.Text;
 
-namespace ChocolateBox.Test.MockClasses
+namespace Plethora.Test.MockClasses
 {
     class MockTextWriter : TextWriter
     {

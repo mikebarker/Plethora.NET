@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Plethora.Linq;
 using Plethora.Test.UtilityClasses;
 
-namespace Plethora.Linq.Test
+namespace Plethora.Test.Linq
 {
     [TestFixture]
     public class EnumerableHelper_Test

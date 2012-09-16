@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Plethora.fqi.Trees;
 
-namespace Plethora.fqi.Trees.Test
+namespace Plethora.Test.fqi.Trees
 {
     [TestFixture]
     public class BinaryTree_Test

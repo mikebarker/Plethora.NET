@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Plethora.Collections;
 
-namespace Plethora.Collections.Test
+namespace Plethora.Test.Collections
 {
     [TestFixture]
     public class ListIndexItterator_Test

@@ -180,6 +180,16 @@ namespace Plethora.Logging.log4net.Extensions
             return Litteral(" ");
         }
 
+        public PatternElement Tab()
+        {
+            return Litteral("\t");
+        }
+
+        public PatternElement NewLine()
+        {
+            return Litteral(Environment.NewLine);
+        }
+
 
         public PatternElement Litteral(string litteral)
         {

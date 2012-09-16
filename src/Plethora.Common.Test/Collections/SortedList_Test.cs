@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
-namespace Plethora.Collections.Test
+namespace Plethora.Test.Collections
 {
     [TestFixture]
     public class SortedList_Test

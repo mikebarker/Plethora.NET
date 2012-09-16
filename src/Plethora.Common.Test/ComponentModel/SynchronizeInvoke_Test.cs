@@ -4,10 +4,11 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using NUnit.Framework;
+using Plethora.ComponentModel;
 using Plethora.Test.UtilityClasses;
 using Plethora.Threading;
 
-namespace Plethora.ComponentModel.Test
+namespace Plethora.Test.ComponentModel
 {
     [TestFixture]
     public class SynchronizeInvoke_Test
