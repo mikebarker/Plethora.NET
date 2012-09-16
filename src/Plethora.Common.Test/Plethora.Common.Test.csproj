@@ -78,7 +78,6 @@
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="!UtilityClasses\Style.cs" />
     <Compile Include="!UtilityClasses\TreeElement.cs" />
-    <Compile Include="!MockClasses\MockNumericHelperExtension.cs" />
     <Compile Include="!MockClasses\MockTextWriter.cs" />
     <Compile Include="Collections\AutoKeyedCollection_Test.cs" />
     <Compile Include="Collections\ListIndexItterator_Test.cs" />
@@ -88,6 +87,7 @@
     <Compile Include="Collections\KeyedCollection_Test.cs" />
     <Compile Include="Collections\SortedByKeyListHelper_Test.cs" />
     <Compile Include="Collections\SortedList_Test.cs" />
+    <Compile Include="ComponentModel\AsyncTaskHelper_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
     <Compile Include="EnumHelper_Test.cs" />
     <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
@@ -102,6 +102,7 @@
     <Compile Include="!ExtensionClasses\HierarchyEx.cs" />
     <Compile Include="IO\MulticastWriter_Test.cs" />
     <Compile Include="Linq\EnumerableHelper_Test.cs" />
+    <Compile Include="Linq\ListHelper_Test.cs" />
     <Compile Include="NumericHelper_Test.cs" />
     <Compile Include="Reflection\Generic_Test.cs" />
     <Compile Include="StringFormat\StringFormatHelper_Test.cs" />

@@ -1,7 +1,7 @@
 using System;
 using System.Linq.Expressions;
 using NUnit.Framework;
-using Plethora.Test._ExtensionClasses;
+using Plethora.Test.ExtensionClasses;
 
 namespace Plethora.Test.ExpressionAide
 {

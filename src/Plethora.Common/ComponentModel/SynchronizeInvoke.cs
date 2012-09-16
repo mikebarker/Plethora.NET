@@ -306,6 +306,15 @@ namespace Plethora.ComponentModel
         }
         #endregion
 
+        #region Protected Properties
+
+        protected Thread AsyncThread
+        {
+            get { return asyncThread; }
+        }
+
+        #endregion
+
         #region Private Methods
 
         /// <summary>
