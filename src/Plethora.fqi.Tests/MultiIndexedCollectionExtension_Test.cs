@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 using NUnit.Framework;
+using Plethora.fqi;
 
-namespace Plethora.fqi.Test
+namespace Plethora.Test.fqi
 {
     [TestFixture]
     public class MultiIndexedCollectionExtension_Test

@@ -8,7 +8,7 @@
     <ProjectGuid>{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plethora.fqi.Test</RootNamespace>
+    <RootNamespace>Plethora.Test.fqi</RootNamespace>
     <AssemblyName>Plethora.fqi.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

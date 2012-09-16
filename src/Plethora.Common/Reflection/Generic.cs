@@ -68,7 +68,7 @@ namespace Plethora.Reflection
         ///   <![CDATA[
         ///       // Returns the method definition for
         ///       //  Queryable.Where<TSource>(IQueryable<TSource>, Expression<Func<TSource, bool>>)
-        ///       MethodInfo whereMethod = typeof(Queryable<>).GetGenericMethod(
+        ///       MethodInfo whereMethod = typeof(Queryable).GetGenericMethod(
         ///           "Where",
         ///           new Type[]
         ///               {
@@ -124,7 +124,7 @@ namespace Plethora.Reflection
         ///   <![CDATA[
         ///       // Returns the method definition for
         ///       //  Queryable.Where<TSource>(IQueryable<TSource>, Expression<Func<TSource, bool>>)
-        ///       MethodInfo whereMethod = typeof(Queryable<>).GetGenericMethod(
+        ///       MethodInfo whereMethod = typeof(Queryable).GetGenericMethod(
         ///           "Where",
         ///           new Type[]
         ///               {

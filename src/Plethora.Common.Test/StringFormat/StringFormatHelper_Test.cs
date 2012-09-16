@@ -1,7 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
+using Plethora.StringFormat;
 
-namespace Plethora.StringFormat.Test
+namespace Plethora.Test.StringFormat
 {
     [TestFixture]
     public class StringFormatHelper_Test

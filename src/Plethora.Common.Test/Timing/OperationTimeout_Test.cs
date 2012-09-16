@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Threading;
 using NUnit.Framework;
+using Plethora.Timing;
 
-namespace Plethora.Timing.Test
+namespace Plethora.Test.Timing
 {
     [TestFixture]
     public class OperationTimeout_Test

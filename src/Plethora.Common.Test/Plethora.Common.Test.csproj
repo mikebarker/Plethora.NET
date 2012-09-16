@@ -103,6 +103,7 @@
     <Compile Include="IO\MulticastWriter_Test.cs" />
     <Compile Include="Linq\EnumerableHelper_Test.cs" />
     <Compile Include="NumericHelper_Test.cs" />
+    <Compile Include="Reflection\Generic_Test.cs" />
     <Compile Include="StringFormat\StringFormatHelper_Test.cs" />
     <Compile Include="StringHelper_Test.cs" />
     <Compile Include="Timing\OperationTimeout_Test.cs" />

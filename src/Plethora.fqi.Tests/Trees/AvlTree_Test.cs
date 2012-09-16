@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Plethora.fqi.Trees;
 using NUnit.Framework;
 
-namespace Plethora.fqi.Trees.Test
+namespace Plethora.Test.fqi.Trees
 {
     [TestFixture]
     public class AvlTree_Test

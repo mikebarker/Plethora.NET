@@ -2,7 +2,7 @@
 using Plethora.Test.ExtensionClasses;
 using Plethora.Test.UtilityClasses;
 
-namespace Plethora.Collections.Test
+namespace Plethora.Test.Collections
 {
     [TestFixture]
     public class Heirarchy_Test

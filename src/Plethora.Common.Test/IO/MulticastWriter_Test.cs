@@ -1,8 +1,9 @@
 using System.Text;
-using ChocolateBox.Test.MockClasses;
 using NUnit.Framework;
+using Plethora.IO;
+using Plethora.Test.MockClasses;
 
-namespace Plethora.IO.Test
+namespace Plethora.Test.IO
 {
     /// <summary>
     /// Unit test class for the <see cref="MulticastWriter"/> class.

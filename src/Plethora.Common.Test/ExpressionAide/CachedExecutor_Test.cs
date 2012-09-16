@@ -1,8 +1,9 @@
 using System;
 using System.Linq.Expressions;
 using NUnit.Framework;
+using Plethora.ExpressionAide;
 
-namespace Plethora.ExpressionAide.Test
+namespace Plethora.Test.ExpressionAide
 {
     [TestFixture]
     public class CachedExecutor_Test

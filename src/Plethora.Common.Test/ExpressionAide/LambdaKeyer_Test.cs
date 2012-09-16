@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 using NUnit.Framework;
 using Plethora.Test._ExtensionClasses;
 
-namespace Plethora.ExpressionAide.Test
+namespace Plethora.Test.ExpressionAide
 {
     [TestFixture]
     public class LambdaKeyerTest
