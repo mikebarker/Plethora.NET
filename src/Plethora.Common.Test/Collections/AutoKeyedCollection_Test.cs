@@ -10,18 +10,14 @@ namespace Plethora.Test.Collections
     public class AutoKeyedCollection_Test
     {
         AutoKeyedCollection<Person> autoKeyedCollection = new AutoKeyedCollection<Person>();
-        private readonly Person Bob_Jameson = new Person("Jameson", "Bob", new DateTime(1964, 03, 14));
-        private readonly Person Fred_Carlile = new Person("Carlile", "Fred", new DateTime(1975, 11, 07));
-        private readonly Person Amy_Cathson = new Person("Cathson", "Amy", new DateTime(1984, 02, 21));
-        private readonly Person Jill_Dorrman = new Person("Dorrman", "Jill", new DateTime(1978, 05, 08));
 
         [SetUp]
         public void SetUp()
         {
             autoKeyedCollection = new AutoKeyedCollection<Person>();
-            autoKeyedCollection.Add(Bob_Jameson);
-            autoKeyedCollection.Add(Fred_Carlile);
-            autoKeyedCollection.Add(Amy_Cathson);
+            autoKeyedCollection.Add(Person.Bob_Jameson);
+            autoKeyedCollection.Add(Person.Fred_Carlile);
+            autoKeyedCollection.Add(Person.Amy_Cathson);
             //Jill_Dorrman not added
         }
 
@@ -42,7 +38,7 @@ namespace Plethora.Test.Collections
         public void ctor_Enumerable()
         {
             //setup
-            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
             //exec
             autoKeyedCollection = new AutoKeyedCollection<Person>(array);
@@ -72,7 +68,7 @@ namespace Plethora.Test.Collections
         public void ctor_EnumerableComparer()
         {
             //setup
-            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
             EqualityComparer<Person> equalityComparer = EqualityComparer<Person>.Default;
 
             //exec
@@ -124,14 +120,14 @@ namespace Plethora.Test.Collections
         {
             //setup
             int preAddCount = autoKeyedCollection.Count;
-            long id = Jill_Dorrman.ID;
+            long id = Person.Jill_Dorrman.ID;
 
             //exec
-            autoKeyedCollection.Add(Jill_Dorrman);
+            autoKeyedCollection.Add(Person.Jill_Dorrman);
 
             //test
             Assert.AreEqual(preAddCount + 1, autoKeyedCollection.Count);
-            Assert.AreEqual(Jill_Dorrman, autoKeyedCollection[Jill_Dorrman]);
+            Assert.AreEqual(Person.Jill_Dorrman, autoKeyedCollection[Person.Jill_Dorrman]);
         }
 
         [Test]
@@ -154,7 +150,7 @@ namespace Plethora.Test.Collections
         {
             try
             {
-                autoKeyedCollection.Add(Bob_Jameson);
+                autoKeyedCollection.Add(Person.Bob_Jameson);
 
                 Assert.Fail();
             }
@@ -184,7 +180,7 @@ namespace Plethora.Test.Collections
         public void Contains_True()
         {
             //exec
-            bool result = autoKeyedCollection.Contains(Bob_Jameson);
+            bool result = autoKeyedCollection.Contains(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -194,7 +190,7 @@ namespace Plethora.Test.Collections
         public void Contains_False()
         {
             //exec
-            bool result = autoKeyedCollection.Contains(Jill_Dorrman);
+            bool result = autoKeyedCollection.Contains(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -223,7 +219,7 @@ namespace Plethora.Test.Collections
         public void ContainsKey_True()
         {
             //exec
-            bool result = autoKeyedCollection.ContainsKey(Bob_Jameson);
+            bool result = autoKeyedCollection.ContainsKey(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -233,7 +229,7 @@ namespace Plethora.Test.Collections
         public void ContainsKey_False()
         {
             //exec
-            bool result = autoKeyedCollection.ContainsKey(Jill_Dorrman);
+            bool result = autoKeyedCollection.ContainsKey(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -252,10 +248,10 @@ namespace Plethora.Test.Collections
             autoKeyedCollection.CopyTo(array, 0);
 
             //test
-            Assert.IsTrue(Array.IndexOf(array, Bob_Jameson) >= 0);
-            Assert.IsTrue(Array.IndexOf(array, Fred_Carlile) >= 0);
-            Assert.IsTrue(Array.IndexOf(array, Amy_Cathson) >= 0);
-            Assert.IsFalse(Array.IndexOf(array, Jill_Dorrman) >= 0);
+            Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 0);
+            Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 0);
+            Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 0);
+            Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 0);
         }
 
         [Test]
@@ -268,10 +264,10 @@ namespace Plethora.Test.Collections
             autoKeyedCollection.CopyTo(array, 2);
 
             //test
-            Assert.IsTrue(Array.IndexOf(array, Bob_Jameson) >= 2);
-            Assert.IsTrue(Array.IndexOf(array, Fred_Carlile) >= 2);
-            Assert.IsTrue(Array.IndexOf(array, Amy_Cathson) >= 2);
-            Assert.IsFalse(Array.IndexOf(array, Jill_Dorrman) >= 2);
+            Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 2);
+            Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 2);
+            Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 2);
+            Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 2);
         }
         #endregion
 
@@ -302,9 +298,9 @@ namespace Plethora.Test.Collections
             int i = 0;
             foreach (var person in autoKeyedCollection)
             {
-                if ((person != Bob_Jameson) &&
-                    (person != Fred_Carlile) &&
-                    (person != Amy_Cathson))
+                if ((person != Person.Bob_Jameson) &&
+                    (person != Person.Fred_Carlile) &&
+                    (person != Person.Amy_Cathson))
                 {
                     Assert.Fail("Invalid person in itteration.");
                 }
@@ -334,9 +330,9 @@ namespace Plethora.Test.Collections
         {
             //setup
             var ids = new List<Person>();
-            ids.Add(Bob_Jameson);
-            ids.Add(Fred_Carlile);
-            ids.Add(Amy_Cathson);
+            ids.Add(Person.Bob_Jameson);
+            ids.Add(Person.Fred_Carlile);
+            ids.Add(Person.Amy_Cathson);
 
             //exec
             var keys = autoKeyedCollection.Keys;
@@ -361,7 +357,7 @@ namespace Plethora.Test.Collections
         public void Remove_InCollection()
         {
             //exec
-            bool result = autoKeyedCollection.Remove(Bob_Jameson);
+            bool result = autoKeyedCollection.Remove(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -372,7 +368,7 @@ namespace Plethora.Test.Collections
         public void Remove_NotInCollection()
         {
             //exec
-            bool result = autoKeyedCollection.Remove(Jill_Dorrman);
+            bool result = autoKeyedCollection.Remove(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -402,7 +398,7 @@ namespace Plethora.Test.Collections
         public void RemoveKey_InCollection()
         {
             //exec
-            bool result = autoKeyedCollection.RemoveKey(Bob_Jameson);
+            bool result = autoKeyedCollection.RemoveKey(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -413,7 +409,7 @@ namespace Plethora.Test.Collections
         public void RemoveKey_NotInCollection()
         {
             //exec
-            bool result = autoKeyedCollection.RemoveKey(Jill_Dorrman);
+            bool result = autoKeyedCollection.RemoveKey(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -428,12 +424,12 @@ namespace Plethora.Test.Collections
         {
             //exec
             Person person;
-            bool result = autoKeyedCollection.TryGetValue(Bob_Jameson, out person);
+            bool result = autoKeyedCollection.TryGetValue(Person.Bob_Jameson, out person);
 
             //test
             Assert.IsTrue(result);
             Assert.IsNotNull(person);
-            Assert.AreEqual(Bob_Jameson, person);
+            Assert.AreEqual(Person.Bob_Jameson, person);
         }
 
         [Test]
@@ -441,7 +437,7 @@ namespace Plethora.Test.Collections
         {
             //exec
             Person person;
-            bool result = autoKeyedCollection.TryGetValue(Jill_Dorrman, out person);
+            bool result = autoKeyedCollection.TryGetValue(Person.Jill_Dorrman, out person);
 
             //test
             Assert.IsFalse(result);
@@ -455,18 +451,18 @@ namespace Plethora.Test.Collections
         public void Upsert_NotInCollection()
         {
             //exec
-            autoKeyedCollection.Upsert(Jill_Dorrman);
+            autoKeyedCollection.Upsert(Person.Jill_Dorrman);
 
             //test
             Assert.AreEqual(4, autoKeyedCollection.Count);
-            Assert.IsTrue(autoKeyedCollection.Contains(Jill_Dorrman));
+            Assert.IsTrue(autoKeyedCollection.Contains(Person.Jill_Dorrman));
         }
 
         [Test]
         public void Upsert_InCollection()
         {
             //exec
-            autoKeyedCollection.Upsert(Bob_Jameson);
+            autoKeyedCollection.Upsert(Person.Bob_Jameson);
 
             //test
             Assert.AreEqual(3, autoKeyedCollection.Count);
@@ -511,9 +507,9 @@ namespace Plethora.Test.Collections
             //setup
             IEnumerable<Person> people = new List<Person>
                 {
-                    Bob_Jameson,
-                    Fred_Carlile,
-                    Amy_Cathson
+                    Person.Bob_Jameson,
+                    Person.Fred_Carlile,
+                    Person.Amy_Cathson
                 };
 
             //exec
@@ -530,9 +526,9 @@ namespace Plethora.Test.Collections
             //setup
             IEnumerable<Person> people = new List<Person>
                 {
-                    Bob_Jameson,
-                    Bob_Jameson,
-                    Fred_Carlile,
+                    Person.Bob_Jameson,
+                    Person.Bob_Jameson,
+                    Person.Fred_Carlile,
                 };
 
             try

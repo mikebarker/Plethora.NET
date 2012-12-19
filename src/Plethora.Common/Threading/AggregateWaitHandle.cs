@@ -4,13 +4,10 @@ using Plethora.Timing;
 
 namespace Plethora.Threading
 {
-    public static class WaitHandleHelper
-    {
-        public static readonly int MaxWaitHandles = 64;
-    }
-
     public class AggregateWaitHandle : WaitHandle
     {
+        public static readonly int MaxWaitHandles = 64;
+
         private readonly WaitHandle[] waitHandles;
 
         public AggregateWaitHandle(params WaitHandle[] waitHandles)
@@ -23,10 +20,10 @@ namespace Plethora.Threading
             OperationTimeout timeout = new OperationTimeout(millisecondsTimeout);
 
             WaitHandle[] currentHandles = null;
-            for (int i = 0; i < this.waitHandles.Length; i += WaitHandleHelper.MaxWaitHandles)
+            for (int i = 0; i < this.waitHandles.Length; i += AggregateWaitHandle.MaxWaitHandles)
             {
                 int count = waitHandles.Length - i;
-                count = Math.Min(count, WaitHandleHelper.MaxWaitHandles);
+                count = Math.Min(count, AggregateWaitHandle.MaxWaitHandles);
 
                 if ((currentHandles == null) || (currentHandles.Length != count))
                     currentHandles = new WaitHandle[count];

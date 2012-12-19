@@ -74,6 +74,7 @@
     <Compile Include="!ExtensionClasses\ExpressionDuplicatorEx.cs" />
     <Compile Include="!ExtensionClasses\ExpressionDuplicatorWithClosurePromotionEx.cs" />
     <Compile Include="!ExtensionClasses\LambdaKeyerEx.cs" />
+    <Compile Include="!MockClasses\MockSet.cs" />
     <Compile Include="!UtilityClasses\EmptyAsyncResult.cs" />
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="!UtilityClasses\Style.cs" />
@@ -85,7 +86,12 @@
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
+    <Compile Include="Collections\Sets\BaseSetImpl_Test.cs" />
+    <Compile Include="Collections\Sets\ExclusiveSet_Test.cs" />
+    <Compile Include="Collections\Sets\InclusiveExclusiveInteraction_Test.cs" />
+    <Compile Include="Collections\Sets\InclusiveSet_Test.cs" />
     <Compile Include="Collections\SortedByKeyListHelper_Test.cs" />
+    <Compile Include="Collections\SortedByKeyList_Test.cs" />
     <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />

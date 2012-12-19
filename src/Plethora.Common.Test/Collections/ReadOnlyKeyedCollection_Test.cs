@@ -10,18 +10,14 @@ namespace Plethora.Test.Collections
     public class ReadOnlyKeyedCollection_Test
     {
         private ReadOnlyKeyedCollection<long, Person> readonlyKeyedCollection;
-        private readonly Person Bob_Jameson = new Person("Jameson", "Bob", new DateTime(1964, 03, 14));
-        private readonly Person Fred_Carlile = new Person("Carlile", "Fred", new DateTime(1975, 11, 07));
-        private readonly Person Amy_Cathson = new Person("Cathson", "Amy", new DateTime(1984, 02, 21));
-        private readonly Person Jill_Dorrman = new Person("Dorrman", "Jill", new DateTime(1978, 05, 08));
 
         [SetUp]
         public void SetUp()
         {
             var keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
-            keyedCollection.Add(Bob_Jameson);
-            keyedCollection.Add(Fred_Carlile);
-            keyedCollection.Add(Amy_Cathson);
+            keyedCollection.Add(Person.Bob_Jameson);
+            keyedCollection.Add(Person.Fred_Carlile);
+            keyedCollection.Add(Person.Amy_Cathson);
             //Jill_Dorrman not added
 
             readonlyKeyedCollection = new ReadOnlyKeyedCollection<long, Person>(keyedCollection);
@@ -33,9 +29,9 @@ namespace Plethora.Test.Collections
         public void ctor()
         {
             var keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
-            keyedCollection.Add(Bob_Jameson);
-            keyedCollection.Add(Fred_Carlile);
-            keyedCollection.Add(Amy_Cathson);
+            keyedCollection.Add(Person.Bob_Jameson);
+            keyedCollection.Add(Person.Fred_Carlile);
+            keyedCollection.Add(Person.Amy_Cathson);
 
             readonlyKeyedCollection = new ReadOnlyKeyedCollection<long, Person>(keyedCollection);
 
@@ -68,7 +64,7 @@ namespace Plethora.Test.Collections
         public void Contains_True()
         {
             //exec
-            bool result = readonlyKeyedCollection.Contains(Bob_Jameson);
+            bool result = readonlyKeyedCollection.Contains(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -78,7 +74,7 @@ namespace Plethora.Test.Collections
         public void Contains_False()
         {
             //exec
-            bool result = readonlyKeyedCollection.Contains(Jill_Dorrman);
+            bool result = readonlyKeyedCollection.Contains(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -107,7 +103,7 @@ namespace Plethora.Test.Collections
         public void ContainsKey_True()
         {
             //setup
-            long id = Bob_Jameson.ID;
+            long id = Person.Bob_Jameson.ID;
 
             //exec
             bool result = readonlyKeyedCollection.ContainsKey(id);
@@ -120,7 +116,7 @@ namespace Plethora.Test.Collections
         public void ContainsKey_False()
         {
             //setup
-            long id = Jill_Dorrman.ID;
+            long id = Person.Jill_Dorrman.ID;
 
             //exec
             bool result = readonlyKeyedCollection.ContainsKey(id);
@@ -142,10 +138,10 @@ namespace Plethora.Test.Collections
             readonlyKeyedCollection.CopyTo(array, 0);
 
             //test
-            Assert.IsTrue(Array.IndexOf(array, Bob_Jameson) >= 0);
-            Assert.IsTrue(Array.IndexOf(array, Fred_Carlile) >= 0);
-            Assert.IsTrue(Array.IndexOf(array, Amy_Cathson) >= 0);
-            Assert.IsFalse(Array.IndexOf(array, Jill_Dorrman) >= 0);
+            Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 0);
+            Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 0);
+            Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 0);
+            Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 0);
         }
 
         [Test]
@@ -158,10 +154,10 @@ namespace Plethora.Test.Collections
             readonlyKeyedCollection.CopyTo(array, 2);
 
             //test
-            Assert.IsTrue(Array.IndexOf(array, Bob_Jameson) >= 2);
-            Assert.IsTrue(Array.IndexOf(array, Fred_Carlile) >= 2);
-            Assert.IsTrue(Array.IndexOf(array, Amy_Cathson) >= 2);
-            Assert.IsFalse(Array.IndexOf(array, Jill_Dorrman) >= 2);
+            Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 2);
+            Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 2);
+            Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 2);
+            Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 2);
         }
         #endregion
 
@@ -192,9 +188,9 @@ namespace Plethora.Test.Collections
             int i = 0;
             foreach (var person in readonlyKeyedCollection)
             {
-                if ((person != Bob_Jameson) &&
-                    (person != Fred_Carlile) &&
-                    (person != Amy_Cathson))
+                if ((person != Person.Bob_Jameson) &&
+                    (person != Person.Fred_Carlile) &&
+                    (person != Person.Amy_Cathson))
                 {
                     Assert.Fail("Invalid person in itteration.");
                 }
@@ -224,9 +220,9 @@ namespace Plethora.Test.Collections
         {
             //setup
             var ids = new List<long>();
-            ids.Add(Bob_Jameson.ID);
-            ids.Add(Fred_Carlile.ID);
-            ids.Add(Amy_Cathson.ID);
+            ids.Add(Person.Bob_Jameson.ID);
+            ids.Add(Person.Fred_Carlile.ID);
+            ids.Add(Person.Amy_Cathson.ID);
 
             //exec
             var keys = readonlyKeyedCollection.Keys;
@@ -251,7 +247,7 @@ namespace Plethora.Test.Collections
         public void TryGetValue_InCollection()
         {
             //setup
-            long bob_ID = Bob_Jameson.ID;
+            long bob_ID = Person.Bob_Jameson.ID;
 
             //exec
             Person person;
@@ -260,14 +256,14 @@ namespace Plethora.Test.Collections
             //test
             Assert.IsTrue(result);
             Assert.IsNotNull(person);
-            Assert.AreEqual(Bob_Jameson, person);
+            Assert.AreEqual(Person.Bob_Jameson, person);
         }
 
         [Test]
         public void TryGetValue_NotInCollection()
         {
             //setup
-            long jill_ID = Jill_Dorrman.ID;
+            long jill_ID = Person.Jill_Dorrman.ID;
 
             //exec
             Person person;
@@ -277,6 +273,42 @@ namespace Plethora.Test.Collections
             Assert.IsFalse(result);
             Assert.IsNull(person);
         }
+        #endregion
+
+        #region Indexor
+
+        [Test]
+        public void Indexor_InCollection()
+        {
+            //setup
+            long fred_ID = Person.Fred_Carlile.ID;
+
+            //exec
+            Person person = readonlyKeyedCollection[fred_ID];
+
+            //test
+            Assert.IsNotNull(person);
+            Assert.AreEqual(Person.Fred_Carlile, person);
+        }
+
+        [Test]
+        public void Indexor_NotInCollection()
+        {
+            //setup
+            long jill_ID = Person.Jill_Dorrman.ID;
+            try
+            {
+                //exec
+                Person person = readonlyKeyedCollection[jill_ID];
+
+                Assert.Fail();
+            }
+            catch (KeyNotFoundException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
         #endregion
     }
 }
