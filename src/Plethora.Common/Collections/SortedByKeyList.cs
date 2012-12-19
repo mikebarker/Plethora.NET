@@ -43,6 +43,17 @@ namespace Plethora.Collections
         }
 
         /// <summary>
+        /// Initializes a new instance of <see cref="SortedList{T}"/> using the
+        /// default comparer for <typeparamref name="T"/>.
+        /// </summary>
+        /// <param name="getKeyFunc">The function which gets the key for an element.</param>
+        /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
+        public SortedByKeyList(Func<T, TKey> getKeyFunc, DuplicatesPolicy duplicatesPolicy)
+            : this(getKeyFunc, duplicatesPolicy, Comparer<TKey>.Default)
+        {
+        }
+
+        /// <summary>
         /// Initializes a new instance of <see cref="SortedList{T}"/>.
         /// </summary>
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
@@ -243,10 +254,34 @@ namespace Plethora.Collections
         /// original <see cref="ICollection{T}"/>.
         /// </returns>
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
-        bool ICollection<T>.Remove(T item)
+        public bool Remove(T item)
         {
+            //Validation
+            if (item == null)
+                throw new ArgumentNullException("item");
+
+
             TKey key = this.getKeyFunc(item);
-            return Remove(key);
+
+            int firstIndexOfKey = this.IndexOf(key);
+            if (firstIndexOfKey < 0)
+                return false;
+
+            int lastIndexOfKey = (IsUnique)
+                ? firstIndexOfKey
+                : this.LastIndexOf(key);  //Can not return -1, since IndexOf found the key
+
+            //Find the first instance of the item in the list and remove it
+            for (int i = firstIndexOfKey; i <= lastIndexOfKey; i++)
+            {
+                if (item.Equals(this.innerList[i]))
+                {
+                    this.innerList.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -260,7 +295,7 @@ namespace Plethora.Collections
         /// <param name="key">The key of the object to remove from the <see cref="ICollection{T}"/>.</param>
         public bool Remove(TKey key)
         {
-            int index = this.BinarySearch(key);
+            int index = this.IndexOf(key);
             if (index < 0)
                 return false;
 
@@ -509,7 +544,7 @@ namespace Plethora.Collections
         {
             int indexOf = this.BinarySearch(index, count, key);
             if (indexOf < 0)
-                return -1;
+                return indexOf;
 
             if (this.IsUnique)
                 return indexOf;
@@ -540,14 +575,14 @@ namespace Plethora.Collections
         {
             int indexOf = this.BinarySearch(index, count, key);
             if (indexOf < 0)
-                return -1;
+                return indexOf;
 
             if (this.IsUnique)
                 return indexOf;
 
             //List not necessarily unique. Find last matching item using linear search
             int nextIndexOf = indexOf + 1;
-            int maxIndex = index + count;
+            int maxIndex = index + count - 1;
             while ((nextIndexOf <= maxIndex) && (comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
             {
                 indexOf = nextIndexOf;

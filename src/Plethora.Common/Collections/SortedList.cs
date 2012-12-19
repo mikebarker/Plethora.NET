@@ -439,7 +439,7 @@ namespace Plethora.Collections
         {
             int indexOf = this.BinarySearch(index, count, item);
             if (indexOf < 0)
-                return -1;
+                return indexOf;
 
             if (this.IsUnique)
                 return indexOf;
@@ -470,7 +470,7 @@ namespace Plethora.Collections
         {
             int indexOf = this.BinarySearch(index, count, item);
             if (indexOf < 0)
-                return -1;
+                return indexOf;
 
             if (this.IsUnique)
                 return indexOf;

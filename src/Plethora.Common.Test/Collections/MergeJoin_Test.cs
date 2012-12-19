@@ -12,13 +12,6 @@ namespace Plethora.Test.Collections
     {
         private List<Person> unorderedListA;
         private List<Person> unorderedListB;
-        private readonly Person Bob_Jameson = new Person(0, "Jameson", "Bob", new DateTime(1964, 03, 14));
-        private readonly Person Fred_Carlile = new Person(1, "Carlile", "Fred", new DateTime(1975, 11, 07));
-        private readonly Person Amy_Cathson = new Person(2, "Cathson", "Amy", new DateTime(1984, 02, 21));
-        private readonly Person Jill_Dorrman = new Person(3, "Dorrman", "Jill", new DateTime(1978, 05, 08));
-        private readonly Person Jane_Doe = new Person(3, "Doe", "Jane", new DateTime(1976, 03, 15));
-        private readonly Person Katherine_Harold = new Person(4, "Harold", "Katherine", new DateTime(1984, 02, 21));
-        private readonly Person Harry_Porker = new Person(5, "Porker", "Harry", new DateTime(1978, 05, 08));
 
         [SetUp]
         public void SetUp()
@@ -26,15 +19,15 @@ namespace Plethora.Test.Collections
             unorderedListA = new List<Person>();
             unorderedListB = new List<Person>();
 
-            unorderedListA.Add(Bob_Jameson);
-            unorderedListA.Add(Amy_Cathson);
-            unorderedListA.Add(Jill_Dorrman);
+            unorderedListA.Add(Person.Bob_Jameson);
+            unorderedListA.Add(Person.Amy_Cathson);
+            unorderedListA.Add(Person.Jill_Dorrman);
 
-            unorderedListB.Add(Fred_Carlile);
-            unorderedListB.Add(Jane_Doe);
-            unorderedListB.Add(Katherine_Harold);
-            unorderedListB.Add(Bob_Jameson);
-            unorderedListB.Add(Harry_Porker);
+            unorderedListB.Add(Person.Fred_Carlile);
+            unorderedListB.Add(Person.Jane_Doe);
+            unorderedListB.Add(Person.Katherine_Harold);
+            unorderedListB.Add(Person.Bob_Jameson);
+            unorderedListB.Add(Person.Harry_Porker);
         }
 
         [Test]
@@ -151,45 +144,45 @@ namespace Plethora.Test.Collections
                 switch (i)
                 {
                     case 0: //Bob
-                        expectedKey = Bob_Jameson.ID;
+                        expectedKey = Person.Bob_Jameson.ID;
                         expectedMergeType = MergeType.Match;
-                        expectedLeftValue = Bob_Jameson;
-                        expectedRightValue = Bob_Jameson;
+                        expectedLeftValue = Person.Bob_Jameson;
+                        expectedRightValue = Person.Bob_Jameson;
                         break;
 
                     case 1: //Fred
-                        expectedKey = Fred_Carlile.ID;
+                        expectedKey = Person.Fred_Carlile.ID;
                         expectedMergeType = MergeType.RightOnly;
                         expectedLeftValue = null;
-                        expectedRightValue = Fred_Carlile;
+                        expectedRightValue = Person.Fred_Carlile;
                         break;
 
                     case 2: //Amy
-                        expectedKey = Amy_Cathson.ID;
+                        expectedKey = Person.Amy_Cathson.ID;
                         expectedMergeType = MergeType.LeftOnly;
-                        expectedLeftValue = Amy_Cathson;
+                        expectedLeftValue = Person.Amy_Cathson;
                         expectedRightValue = null;
                         break;
 
                     case 3: //Jill / Jane
-                        expectedKey = Jill_Dorrman.ID;
+                        expectedKey = Person.Jill_Dorrman.ID;
                         expectedMergeType = MergeType.Different;
-                        expectedLeftValue = Jill_Dorrman;
-                        expectedRightValue = Jane_Doe;
+                        expectedLeftValue = Person.Jill_Dorrman;
+                        expectedRightValue = Person.Jane_Doe;
                         break;
 
                     case 4: //Katherine
-                        expectedKey = Katherine_Harold.ID;
+                        expectedKey = Person.Katherine_Harold.ID;
                         expectedMergeType = MergeType.RightOnly;
                         expectedLeftValue = null;
-                        expectedRightValue = Katherine_Harold;
+                        expectedRightValue = Person.Katherine_Harold;
                         break;
 
                     case 5: //Harry
-                        expectedKey = Harry_Porker.ID;
+                        expectedKey = Person.Harry_Porker.ID;
                         expectedMergeType = MergeType.RightOnly;
                         expectedLeftValue = null;
-                        expectedRightValue = Harry_Porker;
+                        expectedRightValue = Person.Harry_Porker;
                         break;
 
                     default:

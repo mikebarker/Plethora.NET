@@ -10,11 +10,6 @@ namespace Plethora.Test.Collections
     public class SortedList_Test
     {
         private SortedList<Person> sortedList;
-        private readonly Person Bob_Jameson = new Person("Jameson", "Bob", new DateTime(1964, 03, 14));
-        private readonly Person Bob_Jameson2 = new Person("Jameson", "Bob", new DateTime(1998, 07, 13));
-        private readonly Person Fred_Carlile = new Person("Carlile", "Fred", new DateTime(1975, 11, 07));
-        private readonly Person Amy_Cathson = new Person("Cathson", "Amy", new DateTime(1984, 02, 21));
-        private readonly Person Jill_Dorrman = new Person("Dorrman", "Jill", new DateTime(1978, 05, 08));
 
         [SetUp]
         public void SetUp()
@@ -109,7 +104,7 @@ namespace Plethora.Test.Collections
         public void ctor_EnumerableDuplicatesPolicyComparer()
         {
             //setup
-            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
             //exec
             sortedList = new SortedList<Person>(array, DuplicatesPolicy.Error, new Person.NameComparer());
@@ -117,9 +112,9 @@ namespace Plethora.Test.Collections
             //test
             Assert.IsNotNull(sortedList);
             Assert.AreEqual(3, sortedList.Count);
-            Assert.AreEqual(Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Amy_Cathson, sortedList[1]);
-            Assert.AreEqual(Bob_Jameson, sortedList[2]);
+            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
+            Assert.AreEqual(Person.Bob_Jameson, sortedList[2]);
         }
 
         [Test]
@@ -142,7 +137,7 @@ namespace Plethora.Test.Collections
         public void ctor_EnumerableDuplicatesPolicyComparer_Fail_InvalidDuplicatesPolicy()
         {
             //setup
-            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
             try
             {
@@ -161,7 +156,7 @@ namespace Plethora.Test.Collections
         public void ctor_KeySelectorEnumerableComparer_Fail_NullComparer()
         {
             //setup
-            Person[] array = new[] { Bob_Jameson, Fred_Carlile, Amy_Cathson };
+            Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
             try
             {
@@ -180,7 +175,7 @@ namespace Plethora.Test.Collections
         public void ctor_KeySelectorEnumerableComparer_Fail_DuplicateError()
         {
             //setup
-            Person[] array = new[] { Bob_Jameson, Bob_Jameson, Amy_Cathson };
+            Person[] array = new[] { Person.Bob_Jameson, Person.Bob_Jameson, Person.Amy_Cathson };
 
             try
             {
@@ -205,14 +200,14 @@ namespace Plethora.Test.Collections
             int preAddCount = sortedList.Count;
 
             //exec
-            sortedList.Add(Jill_Dorrman);
+            sortedList.Add(Person.Jill_Dorrman);
 
             //test
             Assert.AreEqual(preAddCount + 1, sortedList.Count);
-            Assert.AreEqual(Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Amy_Cathson, sortedList[1]);
-            Assert.AreEqual(Jill_Dorrman, sortedList[2]);
-            Assert.AreEqual(Bob_Jameson, sortedList[3]);
+            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
+            Assert.AreEqual(Person.Jill_Dorrman, sortedList[2]);
+            Assert.AreEqual(Person.Bob_Jameson, sortedList[3]);
         }
 
         [Test]
@@ -240,7 +235,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.Add(Bob_Jameson2);
+                sortedList.Add(Person.Bob_Jameson2);
 
                 Assert.Fail();
             }
@@ -258,14 +253,14 @@ namespace Plethora.Test.Collections
             int preAddCount = sortedList.Count;
 
             //exec
-            sortedList.Add(Bob_Jameson2);
+            sortedList.Add(Person.Bob_Jameson2);
 
             //test
             Assert.AreEqual(preAddCount, sortedList.Count);
-            Assert.AreEqual(Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Amy_Cathson, sortedList[1]);
-            Assert.AreNotEqual(Bob_Jameson, sortedList[2]);
-            Assert.AreEqual(Bob_Jameson2, sortedList[2]);
+            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
+            Assert.AreNotEqual(Person.Bob_Jameson, sortedList[2]);
+            Assert.AreEqual(Person.Bob_Jameson2, sortedList[2]);
         }
 
         [Test]
@@ -276,14 +271,14 @@ namespace Plethora.Test.Collections
             int preAddCount = sortedList.Count;
 
             //exec
-            sortedList.Add(Bob_Jameson2);
+            sortedList.Add(Person.Bob_Jameson2);
 
             //test
             Assert.AreEqual(preAddCount, sortedList.Count);
-            Assert.AreEqual(Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Amy_Cathson, sortedList[1]);
-            Assert.AreEqual(Bob_Jameson, sortedList[2]);
-            Assert.AreNotEqual(Bob_Jameson2, sortedList[2]);
+            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
+            Assert.AreEqual(Person.Bob_Jameson, sortedList[2]);
+            Assert.AreNotEqual(Person.Bob_Jameson2, sortedList[2]);
         }
 
         [Test]
@@ -294,15 +289,15 @@ namespace Plethora.Test.Collections
             int preAddCount = sortedList.Count;
 
             //exec
-            sortedList.Add(Bob_Jameson2);
+            sortedList.Add(Person.Bob_Jameson2);
 
             //test
             Assert.AreEqual(preAddCount + 1, sortedList.Count);
-            Assert.AreEqual(Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Amy_Cathson, sortedList[1]);
+            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
             Assert.IsTrue(
-                (sortedList[2].Equals(Bob_Jameson) && sortedList[3].Equals(Bob_Jameson2)) ||
-                (sortedList[2].Equals(Bob_Jameson2) && sortedList[3].Equals(Bob_Jameson)) );
+                (sortedList[2].Equals(Person.Bob_Jameson) && sortedList[3].Equals(Person.Bob_Jameson2)) ||
+                (sortedList[2].Equals(Person.Bob_Jameson2) && sortedList[3].Equals(Person.Bob_Jameson)) );
         }
         #endregion
 
@@ -325,7 +320,7 @@ namespace Plethora.Test.Collections
         public void Contains_True()
         {
             //exec
-            bool result = sortedList.Contains(Bob_Jameson);
+            bool result = sortedList.Contains(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -335,7 +330,7 @@ namespace Plethora.Test.Collections
         public void Contains_False()
         {
             //exec
-            bool result = sortedList.Contains(Jill_Dorrman);
+            bool result = sortedList.Contains(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -370,9 +365,9 @@ namespace Plethora.Test.Collections
             sortedList.CopyTo(array, 0);
 
             //test
-            Assert.AreEqual(0, Array.IndexOf(array, Fred_Carlile));
-            Assert.AreEqual(1, Array.IndexOf(array, Amy_Cathson));
-            Assert.AreEqual(2, Array.IndexOf(array, Bob_Jameson));
+            Assert.AreEqual(0, Array.IndexOf(array, Person.Fred_Carlile));
+            Assert.AreEqual(1, Array.IndexOf(array, Person.Amy_Cathson));
+            Assert.AreEqual(2, Array.IndexOf(array, Person.Bob_Jameson));
         }
 
         [Test]
@@ -385,9 +380,9 @@ namespace Plethora.Test.Collections
             sortedList.CopyTo(array, 2);
 
             //test
-            Assert.AreEqual(2, Array.IndexOf(array, Fred_Carlile));
-            Assert.AreEqual(3, Array.IndexOf(array, Amy_Cathson));
-            Assert.AreEqual(4, Array.IndexOf(array, Bob_Jameson));
+            Assert.AreEqual(2, Array.IndexOf(array, Person.Fred_Carlile));
+            Assert.AreEqual(3, Array.IndexOf(array, Person.Amy_Cathson));
+            Assert.AreEqual(4, Array.IndexOf(array, Person.Bob_Jameson));
         }
         #endregion
 
@@ -418,9 +413,9 @@ namespace Plethora.Test.Collections
             int i = 0;
             foreach (var person in sortedList)
             {
-                if ((person != Bob_Jameson) &&
-                    (person != Fred_Carlile) &&
-                    (person != Amy_Cathson))
+                if ((person != Person.Bob_Jameson) &&
+                    (person != Person.Fred_Carlile) &&
+                    (person != Person.Amy_Cathson))
                 {
                     Assert.Fail("Invalid person in itteration.");
                 }
@@ -449,7 +444,7 @@ namespace Plethora.Test.Collections
         public void Remove_InCollection()
         {
             //exec
-            bool result = sortedList.Remove(Bob_Jameson);
+            bool result = sortedList.Remove(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -460,7 +455,7 @@ namespace Plethora.Test.Collections
         public void Remove_NotInCollection()
         {
             //exec
-            bool result = sortedList.Remove(Jill_Dorrman);
+            bool result = sortedList.Remove(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -494,8 +489,8 @@ namespace Plethora.Test.Collections
 
             //test
             Assert.AreEqual(2, sortedList.Count);
-            Assert.AreEqual(Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Bob_Jameson, sortedList[1]);
+            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
+            Assert.AreEqual(Person.Bob_Jameson, sortedList[1]);
         }
 
         [Test]
@@ -662,10 +657,10 @@ namespace Plethora.Test.Collections
 
         private void PresetPopulate()
         {
-            sortedList.Add(Bob_Jameson);
-            sortedList.Add(Fred_Carlile);
-            sortedList.Add(Amy_Cathson);
-            //Jill_Dorrman not added
+            sortedList.Add(Person.Bob_Jameson);
+            sortedList.Add(Person.Fred_Carlile);
+            sortedList.Add(Person.Amy_Cathson);
+            //Person.Jill_Dorrman not added
         }
         #endregion
     }

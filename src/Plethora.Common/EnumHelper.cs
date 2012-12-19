@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace Plethora
@@ -19,11 +20,26 @@ namespace Plethora
         #region Public Methods
 
         /// <summary>
+        /// Presents all elements of a enumeration as a list.
+        /// </summary>
+        /// <typeparam name="T">The type of the enum.</typeparam>
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> containing the elements of the enum.
+        /// </returns>
+        public static IEnumerable<T> GetValues<T>()
+        {
+            //Validation
+            if (typeof(T).IsSubclassOf(typeof(Enum)))
+                throw new ArgumentNullException( /* TODO: Error message */ );
+
+            Array flagValues = Enum.GetValues(typeof(T));
+            return flagValues.OfType<T>();
+        }
+
+        /// <summary>
         /// Returns the defined description for an enum.
         /// </summary>
-        /// <param name="value">
-        /// The Enum value for which the description is required.
-        /// </param>
+        /// <param name="value">The Enum value for which the description is required.</param>
         /// <returns>
         /// The description for an enum.
         /// </returns>
@@ -35,22 +51,42 @@ namespace Plethora
         /// <summary>
         /// Returns the defined description for an enum.
         /// </summary>
-        /// <param name="value">
-        /// The Enum value for which the description is required.
-        /// </param>
-        /// <param name="separator">
-        /// The string used to interleave multiple values if required.
-        /// </param>
+        /// <param name="value">The Enum value for which the description is required.</param>
+        /// <param name="separator">The string used to interleave multiple values if required.</param>
         /// <returns>
         /// The description for an enum. If the enum has the FlagAttribute set
         /// multiple values are return separated by 'separator', if required.
         /// </returns>
         public static string Description(this Enum value, string separator)
         {
+            return Description(value, separator, typeof(DescriptionAttribute), "Description");
+        }
+
+        /// <summary>
+        /// Returns the defined description for an enum.
+        /// </summary>
+        /// <param name="value">The Enum value for which the description is required.</param>
+        /// <param name="separator">The string used to interleave multiple values if required.</param>
+        /// <param name="attributeType">The attribute type which contains the enum's description.</param>
+        /// <param name="attributeProperty">The attribute property which returns the enums description.</param>
+        /// <returns>
+        /// The description for an enum. If the enum has the FlagAttribute set
+        /// multiple values are return separated by 'separator', if required.
+        /// </returns>
+        public static string Description(this Enum value, string separator, Type attributeType, string attributeProperty)
+        {
             //Validation
             if (separator == null)
                 throw new ArgumentNullException("separator");
 
+            if (attributeType == null)
+                throw new ArgumentNullException("attributeType");
+
+            if (attributeProperty == null)
+                throw new ArgumentNullException("attributeProperty");
+
+
+            var enumToDescription = CreateEnumToDescrptionFunc(attributeType, attributeProperty);
 
             Type enumType = value.GetType();
 
@@ -58,11 +94,11 @@ namespace Plethora
 
             if (flagsAttribs.Length == 0)
             {
-                return DescriptionNoFlags(value);
+                return enumToDescription(value);
             }
             else
             {
-                string[] descriptions = DescriptionFlags(value);
+                string[] descriptions = DescriptionFlags(value, enumToDescription);
                 return string.Join(separator, descriptions);
             }
         }
@@ -74,9 +110,8 @@ namespace Plethora
         /// Returns the defined description for an Enum where the Enum type does
         /// have the FlagsAttribute.
         /// </summary>
-        /// <param name="value">
-        /// The Enum value for which the description is required.
-        /// </param>
+        /// <param name="value">The Enum value for which the description is required.</param>
+        /// <param name="enumToDescription">The mapping function which returns the description for an enum's value.</param>
         /// <returns>
         /// The descriptions for an Enum.
         /// </returns>
@@ -84,7 +119,7 @@ namespace Plethora
         /// If value is a combination of multiple Enum values, each value is
         /// returned.
         /// </remarks>
-        private static string[] DescriptionFlags(Enum value)
+        private static string[] DescriptionFlags(Enum value, Func<Enum, string> enumToDescription)
         {
             Type enumType = value.GetType();
 
@@ -92,20 +127,20 @@ namespace Plethora
 
             Array flagValues = Enum.GetValues(enumType);
             List<string> rtnList = new List<string>(flagValues.Length);
-            foreach (ValueType flagValue in flagValues)
+            foreach (Enum flagValue in flagValues)
             {
                 long lngFlagValue = Convert.ToInt64(flagValue, CultureInfo.CurrentCulture);
 
                 //Elements with exactly match will not be broken down to individual flags
                 if (lngValue == lngFlagValue)
                 {
-                    string description = DescriptionNoFlags((Enum)flagValue);
+                    string description = enumToDescription(flagValue);
                     return new string[] { description };
                 }
                 //Each individual flag which is set returns, unless an exact is found
                 else if ((lngFlagValue != 0) && ((lngValue & lngFlagValue) == lngFlagValue))
                 {
-                    string description = DescriptionNoFlags((Enum)flagValue);
+                    string description = enumToDescription(flagValue);
                     rtnList.Add(description);
                 }
             }
@@ -116,31 +151,28 @@ namespace Plethora
                 return rtnList.ToArray();
         }
 
-        /// <summary>
-        /// Returns the defined description for an enum where the Enum type does
-        /// not have the FlagsAttribute.
-        /// </summary>
-        /// <param name="value">
-        /// The Enum value for which the description is required.
-        /// </param>
-        /// <returns>
-        /// The description for an enum.
-        /// </returns>
-        private static string DescriptionNoFlags(Enum value)
+        private static Func<Enum, string> CreateEnumToDescrptionFunc(Type attributeType, string attributeProperty)
         {
-            Type enumType = value.GetType();
+            PropertyInfo propertyInfo = attributeType.GetProperty(attributeProperty, BindingFlags.Instance | BindingFlags.Public);
+            Func<Enum, string> enumToDescrptionFunc = delegate(Enum value)
+                {
+                    Type enumType = value.GetType();
 
-            string enumString = value.ToString();
+                    string enumString = value.ToString();
 
-            FieldInfo field = enumType.GetField(enumString);
-            if (field == null)
-                return enumString;
+                    FieldInfo field = enumType.GetField(enumString);
+                    if (field == null)
+                        return enumString;
 
-            object[] attribs = field.GetCustomAttributes(typeof(DescriptionAttribute), false);
-            if ((attribs == null) || (attribs.Length == 0))
-                return enumString;
+                    object[] attribs = field.GetCustomAttributes(attributeType, false);
+                    if (attribs.Length == 0)
+                        return enumString;
 
-            return ((DescriptionAttribute)attribs[0]).Description;
+                    var description = propertyInfo.GetValue(attribs[0], null);
+                    return description.ToString();
+                };
+
+            return enumToDescrptionFunc;
         }
         #endregion
     }

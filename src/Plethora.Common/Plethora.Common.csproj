@@ -58,6 +58,13 @@
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
     <Compile Include="Collections\ListIndexItterator.cs" />
+    <Compile Include="Collections\Sets\BaseSetImpl.cs" />
+    <Compile Include="Collections\Sets\ExclusiveSet.cs" />
+    <Compile Include="Collections\Sets\InclusiveSet.cs" />
+    <Compile Include="Collections\Sets\SubtractionSet.cs" />
+    <Compile Include="Collections\Sets\IntersectionSet.cs" />
+    <Compile Include="Collections\Sets\ISet.cs" />
+    <Compile Include="Collections\Sets\UnionSet.cs" />
     <Compile Include="Collections\SortedByKeyListHelper.cs" />
     <Compile Include="Collections\DuplicatesPolicy.cs" />
     <Compile Include="Collections\SortedByKeyList.cs" />
@@ -115,7 +122,7 @@
     <Compile Include="StringFormat\StringFormatHelper.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="Threading\AggregateWaitHandle.cs" />
-    <Compile Include="Threading\SynchronizeInvoke.cs" />
+    <Compile Include="Threading\AsyncException.cs" />
     <Compile Include="Timing\OperationTimeout.cs" />
     <Compile Include="WeakReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
