@@ -340,7 +340,7 @@ namespace Plethora.Cache
                 WaitHandle[] first64IncompleteWaitHandles = dataAsyncResult.Requests
                     .Where(r => !r.IsComplete)
                     .Select(r => r.CompleteWaitHandle)
-                    .Take(WaitHandleHelper.MaxWaitHandles)
+                    .Take(AggregateWaitHandle.MaxWaitHandles)
                     .ToArray();
 
                 //Test if none are incomplete
