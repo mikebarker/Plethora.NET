@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Plethora.Logging.Exceptions
+namespace Plethora.Logging
 {
     /// <summary>
     /// Exception base class, which indicates whether an exception has been logged.
@@ -14,7 +14,7 @@ namespace Plethora.Logging.Exceptions
     /// and do not then clutter up the logs by re-logging the same information.
     /// </remarks>
     [Serializable]
-    public abstract class IsLoggedException : Exception
+    public class IsLoggedException : Exception
     {
         #region Fields
 
@@ -24,9 +24,16 @@ namespace Plethora.Logging.Exceptions
         #region Constructors
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="IsLoggedException"/> class.
+        /// </summary>
+        public IsLoggedException()
+        {
+        }
+
+        /// <summary>
         /// Initialises a new instance of the <see cref="IsLoggedException"/> class.
         /// </summary>
-        protected IsLoggedException(string message)
+        public IsLoggedException(string message)
             : base(message)
         {
         }
@@ -34,7 +41,7 @@ namespace Plethora.Logging.Exceptions
         /// <summary>
         /// Initialises a new instance of the <see cref="IsLoggedException"/> class.
         /// </summary>
-        protected IsLoggedException(string message, Exception innerException)
+        public IsLoggedException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
@@ -42,7 +49,7 @@ namespace Plethora.Logging.Exceptions
         /// <summary>
         /// Initialises a new instance of the <see cref="IsLoggedException"/> class.
         /// </summary>
-        protected IsLoggedException(string message, bool isLogged, Exception innerException)
+        public IsLoggedException(string message, Exception innerException, bool isLogged)
             : base(message, innerException)
         {
             this.IsLogged = isLogged;

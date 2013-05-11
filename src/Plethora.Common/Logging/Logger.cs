@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using Plethora.Logging.Exceptions;
 
 namespace Plethora.Logging
 {

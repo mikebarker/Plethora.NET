@@ -135,18 +135,6 @@ namespace Plethora.Format
             this.provider = provider;
             this.styles = styles;
         }
-
-        private DateTimeFormatParser(DateTimeFormatParser numericFormatParser)
-        {
-            //Validation
-            if (numericFormatParser == null)
-                throw new ArgumentNullException("numericFormatParser");
-
-
-            this.FormatString = numericFormatParser.FormatString;
-            this.provider = numericFormatParser.Provider;
-            this.styles = numericFormatParser.Styles;
-        }
         #endregion
 
         #region IFormatParserPartial<T> Members
@@ -250,8 +238,14 @@ namespace Plethora.Format
         /// </returns>
         public DateTimeFormatParser Clone()
         {
-            return new DateTimeFormatParser(this);
+            var clone = new DateTimeFormatParser(
+                this.formatString,
+                this.provider,
+                this.styles);
+
+            return clone;
         }
+
         #endregion
 
         #region Properties

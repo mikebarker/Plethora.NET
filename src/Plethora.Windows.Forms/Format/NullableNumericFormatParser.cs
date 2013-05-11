@@ -153,11 +153,6 @@ namespace Plethora.Format
             : base(formatParser)
         {
         }
-
-        protected NullableNumericFormatParser(NullableNumericFormatParser<T> nullableNumericFormatParser)
-            : base(nullableNumericFormatParser.InnerFormatParser.Clone())
-        {
-        }
         #endregion
 
         #region ICloneable Implementation
@@ -181,7 +176,7 @@ namespace Plethora.Format
         /// </returns>
         public NullableNumericFormatParser<T> Clone()
         {
-            return new NullableNumericFormatParser<T>(this);
+            return new NullableNumericFormatParser<T>(this.InnerFormatParser.Clone());
         }
         #endregion
 

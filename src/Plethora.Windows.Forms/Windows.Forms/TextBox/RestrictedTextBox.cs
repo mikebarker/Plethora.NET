@@ -4,7 +4,7 @@ using System.Media;
 using System.Windows.Forms;
 using Plethora.Win32;
 
-namespace Plethora.Windows.Forms
+namespace Plethora.Windows.Forms.Base
 {
     /// <summary>
     /// Base class for a text box which restricts user input.

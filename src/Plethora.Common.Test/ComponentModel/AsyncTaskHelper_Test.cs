@@ -28,10 +28,10 @@ namespace Plethora.Test.ComponentModel
         public void GetValue()
         {
             //exec
-            var result = AsyncTaskHelper.GetValue(synchronizeInvoke, si => si.AsyncThread.ManagedThreadId);
+            var result = AsyncTaskHelper.GetValue(synchronizeInvoke, si => si.Identifier);
 
             //test
-            Assert.AreEqual(synchronizeInvoke.AsyncThread.ManagedThreadId, result);
+            Assert.AreEqual(synchronizeInvoke.Identifier, result);
         }
 
         #endregion
@@ -59,7 +59,6 @@ namespace Plethora.Test.ComponentModel
             //test
             Assert.AreNotEqual(0, threadIdAction);
             Assert.AreNotEqual(threadIdInvoke, threadIdAction); //Confirm the action was completed off-thread.
-            Assert.AreEqual(synchronizeInvoke.AsyncThread.ManagedThreadId, threadIdAction); //Confirm the action was completed off-thread.
         }
 
         [Test]
@@ -82,7 +81,6 @@ namespace Plethora.Test.ComponentModel
             Assert.IsFalse(result);
             Assert.AreNotEqual(0, threadIdAction);
             Assert.AreNotEqual(threadIdInvoke, threadIdAction); //Confirm the action was completed off-thread.
-            Assert.AreEqual(synchronizeInvoke.AsyncThread.ManagedThreadId, threadIdAction); //Confirm the action was completed off-thread.
         }
 
         #endregion
@@ -139,7 +137,7 @@ namespace Plethora.Test.ComponentModel
             Assert.AreNotEqual(0, threadIdAction);
             Assert.AreNotEqual(0, threadIdOnComplete);
             Assert.AreNotEqual(threadIdInvoke, threadIdAction); //Confirm the action was completed off-thread.
-            Assert.AreEqual(synchronizeInvoke.AsyncThread.ManagedThreadId, threadIdOnComplete);
+            Assert.AreNotEqual(threadIdInvoke, threadIdOnComplete);
         }
 
         [Test]
@@ -184,8 +182,6 @@ namespace Plethora.Test.ComponentModel
             Assert.AreNotEqual(threadIdInvoke, threadIdAction); //Confirm the action was completed off-thread.
             Assert.AreNotEqual(threadIdAction, threadIdOnComplete);
             Assert.AreNotEqual(threadIdAction, threadIdOnException);
-            Assert.AreEqual(synchronizeInvoke.AsyncThread.ManagedThreadId, threadIdOnException);
-            Assert.AreEqual(synchronizeInvoke.AsyncThread.ManagedThreadId, threadIdOnComplete);
             Assert.AreEqual(exceptionThrown, exceptionCaught);
         }
 
@@ -196,9 +192,12 @@ namespace Plethora.Test.ComponentModel
 
         private class SynchronizeInvokeEx : SynchronizeInvoke
         {
-            public new Thread AsyncThread
+            private static readonly Random rnd = new Random();
+            private readonly int identifier = rnd.Next();
+
+            public int Identifier
             {
-                get { return base.AsyncThread; }
+                get { return identifier; }
             }
         }
         #endregion

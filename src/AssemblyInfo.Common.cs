@@ -23,8 +23,8 @@ using System.Security.Permissions;
 [assembly: AssemblyCulture("")]
 
 // Version
-[assembly: AssemblyVersion("0.9.*")]
-[assembly: AssemblyFileVersion("0.9.0.3")]
+[assembly: AssemblyVersion("0.10.*")]
+[assembly: AssemblyFileVersion("0.10.0.1")]
 
 // Interoperability
 [assembly: ComVisible(false)]

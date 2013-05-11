@@ -27,9 +27,13 @@ namespace Plethora.Collections
                 throw new ArgumentOutOfRangeException("startIndex", startIndex,
                     ResourceProvider.ArgMustBeGreaterThanEqualToZero("startIndex"));
 
+            if (startIndex >= list.Count)
+                throw new ArgumentOutOfRangeException("startIndex",
+                    ResourceProvider.ArgMustBeBetween("startIndex", "0", "list.Count"));
+
             if ((count < 0) || ((startIndex + count) > list.Count))
                 throw new ArgumentOutOfRangeException("count",
-                    ResourceProvider.ArgMustBeBetween("count", "0", "list.Length - startIndex"));
+                    ResourceProvider.ArgMustBeBetween("count", "0", "list.Count - startIndex"));
 
 
             this.list = list;

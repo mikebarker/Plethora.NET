@@ -30,7 +30,8 @@ namespace Plethora
         {
             //Validation
             if (typeof(T).IsSubclassOf(typeof(Enum)))
-                throw new ArgumentNullException( /* TODO: Error message */ );
+                throw new ArgumentException(ResourceProvider.ArgMustBeOfType("T", typeof(Enum)), "T");
+
 
             Array flagValues = Enum.GetValues(typeof(T));
             return flagValues.OfType<T>();

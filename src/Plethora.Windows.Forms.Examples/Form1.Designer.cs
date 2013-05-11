@@ -51,7 +51,7 @@ namespace Plethora.Windows.Forms.Examples
             this.label1.Location = new System.Drawing.Point(12, 15);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 13);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = 6;
             this.label1.Text = "TextBoxEx:";
             // 
             // label3
@@ -60,7 +60,7 @@ namespace Plethora.Windows.Forms.Examples
             this.label3.Location = new System.Drawing.Point(12, 184);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(41, 13);
-            this.label3.TabIndex = 7;
+            this.label3.TabIndex = 0;
             this.label3.Text = "Popup:";
             // 
             // label4
@@ -69,7 +69,7 @@ namespace Plethora.Windows.Forms.Examples
             this.label4.Location = new System.Drawing.Point(12, 56);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(85, 13);
-            this.label4.TabIndex = 5;
+            this.label4.TabIndex = 7;
             this.label4.Text = "Integer TextBox:";
             // 
             // button1
@@ -89,7 +89,7 @@ namespace Plethora.Windows.Forms.Examples
             this.checkBox1.Location = new System.Drawing.Point(231, 235);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(80, 17);
-            this.checkBox1.TabIndex = 8;
+            this.checkBox1.TabIndex = 5;
             this.checkBox1.Text = "checkBox1";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
@@ -99,7 +99,7 @@ namespace Plethora.Windows.Forms.Examples
             this.label5.Location = new System.Drawing.Point(12, 145);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(136, 13);
-            this.label5.TabIndex = 10;
+            this.label5.TabIndex = 8;
             this.label5.Text = "Nullable DateTimeTextBox:";
             // 
             // dateTimeTextBox
@@ -111,7 +111,7 @@ namespace Plethora.Windows.Forms.Examples
             this.dateTimeTextBox.MinValue = new System.DateTime(((long)(0)));
             this.dateTimeTextBox.Name = "dateTimeTextBox";
             this.dateTimeTextBox.Size = new System.Drawing.Size(159, 20);
-            this.dateTimeTextBox.TabIndex = 9;
+            this.dateTimeTextBox.TabIndex = 2;
             this.dateTimeTextBox.Value = new System.DateTime(2011, 6, 7, 0, 0, 0, 0);
             // 
             // textBoxEx1

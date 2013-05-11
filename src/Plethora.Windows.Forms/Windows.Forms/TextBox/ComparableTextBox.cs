@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Plethora.Format;
 using Plethora.Win32;
 
-namespace Plethora.Windows.Forms
+namespace Plethora.Windows.Forms.Base
 {
     /// <summary>
     /// TextBox which restricts user input to values of a type derived from <see cref="IComparable"/>.

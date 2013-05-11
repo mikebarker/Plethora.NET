@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Plethora.Logging.Exceptions;
+using Plethora.Logging;
 
 namespace Plethora
 {

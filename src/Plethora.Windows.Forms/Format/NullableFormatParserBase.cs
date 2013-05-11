@@ -42,12 +42,6 @@ namespace Plethora.Format
 
             WireEvents();
         }
-
-        protected NullableFormatParserBase(NullableFormatParserBase<T> nullableFormatParser)
-            : this(nullableFormatParser.innerFormatParser)
-        {
-            this.NullString = nullableFormatParser.NullString;
-        }
         #endregion
 
         #region IFormatParserPartial<Nullable<T>> Members
