@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Plethora.ComponentModel;
 using Plethora.Format;
+using Plethora.Windows.Forms.Base;
 
 namespace Plethora.Windows.Forms
 {
@@ -11,7 +12,10 @@ namespace Plethora.Windows.Forms
     public class NullableDateTimeTextBox : NullableDateTimeTextBoxBase
     {
     }
+}
 
+namespace Plethora.Windows.Forms.Base
+{
     /// <summary>
     /// Intermediate class required to "fool" the designers to construct the <see cref="NullableDateTimeTextBox"/>.
     /// </summary>
@@ -204,7 +208,7 @@ namespace Plethora.Windows.Forms
             if (e.Button == MouseButtons.Left)
             {
                 var activeForm = Form.ActiveForm;
-                if ((activeForm !=null) && (activeForm.ActiveControl == this))
+                if ((activeForm != null) && (activeForm.ActiveControl == this))
                 {
                     ShowDropDown();
                 }

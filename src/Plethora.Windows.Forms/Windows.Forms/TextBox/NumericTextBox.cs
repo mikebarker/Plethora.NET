@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using Plethora.Format;
 using Plethora.Windows.Forms.Styles;
 
-namespace Plethora.Windows.Forms
+namespace Plethora.Windows.Forms.Base
 {
     /// <summary>
     /// TextBox which restricts user input to numeric values.

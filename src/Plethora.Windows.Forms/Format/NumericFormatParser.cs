@@ -223,23 +223,6 @@ namespace Plethora.Format
 
             this.styles = MaskStyles(styles);
         }
-
-        private NumericFormatParser(NumericFormatParser<T> numericFormatParser)
-        {
-            //Validation
-            if (numericFormatParser == null)
-                throw new ArgumentNullException("numericFormatParser");
-
-
-            this.suffixMultipliers = new Dictionary<string,double>(numericFormatParser.suffixMultipliers);
-            this.AssumedSuffix = numericFormatParser.AssumedSuffix;
-
-            this.regexParseNumeric = numericFormatParser.regexParseNumeric;
-
-            this.FormatString = numericFormatParser.FormatString;
-            this.Provider = numericFormatParser.Provider;
-            this.Styles = numericFormatParser.Styles;
-        }
         #endregion
 
         #region IFormatParserPartial<T> Members
@@ -377,8 +360,21 @@ namespace Plethora.Format
         /// </returns>
         public NumericFormatParser<T> Clone()
         {
-            return new NumericFormatParser<T>(this);
+            var clone = new NumericFormatParser<T>(
+                this.FormatString,
+                this.provider,
+                this.styles);
+
+            foreach (var suffixMultiplier in suffixMultipliers)
+            {
+                clone.suffixMultipliers.Add(suffixMultiplier.Key, suffixMultiplier.Value);
+            }
+            clone.assumedSuffix = this.assumedSuffix;
+            clone.regexParseNumeric = this.regexParseNumeric;
+
+            return clone;
         }
+
         #endregion
 
         #region Properties

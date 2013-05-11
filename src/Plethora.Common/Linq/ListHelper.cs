@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Plethora.Collections;
 
 namespace Plethora.Linq
@@ -48,8 +49,50 @@ namespace Plethora.Linq
 
         #region SubList
 
+        public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index)
+        {
+            //Validation
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+
+            var count = source.Count - index;
+            return SubList(source, index, count);
+        }
+
         public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index, int count)
         {
+            return new ListIndexItterator<TSource>(source, index, count);
+        }
+
+
+        public static IEnumerable<TSource> SubListOrEmpty<TSource>(this IList<TSource> source, int index)
+        {
+            //Validation
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            
+            var count = source.Count - index;
+            return SubListOrEmpty(source, index, count);
+        }
+
+        public static IEnumerable<TSource> SubListOrEmpty<TSource>(this IList<TSource> source, int index, int count)
+        {
+            //Validation
+            if (source == null)
+                throw new ArgumentNullException("source");
+
+            if (index < 0)
+                throw new ArgumentOutOfRangeException("index", ResourceProvider.ArgMustBeGreaterThanEqualToZero("index"));
+
+
+            if (index > source.Count - 1)
+                return Enumerable.Empty<TSource>();
+
+            var maxCount = source.Count - index;
+            count = Math.Min(count, maxCount);
+
             return new ListIndexItterator<TSource>(source, index, count);
         }
         #endregion

@@ -138,10 +138,6 @@ namespace Plethora.Format
         {
         }
 
-        protected NullableDateTimeFormatParser(NullableDateTimeFormatParser nullableDateTimeFormatParser)
-            : base(nullableDateTimeFormatParser.InnerFormatParser.Clone())
-        {
-        }
         #endregion
 
         #region ICloneable Implementation
@@ -165,7 +161,9 @@ namespace Plethora.Format
         /// </returns>
         public NullableDateTimeFormatParser Clone()
         {
-            return new NullableDateTimeFormatParser(this);
+            var clone = new NullableDateTimeFormatParser(this.InnerFormatParser.Clone());
+
+            return clone;
         }
         #endregion
 

@@ -74,6 +74,7 @@
     <Compile Include="!ExtensionClasses\ExpressionDuplicatorEx.cs" />
     <Compile Include="!ExtensionClasses\ExpressionDuplicatorWithClosurePromotionEx.cs" />
     <Compile Include="!ExtensionClasses\LambdaKeyerEx.cs" />
+    <Compile Include="!MockClasses\MockDataRecord.cs" />
     <Compile Include="!MockClasses\MockSet.cs" />
     <Compile Include="!UtilityClasses\EmptyAsyncResult.cs" />
     <Compile Include="!UtilityClasses\Person.cs" />
@@ -95,7 +96,9 @@
     <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
+    <Compile Include="Data\DataRecordHelper_Test.cs" />
     <Compile Include="EnumHelper_Test.cs" />
+    <Compile Include="EqualityHelper_Test.cs" />
     <Compile Include="ExpressionAide\CachedExecutor_Test.cs" />
     <Compile Include="ExpressionAide\ExpressionDuplicatorWithClosurePromotion_Test.cs" />
     <Compile Include="ExpressionAide\ExpressionDuplicator_Test.cs">

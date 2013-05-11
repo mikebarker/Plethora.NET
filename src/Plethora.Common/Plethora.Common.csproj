@@ -71,13 +71,16 @@
     <Compile Include="Collections\SortedList.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
+    <Compile Include="Threading\LiteLock.cs" />
+    <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
+    <Compile Include="Data\DataRecordHelper.cs" />
+    <Compile Include="EqualityHelper.cs" />
     <Compile Include="IO\TextReaderHelper.cs" />
     <Compile Include="Linq\ListHelper.cs" />
-    <Compile Include="Logging\Exceptions\IsLoggedException.cs" />
-    <Compile Include="Logging\Exceptions\LoggedException.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\ILoggerProvider.cs" />
+    <Compile Include="Logging\IsLoggedException.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\LogLevel.cs" />
     <Compile Include="MirrorClass.cs" />
@@ -159,6 +162,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

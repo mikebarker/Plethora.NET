@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using Plethora.Windows.Forms.Base;
 
 namespace Plethora.Windows.Forms
 {
@@ -18,7 +19,10 @@ namespace Plethora.Windows.Forms
     public class IntegerTextBox : IntegerTextBoxBase
     {
     }
+}
 
+namespace Plethora.Windows.Forms.Base
+{
     /// <summary>
     /// Intermediate class required to "fool" the designers to construct the <see cref="IntegerTextBox"/>.
     /// </summary>

@@ -1,76 +1,72 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Plethora.Collections
 {
     public static class SortedByKeyListHelper
     {
+        public static IEnumerable<T> GetByKey<TKey, T>(this SortedByKeyList<TKey, T> list, TKey key)
+        {
+            return GetByRange(list, new Range<TKey>(key, key, true, true));
+        }
+
         public static IEnumerable<T> GetByRange<TKey, T>(this SortedByKeyList<TKey, T> list, Range<TKey> range)
         {
-            int startIndex = list.BinarySearch(range.Min);
-            if (startIndex < 0)
+            if (list.Comparer.Compare(range.Min, range.Max) > 0) // min > max
+                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan("range.Min", "range.Max"), "range");
+
+
+            int startIndex;
+            if (range.MinInclusive)
             {
-                startIndex = ~startIndex;
-            }
-            else if (range.MinInclusive)
-            {
-                //Find the first index which is equal to the min key
-                while (true)
-                {
-                    int nextIndex = startIndex - 1;
-                    T item = list[nextIndex];
-                    TKey key = list.GetKey(item);
-                    if (list.Comparer.Compare(range.Min, key) == 0)
-                        startIndex = nextIndex;
-                    else
-                        break;
-                }
+                var firstIndex = list.IndexOf(range.Min);
+                if (firstIndex < 0)
+                    firstIndex = ~firstIndex;
+
+                startIndex = firstIndex;
             }
             else
             {
-                //Find the first index which is not equal to the min key
-                while (true)
-                {
-                    startIndex++;
-                    T item = list[startIndex];
-                    TKey key = list.GetKey(item);
-                    if (list.Comparer.Compare(range.Min, key) != 0)
-                        break;
-                }
+                var lastIndex = list.LastIndexOf(range.Min);
+                if (lastIndex < 0)
+                    startIndex = ~lastIndex;
+                else
+                    startIndex = lastIndex + 1;
+
+
+                if (startIndex >= list.Count)
+                    return Enumerable.Empty<T>();
             }
 
-            int endIndex = list.BinarySearch(range.Max);
-            if (endIndex < 0)
+
+            int endIndex;
+            if (range.MaxInclusive)
             {
-                endIndex = (~endIndex) - 1;
-            }
-            else if (range.MaxInclusive)
-            {
-                //Find the last index which is equal to the max key
-                while (true)
-                {
-                    int nextIndex = endIndex + 1;
-                    T item = list[nextIndex];
-                    TKey key = list.GetKey(item);
-                    if (list.Comparer.Compare(key, range.Max) == 0)
-                        endIndex = nextIndex;
-                    else
-                        break;
-                }
+                var lastIndex = list.LastIndexOf(range.Max);
+                if (lastIndex < 0)
+                    lastIndex = ~lastIndex - 1;
+
+                endIndex = lastIndex;
             }
             else
             {
-                //Find the last index which is not equal to the max key
-                while (true)
-                {
-                    endIndex--;
-                    T item = list[endIndex];
-                    TKey key = list.GetKey(item);
-                    if (list.Comparer.Compare(key, range.Max) != 0)
-                        break;
-                }
+                var firstIndex = list.IndexOf(range.Max);
+                if (firstIndex < 0)
+                    endIndex = ~firstIndex - 1;
+                else
+                    endIndex = firstIndex - 1;
+
+
+                if (endIndex < 0)
+                    return Enumerable.Empty<T>();
             }
 
-            return new ListIndexItterator<T>(list, startIndex, (endIndex - startIndex + 1));
+            var count = endIndex - startIndex + 1;
+            if (count == 0)
+                return Enumerable.Empty<T>();
+
+            return new ListIndexItterator<T>(list, startIndex, count);
         }
     }
 }

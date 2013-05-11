@@ -33,6 +33,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache", "Plethora.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache.Example", "Plethora.Cache.Example\Plethora.Cache.Example.csproj", "{F8B5E73A-8AD4-430C-951D-26C77E0603FC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Synchronized", "Plethora.Synchronized\Plethora.Synchronized.csproj", "{1577E94B-E43A-4C2B-A51A-52C8602108B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,10 @@ Global
 		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8B5E73A-8AD4-430C-951D-26C77E0603FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

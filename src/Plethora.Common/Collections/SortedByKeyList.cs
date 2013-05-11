@@ -27,7 +27,7 @@ namespace Plethora.Collections
         /// </summary>
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
         public SortedByKeyList(Func<T, TKey> getKeyFunc)
-            : this(getKeyFunc, DuplicatesPolicy.Error, Comparer<TKey>.Default)
+            : this(getKeyFunc, DuplicatesPolicy.Allow, Comparer<TKey>.Default)
         {
         }
 
@@ -38,7 +38,7 @@ namespace Plethora.Collections
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
         /// <param name="comparer">The comparer used to sort the list by key.</param>
         public SortedByKeyList(Func<T, TKey> getKeyFunc, IComparer<TKey> comparer)
-            : this(getKeyFunc, DuplicatesPolicy.Error, comparer)
+            : this(getKeyFunc, DuplicatesPolicy.Allow, comparer)
         {
         }
 
@@ -540,6 +540,12 @@ namespace Plethora.Collections
             return this.IndexOf(key, index, count);
         }
 
+        /// <returns>
+        /// If >= 0 the return value contains the index of the first item with the given key;
+        /// if negative the return value is the bit-wise compilment of the point in the list
+        /// where the value would be inserted.
+        /// </returns>
+        /// <see cref="BinarySearch(TKey)"/>
         public int IndexOf(TKey key, int index, int count)
         {
             int indexOf = this.BinarySearch(index, count, key);

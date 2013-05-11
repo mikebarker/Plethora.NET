@@ -188,7 +188,12 @@ namespace Plethora.ComponentModel
 
                 var owner = this.Control.FindForm();
                 if (owner != null)
-                    owner.Activate();
+                {
+                    if (owner.MdiParent == null)
+                        owner.Activate();
+                    else
+                        owner.MdiParent.Activate();
+                }
 
                 //Force the activation of the main form; before releasing inShowDropDown.
                 Application.DoEvents();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Plethora.Format;
+using Plethora.Windows.Forms.Base;
 using Plethora.Windows.Forms.Styles;
 
 namespace Plethora.Windows.Forms

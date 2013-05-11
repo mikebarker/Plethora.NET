@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Plethora.Logging.Exceptions;
+using Plethora.Logging;
 
 namespace Plethora.Threading
 {
