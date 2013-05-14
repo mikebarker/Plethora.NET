@@ -9,7 +9,7 @@ using Plethora.Threading;
 
 namespace Plethora.Synchronized
 {
-    internal class SyncCollection<TKey, T> : IChangeSink, IChangeSource, INotifyCollectionChanged, INotifyPropertyChanged, IList<T>
+    public class SyncCollection<TKey, T> : IChangeSink, IChangeSource, INotifyCollectionChanged, INotifyPropertyChanged, IList<T>
     {
         private readonly Func<T, TKey> getKeyFunc;
         private readonly SortedList<TKey, T> innerList;
@@ -52,12 +52,12 @@ namespace Plethora.Synchronized
 
 
         private readonly LiteLock listLock = new LiteLock();
-        internal IDisposable EnterLock()
+        public IDisposable EnterLock()
         {
             return listLock.AcquireLock();
         }
 
-        internal bool IsLockEntered
+        public bool IsLockEntered
         {
             get { return listLock.IsLockAcquired; }
         }
