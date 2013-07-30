@@ -82,7 +82,7 @@ namespace Plethora.Context.Windows.Forms
 
         private class ActionSortOrderComparer : IComparer<IAction>
         {
-            public static ActionSortOrderComparer Instance = new ActionSortOrderComparer();
+            public static readonly ActionSortOrderComparer Instance = new ActionSortOrderComparer();
 
             public int Compare(IAction x, IAction y)
             {
