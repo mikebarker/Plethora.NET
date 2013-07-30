@@ -10,7 +10,7 @@ namespace Plethora.Context.Windows.Forms
     {
         #region Fields
 
-        private readonly WeakReference<T> reference;
+        private readonly WeakReference reference;
         private readonly Func<T, IEnumerable<ContextInfo>>[] getContextCallbacks;
         #endregion
 
@@ -34,7 +34,7 @@ namespace Plethora.Context.Windows.Forms
                 throw new ArgumentNullException("control");
 
 
-            this.reference = new WeakReference<T>(control);
+            this.reference = new WeakReference(control);
             this.getContextCallbacks = getContextCallbacks;
 
             control.GotFocus += control_GotFocus;
@@ -46,7 +46,7 @@ namespace Plethora.Context.Windows.Forms
 
         protected T Control
         {
-            get { return reference.Target; }
+            get { return (T)reference.Target; }
         }
         #endregion
 
@@ -56,9 +56,12 @@ namespace Plethora.Context.Windows.Forms
         {
             if (disposing)
             {
-                var control = reference.Target;
-                control.GotFocus -= control_GotFocus;
-                control.LostFocus -= control_LostFocus;
+                var control = this.Control;
+                if (control != null)
+                {
+                    control.GotFocus -= control_GotFocus;
+                    control.LostFocus -= control_LostFocus;
+                }
             }
 
             base.Dispose(disposing);

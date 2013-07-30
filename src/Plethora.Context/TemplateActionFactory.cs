@@ -80,6 +80,45 @@ namespace Plethora.Context
         }
 
 
+        private class ContextAction : IAction
+        {
+            #region Fields
+
+            private readonly ContextInfo context;
+            private readonly IContextActionTemplate template;
+
+            #endregion
+
+            #region Constructor
+
+            public ContextAction(IContextActionTemplate template, ContextInfo context)
+            {
+                this.context = context;
+                this.template = template;
+            }
+
+            #endregion
+
+            #region Implementation of IAction
+
+            public string ActionName
+            {
+                get { return this.template.GetActionName(this.context); }
+            }
+
+            public bool CanExecute
+            {
+                get { return this.template.CanExecute(this.context); }
+            }
+
+            public void Execute()
+            {
+                this.template.Execute(this.context);
+            }
+
+            #endregion
+        }
+
         private class MultiContextAction : IAction
         {
             #region Fields
@@ -106,11 +145,6 @@ namespace Plethora.Context
                 get { return this.template.GetActionName(this.contexts); }
             }
 
-            public string ActionDescription
-            {
-                get { return this.template.GetActionDescription(this.contexts); }
-            }
-
             public bool CanExecute
             {
                 get { return this.template.CanExecute(this.contexts); }
@@ -119,50 +153,6 @@ namespace Plethora.Context
             public void Execute()
             {
                 this.template.Execute(this.contexts);
-            }
-
-            #endregion
-        }
-
-        private class ContextAction : IAction
-        {
-            #region Fields
-            
-            private readonly ContextInfo context;
-            private readonly IContextActionTemplate template;
-
-            #endregion
-
-            #region Constructor
-
-            public ContextAction(IContextActionTemplate template, ContextInfo context)
-            {
-                this.context = context;
-                this.template = template;
-            }
-
-            #endregion
-
-            #region Implementation of IAction
-
-            public string ActionName
-            {
-                get { return this.template.GetActionName(this.context); }
-            }
-
-            public string ActionDescription
-            {
-                get { return this.template.GetActionDescription(this.context); }
-            }
-
-            public bool CanExecute
-            {
-                get { return this.template.CanExecute(this.context); }
-            }
-
-            public void Execute()
-            {
-                this.template.Execute(this.context);
             }
 
             #endregion

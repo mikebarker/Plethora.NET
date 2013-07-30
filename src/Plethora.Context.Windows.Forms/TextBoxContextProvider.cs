@@ -22,7 +22,9 @@ namespace Plethora.Context.Windows.Forms
         {
             if (disposing)
             {
-                this.Control.TextChanged -= textBox_TextChanged;
+                var control = this.Control;
+                if (control != null)
+                    control.TextChanged -= textBox_TextChanged;
             }
             base.Dispose(disposing);
         }

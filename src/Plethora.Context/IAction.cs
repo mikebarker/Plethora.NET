@@ -4,8 +4,6 @@
     {
         string ActionName { get; }
 
-        string ActionDescription { get; }
-
         bool CanExecute { get; }
 
         void Execute();

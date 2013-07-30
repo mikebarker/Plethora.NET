@@ -29,14 +29,17 @@ namespace Plethora.Context.Windows.Forms
         {
             if (disposing)
             {
-                this.Control.TextChanged -= listView_SelectedIndexChanged;
+                var control = this.Control;
+                if (control != null)
+                    control.SelectedIndexChanged -= listView_SelectedIndexChanged;
             }
             base.Dispose(disposing);
         }
 
         protected override void OnEnterContext(object sender, EventArgs e)
         {
-            if (base.Control.SelectedItems.Count != 0)
+            var control = this.Control;
+            if ((control != null) && (control.SelectedItems.Count != 0))
                 base.OnEnterContext(sender, e);
         }
         #endregion

@@ -6,8 +6,6 @@
 
         string GetActionName(ContextInfo info);
 
-        string GetActionDescription(ContextInfo info);
-
         bool CanExecute(ContextInfo info);
 
         void Execute(ContextInfo info);
@@ -18,8 +16,6 @@
         string ContextName { get; }
 
         string GetActionName(ContextInfo[] contexts);
-
-        string GetActionDescription(ContextInfo[] contexts);
 
         bool CanExecute(ContextInfo[] contexts);
 

@@ -65,9 +65,8 @@ namespace Plethora.Context.Example
 
             foreach (var action in actions)
             {
-                textBox2.Text += string.Format("{0} :\t{1}\r\n",
-                                               action.ActionName,
-                                               action.ActionDescription);
+                textBox2.Text += string.Format("{0}\r\n",
+                                               action.ActionName);
             }
         }
 
