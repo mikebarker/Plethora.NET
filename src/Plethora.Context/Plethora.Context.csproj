@@ -61,17 +61,22 @@
     <Compile Include="ContextInfoComparer.cs" />
     <Compile Include="ContextManager.cs" />
     <Compile Include="ContextProvider.cs" />
+    <Compile Include="IUiContextActionTemplate.cs" />
+    <Compile Include="IUiAction.cs" />
     <Compile Include="IAction.cs" />
     <Compile Include="IContextActionFactory.cs" />
     <Compile Include="IContextActionTemplate.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TemplateActionFactory.cs" />
+    <Compile Include="UiActionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

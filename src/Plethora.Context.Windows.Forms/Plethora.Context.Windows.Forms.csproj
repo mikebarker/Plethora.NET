@@ -56,6 +56,9 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="ContextActionMenuStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ControlContextProvider.cs" />
     <Compile Include="ListViewContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -66,6 +69,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
@@ -86,10 +90,6 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
-      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
-      <Name>Plethora.Common</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Plethora.Context\Plethora.Context.csproj">
       <Project>{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}</Project>
       <Name>Plethora.Context</Name>

@@ -43,6 +43,9 @@ namespace Plethora.Context.Example
             contextForm.Show();
 
             contextManager = ContextManager.DefaultInstance;
+
+            contextActionMenuStrip.ContextManager = contextManager;
+            
             contextManager.RegisterProvider(new TextBoxContextProvider(this.textBox1, GetContractContext));
             contextManager.RegisterProvider(new ListViewContextProvider(this.listView1, GetPositionContext));
 
@@ -56,16 +59,16 @@ namespace Plethora.Context.Example
 
 
             //Register actions
-            ContextActionTemplate viewContractAction = new ContextActionTemplate("Contract", c => "View Contract #" + ((long)c.Data), c => "Open the contract screen.");
+            ContextActionTemplate viewContractAction = new ContextActionTemplate("Contract", c => "View Contract #" + ((long)c.Data));
             contextManager.RegisterActionTemplate(viewContractAction);
 
-            ContextActionTemplate editContractAction = new ContextActionTemplate("Contract", c => "Edit Contract #" + ((long)c.Data), c => "Edit the contract.");
+            ContextActionTemplate editContractAction = new ContextActionTemplate("Contract", c => "Edit Contract #" + ((long)c.Data));
             contextManager.RegisterActionTemplate(editContractAction);
 
-            ContextActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument", c => "Open instrument #" + ((long)c.Data));
+            ContextActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument #" + ((long)c.Data));
             contextManager.RegisterActionTemplate(viewInstrumentAction);
 
-            IMultiContextActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View Instruments", array => "Open instruments #" + (string.Join(", ", array.Select(c => ((long)c.Data).ToString()).ToArray())));
+            IMultiContextActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
             contextManager.RegisterActionTemplate(viewMultiInstrumentAction);
         }
 
@@ -162,23 +165,18 @@ namespace Plethora.Context.Example
     {
         private readonly string contextName;
         private readonly Func<ContextInfo, string> getActionName;
-        private readonly Func<ContextInfo, string> getActionDescription;
 
-        public ContextActionTemplate(string contextName, Func<ContextInfo, string> getActionName, Func<ContextInfo, string> getActionDescription)
+        public ContextActionTemplate(string contextName, Func<ContextInfo, string> getActionName)
         {
             this.contextName = contextName;
             this.getActionName = getActionName;
-            this.getActionDescription = getActionDescription;
         }
 
         public string ContextName { get { return this.contextName; } }
+
         public string GetActionName(ContextInfo info)
         {
             return getActionName(info);
-        }
-        public string GetActionDescription(ContextInfo info)
-        {
-            return getActionDescription(info);
         }
 
         public bool CanExecute(ContextInfo info)
@@ -195,23 +193,18 @@ namespace Plethora.Context.Example
     {
         private readonly string contextName;
         private readonly Func<ContextInfo[], string> getActionName;
-        private readonly Func<ContextInfo[], string> getActionDescription;
 
-        public MultiContextActionTemplate(string contextName, Func<ContextInfo[], string> getActionName, Func<ContextInfo[], string> getActionDescription)
+        public MultiContextActionTemplate(string contextName, Func<ContextInfo[], string> getActionName)
         {
             this.contextName = contextName;
             this.getActionName = getActionName;
-            this.getActionDescription = getActionDescription;
         }
 
         public string ContextName { get { return this.contextName; } }
+
         public string GetActionName(ContextInfo[] info)
         {
             return getActionName(info);
-        }
-        public string GetActionDescription(ContextInfo[] info)
-        {
-            return getActionDescription(info);
         }
 
         public bool CanExecute(ContextInfo[] info)
