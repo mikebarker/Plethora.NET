@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 
 namespace Plethora.Context
@@ -56,7 +57,11 @@ namespace Plethora.Context
                     {
                         foreach (var template in list)
                         {
-                            IAction action = new ContextAction(template, contexts.Single());
+                            var uiTemplate = template as IUiContextActionTemplate;
+                            IAction action = (uiTemplate != null)
+                                ? new UiContextAction(uiTemplate, contexts.Single())
+                                : new ContextAction(template, contexts.Single());
+
                             actions.Add(action);
                         }
                     }
@@ -68,7 +73,11 @@ namespace Plethora.Context
                     {
                         foreach (var template in list)
                         {
-                            IAction action = new MultiContextAction(template, contexts);
+                            var uiTemplate = template as IUiMultiContextActionTemplate;
+                            IAction action = (uiTemplate != null)
+                                ? new UiMultiContextAction(uiTemplate, contexts)
+                                : new MultiContextAction(template, contexts);
+
                             actions.Add(action);
                         }
                     }
@@ -99,6 +108,17 @@ namespace Plethora.Context
 
             #endregion
 
+            protected ContextInfo Context
+            {
+                get { return context; }
+            }
+
+            protected IContextActionTemplate Template
+            {
+                get { return template; }
+            }
+
+
             #region Implementation of IAction
 
             public string ActionName
@@ -114,6 +134,47 @@ namespace Plethora.Context
             public void Execute()
             {
                 this.template.Execute(this.context);
+            }
+
+            #endregion
+        }
+
+        private class UiContextAction : ContextAction, IUiAction
+        {
+            #region Constructor
+
+            public UiContextAction(IUiContextActionTemplate template, ContextInfo context)
+                : base(template, context)
+            {
+            }
+
+            #endregion
+
+            protected new IUiContextActionTemplate Template
+            {
+                get { return (IUiContextActionTemplate)base.Template; }
+            }
+
+            #region Implementation of IUiAction
+
+            public string ActionDescription
+            {
+                get { return this.Template.GetActionDescription(this.Context); }
+            }
+
+            public Image Image
+            {
+                get { return this.Template.GetImage(this.Context); }
+            }
+
+            public string Group
+            {
+                get { return this.Template.GetGroup(this.Context); }
+            }
+
+            public int Rank
+            {
+                get { return this.Template.GetRank(this.Context); }
             }
 
             #endregion
@@ -137,7 +198,17 @@ namespace Plethora.Context
             }
 
             #endregion
-            
+
+            protected ContextInfo[] Contexts
+            {
+                get { return contexts; }
+            }
+
+            protected IMultiContextActionTemplate Template
+            {
+                get { return this.template; }
+            }
+
             #region Implementation of IAction
 
             public string ActionName
@@ -153,6 +224,47 @@ namespace Plethora.Context
             public void Execute()
             {
                 this.template.Execute(this.contexts);
+            }
+
+            #endregion
+        }
+
+        private class UiMultiContextAction : MultiContextAction, IUiAction
+        {
+            #region Constructors
+
+            public UiMultiContextAction(IUiMultiContextActionTemplate template, ContextInfo[] contexts)
+                : base(template, contexts)
+            {
+            }
+
+            #endregion
+
+            protected new IUiMultiContextActionTemplate Template
+            {
+                get { return (IUiMultiContextActionTemplate)base.Template; }
+            }
+
+            #region Implementation of IUiAction
+
+            public string ActionDescription
+            {
+                get { return this.Template.GetActionDescription(this.Contexts); }
+            }
+
+            public Image Image
+            {
+                get { return this.Template.GetImage(this.Contexts); }
+            }
+
+            public string Group
+            {
+                get { return this.Template.GetGroup(this.Contexts); }
+            }
+
+            public int Rank
+            {
+                get { return this.Template.GetRank(this.Contexts); }
             }
 
             #endregion
