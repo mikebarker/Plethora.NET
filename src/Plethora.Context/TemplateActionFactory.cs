@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -11,6 +12,11 @@ namespace Plethora.Context
 
         public void RegisterActionTemplate(IMultiContextActionTemplate template)
         {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+
             string contextName = template.ContextName;
 
             List<IMultiContextActionTemplate> list;
@@ -25,6 +31,11 @@ namespace Plethora.Context
 
         public void RegisterActionTemplate(IContextActionTemplate template)
         {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+
             string contextName = template.ContextName;
 
             List<IContextActionTemplate> list;
@@ -35,6 +46,30 @@ namespace Plethora.Context
             }
 
             list.Add(template);
+        }
+
+        public void DeregisterActionTemplate(IContextActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+
+            List<IContextActionTemplate> list;
+            if (templates.TryGetValue(template.ContextName, out list))
+                list.Remove(template);
+        }
+
+        public void DeregisterActionTemplate(IMultiContextActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+
+            List<IMultiContextActionTemplate> list;
+            if (multiTemplates.TryGetValue(template.ContextName, out list))
+                list.Remove(template);
         }
 
         public IEnumerable<IAction> GetActions(IDictionary<string, ContextInfo[]> contextsByName)

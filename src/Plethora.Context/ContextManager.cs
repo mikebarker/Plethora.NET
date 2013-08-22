@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace Plethora.Context
 {
+    // TODO: This can be more efficient by keeping a cache of the contexts, and only updating those per provider when the context changes
     public class ContextManager
     {
         #region Singleton Instance
@@ -18,7 +19,7 @@ namespace Plethora.Context
         #region Fields
 
         private readonly object lockObj = new object();
-        private readonly ICollection<IContextProvider> providers = new List<IContextProvider>();
+        private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
         private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>();
         private readonly ICollection<IContextActionFactory> actionFactories = new List<IContextActionFactory>();
         private TemplateActionFactory templateActionFactory;
@@ -34,8 +35,120 @@ namespace Plethora.Context
 
         public void RegisterProvider(IContextProvider provider)
         {
+            //Validation
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+
             provider.EnterContext += provider_EnterContext;
             provider.LeaveContext += provider_LeaveContext;
+        }
+
+        public void DeregisterProvider(IContextProvider provider)
+        {
+            //Validation
+            if (provider == null)
+                throw new ArgumentNullException("provider");
+
+            lock (lockObj)
+            {
+                activeProviders.Remove(provider);
+
+                provider.EnterContext -= provider_EnterContext;
+                provider.LeaveContext -= provider_LeaveContext;
+            }
+        }
+
+        public void RegisterAugmentor(ContextAugmentor augmentor)
+        {
+            //Validation
+            if (augmentor == null)
+                throw new ArgumentNullException("augmentor");
+
+            lock (lockObj)
+            {
+                ICollection<ContextAugmentor> list;
+                if (!augmentors.TryGetValue(augmentor.ContextName, out list))
+                {
+                    list = new List<ContextAugmentor>();
+                    augmentors.Add(augmentor.ContextName, list);
+                }
+
+                list.Add(augmentor);
+            }
+        }
+
+        public void DeregisterAugmentor(ContextAugmentor augmentor)
+        {
+            //Validation
+            if (augmentor == null)
+                throw new ArgumentNullException("augmentor");
+
+            lock (lockObj)
+            {
+                ICollection<ContextAugmentor> list;
+                if (augmentors.TryGetValue(augmentor.ContextName, out list))
+                    list.Remove(augmentor);
+            }
+        }
+
+        public void RegisterFactory(IContextActionFactory factory)
+        {
+            //Validation
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            lock (lockObj)
+            {
+                this.actionFactories.Add(factory);
+            }
+        }
+
+        public void DeregisterFactory(IContextActionFactory factory)
+        {
+            //Validation
+            if (factory == null)
+                throw new ArgumentNullException("factory");
+
+            lock (lockObj)
+            {
+                this.actionFactories.Remove(factory);
+            }
+        }
+
+        public void RegisterActionTemplate(IContextActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            lock (lockObj)
+            {
+                if (templateActionFactory == null)
+                {
+                    templateActionFactory = new TemplateActionFactory();
+                    actionFactories.Add(templateActionFactory);
+                }
+
+                templateActionFactory.RegisterActionTemplate(template);
+            }
+        }
+
+        public void RegisterActionTemplate(IMultiContextActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            lock (lockObj)
+            {
+                if (templateActionFactory == null)
+                {
+                    templateActionFactory = new TemplateActionFactory();
+                    actionFactories.Add(templateActionFactory);
+                }
+
+                templateActionFactory.RegisterActionTemplate(template);
+            }
         }
 
         public IEnumerable<ContextInfo> GetContexts()
@@ -44,7 +157,7 @@ namespace Plethora.Context
             {
                 var contextSet = new Dictionary<ContextInfo, ContextInfo>(new ContextInfoComparer());
 
-                var localContextsEnumerable = providers
+                var localContextsEnumerable = activeProviders
                     .Where(provider => provider != null)
                     .Select(provider => provider.Contexts)
                     .Where(contexts => contexts != null)
@@ -111,72 +224,10 @@ namespace Plethora.Context
                     .Select(factory => factory.GetActions(contextsByName))
                     .Where(actionList => actionList != null)
                     .SelectMany(actionList => actionList)
+                    .Where(action => action != null)
                     .ToList();
 
                 return actions;
-            }
-        }
-
-        public void RegisterAugmentor(ContextAugmentor augmentor)
-        {
-            lock (lockObj)
-            {
-                ICollection<ContextAugmentor> list;
-                if (!augmentors.TryGetValue(augmentor.ContextName, out list))
-                {
-                    list = new List<ContextAugmentor>();
-                    augmentors.Add(augmentor.ContextName, list);
-                }
-
-                list.Add(augmentor);
-            }
-        }
-
-        public void RegisterFactory(IContextActionFactory factory)
-        {
-            //Validation
-            if (factory == null)
-                throw new ArgumentNullException("factory");
-
-            lock (lockObj)
-            {
-                this.actionFactories.Add(factory);
-            }
-        }
-
-        public void RegisterActionTemplate(IContextActionTemplate template)
-        {
-            //Validation
-            if (template == null)
-                throw new ArgumentNullException("template");
-
-            lock (lockObj)
-            {
-                if (templateActionFactory == null)
-                {
-                    templateActionFactory = new TemplateActionFactory();
-                    actionFactories.Add(templateActionFactory);
-                }
-
-                templateActionFactory.RegisterActionTemplate(template);
-            }
-        }
-
-        public void RegisterActionTemplate(IMultiContextActionTemplate template)
-        {
-            //Validation
-            if (template == null)
-                throw new ArgumentNullException("template");
-
-            lock (lockObj)
-            {
-                if (templateActionFactory == null)
-                {
-                    templateActionFactory = new TemplateActionFactory();
-                    actionFactories.Add(templateActionFactory);
-                }
-
-                templateActionFactory.RegisterActionTemplate(template);
             }
         }
 
@@ -212,8 +263,8 @@ namespace Plethora.Context
 
             lock (lockObj)
             {
-                if (!providers.Contains(provider))
-                    providers.Add(provider);
+                if (!activeProviders.Contains(provider))
+                    activeProviders.Add(provider);
             }
 
             OnContextChanged();
@@ -226,7 +277,7 @@ namespace Plethora.Context
 
             lock (lockObj)
             {
-                providers.Remove(provider);
+                activeProviders.Remove(provider);
             }
 
             OnContextChanged();
