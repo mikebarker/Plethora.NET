@@ -90,8 +90,6 @@ namespace Plethora.Context
             var handler = this.EnterContext;
             if (handler != null)
                 handler(sender, e);
-
-            OnContextChanged();
         }
 
         protected void OnLeaveContext()
@@ -104,8 +102,6 @@ namespace Plethora.Context
             var handler = this.LeaveContext;
             if (handler != null)
                 handler(sender, e);
-
-            OnContextChanged();
         }
 
         protected void OnContextChanged()
