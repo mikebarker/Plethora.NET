@@ -1,24 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextCollection : ObservableCollection<WpfContext>, IContextProvider
+    internal class WpfContextProvider : IContextProvider
     {
-        public WpfContextCollection()
+        public WpfContextProvider(UIElement element)
         {
-            this.internalContextProvider = new InternalContextProvider(this);
-        }
+            //Validation
+            if (element == null)
+                throw new ArgumentNullException("element");
 
-        public WpfContextCollection(UIElement uiElement)
-            : this()
-        {
-            SetUIElement(uiElement);
+
+            this.internalContextProvider = new InternalContextProvider(this);
+            this.uiElement = element;
+            RegisterUIElement(uiElement);
         }
 
         #region Implementation of IContextProvider
@@ -26,16 +24,16 @@ namespace Plethora.Context.Wpf
         //Uses containment to provide inheritance.
         private sealed class InternalContextProvider : ContextProvider
         {
-            private readonly WpfContextCollection parent;
+            private readonly WpfContextProvider parent;
 
-            public InternalContextProvider(WpfContextCollection parent)
+            public InternalContextProvider(WpfContextProvider parent)
             {
                 this.parent = parent;
             }
 
             public override IEnumerable<ContextInfo> GetContexts()
             {
-                return parent.GetContextInfos();
+                return parent.Contexts;
             }
 
             public new void OnContextChanged()
@@ -77,7 +75,12 @@ namespace Plethora.Context.Wpf
 
         public IEnumerable<ContextInfo> Contexts
         {
-            get { return internalContextProvider.Contexts; }
+            get
+            {
+                return (ContextSource != null) 
+                    ? ContextSource.Contexts
+                    : null;
+            }
         }
 
 
@@ -99,74 +102,71 @@ namespace Plethora.Context.Wpf
         #endregion
 
 
-        private IEnumerable<ContextInfo> GetContextInfos()
-        {
-            var contextInfos = this.Items
-                .Select(wpfContext => new ContextInfo(wpfContext.Name, wpfContext.Rank, wpfContext.Data))
-                .ToArray();
 
-            return contextInfos;
+        private IWpfContextSource contextSource;
+
+        public IWpfContextSource ContextSource
+        {
+            get { return contextSource; }
+            set 
+            {
+                if (contextSource != null)
+                {
+                    contextSource.UIElement = null;
+                    contextSource.ContextChanged -= contextSource_ContextChanged;
+                }
+
+                contextSource = value;
+
+                if (contextSource != null)
+                {
+                    contextSource.UIElement = this.uiElement;
+                    contextSource.ContextChanged += contextSource_ContextChanged;
+                }
+            }
+        }
+
+        void contextSource_ContextChanged(object sender, EventArgs e)
+        {
+            this.OnContextChanged();
         }
 
 
-        private bool isUIElementSet = false;
 
-        internal void SetUIElement(UIElement element)
+
+
+        private readonly UIElement uiElement;
+
+        public UIElement UIElement
+        {
+            get { return uiElement; }
+        }
+
+        private void RegisterUIElement(UIElement element)
         {
             //Do not hook up the event model in design mode
             if (DesignerProperties.GetIsInDesignMode(element))
                 return;
-
-            if (isUIElementSet)
-                throw new InvalidOperationException("UIElement is already set.");
-
-            isUIElementSet = true;
 
             element.GotFocus += element_GotFocus;
             element.LostFocus += element_LostFocus;
 
             var contextManager = WpfContext.GetManagerForElement(element);
             contextManager.RegisterProvider(this);
+
+            if (ContextSource != null)
+                contextSource.UIElement = uiElement;
         }
 
-
-        private void element_GotFocus(object sender, RoutedEventArgs routedEventArgs)
+        private void element_GotFocus(object sender, RoutedEventArgs e)
         {
-            this.OnEnterContext();
+            OnEnterContext();
         }
 
         private void element_LostFocus(object sender, RoutedEventArgs e)
         {
-            this.OnLeaveContext();
+            OnLeaveContext();
         }
 
-        void context_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            this.OnContextChanged();
-        }
-
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
-        {
-            base.OnCollectionChanged(e);
-
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Add:
-                    foreach (var newItem in e.NewItems)
-                    {
-                        var context = (WpfContext)newItem;
-                        context.PropertyChanged += context_PropertyChanged;
-                    }
-                    break;
-
-                case NotifyCollectionChangedAction.Remove:
-                    foreach (var oldItem in e.OldItems)
-                    {
-                        var context = (WpfContext)oldItem;
-                        context.PropertyChanged -= context_PropertyChanged;
-                    }
-                    break;
-            }
-        }
     }
 }

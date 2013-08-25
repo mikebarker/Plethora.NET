@@ -56,15 +56,19 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
-    <Compile Include="WpfContextCollection.cs" />
+    <Compile Include="IWpfContextSource.cs" />
     <Compile Include="WpfContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WpfContextInfo.cs" />
+    <Compile Include="WpfContextProvider.cs" />
+    <Compile Include="WpfContextSourceCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Context\Plethora.Context.csproj">
