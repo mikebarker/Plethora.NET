@@ -1,110 +1,63 @@
-﻿using System.Collections;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContext : DependencyObject, INotifyPropertyChanged
+    public static class WpfContext
     {
-        #region Implementation Of INotifyPropertyChanged
+        #region ContextSource Attached Property
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public static readonly DependencyProperty ContextSourceProperty =
+            DependencyProperty.RegisterAttached(
+                "ContextSource",
+                typeof (IWpfContextSource),
+                typeof (UIElement),
+                new PropertyMetadata(null, ContextSourceChangedCallback));
 
-        #endregion
-
-        #region Properties
-
-        #region Name DependencyProperty
-
-        public string Name
+        private static void ContextSourceChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            get { return (string)GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            UIElement element = (UIElement)dependencyObject;
+            IWpfContextSource contextSource = (IWpfContextSource)e.NewValue;
+
+            var provider = GetContextProvider(element);
+            provider.ContextSource = contextSource;
         }
 
-        public static readonly DependencyProperty NameProperty = DependencyProperty.Register(
-            "Name",
-            typeof(string),
-            typeof(WpfContext),
-            new PropertyMetadata(default(string), PropertyChangedCallback));
-
-        #endregion
-
-        #region Rank DependencyProperty
-
-        public int Rank
+        public static void SetContextSource(UIElement element, IWpfContextSource value)
         {
-            get { return (int)GetValue(RankProperty); }
-            set { SetValue(RankProperty, value); }
+            element.SetValue(ContextSourceProperty, value);
         }
 
-        public static readonly DependencyProperty RankProperty = DependencyProperty.Register(
-            "Rank",
-            typeof(int),
-            typeof(WpfContext),
-            new PropertyMetadata(default(int), PropertyChangedCallback));
-
-        #endregion
-
-        #region Data DependencyProperty
-
-        public object Data
+        public static IWpfContextSource GetContextSource(UIElement element)
         {
-            get { return GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
-        }
-
-        public static readonly DependencyProperty DataProperty = DependencyProperty.Register(
-            "Data",
-            typeof(object),
-            typeof(WpfContext),
-            new PropertyMetadata(default(object), PropertyChangedCallback));
-
-        #endregion
-
-        #endregion
-
-        #region Private Methods
-
-        private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
-        {
-            var wpfContext = (WpfContext)dependencyObject;
-            wpfContext.OnPropertyChanged(e.Property.Name);
-        }
-
-        protected void OnPropertyChanged(string propertyName)
-        {
-            var handler = PropertyChanged;
-            if (handler != null)
-                handler(this, new PropertyChangedEventArgs(propertyName));
+            return (IWpfContextSource)element.GetValue(ContextSourceProperty);
         }
 
         #endregion
 
 
-        #region Providers DependencyProperty
+        #region ContextProvider DependencyProperty
 
-        internal static readonly DependencyProperty ContextCollectionProperty = DependencyProperty.RegisterAttached(
-            "ContextCollection_", //Intentionally rename to force WPF to use the Get method below
-            typeof(IList),
+        internal static readonly DependencyProperty ContextProviderProperty = DependencyProperty.RegisterAttached(
+            "ContextProvider_", //Intentionally renamed to force WPF to use the Get method below
+            typeof(WpfContextProvider),
             typeof(UIElement),
-            new PropertyMetadata(default(IList)));
+            new PropertyMetadata(default(WpfContextProvider)));
 
-        public static void SetContextCollection(UIElement element, IList value)
+        private static void SetContextProvider(UIElement element, WpfContextProvider value)
         {
-            element.SetValue(ContextCollectionProperty, value);
+            element.SetValue(ContextProviderProperty, value);
         }
 
-        public static IList GetContextCollection(UIElement element)
+        private static WpfContextProvider GetContextProvider(UIElement element)
         {
-            var list = (IList)element.GetValue(ContextCollectionProperty);
-            if (list == null)
+            var provider = (WpfContextProvider)element.GetValue(ContextProviderProperty);
+            if (provider == null)
             {
-                list = new WpfContextCollection(element);
-                element.SetValue(ContextCollectionProperty, list);
+                provider = new WpfContextProvider(element);
+                element.SetValue(ContextProviderProperty, provider);
             }
 
-            return list;
+            return provider;
         }
 
         #endregion

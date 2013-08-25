@@ -8,24 +8,31 @@
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value ="5" />
         </Style>
+        
+        <wpf:WpfContextSourceCollection x:Key="contractContext">
+            <wpf:WpfContextInfo Name="Contract" Data="{Binding RelativeSource={RelativeSource Self}, Path=UIElement.Text}"/>
+            <wpf:WpfContextInfo Name="SignedContract" ElementDataPath="Text"/>
+        </wpf:WpfContextSourceCollection>
+
+        
     </Window.Resources>
     
     <Grid>
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">Contract:</TextBlock>
-                <TextBox>
+                <TextBox wpf:WpfContext.ContextSource="{StaticResource contractContext}">
                     1234
-                    <wpf:WpfContext.ContextCollection>
-                        <wpf:WpfContext Name="Bob" Data="27" />
-                        <wpf:WpfContext Name="Dylan" Rank="5" Data="78" />
-                    </wpf:WpfContext.ContextCollection>
                 </TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">Instrument:</TextBlock>
                 <TextBox>
                     VOD.L
+
+                    <wpf:WpfContext.ContextSource>
+                        <wpf:WpfContextInfo Name="Instrument" Data="{Binding RelativeSource={RelativeSource Self}, Path=UIElement.Text}"/>
+                    </wpf:WpfContext.ContextSource>
                 </TextBox>
             </StackPanel>
             
