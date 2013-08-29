@@ -49,8 +49,7 @@ namespace Plethora.Context.Wpf
             get
             {
                 var contexts = this
-                    .Cast<IWpfContextSource>()
-                    .SelectMany(item => item.Contexts)
+                    .Select(item => item.Context)
                     .ToArray();
 
                 return contexts;
