@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
@@ -8,16 +7,13 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextSourceCollection : ObservableCollection<IWpfContextSource>, IWpfContextSource
+    public class WpfContextSourceCollection : FreezableCollection<WpfContextSource>, IWpfContextSource //ObservableCollection<IWpfContextSource>, IWpfContextSource
     {
         public WpfContextSourceCollection()
         {
+            ((INotifyCollectionChanged)this).CollectionChanged += this_CollectionChanged;
         }
 
-        public WpfContextSourceCollection(UIElement uiElement)
-        {
-            UIElement = uiElement;
-        }
 
         #region Implementation Of IWpfContextSource
 
@@ -52,7 +48,8 @@ namespace Plethora.Context.Wpf
         {
             get
             {
-                var contexts = this.Items
+                var contexts = this
+                    .Cast<IWpfContextSource>()
                     .SelectMany(item => item.Contexts)
                     .ToArray();
 
@@ -86,7 +83,7 @@ namespace Plethora.Context.Wpf
             if (DesignerProperties.GetIsInDesignMode(element))
                 return;
 
-            foreach (var wpfContextSource in Items)
+            foreach (var wpfContextSource in this)
             {
                 wpfContextSource.UIElement = element;
             }
@@ -98,7 +95,7 @@ namespace Plethora.Context.Wpf
             if (DesignerProperties.GetIsInDesignMode(element))
                 return;
 
-            foreach (var wpfContextSource in Items)
+            foreach (var wpfContextSource in this)
             {
                 wpfContextSource.UIElement = null;
             }
@@ -110,10 +107,8 @@ namespace Plethora.Context.Wpf
             this.OnContextChanged();
         }
 
-        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        private void this_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
         {
-            base.OnCollectionChanged(e);
-
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
@@ -129,8 +124,8 @@ namespace Plethora.Context.Wpf
                     foreach (var oldItem in e.OldItems)
                     {
                         var wpfContextSource = (IWpfContextSource)oldItem;
-                        wpfContextSource.UIElement = null;
                         wpfContextSource.ContextChanged -= contextSource_ContextChanged;
+                        wpfContextSource.UIElement = null;
                     }
                     break;
             }

@@ -15,6 +15,9 @@ namespace Plethora.Context.Wpf
 
         private static void ContextSourceChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
+            if (ReferenceEquals(e.OldValue, e.NewValue))
+                return;
+
             UIElement element = (UIElement)dependencyObject;
             IWpfContextSource contextSource = (IWpfContextSource)e.NewValue;
 

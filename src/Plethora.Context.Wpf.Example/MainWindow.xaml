@@ -10,10 +10,9 @@
         </Style>
         
         <wpf:WpfContextSourceCollection x:Key="contractContext">
-            <wpf:WpfContextInfo Name="Contract" Data="{Binding RelativeSource={RelativeSource Self}, Path=UIElement.Text}"/>
-            <wpf:WpfContextInfo Name="SignedContract" ElementDataPath="Text"/>
+            <wpf:WpfContextSource Name="Contract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
+            <wpf:WpfContextSource Name="SignedContract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
         </wpf:WpfContextSourceCollection>
-
         
     </Window.Resources>
     
@@ -31,7 +30,7 @@
                     VOD.L
 
                     <wpf:WpfContext.ContextSource>
-                        <wpf:WpfContextInfo Name="Instrument" Data="{Binding RelativeSource={RelativeSource Self}, Path=UIElement.Text}"/>
+                        <wpf:WpfContextSource Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
                     </wpf:WpfContext.ContextSource>
                 </TextBox>
             </StackPanel>
