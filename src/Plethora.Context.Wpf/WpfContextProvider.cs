@@ -110,6 +110,10 @@ namespace Plethora.Context.Wpf
             get { return contextSource; }
             set 
             {
+                if (ReferenceEquals(contextSource, value))
+                    return;
+
+
                 if (contextSource != null)
                 {
                     contextSource.UIElement = null;

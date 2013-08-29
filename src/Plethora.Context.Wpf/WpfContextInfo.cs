@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Data;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextInfo : DependencyObject, IWpfContextSource
+    public class WpfContextSource : Freezable, IWpfContextSource
     {
         #region Properties
 
@@ -20,17 +19,8 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty UIElementProperty = DependencyProperty.Register(
             "UIElement",
             typeof(UIElement),
-            typeof(WpfContextInfo),
-            new PropertyMetadata(default(UIElement), UIElementChangedCallback));
-
-        private static void UIElementChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs dependencyPropertyChangedEventArgs)
-        {
-            var wpfContextInfo = (WpfContextInfo)dependencyObject;
-
-            //Rebind if the element data path is specified
-            if (wpfContextInfo.ElementDataPath != null)
-                wpfContextInfo.BindDataToUIElement();
-        }
+            typeof(WpfContextSource),
+            new PropertyMetadata(default(UIElement)));
 
         #endregion
 
@@ -45,7 +35,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty NameProperty = DependencyProperty.Register(
             "Name",
             typeof(string),
-            typeof(WpfContextInfo),
+            typeof(WpfContextSource),
             new PropertyMetadata(default(string), PropertyChangedCallback));
 
         #endregion
@@ -61,7 +51,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty RankProperty = DependencyProperty.Register(
             "Rank",
             typeof(int),
-            typeof(WpfContextInfo),
+            typeof(WpfContextSource),
             new PropertyMetadata(default(int), PropertyChangedCallback));
 
         #endregion
@@ -77,30 +67,8 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty DataProperty = DependencyProperty.Register(
             "Data",
             typeof(object),
-            typeof(WpfContextInfo),
+            typeof(WpfContextSource),
             new PropertyMetadata(default(object), PropertyChangedCallback));
-
-        #endregion
-
-        #region ElementDataPath DependencyProperty
-
-        public string ElementDataPath
-        {
-            get { return (string)GetValue(ElementDataPathProperty); }
-            set { SetValue(ElementDataPathProperty, value); }
-        }
-
-        public static readonly DependencyProperty ElementDataPathProperty = DependencyProperty.Register(
-            "ElementDataPath",
-            typeof(string),
-            typeof(WpfContextInfo),
-            new PropertyMetadata(default(string), ElementDataPathChangedCallback));
-
-        private static void ElementDataPathChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
-        {
-            var wpfContextInfo = (WpfContextInfo)dependencyObject;
-            wpfContextInfo.BindDataToUIElement();
-        }
 
         #endregion
 
@@ -143,26 +111,16 @@ namespace Plethora.Context.Wpf
 
         private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            var wpfContextInfo = (WpfContextInfo)dependencyObject;
+            var wpfContextInfo = (WpfContextSource)dependencyObject;
             wpfContextInfo.OnContextChanged(EventArgs.Empty);
         }
 
-
-        private void BindDataToUIElement()
-        {
-            BindingOperations.ClearBinding(this, DataProperty);
-
-            //Do not re-bind if either the UIElement or the ElementDataPath are null
-            if ((ElementDataPath == null) || (UIElement == null))
-                return;
-
-            Binding binding = new Binding();
-            binding.Source = this.UIElement;
-            binding.Path = new PropertyPath(this.ElementDataPath);
-
-            BindingOperations.SetBinding(this, DataProperty, binding);
-        }
-
         #endregion
+
+
+        protected override Freezable CreateInstanceCore()
+        {
+            return new WpfContextSource();
+        }
     }
 }
