@@ -1,6 +1,12 @@
 ﻿namespace Plethora.Context
 {
-    public interface IContextActionTemplate
+    /// <summary>
+    /// A template used to create <see cref="IAction"/> instances to operate on
+    /// a single <see cref="ContextInfo"/> item.
+    /// </summary>
+    /// <seealso cref="IUiActionTemplate"/>
+    /// <seealso cref="IMultiActionTemplate"/>
+    public interface IActionTemplate
     {
         string ContextName { get; }
 
@@ -11,7 +17,13 @@
         void Execute(ContextInfo context);
     }
 
-    public interface IMultiContextActionTemplate
+    /// <summary>
+    /// A template used to create <see cref="IAction"/> instances to operate on
+    /// multiple <see cref="ContextInfo"/> items.
+    /// </summary>
+    /// <seealso cref="IUiMultiActionTemplate"/>
+    /// <seealso cref="IActionTemplate"/>
+    public interface IMultiActionTemplate
     {
         string ContextName { get; }
 
