@@ -2,7 +2,13 @@
 
 namespace Plethora.Context
 {
-    public interface IUiContextActionTemplate : IContextActionTemplate
+    /// <summary>
+    /// A template used to create <see cref="IUiAction"/> instances to operate on
+    /// a single <see cref="ContextInfo"/> item.
+    /// </summary>
+    /// <seealso cref="IActionTemplate"/>
+    /// <seealso cref="IUiMultiActionTemplate"/>
+    public interface IUiActionTemplate : IActionTemplate
     {
         string GetActionDescription(ContextInfo context);
 
@@ -13,7 +19,13 @@ namespace Plethora.Context
         int GetRank(ContextInfo context);
     }
 
-    public interface IUiMultiContextActionTemplate : IMultiContextActionTemplate
+    /// <summary>
+    /// A template used to create <see cref="IUiAction"/> instances to operate on
+    /// multiple <see cref="ContextInfo"/> items.
+    /// </summary>
+    /// <seealso cref="IMultiActionTemplate"/>
+    /// <seealso cref="IUiActionTemplate"/>
+    public interface IUiMultiActionTemplate : IMultiActionTemplate
     {
         string GetActionDescription(ContextInfo[] context);
 

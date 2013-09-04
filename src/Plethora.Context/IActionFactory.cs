@@ -2,7 +2,7 @@
 
 namespace Plethora.Context
 {
-    public interface IContextActionFactory
+    public interface IActionFactory
     {
         IEnumerable<IAction> GetActions(IDictionary<string, ContextInfo[]> contextsByName);
     }

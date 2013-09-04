@@ -21,7 +21,7 @@ namespace Plethora.Context
         private readonly object lockObj = new object();
         private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
         private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>();
-        private readonly ICollection<IContextActionFactory> actionFactories = new List<IContextActionFactory>();
+        private readonly ICollection<IActionFactory> actionFactories = new List<IActionFactory>();
         private TemplateActionFactory templateActionFactory;
 
         #endregion
@@ -91,7 +91,7 @@ namespace Plethora.Context
             }
         }
 
-        public void RegisterFactory(IContextActionFactory factory)
+        public void RegisterFactory(IActionFactory factory)
         {
             //Validation
             if (factory == null)
@@ -103,7 +103,7 @@ namespace Plethora.Context
             }
         }
 
-        public void DeregisterFactory(IContextActionFactory factory)
+        public void DeregisterFactory(IActionFactory factory)
         {
             //Validation
             if (factory == null)
@@ -115,7 +115,7 @@ namespace Plethora.Context
             }
         }
 
-        public void RegisterActionTemplate(IContextActionTemplate template)
+        public void RegisterActionTemplate(IActionTemplate template)
         {
             //Validation
             if (template == null)
@@ -133,7 +133,7 @@ namespace Plethora.Context
             }
         }
 
-        public void RegisterActionTemplate(IMultiContextActionTemplate template)
+        public void RegisterActionTemplate(IMultiActionTemplate template)
         {
             //Validation
             if (template == null)

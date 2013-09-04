@@ -68,7 +68,7 @@ namespace Plethora.Context.Example
             ContextActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument #" + ((long)c.Data));
             contextManager.RegisterActionTemplate(viewInstrumentAction);
 
-            IMultiContextActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
+            IMultiActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
             contextManager.RegisterActionTemplate(viewMultiInstrumentAction);
         }
 
@@ -161,7 +161,7 @@ namespace Plethora.Context.Example
         }
     }
 
-    class ContextActionTemplate : IContextActionTemplate
+    class ContextActionTemplate : IActionTemplate
     {
         private readonly string contextName;
         private readonly Func<ContextInfo, string> getActionName;
@@ -189,7 +189,7 @@ namespace Plethora.Context.Example
         }
     }
 
-    class MultiContextActionTemplate : IMultiContextActionTemplate
+    class MultiContextActionTemplate : IMultiActionTemplate
     {
         private readonly string contextName;
         private readonly Func<ContextInfo[], string> getActionName;

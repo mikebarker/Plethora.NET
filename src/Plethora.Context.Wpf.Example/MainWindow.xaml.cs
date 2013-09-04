@@ -31,7 +31,7 @@ namespace Plethora.Context.Wpf.Example
         }
 
 
-        class GenericActionTemplate : IUiContextActionTemplate
+        class GenericActionTemplate : IUiActionTemplate
         {
             private readonly string contextName;
             private readonly string actionName;
@@ -49,7 +49,7 @@ namespace Plethora.Context.Wpf.Example
                 this.canExecute = canExecute;
             }
 
-            #region Implementation of IContextActionTemplate
+            #region Implementation of IActionTemplate
 
             public string ContextName
             {
@@ -73,7 +73,7 @@ namespace Plethora.Context.Wpf.Example
 
             #endregion
 
-            #region Implementation of IUiContextActionTemplate
+            #region Implementation of IUiActionTemplate
 
             public string GetActionDescription(ContextInfo context)
             {
