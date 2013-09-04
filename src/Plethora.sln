@@ -7,21 +7,21 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{42E2A8
 		..\license.txt = ..\license.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms", "Plethora.Windows.Forms\Plethora.Windows.Forms.csproj", "{95839C43-2A34-4716-AEE5-59D68274FAC9}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Examples", "Plethora.Windows.Forms.Examples\Plethora.Windows.Forms.Examples.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common", "Plethora.Common\Plethora.Common.csproj", "{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing", "Plethora.Drawing\Plethora.Drawing.csproj", "{94C3CA39-7B10-408A-B342-8D15BC46F157}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing.Examples", "Plethora.Drawing.Examples\Plethora.Drawing.Examples.csproj", "{B1D27435-5EE9-4257-8956-C3A2792CAFEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Test", "Plethora.Common.Test\Plethora.Common.Test.csproj", "{285904D4-549B-4E66-B50D-4BE919B7FF3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Example", "Plethora.Common.Example\Plethora.Common.Example.csproj", "{52069679-A947-4C6A-A89D-83294FFD6015}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing", "Plethora.Drawing\Plethora.Drawing.csproj", "{94C3CA39-7B10-408A-B342-8D15BC46F157}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing.Examples", "Plethora.Drawing.Examples\Plethora.Drawing.Examples.csproj", "{B1D27435-5EE9-4257-8956-C3A2792CAFEA}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Logging.log4net", "Plethora.Logging.log4net\Plethora.Logging.log4net.csproj", "{A003AE53-E0AD-4F9A-A784-3F0B6D433085}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms", "Plethora.Windows.Forms\Plethora.Windows.Forms.csproj", "{95839C43-2A34-4716-AEE5-59D68274FAC9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Examples", "Plethora.Windows.Forms.Examples\Plethora.Windows.Forms.Examples.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi", "Plethora.fqi\Plethora.fqi.csproj", "{96CC92ED-DDC2-439E-8888-06E2506970E1}"
 EndProject
@@ -39,9 +39,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Synchronized.Examp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context", "Plethora.Context\Plethora.Context.csproj", "{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Example", "Plethora.Context.Example\Plethora.Context.Example.csproj", "{1BEA4DF2-270C-4B8D-939F-86F3D48BD068}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Forms", "Plethora.Context.Windows.Forms\Plethora.Context.Windows.Forms.csproj", "{F4C30696-043E-4433-93E1-8FC05F106927}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Forms.Example", "Plethora.Context.Windows.Forms.Example\Plethora.Context.Windows.Forms.Example.csproj", "{1BEA4DF2-270C-4B8D-939F-86F3D48BD068}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Wpf", "Plethora.Context.Wpf\Plethora.Context.Wpf.csproj", "{5E454E70-289F-4BFD-BEAA-F003B14B869E}"
 EndProject

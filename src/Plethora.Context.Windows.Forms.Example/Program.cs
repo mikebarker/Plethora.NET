@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Plethora.Context.Example
+namespace Plethora.Context.Windows.Forms.Example
 {
     static class Program
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{1BEA4DF2-270C-4B8D-939F-86F3D48BD068}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plethora.Context.Example</RootNamespace>
-    <AssemblyName>Plethora.Context.Example</AssemblyName>
+    <RootNamespace>Plethora.Context.Windows.Forms.Example</RootNamespace>
+    <AssemblyName>Plethora.Context.Windows.Forms.Example</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

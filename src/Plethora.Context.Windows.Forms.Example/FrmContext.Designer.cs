@@ -1,4 +1,4 @@
-namespace Plethora.Context.Example
+namespace Plethora.Context.Windows.Forms.Example
 {
     partial class FrmContext
     {
