@@ -56,20 +56,20 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="ActionHelper.cs" />
     <Compile Include="ContextAugmentor.cs" />
     <Compile Include="ContextInfo.cs" />
     <Compile Include="ContextInfoComparer.cs" />
     <Compile Include="ContextManager.cs" />
     <Compile Include="ContextProvider.cs" />
-    <Compile Include="IUiContextActionTemplate.cs" />
+    <Compile Include="IActionFactory.cs" />
+    <Compile Include="IActionTemplate.cs" />
+    <Compile Include="IUiActionTemplate.cs" />
     <Compile Include="IUiAction.cs" />
     <Compile Include="IAction.cs" />
-    <Compile Include="IContextActionFactory.cs" />
-    <Compile Include="IContextActionTemplate.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TemplateActionFactory.cs" />
-    <Compile Include="UiActionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
