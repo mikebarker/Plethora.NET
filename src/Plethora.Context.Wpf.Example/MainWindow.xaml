@@ -8,25 +8,26 @@
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value ="5" />
         </Style>
-        
+
         <wpf:WpfContextSourceCollection x:Key="contractContext">
             <wpf:WpfContextSource Name="Contract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
             <wpf:WpfContextSource Name="SignedContract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
         </wpf:WpfContextSourceCollection>
-        
+
+        <wpf:WpfContextMenu x:Key="contextMenu" />
     </Window.Resources>
     
     <Grid>
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">Contract:</TextBlock>
-                <TextBox wpf:WpfContext.ContextSource="{StaticResource contractContext}">
+                <TextBox wpf:WpfContext.ContextSource="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
                     1234
                 </TextBox>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">Instrument:</TextBlock>
-                <TextBox>
+                <TextBox ContextMenu="{StaticResource contextMenu}">
                     VOD.L
 
                     <wpf:WpfContext.ContextSource>
@@ -35,9 +36,7 @@
                 </TextBox>
             </StackPanel>
             
-            <TextBox Name="ContextTextBox">
-                
-            </TextBox>
+            <TextBox Name="ContextTextBox"/>
         </StackPanel>
     </Grid>
 </Window>
