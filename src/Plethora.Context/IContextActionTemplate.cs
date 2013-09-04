@@ -4,11 +4,11 @@
     {
         string ContextName { get; }
 
-        string GetActionName(ContextInfo info);
+        string GetActionName(ContextInfo context);
 
-        bool CanExecute(ContextInfo info);
+        bool CanExecute(ContextInfo context);
 
-        void Execute(ContextInfo info);
+        void Execute(ContextInfo context);
     }
 
     public interface IMultiContextActionTemplate

@@ -165,7 +165,58 @@ namespace Plethora.Context.Windows.Forms
 
         #endregion
 
-        protected override void OnOpening(System.ComponentModel.CancelEventArgs e)
+        #region DisableGrouping Property
+
+        private static readonly object DisableGroupingChanged_EventKey = new object();
+        private const bool DisableGrouping_DefaultValue = false;
+
+        /// <summary>
+        /// Raised when the value of <see cref="DisableGrouping"/> has changed.
+        /// </summary>
+        [Browsable(true)]
+        [Category("Action")]
+        [Description("Raised when the value of DisableGrouping has changed")]
+        public event EventHandler DisableGroupingChanged
+        {
+            add { base.Events.AddHandler(DisableGroupingChanged_EventKey, value); }
+            remove { base.Events.RemoveHandler(DisableGroupingChanged_EventKey, value); }
+        }
+
+        private bool disableGrouping = DisableGrouping_DefaultValue;
+
+        /// <summary>
+        /// Gets and sets a flag which determines whether grouping items should be disabled, to all actions in a flat menu.
+        /// </summary>
+        [Browsable(true)]
+        [Category("Behaviour")]
+        [DefaultValue(DisableGrouping_DefaultValue)]
+        [Description("A flag which determines whether unavailable items should be shown in the menu.")]
+        public virtual bool DisableGrouping
+        {
+            get { return disableGrouping; }
+            set
+            {
+                if (this.disableGrouping == value)
+                    return;
+
+                this.disableGrouping = value;
+                this.OnDisableGroupingChanged(EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="DisableGroupingChanged"/> event.
+        /// </summary>
+        protected virtual void OnDisableGroupingChanged(EventArgs e)
+        {
+            var handler = base.Events[DisableGroupingChanged_EventKey] as EventHandler;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        #endregion
+
+        protected override void OnOpening(CancelEventArgs e)
         {
             base.OnOpening(e);
 
@@ -180,24 +231,25 @@ namespace Plethora.Context.Windows.Forms
             var contexts = this.ContextManager.GetContexts();
             var contextActions = this.ContextManager.GetActions(contexts);
 
-            //Group by the IUiAction.Group property if available, otherwise by ""
+            //Group by the IUiAction.Group property if available, otherwise by "" as returned from ActionHelper.GetGroup(...)
             //Order by the IUiAction.Rank property is available
             var groupedActions = contextActions
-                .GroupBy(UiActionHelper.GetGroup)
-                .Select(group => new {GroupName = group.Key, Actions = group.OrderBy(a=>a, ActionSortOrderComparer.Instance) })
-                .OrderBy(g => g.Actions.First(), ActionSortOrderComparer.Instance);
+                .GroupBy(ActionHelper.GetGroupSafe)
+                .Select(group => new { GroupName = group.Key, Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance) })
+                .OrderBy(g => g.Actions.First(), ActionHelper.SortOrderComparer.Instance);
 
             var maxItems = (this.MaxGroupItems < 0)
                                ? int.MaxValue
                                : this.MaxGroupItems;
 
+            bool disableGrouping = this.DisableGrouping;
             bool anyActions = false;
             foreach (var group in groupedActions)
             {
                 anyActions = true;
 
                 ToolStripItemCollection itemsCollection; // set to the root menu or a sub-menu
-                if (string.Empty.Equals(group.GroupName))
+                if (disableGrouping || string.Empty.Equals(group.GroupName))
                 {
                     itemsCollection = this.Items;
                 }
@@ -219,8 +271,8 @@ namespace Plethora.Context.Windows.Forms
                     ToolStripItem menuItem = itemsCollection.Add(action.ActionName, null, (sender, args) => action.Execute());
                     menuItem.Enabled = canExecute;
 
-                    menuItem.Image = UiActionHelper.GetImage(action);
-                    menuItem.ToolTipText = UiActionHelper.GetActionDescription(action);
+                    menuItem.Image = ActionHelper.GetImage(action);
+                    menuItem.ToolTipText = ActionHelper.GetActionDescription(action);
                 }
             }
 
@@ -236,24 +288,5 @@ namespace Plethora.Context.Windows.Forms
             base.OnClosed(e);
         }
 
-
-        private class ActionSortOrderComparer : IComparer<IAction>
-        {
-            public static readonly ActionSortOrderComparer Instance = new ActionSortOrderComparer();
-
-            public int Compare(IAction x, IAction y)
-            {
-                int result;
-                result = Comparer<int>.Default.Compare(UiActionHelper.GetRank(x), UiActionHelper.GetRank(y));
-                if (result != 0)
-                    return -result;  //Reverse the rank such that highest ranks sort first
-
-                result = Comparer<string>.Default.Compare(x.ActionName, y.ActionName);
-                if (result != 0)
-                    return result;
-
-                return result;
-            }
-        }
     }
 }

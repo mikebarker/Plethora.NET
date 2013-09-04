@@ -56,6 +56,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -66,6 +67,7 @@
     <Compile Include="IWpfContextSource.cs" />
     <Compile Include="WpfContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WpfContextMenu.cs" />
     <Compile Include="WpfContextProvider.cs" />
     <Compile Include="WpfContextSource.cs" />
     <Compile Include="WpfContextSourceCollection.cs" />

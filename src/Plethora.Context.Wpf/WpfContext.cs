@@ -10,7 +10,7 @@ namespace Plethora.Context.Wpf
             DependencyProperty.RegisterAttached(
                 "ContextSource",
                 typeof (IWpfContextSource),
-                typeof (UIElement),
+                typeof (WpfContext),
                 new PropertyMetadata(null, ContextSourceChangedCallback));
 
         private static void ContextSourceChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -43,7 +43,7 @@ namespace Plethora.Context.Wpf
         internal static readonly DependencyProperty ContextProviderProperty = DependencyProperty.RegisterAttached(
             "ContextProvider_", //Intentionally renamed to force WPF to use the Get method below
             typeof(WpfContextProvider),
-            typeof(UIElement),
+            typeof(WpfContext),
             new PropertyMetadata(default(WpfContextProvider)));
 
         private static void SetContextProvider(UIElement element, WpfContextProvider value)
@@ -71,7 +71,7 @@ namespace Plethora.Context.Wpf
             DependencyProperty.RegisterAttached(
                 "Manager",
                 typeof(ContextManager),
-                typeof(UIElement),
+                typeof(WpfContext),
                 new PropertyMetadata(default(ContextManager)));
 
         public static void SetManager(DependencyObject dependencyObject, ContextManager value)

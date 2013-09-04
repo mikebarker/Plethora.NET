@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextSourceCollection : FreezableCollection<WpfContextSource>, IWpfContextSource //ObservableCollection<IWpfContextSource>, IWpfContextSource
+    public class WpfContextSourceCollection : FreezableCollection<WpfContextSource>, IWpfContextSource
     {
         public WpfContextSourceCollection()
         {
