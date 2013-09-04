@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Plethora.Context.Windows.Forms;
 
-namespace Plethora.Context.Example
+namespace Plethora.Context.Windows.Forms.Example
 {
     public partial class Form1 : Form
     {
