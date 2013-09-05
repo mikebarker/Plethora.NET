@@ -37,8 +37,8 @@ namespace Plethora.Context.Windows.Forms
             this.reference = new WeakReference(control);
             this.getContextCallbacks = getContextCallbacks;
 
-            control.GotFocus += control_GotFocus;
-            control.LostFocus += control_LostFocus;
+            control.Enter += control_Enter;
+            control.Leave += control_Leave;
         }
         #endregion
 
@@ -59,8 +59,8 @@ namespace Plethora.Context.Windows.Forms
                 var control = this.Control;
                 if (control != null)
                 {
-                    control.GotFocus -= control_GotFocus;
-                    control.LostFocus -= control_LostFocus;
+                    control.Enter -= control_Enter;
+                    control.Leave -= control_Leave;
                 }
             }
 
@@ -92,14 +92,14 @@ namespace Plethora.Context.Windows.Forms
 
         #region Private Methods
 
-        private void control_LostFocus(object sender, EventArgs e)
-        {
-            this.OnLeaveContext();
-        }
-
-        private void control_GotFocus(object sender, EventArgs e)
+        private void control_Enter(object sender, EventArgs e)
         {
             this.OnEnterContext();
+        }
+
+        private void control_Leave(object sender, EventArgs e)
+        {
+            this.OnLeaveContext();
         }
 
         private static Func<T, IEnumerable<ContextInfo>> AsEnumerable(Func<T, ContextInfo> func)
