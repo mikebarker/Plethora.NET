@@ -99,7 +99,23 @@ namespace Plethora.Context.Windows.Forms
 
         private void control_Leave(object sender, EventArgs e)
         {
-            this.OnLeaveContext();
+            Control source = (Control)sender;
+            if (!ReferenceEquals(source, this.Control))
+                source.Leave -= control_Leave;
+
+            Form parentForm = source.FindForm();
+            Control activeControl = parentForm.ActiveControl;
+
+            bool isActivityControl = false; // TODO: method to determine if active control can provide context activity
+            if (isActivityControl)
+            {
+                if (!ReferenceEquals(activeControl, this.Control))
+                    activeControl.Leave += control_Leave;
+            }
+            else
+            {
+                this.OnLeaveContext();
+            }
         }
 
         private static Func<T, IEnumerable<ContextInfo>> AsEnumerable(Func<T, ContextInfo> func)
