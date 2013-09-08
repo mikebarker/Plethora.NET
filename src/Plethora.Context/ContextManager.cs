@@ -22,7 +22,7 @@ namespace Plethora.Context
         private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
         private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>();
         private readonly ICollection<IActionFactory> actionFactories = new List<IActionFactory>();
-        private TemplateActionFactory templateActionFactory;
+        private volatile TemplateActionFactory templateActionFactory;
 
         #endregion
 
@@ -151,6 +151,36 @@ namespace Plethora.Context
             }
         }
 
+        public void DeregisterActionTemplate(IActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            lock (lockObj)
+            {
+                if (templateActionFactory == null)
+                    return;
+
+                templateActionFactory.DeregisterActionTemplate(template);
+            }
+        }
+
+        public void DeregisterActionTemplate(IMultiActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            lock (lockObj)
+            {
+                if (templateActionFactory == null)
+                    return;
+
+                templateActionFactory.DeregisterActionTemplate(template);
+            }
+        }
+
         public IEnumerable<ContextInfo> GetContexts()
         {
             lock (lockObj)
@@ -223,7 +253,7 @@ namespace Plethora.Context
                 var actions = actionFactories
                     .Select(factory => factory.GetActions(contextsByName))
                     .Where(actionList => actionList != null)
-                    .SelectMany(actionList => actionList)
+                    .SelectMany(action => action)
                     .Where(action => action != null)
                     .ToList();
 
@@ -299,6 +329,8 @@ namespace Plethora.Context
             if (handler != null)
                 handler(this, EventArgs.Empty);
         }
+
         #endregion
+
     }
 }

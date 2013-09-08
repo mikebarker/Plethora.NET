@@ -44,9 +44,11 @@ namespace Plethora.Context.Windows.Forms.Example
             contextManager = ContextManager.DefaultInstance;
 
             contextActionMenuStrip.ContextManager = contextManager;
-            
-            contextManager.RegisterProvider(new TextBoxContextProvider(this.textBox1, GetContractContext));
-            contextManager.RegisterProvider(new ListViewContextProvider(this.listView1, GetPositionContext));
+
+            var textBoxProvider = new TextBoxContextProvider(this.textBox1, GetContractContext);
+            var listViewProvider = new ListViewContextProvider(this.listView1, GetPositionContext);
+            contextManager.RegisterProvider(textBoxProvider);
+            contextManager.RegisterProvider(listViewProvider);
 
             //Augments positions with contract and instrument contexts.
             ContextAugmentor positionAugmentor = new ContextAugmentor("Position", positionContext => new ContextInfo[]
@@ -69,6 +71,34 @@ namespace Plethora.Context.Windows.Forms.Example
 
             IMultiActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
             contextManager.RegisterActionTemplate(viewMultiInstrumentAction);
+
+
+            contextManager.ContextChanged += contextManager_ContextChanged;
+
+            ActivityItemRegister activityItemRegister = new ActivityItemRegister();
+            textBoxProvider.ActivityItemRegister = activityItemRegister;
+            listViewProvider.ActivityItemRegister = activityItemRegister;
+
+            activityItemRegister.RegisterActivityItem(this.groupBox2);
+        }
+
+        private void contextManager_ContextChanged(object sender, EventArgs e)
+        {
+            var contexts = contextManager.GetContexts();
+            var actions = contextManager.GetActions(contexts);
+
+            this.groupBox2.Controls.Clear();
+            foreach (var action in actions)
+            {
+                Button btn = new Button();
+                btn.Dock = DockStyle.Top;
+                btn.Height = 48;
+                btn.Text = action.ActionName;
+                btn.Enabled = action.CanExecute;
+                btn.Click += delegate { action.Execute(); };
+
+                this.groupBox2.Controls.Add(btn);
+            }
         }
 
         public static IEnumerable<ContextInfo> GetContractContext(TextBox textBox)
@@ -85,10 +115,11 @@ namespace Plethora.Context.Windows.Forms.Example
         {
             var items = listView.SelectedItems;
             var positions = items.Cast<ListViewItem>().Select(GetPosition).Distinct();
-            if (!positions.Any())
+            var positionContexts = positions.Select(datum => new PositionContextInfo(datum)).ToList();
+            if (!positionContexts.Any())
                 return null;
 
-            return positions.Select(datum => new PositionContextInfo(datum));
+            return positionContexts;
         }
 
         private static long GetContractID(ListViewItem item)
@@ -185,6 +216,7 @@ namespace Plethora.Context.Windows.Forms.Example
 
         public void Execute(ContextInfo info)
         {
+            MessageBox.Show("Executed: " + GetActionName(info), "Executed Action", MessageBoxButtons.OK);
         }
     }
 
@@ -213,6 +245,7 @@ namespace Plethora.Context.Windows.Forms.Example
 
         public void Execute(ContextInfo[] info)
         {
+            MessageBox.Show("Executed: " + GetActionName(info), "Executed Action", MessageBoxButtons.OK);
         }
     }
 }

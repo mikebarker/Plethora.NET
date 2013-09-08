@@ -19,6 +19,9 @@ namespace Plethora.Context.Wpf.Example
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "Edit Contract"));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("SignedContract", "View Signed Contract", false));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Instrument", "View Instrument"));
+
+            var activityItemRegister = (WpfActivityItemRegister)this.Resources["activityItemRegister"];
+            activityItemRegister.ActivityItemRegister.RegisterActivityItem(ContextTextBox);
         }
 
         void DefaultInstance_ContextChanged(object sender, EventArgs e)

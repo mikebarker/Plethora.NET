@@ -44,9 +44,10 @@ namespace Plethora.Context.Windows.Forms.Example
             this.listView1 = new System.Windows.Forms.ListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.contextActionMenuStrip = new Plethora.Context.Windows.Forms.ContextActionMenuStrip();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.textBox2 = new System.Windows.Forms.TextBox();
-            this.contextActionMenuStrip = new Plethora.Context.Windows.Forms.ContextActionMenuStrip();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,6 +86,11 @@ namespace Plethora.Context.Windows.Forms.Example
             this.listView1.UseCompatibleStateImageBehavior = false;
             this.listView1.View = System.Windows.Forms.View.Details;
             // 
+            // contextActionMenuStrip
+            // 
+            this.contextActionMenuStrip.Name = "contextActionMenuStrip";
+            this.contextActionMenuStrip.Size = new System.Drawing.Size(61, 4);
+            // 
             // textBox1
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -97,22 +103,26 @@ namespace Plethora.Context.Windows.Forms.Example
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(455, 72);
+            this.textBox2.Location = new System.Drawing.Point(412, 31);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(100, 20);
             this.textBox2.TabIndex = 1;
             // 
-            // contextActionMenuStrip
+            // groupBox2
             // 
-            this.contextActionMenuStrip.ContextManager = null;
-            this.contextActionMenuStrip.Name = "contextActionMenuStrip";
-            this.contextActionMenuStrip.Size = new System.Drawing.Size(61, 4);
+            this.groupBox2.Location = new System.Drawing.Point(412, 57);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(200, 186);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "groupBox2";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(640, 266);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.groupBox1);
             this.Name = "Form1";
@@ -133,5 +143,6 @@ namespace Plethora.Context.Windows.Forms.Example
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.TextBox textBox2;
         private Windows.Forms.ContextActionMenuStrip contextActionMenuStrip;
+        private System.Windows.Forms.GroupBox groupBox2;
     }
 }

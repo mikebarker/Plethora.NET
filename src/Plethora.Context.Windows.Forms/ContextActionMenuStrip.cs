@@ -218,15 +218,18 @@ namespace Plethora.Context.Windows.Forms
 
         protected override void OnOpening(CancelEventArgs e)
         {
-            base.OnOpening(e);
-
-            this.Items.Clear();
-
             if (this.contextManager == null)
             {
                 Debug.Write("ContextManager not set.");
+                e.Cancel = true;
                 return;
             }
+
+            //e.Cancel can be set to true if no items existed in the Items collection before
+            //the method was called. Reset the flag here, and re-test after population.
+            e.Cancel = false;
+
+            this.Items.Clear();
 
             var contexts = this.ContextManager.GetContexts();
             var contextActions = this.ContextManager.GetActions(contexts);
@@ -238,26 +241,30 @@ namespace Plethora.Context.Windows.Forms
                 .Select(group => new { GroupName = group.Key, Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance) })
                 .OrderBy(g => g.Actions.First(), ActionHelper.SortOrderComparer.Instance);
 
-            var maxItems = (this.MaxGroupItems < 0)
-                               ? int.MaxValue
-                               : this.MaxGroupItems;
+            var maxItems = this.MaxGroupItems;
+            if (maxItems < 0)
+                maxItems = int.MaxValue;
 
+            bool showUnavailableActions = this.ShowUnavailableActions;
             bool disableGrouping = this.DisableGrouping;
+
             bool anyActions = false;
             foreach (var group in groupedActions)
             {
                 anyActions = true;
 
-                ToolStripItemCollection itemsCollection; // set to the root menu or a sub-menu
+                ToolStripItemCollection itemCollection; // set to the root menu or a sub-menu
                 if (disableGrouping || string.Empty.Equals(group.GroupName))
                 {
-                    itemsCollection = this.Items;
+                    itemCollection = this.Items;
                 }
                 else
                 {
-                    var item = new ToolStripMenuItem(group.GroupName);
+                    var item = new ToolStripMenuItem();
+                    item.Text = group.GroupName;
+
                     this.Items.Add(item);
-                    itemsCollection = item.DropDownItems;
+                    itemCollection = item.DropDownItems;
                 }
 
                 foreach (IAction contextAction in group.Actions.Take(maxItems))
@@ -265,19 +272,24 @@ namespace Plethora.Context.Windows.Forms
                     var action = contextAction;
 
                     bool canExecute = action.CanExecute;
-                    if ((!canExecute) && (!this.ShowUnavailableActions))
+                    if ((!canExecute) && (!showUnavailableActions))
                         continue;
 
-                    ToolStripItem menuItem = itemsCollection.Add(action.ActionName, null, (sender, args) => action.Execute());
+                    ToolStripItem menuItem = new ToolStripMenuItem();
+                    menuItem.Text = action.ActionName;
                     menuItem.Enabled = canExecute;
-
                     menuItem.Image = ActionHelper.GetImage(action);
                     menuItem.ToolTipText = ActionHelper.GetActionDescription(action);
+                    menuItem.Click += delegate { action.Execute(); };
+
+                    itemCollection.Add(menuItem);
                 }
             }
 
             if (!anyActions)
                 e.Cancel = true;
+
+            base.OnOpening(e);
         }
 
         protected override void OnClosed(ToolStripDropDownClosedEventArgs e)
@@ -287,6 +299,5 @@ namespace Plethora.Context.Windows.Forms
 
             base.OnClosed(e);
         }
-
     }
 }

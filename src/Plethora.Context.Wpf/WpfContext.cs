@@ -86,6 +86,27 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
+        #region ActivityItemRegister Attached Property
+
+        public static readonly DependencyProperty ActivityItemRegisterProperty =
+            DependencyProperty.RegisterAttached(
+                "ActivityItemRegister",
+                typeof(ActivityItemRegister),
+                typeof(WpfContext),
+                new PropertyMetadata(default(ActivityItemRegister)));
+
+        public static void SetActivityItemRegister(DependencyObject dependencyObject, ActivityItemRegister value)
+        {
+            dependencyObject.SetValue(ActivityItemRegisterProperty, value);
+        }
+
+        public static ActivityItemRegister GetActivityItemRegister(DependencyObject dependencyObject)
+        {
+            return (ActivityItemRegister)dependencyObject.GetValue(ActivityItemRegisterProperty);
+        }
+
+        #endregion
+
         public static ContextManager GetManagerForElement(UIElement element)
         {
             bool isDefault;
@@ -115,6 +136,34 @@ namespace Plethora.Context.Wpf
             }
 
             return contextManager;
+        }
+
+        public static ActivityItemRegister GetActivityItemRegisterForElement(UIElement element)
+        {
+            bool isDefault;
+            return GetActivityItemRegisterForElement(element, out isDefault);
+        }
+
+        public static ActivityItemRegister GetActivityItemRegisterForElement(UIElement element, out bool isDefault)
+        {
+            DependencyObject obj = element;
+
+            isDefault = false;
+            ActivityItemRegister activityItemRegister = null;
+            while (obj != null)
+            {
+                activityItemRegister = GetActivityItemRegister(obj);
+
+                if (activityItemRegister != null)
+                    break;
+
+                obj = LogicalTreeHelper.GetParent(obj);
+            }
+
+            if (activityItemRegister == null)
+                isDefault = true;
+
+            return activityItemRegister;
         }
     }
 }

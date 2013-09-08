@@ -94,8 +94,8 @@ namespace Plethora.Context
                         {
                             var uiTemplate = template as IUiActionTemplate;
                             IAction action = (uiTemplate != null)
-                                ? new UiContextAction(uiTemplate, contexts.Single())
-                                : new ContextAction(template, contexts.Single());
+                                ? new UiContextAction(uiTemplate, contexts[0])
+                                : new ContextAction(template, contexts[0]);
 
                             actions.Add(action);
                         }

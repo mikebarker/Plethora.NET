@@ -136,7 +136,7 @@ namespace Plethora.Context.Wpf
             this.OnContextChanged();
         }
 
-
+        public ActivityItemRegister ActivityItemRegister { get; set; }
 
 
 
@@ -159,8 +159,13 @@ namespace Plethora.Context.Wpf
             var contextManager = WpfContext.GetManagerForElement(element);
             contextManager.RegisterProvider(this);
 
+            var activityItemRegister = WpfContext.GetActivityItemRegisterForElement(element);
+            if (activityItemRegister != null)
+                this.ActivityItemRegister = activityItemRegister;
+
+
             if (ContextSource != null)
-                contextSource.UIElement = uiElement;
+                contextSource.UIElement = element;
         }
 
         private void element_GotKeyboardFocus(object sender, RoutedEventArgs e)
@@ -181,8 +186,7 @@ namespace Plethora.Context.Wpf
                 return;
             }
 
-            bool isActivityControl = false; // TODO: method to determine if active control can provide context activity
-            if (isActivityControl)
+            if (IsActivityElement(activeControl))
             {
                 if (!ReferenceEquals(activeControl, this.UIElement))
                     activeControl.LostKeyboardFocus += element_LostKeyboardFocus;
@@ -191,9 +195,24 @@ namespace Plethora.Context.Wpf
             {
                 this.OnLeaveContext();
             }
+        }
 
-            
-            OnLeaveContext();
+        private bool IsActivityElement(UIElement element)
+        {
+            var itemRegister = this.ActivityItemRegister;
+            if (itemRegister == null)
+                return false;
+
+            DependencyObject obj = element;
+            while (obj != null)
+            {
+                if (itemRegister.IsActivityItem(obj))
+                    return true;
+
+                obj = LogicalTreeHelper.GetParent(obj);
+            }
+
+            return false;
         }
 
     }

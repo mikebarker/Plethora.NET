@@ -87,6 +87,8 @@ namespace Plethora.Context
 
         protected virtual void OnEnterContext(object sender, EventArgs e)
         {
+            ClearCache();
+
             var handler = this.EnterContext;
             if (handler != null)
                 handler(sender, e);
@@ -99,6 +101,8 @@ namespace Plethora.Context
 
         protected virtual void OnLeaveContext(object sender, EventArgs e)
         {
+            ClearCache();
+
             var handler = this.LeaveContext;
             if (handler != null)
                 handler(sender, e);
@@ -111,16 +115,26 @@ namespace Plethora.Context
 
         protected virtual void OnContextChanged(object sender, EventArgs e)
         {
-            lock (contextLock)
-            {
-                contexts = null;
-                isContextsCached = false;
-            }
+            ClearCache();
 
             var handler = this.ContextChanged;
             if (handler != null)
                 handler(sender, e);
         }
+
+        #endregion
+        
+        #region Private Methods
+
+        private void ClearCache()
+        {
+            lock (contextLock)
+            {
+                contexts = null;
+                isContextsCached = false;
+            }
+        }
+
         #endregion
     }
 }
