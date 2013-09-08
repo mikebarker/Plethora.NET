@@ -76,7 +76,9 @@ namespace Plethora.Context.Wpf
             if (maxItems < 0)
                 maxItems = int.MaxValue;
 
+            bool showUnavailableActions = this.ShowUnavailableActions;
             bool disableGrouping = this.DisableGrouping;
+
             bool anyActions = false;
             foreach (var group in groupedActions)
             {
@@ -101,7 +103,7 @@ namespace Plethora.Context.Wpf
                     var action = contextAction;
 
                     bool canExecute = action.CanExecute;
-                    if ((!canExecute) && (!this.ShowUnavailableActions))
+                    if ((!canExecute) && (!showUnavailableActions))
                         continue;
 
                     MenuItem menuItem = new MenuItem();

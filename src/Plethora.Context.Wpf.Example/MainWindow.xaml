@@ -15,9 +15,12 @@
         </wpf:WpfContextSourceCollection>
 
         <wpf:WpfContextMenu x:Key="contextMenu" />
+
+        <wpf:WpfActivityItemRegister x:Key="activityItemRegister">
+        </wpf:WpfActivityItemRegister>
     </Window.Resources>
-    
-    <Grid>
+
+    <Grid wpf:WpfContext.ActivityItemRegister="{Binding Path=ActivityItemRegister, Source={StaticResource activityItemRegister}}">
         <StackPanel>
             <StackPanel Orientation="Horizontal">
                 <TextBlock VerticalAlignment="Center">Contract:</TextBlock>

@@ -12,17 +12,10 @@ namespace Plethora.Context.Windows.Forms
 
         private readonly WeakReference reference;
         private readonly Func<T, IEnumerable<ContextInfo>>[] getContextCallbacks;
+
         #endregion
 
         #region Constructors
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="TextBoxContextProvider"/> class.
-        /// </summary>
-        protected ControlContextProvider(T control, params Func<T, ContextInfo>[] getContextCallbacks)
-            : this(control, getContextCallbacks.Select(AsEnumerable).ToArray())
-        {
-        }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="TextBoxContextProvider"/> class.
@@ -48,6 +41,9 @@ namespace Plethora.Context.Windows.Forms
         {
             get { return (T)reference.Target; }
         }
+
+        public ActivityItemRegister ActivityItemRegister { get; set; }
+
         #endregion
 
         #region Overrides of ContextProvider
@@ -106,8 +102,7 @@ namespace Plethora.Context.Windows.Forms
             Form parentForm = source.FindForm();
             Control activeControl = parentForm.ActiveControl;
 
-            bool isActivityControl = false; // TODO: method to determine if active control can provide context activity
-            if (isActivityControl)
+            if (IsActivityControl(activeControl))
             {
                 if (!ReferenceEquals(activeControl, this.Control))
                     activeControl.Leave += control_Leave;
@@ -118,10 +113,23 @@ namespace Plethora.Context.Windows.Forms
             }
         }
 
-        private static Func<T, IEnumerable<ContextInfo>> AsEnumerable(Func<T, ContextInfo> func)
+        private bool IsActivityControl(Control control)
         {
-            return t => Enumerable.Repeat(func(t), 1);
+            var itemRegister = this.ActivityItemRegister;
+            if (itemRegister == null)
+                return false;
+
+            while (control != null)
+            {
+                if (itemRegister.IsActivityItem(control))
+                    return true;
+
+                control = control.Parent;
+            }
+
+            return false;
         }
+
         #endregion
     }
 }

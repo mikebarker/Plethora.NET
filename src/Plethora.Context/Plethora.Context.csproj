@@ -57,6 +57,7 @@
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
     <Compile Include="ActionHelper.cs" />
+    <Compile Include="ActivityItemRegister.cs" />
     <Compile Include="ContextAugmentor.cs" />
     <Compile Include="ContextInfo.cs" />
     <Compile Include="ContextInfoComparer.cs" />
