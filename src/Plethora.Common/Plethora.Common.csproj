@@ -71,6 +71,7 @@
     <Compile Include="Collections\SortedList.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
+    <Compile Include="WeakEvent.cs" />
     <Compile Include="Threading\LiteLock.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Threading\AggregateWaitHandle.cs" />
     <Compile Include="Threading\AsyncException.cs" />
     <Compile Include="Timing\OperationTimeout.cs" />
+    <Compile Include="WeakDelegate.cs" />
     <Compile Include="WeakReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
