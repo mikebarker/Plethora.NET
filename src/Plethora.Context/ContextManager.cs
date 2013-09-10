@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace Plethora.Context
 {
@@ -18,7 +19,7 @@ namespace Plethora.Context
 
         #region Fields
 
-        private readonly object lockObj = new object();
+        private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
         private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
         private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>();
         private readonly ICollection<IActionFactory> actionFactories = new List<IActionFactory>();
@@ -28,7 +29,23 @@ namespace Plethora.Context
 
         #region Events
 
-        public event EventHandler ContextChanged;
+        private readonly WeakEvent<EventHandler> contextChanged = new WeakEvent<EventHandler>();
+
+        public event EventHandler ContextChanged
+        {
+            add { contextChanged.Add(value); }
+            remove { contextChanged.Remove(value); }
+        }
+
+        protected virtual void OnContextChanged(object sender, EventArgs e)
+        {
+            foreach (var handler in contextChanged.GetInvocationList())
+            {
+                if (handler != null)
+                    handler(sender, e);
+            }
+        }
+
         #endregion
 
         #region Public Methods
@@ -49,12 +66,17 @@ namespace Plethora.Context
             if (provider == null)
                 throw new ArgumentNullException("provider");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 activeProviders.Remove(provider);
 
                 provider.EnterContext -= provider_EnterContext;
                 provider.LeaveContext -= provider_LeaveContext;
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
         }
 
@@ -64,7 +86,8 @@ namespace Plethora.Context
             if (augmentor == null)
                 throw new ArgumentNullException("augmentor");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 ICollection<ContextAugmentor> list;
                 if (!augmentors.TryGetValue(augmentor.ContextName, out list))
@@ -75,6 +98,10 @@ namespace Plethora.Context
 
                 list.Add(augmentor);
             }
+            finally
+            {
+                rwLock.ExitWriteLock();
+            }
         }
 
         public void DeregisterAugmentor(ContextAugmentor augmentor)
@@ -83,11 +110,16 @@ namespace Plethora.Context
             if (augmentor == null)
                 throw new ArgumentNullException("augmentor");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 ICollection<ContextAugmentor> list;
                 if (augmentors.TryGetValue(augmentor.ContextName, out list))
                     list.Remove(augmentor);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
         }
 
@@ -97,9 +129,14 @@ namespace Plethora.Context
             if (factory == null)
                 throw new ArgumentNullException("factory");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 this.actionFactories.Add(factory);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
         }
 
@@ -109,9 +146,14 @@ namespace Plethora.Context
             if (factory == null)
                 throw new ArgumentNullException("factory");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 this.actionFactories.Remove(factory);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
         }
 
@@ -121,7 +163,8 @@ namespace Plethora.Context
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 if (templateActionFactory == null)
                 {
@@ -130,6 +173,10 @@ namespace Plethora.Context
                 }
 
                 templateActionFactory.RegisterActionTemplate(template);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
         }
 
@@ -139,7 +186,8 @@ namespace Plethora.Context
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 if (templateActionFactory == null)
                 {
@@ -149,6 +197,10 @@ namespace Plethora.Context
 
                 templateActionFactory.RegisterActionTemplate(template);
             }
+            finally
+            {
+                rwLock.ExitWriteLock();
+            }
         }
 
         public void DeregisterActionTemplate(IActionTemplate template)
@@ -157,12 +209,17 @@ namespace Plethora.Context
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 if (templateActionFactory == null)
                     return;
 
                 templateActionFactory.DeregisterActionTemplate(template);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
         }
 
@@ -172,18 +229,24 @@ namespace Plethora.Context
             if (template == null)
                 throw new ArgumentNullException("template");
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 if (templateActionFactory == null)
                     return;
 
                 templateActionFactory.DeregisterActionTemplate(template);
             }
+            finally
+            {
+                rwLock.ExitWriteLock();
+            }
         }
 
         public IEnumerable<ContextInfo> GetContexts()
         {
-            lock (lockObj)
+            rwLock.EnterReadLock();
+            try
             {
                 var contextSet = new Dictionary<ContextInfo, ContextInfo>(new ContextInfoComparer());
 
@@ -240,11 +303,16 @@ namespace Plethora.Context
 
                 return contextSet.Keys;
             }
+            finally
+            {
+                rwLock.ExitReadLock();
+            }
         }
 
         public IEnumerable<IAction> GetActions(IEnumerable<ContextInfo> contexts)
         {
-            lock (lockObj)
+            rwLock.EnterReadLock();
+            try
             {
                 var contextsByName = contexts
                     .GroupBy(context => context.Name)
@@ -258,6 +326,10 @@ namespace Plethora.Context
                     .ToList();
 
                 return actions;
+            }
+            finally
+            {
+                rwLock.ExitReadLock();
             }
         }
 
@@ -291,10 +363,15 @@ namespace Plethora.Context
             var provider = (IContextProvider)sender;
             provider.ContextChanged += provider_ContextChanged;
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 if (!activeProviders.Contains(provider))
                     activeProviders.Add(provider);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
 
             OnContextChanged();
@@ -305,9 +382,14 @@ namespace Plethora.Context
             var provider = (IContextProvider)sender;
             provider.ContextChanged -= provider_ContextChanged;
 
-            lock (lockObj)
+            rwLock.EnterWriteLock();
+            try
             {
                 activeProviders.Remove(provider);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
             }
 
             OnContextChanged();
@@ -315,19 +397,12 @@ namespace Plethora.Context
 
         private void provider_ContextChanged(object sender, EventArgs e)
         {
-            OnContextChanged(sender, e);
+            OnContextChanged();
         }
 
         protected void OnContextChanged()
         {
             OnContextChanged(this, EventArgs.Empty);
-        }
-
-        protected virtual void OnContextChanged(object sender, EventArgs e)
-        {
-            var handler = this.ContextChanged;
-            if (handler != null)
-                handler(this, EventArgs.Empty);
         }
 
         #endregion

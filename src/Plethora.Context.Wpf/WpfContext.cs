@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
@@ -37,19 +38,13 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-
-        #region ContextProvider DependencyProperty
+        #region ContextProvider Attached Property
 
         internal static readonly DependencyProperty ContextProviderProperty = DependencyProperty.RegisterAttached(
             "ContextProvider_", //Intentionally renamed to force WPF to use the Get method below
             typeof(WpfContextProvider),
             typeof(WpfContext),
             new PropertyMetadata(default(WpfContextProvider)));
-
-        private static void SetContextProvider(UIElement element, WpfContextProvider value)
-        {
-            element.SetValue(ContextProviderProperty, value);
-        }
 
         private static WpfContextProvider GetContextProvider(UIElement element)
         {
@@ -86,23 +81,34 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region ActivityItemRegister Attached Property
+        #region IsActivityItem Attached Property
 
-        public static readonly DependencyProperty ActivityItemRegisterProperty =
+        public static readonly DependencyProperty IsActivityItemProperty =
             DependencyProperty.RegisterAttached(
-                "ActivityItemRegister",
-                typeof(ActivityItemRegister),
+                "IsActivityItem",
+                typeof(bool),
                 typeof(WpfContext),
-                new PropertyMetadata(default(ActivityItemRegister)));
+                new PropertyMetadata(false, IsActivityItemChangedCallback));
 
-        public static void SetActivityItemRegister(DependencyObject dependencyObject, ActivityItemRegister value)
+        private static void IsActivityItemChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            dependencyObject.SetValue(ActivityItemRegisterProperty, value);
+            if (e.NewValue == e.OldValue)
+                return;
+
+            if (((bool)e.NewValue) == true)
+                ActivityItemRegister.Instance.RegisterActivityItem(dependencyObject);
+            else
+                ActivityItemRegister.Instance.DeregisterActivityItem(dependencyObject);
         }
 
-        public static ActivityItemRegister GetActivityItemRegister(DependencyObject dependencyObject)
+        public static void SetIsActivityItem(DependencyObject dependencyObject, bool value)
         {
-            return (ActivityItemRegister)dependencyObject.GetValue(ActivityItemRegisterProperty);
+            dependencyObject.SetValue(IsActivityItemProperty, value);
+        }
+
+        public static bool GetIsActivityItem(DependencyObject dependencyObject)
+        {
+            return (bool)dependencyObject.GetValue(IsActivityItemProperty);
         }
 
         #endregion
@@ -138,32 +144,5 @@ namespace Plethora.Context.Wpf
             return contextManager;
         }
 
-        public static ActivityItemRegister GetActivityItemRegisterForElement(UIElement element)
-        {
-            bool isDefault;
-            return GetActivityItemRegisterForElement(element, out isDefault);
-        }
-
-        public static ActivityItemRegister GetActivityItemRegisterForElement(UIElement element, out bool isDefault)
-        {
-            DependencyObject obj = element;
-
-            isDefault = false;
-            ActivityItemRegister activityItemRegister = null;
-            while (obj != null)
-            {
-                activityItemRegister = GetActivityItemRegister(obj);
-
-                if (activityItemRegister != null)
-                    break;
-
-                obj = LogicalTreeHelper.GetParent(obj);
-            }
-
-            if (activityItemRegister == null)
-                isDefault = true;
-
-            return activityItemRegister;
-        }
     }
 }

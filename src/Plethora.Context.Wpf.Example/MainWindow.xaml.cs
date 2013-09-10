@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Drawing;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using Image = System.Drawing.Image;
 
 namespace Plethora.Context.Wpf.Example
 {
@@ -19,18 +20,30 @@ namespace Plethora.Context.Wpf.Example
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "Edit Contract"));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("SignedContract", "View Signed Contract", false));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Instrument", "View Instrument"));
-
-            var activityItemRegister = (WpfActivityItemRegister)this.Resources["activityItemRegister"];
-            activityItemRegister.ActivityItemRegister.RegisterActivityItem(ContextTextBox);
         }
 
         void DefaultInstance_ContextChanged(object sender, EventArgs e)
         {
-            var contextText = ContextManager.DefaultInstance
-                .GetContexts()
+            var contexts = ContextManager.DefaultInstance.GetContexts();
+
+            var contextText = contexts
                 .Select(context => string.Format("{0} [{1}]", context.Name, context.Data));
 
             this.ContextTextBox.Text = string.Join("\r\n", contextText);
+
+            var actions = ContextManager.DefaultInstance.GetActions(contexts);
+
+            this.ContextStack.Children.Clear();
+            foreach (var action in actions)
+            {
+                Button btn = new Button();
+                btn.Height = 48;
+                btn.Content = action.ActionName;
+                btn.IsEnabled = action.CanExecute;
+                btn.Click += delegate { action.Execute(); };
+
+                this.ContextStack.Children.Add(btn);
+            }
         }
 
 

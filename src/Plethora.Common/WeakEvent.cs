@@ -21,7 +21,7 @@ namespace Plethora
     ///            remove { myWeakEvent.Remove(value); }
     ///        }
     /// 
-    ///        protected void OnWeakEvent(object sender, EventArgs e)
+    ///        protected virtual void OnWeakEvent(object sender, EventArgs e)
     ///        {
     ///            foreach (var handler in myWeakEvent.GetInvocationList())
     ///            {

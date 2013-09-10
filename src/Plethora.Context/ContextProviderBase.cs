@@ -3,37 +3,17 @@ using System.Collections.Generic;
 
 namespace Plethora.Context
 {
-    public abstract class ContextProvider : IContextProvider, IDisposable
+    public abstract class ContextProviderBase : IContextProvider, IDisposable
     {
-        #region Fields
-
-        private readonly object contextLock = new object();
-        private bool isContextsCached = false;
-        private IEnumerable<ContextInfo> contexts;
-        #endregion
-
         #region Implementation of IContextProvider
 
         public event EventHandler EnterContext;
         public event EventHandler LeaveContext;
         public event EventHandler ContextChanged;
 
-        public IEnumerable<ContextInfo> Contexts
+        public abstract IEnumerable<ContextInfo> Contexts
         {
-            get
-            {
-                lock (contextLock)
-                {
-                    //Cache the result to prevent thrashing of unnecessary calls to GetContext
-                    if (!isContextsCached)
-                    {
-                        contexts = GetContexts();
-                        isContextsCached = true;
-                    }
-
-                    return contexts;
-                }
-            }
+            get;
         }
 
         #endregion
@@ -43,7 +23,7 @@ namespace Plethora.Context
         // Track whether Dispose has been called.
         private bool disposed = false;
 
-        ~ContextProvider()
+        ~ContextProviderBase()
         {
             Dispose(false);
         }
@@ -73,11 +53,6 @@ namespace Plethora.Context
         }
         #endregion
 
-        #region Abstract Methods
-
-        public abstract IEnumerable<ContextInfo> GetContexts();
-        #endregion
-
         #region Protected Methods
 
         protected void OnEnterContext()
@@ -87,8 +62,6 @@ namespace Plethora.Context
 
         protected virtual void OnEnterContext(object sender, EventArgs e)
         {
-            ClearCache();
-
             var handler = this.EnterContext;
             if (handler != null)
                 handler(sender, e);
@@ -101,8 +74,6 @@ namespace Plethora.Context
 
         protected virtual void OnLeaveContext(object sender, EventArgs e)
         {
-            ClearCache();
-
             var handler = this.LeaveContext;
             if (handler != null)
                 handler(sender, e);
@@ -115,24 +86,9 @@ namespace Plethora.Context
 
         protected virtual void OnContextChanged(object sender, EventArgs e)
         {
-            ClearCache();
-
             var handler = this.ContextChanged;
             if (handler != null)
                 handler(sender, e);
-        }
-
-        #endregion
-        
-        #region Private Methods
-
-        private void ClearCache()
-        {
-            lock (contextLock)
-            {
-                contexts = null;
-                isContextsCached = false;
-            }
         }
 
         #endregion

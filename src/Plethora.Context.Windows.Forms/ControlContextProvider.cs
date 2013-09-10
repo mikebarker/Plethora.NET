@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Plethora.Context.Windows.Forms
 {
-    public abstract class ControlContextProvider<T> : ContextProvider
+    public abstract class ControlContextProvider<T> : CachedContextProvider
         where T : Control
     {
         #region Fields
@@ -42,8 +42,6 @@ namespace Plethora.Context.Windows.Forms
             get { return (T)reference.Target; }
         }
 
-        public ActivityItemRegister ActivityItemRegister { get; set; }
-
         #endregion
 
         #region Overrides of ContextProvider
@@ -63,7 +61,7 @@ namespace Plethora.Context.Windows.Forms
             base.Dispose(disposing);
         }
 
-        public override IEnumerable<ContextInfo> GetContexts()
+        protected override IEnumerable<ContextInfo> GetContexts()
         {
             if (getContextCallbacks == null)
                 return null;
@@ -115,13 +113,9 @@ namespace Plethora.Context.Windows.Forms
 
         private bool IsActivityControl(Control control)
         {
-            var itemRegister = this.ActivityItemRegister;
-            if (itemRegister == null)
-                return false;
-
             while (control != null)
             {
-                if (itemRegister.IsActivityItem(control))
+                if (ActivityItemRegister.Instance.IsActivityItem(control))
                     return true;
 
                 control = control.Parent;

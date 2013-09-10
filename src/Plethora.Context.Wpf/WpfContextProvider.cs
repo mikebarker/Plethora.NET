@@ -6,7 +6,7 @@ using System.Windows.Input;
 
 namespace Plethora.Context.Wpf
 {
-    internal class WpfContextProvider : IContextProvider
+    internal class WpfContextProvider : CachedContextProvider
     {
         public WpfContextProvider(UIElement element)
         {
@@ -15,89 +15,17 @@ namespace Plethora.Context.Wpf
                 throw new ArgumentNullException("element");
 
 
-            this.internalContextProvider = new InternalContextProvider(this);
             this.uiElement = element;
             RegisterUIElement(uiElement);
         }
 
         #region Implementation of IContextProvider
 
-        //Uses containment to provide inheritance.
-        private sealed class InternalContextProvider : ContextProvider
+        protected override IEnumerable<ContextInfo> GetContexts()
         {
-            private readonly WpfContextProvider parent;
-
-            public InternalContextProvider(WpfContextProvider parent)
-            {
-                this.parent = parent;
-            }
-
-            public override IEnumerable<ContextInfo> GetContexts()
-            {
-                return parent.Contexts;
-            }
-
-            public new void OnContextChanged()
-            {
-                base.OnContextChanged(parent, EventArgs.Empty);
-            }
-
-            public new void OnEnterContext()
-            {
-                base.OnEnterContext(parent, EventArgs.Empty);
-            }
-
-            public new void OnLeaveContext()
-            {
-                base.OnLeaveContext(parent, EventArgs.Empty);
-            }
-        }
-
-
-        private readonly InternalContextProvider internalContextProvider;
-
-        public event EventHandler EnterContext
-        {
-            add { internalContextProvider.EnterContext += value; }
-            remove { internalContextProvider.EnterContext -= value; }
-        }
-
-        public event EventHandler LeaveContext
-        {
-            add { internalContextProvider.LeaveContext += value; }
-            remove { internalContextProvider.LeaveContext -= value; }
-        }
-
-        public event EventHandler ContextChanged
-        {
-            add { internalContextProvider.ContextChanged += value; }
-            remove { internalContextProvider.ContextChanged -= value; }
-        }
-
-        public IEnumerable<ContextInfo> Contexts
-        {
-            get
-            {
-                return (ContextSource != null) 
-                    ? ContextSource.Contexts
-                    : null;
-            }
-        }
-
-
-        private void OnContextChanged()
-        {
-            internalContextProvider.OnContextChanged();
-        }
-
-        private void OnEnterContext()
-        {
-            internalContextProvider.OnEnterContext();
-        }
-
-        private void OnLeaveContext()
-        {
-            internalContextProvider.OnLeaveContext();
+            return (ContextSource != null) 
+                ? ContextSource.Contexts
+                : null;
         }
 
         #endregion
@@ -136,8 +64,6 @@ namespace Plethora.Context.Wpf
             this.OnContextChanged();
         }
 
-        public ActivityItemRegister ActivityItemRegister { get; set; }
-
 
 
         private readonly UIElement uiElement;
@@ -153,31 +79,26 @@ namespace Plethora.Context.Wpf
             if (DesignerProperties.GetIsInDesignMode(element))
                 return;
 
-            element.GotKeyboardFocus += element_GotKeyboardFocus;
-            element.LostKeyboardFocus += element_LostKeyboardFocus;
+            element.GotFocus += element_GotFocus;
+            element.LostFocus += element_LostFocus;
 
             var contextManager = WpfContext.GetManagerForElement(element);
             contextManager.RegisterProvider(this);
-
-            var activityItemRegister = WpfContext.GetActivityItemRegisterForElement(element);
-            if (activityItemRegister != null)
-                this.ActivityItemRegister = activityItemRegister;
-
 
             if (ContextSource != null)
                 contextSource.UIElement = element;
         }
 
-        private void element_GotKeyboardFocus(object sender, RoutedEventArgs e)
+        private void element_GotFocus(object sender, RoutedEventArgs e)
         {
             OnEnterContext();
         }
 
-        private void element_LostKeyboardFocus(object sender, RoutedEventArgs e)
+        private void element_LostFocus(object sender, RoutedEventArgs e)
         {
             UIElement source = (UIElement)sender;
             if (!ReferenceEquals(source, this.UIElement))
-                source.LostKeyboardFocus -= element_LostKeyboardFocus;
+                source.LostFocus -= element_LostFocus;
 
             UIElement activeControl = Keyboard.FocusedElement as UIElement;
             if (activeControl == null)
@@ -189,7 +110,7 @@ namespace Plethora.Context.Wpf
             if (IsActivityElement(activeControl))
             {
                 if (!ReferenceEquals(activeControl, this.UIElement))
-                    activeControl.LostKeyboardFocus += element_LostKeyboardFocus;
+                    activeControl.LostFocus += element_LostFocus;
             }
             else
             {
@@ -199,14 +120,10 @@ namespace Plethora.Context.Wpf
 
         private bool IsActivityElement(UIElement element)
         {
-            var itemRegister = this.ActivityItemRegister;
-            if (itemRegister == null)
-                return false;
-
             DependencyObject obj = element;
             while (obj != null)
             {
-                if (itemRegister.IsActivityItem(obj))
+                if (ActivityItemRegister.Instance.IsActivityItem(obj))
                     return true;
 
                 obj = LogicalTreeHelper.GetParent(obj);
