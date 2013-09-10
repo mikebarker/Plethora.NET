@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextSourceCollection : FreezableCollection<WpfContextSource>, IWpfContextSource
+    public class WpfContextSourceCollection : FreezableCollection<Freezable>, IWpfContextSource
     {
         public WpfContextSourceCollection()
         {
@@ -49,7 +49,7 @@ namespace Plethora.Context.Wpf
             get
             {
                 var contexts = this
-                    .Select(item => item.Context)
+                    .SelectMany(item => ((IWpfContextSource)item).Contexts)
                     .ToArray();
 
                 return contexts;
@@ -84,7 +84,7 @@ namespace Plethora.Context.Wpf
 
             foreach (var wpfContextSource in this)
             {
-                wpfContextSource.UIElement = element;
+                ((IWpfContextSource)wpfContextSource).UIElement = element;
             }
         }
 
@@ -96,7 +96,7 @@ namespace Plethora.Context.Wpf
 
             foreach (var wpfContextSource in this)
             {
-                wpfContextSource.UIElement = null;
+                ((IWpfContextSource)wpfContextSource).UIElement = null;
             }
         }
 
@@ -113,6 +113,9 @@ namespace Plethora.Context.Wpf
                 case NotifyCollectionChangedAction.Add:
                     foreach (var newItem in e.NewItems)
                     {
+                        if (!(newItem is IWpfContextSource))
+                            throw new ArgumentException(string.Format("Items must be of type {0}.", typeof (IWpfContextSource).Name));
+
                         var wpfContextSource = (IWpfContextSource)newItem;
                         wpfContextSource.UIElement = this.UIElement;
                         wpfContextSource.ContextChanged += contextSource_ContextChanged;

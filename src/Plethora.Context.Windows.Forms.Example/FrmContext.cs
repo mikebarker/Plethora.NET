@@ -18,6 +18,13 @@ namespace Plethora.Context.Windows.Forms.Example
             contextManager.ContextChanged += contextManager_ContextChanged;
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            contextManager.ContextChanged -= contextManager_ContextChanged;
+
+            base.OnClosed(e);
+        }
+
         void contextManager_ContextChanged(object sender, EventArgs e)
         {
             RefreshContext();
@@ -68,11 +75,6 @@ namespace Plethora.Context.Windows.Forms.Example
                 textBox2.Text += string.Format("{0}\r\n",
                                                action.ActionName);
             }
-        }
-
-        void frm_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            this.Close();
         }
     }
 }

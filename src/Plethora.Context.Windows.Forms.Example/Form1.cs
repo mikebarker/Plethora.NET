@@ -45,10 +45,8 @@ namespace Plethora.Context.Windows.Forms.Example
 
             contextActionMenuStrip.ContextManager = contextManager;
 
-            var textBoxProvider = new TextBoxContextProvider(this.textBox1, GetContractContext);
-            var listViewProvider = new ListViewContextProvider(this.listView1, GetPositionContext);
-            contextManager.RegisterProvider(textBoxProvider);
-            contextManager.RegisterProvider(listViewProvider);
+            contextManager.RegisterProvider(new TextBoxContextProvider(this.textBox1, GetContractContext));
+            contextManager.RegisterProvider(new ListViewContextProvider(this.listView1, GetPositionContext));
 
             //Augments positions with contract and instrument contexts.
             ContextAugmentor positionAugmentor = new ContextAugmentor("Position", positionContext => new ContextInfo[]
@@ -75,10 +73,7 @@ namespace Plethora.Context.Windows.Forms.Example
 
             contextManager.ContextChanged += contextManager_ContextChanged;
 
-            ActivityItemRegister activityItemRegister = new ActivityItemRegister();
-            textBoxProvider.ActivityItemRegister = activityItemRegister;
-            listViewProvider.ActivityItemRegister = activityItemRegister;
-
+            ActivityItemRegister activityItemRegister = ActivityItemRegister.Instance;
             activityItemRegister.RegisterActivityItem(this.groupBox2);
         }
 

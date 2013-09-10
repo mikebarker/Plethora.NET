@@ -14,32 +14,42 @@
             <wpf:WpfContextSource Name="SignedContract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
         </wpf:WpfContextSourceCollection>
 
+        <wpf:WpfContextSource x:Key="textboxContext" Name="Textbox" Data="{Binding Path=UIElement, RelativeSource={RelativeSource Self}}"/>
+
         <wpf:WpfContextMenu x:Key="contextMenu" />
 
-        <wpf:WpfActivityItemRegister x:Key="activityItemRegister">
-        </wpf:WpfActivityItemRegister>
     </Window.Resources>
 
-    <Grid wpf:WpfContext.ActivityItemRegister="{Binding Path=ActivityItemRegister, Source={StaticResource activityItemRegister}}">
-        <StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center">Contract:</TextBlock>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        
+        <StackPanel Grid.Column="0" >
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
                 <TextBox wpf:WpfContext.ContextSource="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
                     1234
                 </TextBox>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock VerticalAlignment="Center">Instrument:</TextBlock>
+            </DockPanel>
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Instrument:</TextBlock>
                 <TextBox ContextMenu="{StaticResource contextMenu}">
                     VOD.L
 
                     <wpf:WpfContext.ContextSource>
-                        <wpf:WpfContextSource Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
+                        <wpf:WpfContextSourceCollection >
+                            <StaticResource ResourceKey="textboxContext" />
+                            <wpf:WpfContextSource Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
+                        </wpf:WpfContextSourceCollection>
                     </wpf:WpfContext.ContextSource>
                 </TextBox>
-            </StackPanel>
+            </DockPanel>
             
-            <TextBox Name="ContextTextBox"/>
+            <TextBox Name="ContextTextBox" wpf:WpfContext.IsActivityItem="True" />
         </StackPanel>
+        
+        <StackPanel Grid.Column="1" Name="ContextStack" wpf:WpfContext.IsActivityItem="True" />
     </Grid>
 </Window>

@@ -60,6 +60,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
+      <Name>Plethora.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plethora.Context.Windows.Forms\Plethora.Context.Windows.Forms.csproj">
       <Project>{F4C30696-043E-4433-93E1-8FC05F106927}</Project>
       <Name>Plethora.Context.Windows.Forms</Name>

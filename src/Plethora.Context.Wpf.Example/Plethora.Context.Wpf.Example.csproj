@@ -95,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
+      <Name>Plethora.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plethora.Context.Wpf\Plethora.Context.Wpf.csproj">
       <Project>{5E454E70-289F-4BFD-BEAA-F003B14B869E}</Project>
       <Name>Plethora.Context.Wpf</Name>

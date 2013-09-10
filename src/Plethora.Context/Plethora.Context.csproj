@@ -58,11 +58,12 @@
     </Compile>
     <Compile Include="ActionHelper.cs" />
     <Compile Include="ActivityItemRegister.cs" />
+    <Compile Include="CachedContextProvider.cs" />
     <Compile Include="ContextAugmentor.cs" />
     <Compile Include="ContextInfo.cs" />
     <Compile Include="ContextInfoComparer.cs" />
     <Compile Include="ContextManager.cs" />
-    <Compile Include="ContextProvider.cs" />
+    <Compile Include="ContextProviderBase.cs" />
     <Compile Include="IActionFactory.cs" />
     <Compile Include="IActionTemplate.cs" />
     <Compile Include="IUiActionTemplate.cs" />
@@ -96,7 +97,12 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
+      <Name>Plethora.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
