@@ -7,6 +7,18 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
+    /// <summary>
+    /// A collection of context sources.
+    /// </summary>
+    /// <remarks>
+    ///  <para>
+    ///   Elements added to this class must implement the <see cref="IWpfContextSource"/> interface.
+    ///  </para>
+    ///  <para>
+    ///   This class inherits from <see cref="FreezableCollection{T}"/> to allow the DataContext
+    ///   to flow through the context source tree.
+    ///  </para>
+    /// </remarks>
     public class WpfContextSourceCollection : FreezableCollection<Freezable>, IWpfContextSource
     {
         public WpfContextSourceCollection()
@@ -106,30 +118,65 @@ namespace Plethora.Context.Wpf
             this.OnContextChanged();
         }
 
+
+        //A full list of previous elements is required to support Reset actions, so that old elements can be unloaded correctly.
+        List<Freezable> prevList = new List<Freezable>(); 
+
         private void this_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
+                case NotifyCollectionChangedAction.Move:
+                    //Do nothing. Order is not important
+                    break;
+
                 case NotifyCollectionChangedAction.Add:
-                    foreach (var newItem in e.NewItems)
-                    {
-                        if (!(newItem is IWpfContextSource))
-                            throw new ArgumentException(string.Format("Items must be of type {0}.", typeof (IWpfContextSource).Name));
-
-                        var wpfContextSource = (IWpfContextSource)newItem;
-                        wpfContextSource.UIElement = this.UIElement;
-                        wpfContextSource.ContextChanged += contextSource_ContextChanged;
-                    }
-                    break;
-
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (var oldItem in e.OldItems)
+                case NotifyCollectionChangedAction.Replace:
+                case NotifyCollectionChangedAction.Reset:
+
+                    bool isReset = (e.Action != NotifyCollectionChangedAction.Reset);
+
+                    var oldItems = (!isReset) ? e.OldItems : prevList;
+                    var newItems = (!isReset) ? e.NewItems : this;
+
+
+                    if (oldItems != null)
                     {
-                        var wpfContextSource = (IWpfContextSource)oldItem;
-                        wpfContextSource.ContextChanged -= contextSource_ContextChanged;
-                        wpfContextSource.UIElement = null;
+                        foreach (var oldItem in oldItems)
+                        {
+                            var wpfContextSource = (IWpfContextSource)oldItem;
+                            wpfContextSource.ContextChanged -= contextSource_ContextChanged;
+                            wpfContextSource.UIElement = null;
+
+                            if (!isReset)
+                                prevList.Remove((Freezable)oldItem);
+                        }
                     }
+
+                    if (newItems != null)
+                    {
+                        foreach (var newItem in newItems)
+                        {
+                            if (!(newItem is IWpfContextSource))
+                                throw new ArgumentException(string.Format("Items must be of type {0}.",
+                                                                          typeof (IWpfContextSource).Name));
+
+                            var wpfContextSource = (IWpfContextSource)newItem;
+                            wpfContextSource.UIElement = this.UIElement;
+                            wpfContextSource.ContextChanged += contextSource_ContextChanged;
+
+                            if (!isReset)
+                                prevList.Add((Freezable)newItem);
+                        }
+                    }
+
+                    if (isReset)
+                        prevList = new List<Freezable>(this);
                     break;
+
+                default:
+                    throw new InvalidOperationException(string.Format("Unsupproted action {0}", e.Action));
             }
         }
 
