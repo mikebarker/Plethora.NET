@@ -1,5 +1,4 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
@@ -7,10 +6,10 @@ namespace Plethora.Context.Wpf
     {
         #region ContextSource Attached Property
 
-        public static readonly DependencyProperty ContextSourceProperty =
+        public static readonly DependencyProperty ContextSourceTemplateProperty =
             DependencyProperty.RegisterAttached(
-                "ContextSource",
-                typeof (IWpfContextSource),
+                "ContextSourceTemplate",
+                typeof(IWpfContextSourceTemplate),
                 typeof (WpfContext),
                 new PropertyMetadata(null, ContextSourceChangedCallback));
 
@@ -20,20 +19,22 @@ namespace Plethora.Context.Wpf
                 return;
 
             UIElement element = (UIElement)dependencyObject;
-            IWpfContextSource contextSource = (IWpfContextSource)e.NewValue;
+            IWpfContextSourceTemplate contextTemplate = (IWpfContextSourceTemplate)e.NewValue;
+            IWpfContextSource contextSource = contextTemplate.CreateContent();
+            contextSource.UIElement = element;
 
             var provider = GetContextProvider(element);
             provider.ContextSource = contextSource;
         }
 
-        public static void SetContextSource(UIElement element, IWpfContextSource value)
+        public static void SetContextSourceTemplate(UIElement element, IWpfContextSourceTemplate value)
         {
-            element.SetValue(ContextSourceProperty, value);
+            element.SetValue(ContextSourceTemplateProperty, value);
         }
 
-        public static IWpfContextSource GetContextSource(UIElement element)
+        public static IWpfContextSourceTemplate GetContextSourceTemplate(UIElement element)
         {
-            return (IWpfContextSource)element.GetValue(ContextSourceProperty);
+            return (IWpfContextSourceTemplate)element.GetValue(ContextSourceTemplateProperty);
         }
 
         #endregion
