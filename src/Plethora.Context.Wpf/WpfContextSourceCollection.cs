@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 
@@ -10,39 +9,219 @@ namespace Plethora.Context.Wpf
     /// <summary>
     /// A collection of context sources.
     /// </summary>
-    /// <remarks>
-    ///  <para>
-    ///   Elements added to this class must implement the <see cref="IWpfContextSource"/> interface.
-    ///  </para>
-    ///  <para>
-    ///   This class inherits from <see cref="FreezableCollection{T}"/> to allow the DataContext
-    ///   to flow through the context source tree.
-    ///  </para>
-    /// </remarks>
-    public class WpfContextSourceCollection : FreezableCollection<Freezable>, IWpfContextSource
+    public class WpfContextSourceCollection : FrameworkElement, IList<IWpfContextSource>, IList, IWpfContextSource
     {
-        public WpfContextSourceCollection()
+        private readonly List<IWpfContextSource> innerList = new List<IWpfContextSource>();
+
+        #region IEnumerable<IWpfContextSource>
+
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            ((INotifyCollectionChanged)this).CollectionChanged += this_CollectionChanged;
+            return GetEnumerator();
         }
 
+        public IEnumerator<IWpfContextSource> GetEnumerator()
+        {
+            return innerList.GetEnumerator();
+        }
 
-        #region Implementation Of IWpfContextSource
+        #endregion
+
+        #region ICollection<IWpfContextSource>
+
+        public void Add(IWpfContextSource item)
+        {
+            innerList.Add(item);
+            item.ContextChanged += item_ContextChanged;
+        }
+
+        public void Clear()
+        {
+            foreach (IWpfContextSource item in innerList)
+            {
+                item.ContextChanged -= item_ContextChanged;
+            }
+            innerList.Clear();
+        }
+
+        public bool Contains(IWpfContextSource item)
+        {
+            return innerList.Contains(item);
+        }
+
+        public void CopyTo(IWpfContextSource[] array, int arrayIndex)
+        {
+            innerList.CopyTo(array, arrayIndex);
+        }
+
+        public bool Remove(IWpfContextSource item)
+        {
+            item.ContextChanged -= item_ContextChanged;
+            return innerList.Remove(item);
+        }
+
+        public int Count
+        {
+            get { return innerList.Count; }
+        }
+
+        bool ICollection<IWpfContextSource>.IsReadOnly
+        {
+            get { return ((ICollection<IWpfContextSource>)innerList).IsReadOnly; }
+        }
+
+        #endregion
+
+        #region IList<IWpfContextSource>
+
+        public int IndexOf(IWpfContextSource item)
+        {
+            return innerList.IndexOf(item);
+        }
+
+        public void Insert(int index, IWpfContextSource item)
+        {
+            innerList.Insert(index, item);
+            item.ContextChanged += item_ContextChanged;
+        }
+
+        public void RemoveAt(int index)
+        {
+            var item = innerList[index];
+            item.ContextChanged -= item_ContextChanged;
+            innerList.RemoveAt(index);
+        }
+
+        public IWpfContextSource this[int index]
+        {
+            get { return innerList[index]; }
+            set
+            {
+                var oldValue = innerList[index];
+                if (oldValue == value)
+                    return;
+
+                oldValue.ContextChanged -= item_ContextChanged;
+
+                innerList[index] = value;
+
+                value.ContextChanged += item_ContextChanged;
+            }
+        }
+
+        #endregion
+
+        #region ICollection
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            ((ICollection)innerList).CopyTo(array, index);
+        }
+
+        object ICollection.SyncRoot
+        {
+            get { return ((ICollection)innerList).SyncRoot; }
+        }
+
+        bool ICollection.IsSynchronized
+        {
+            get { return ((ICollection)innerList).IsSynchronized; }
+        }
+
+        #endregion
+
+        #region IList
+
+        int IList.Add(object value)
+        {
+            var item = (IWpfContextSource)value;
+            this.Add(item);
+            return innerList.Count - 1;
+        }
+
+        bool IList.Contains(object value)
+        {
+            var item = (IWpfContextSource)value; 
+            return this.Contains(item);
+        }
+
+        int IList.IndexOf(object value)
+        {
+            var item = (IWpfContextSource)value; 
+            return this.IndexOf(item);
+        }
+
+        void IList.Insert(int index, object value)
+        {
+            var item = (IWpfContextSource)value;
+            this.Insert(index, item);
+        }
+
+        void IList.Remove(object value)
+        {
+            var item = (IWpfContextSource)value; 
+            this.Remove(item);
+        }
+
+        object IList.this[int index]
+        {
+            get { return this[index]; }
+            set
+            {
+                var item = (IWpfContextSource)value;
+                this[index] = item;
+            }
+        }
+
+        bool IList.IsReadOnly
+        {
+            get { return ((IList)innerList).IsReadOnly; }
+        }
+
+        bool IList.IsFixedSize
+        {
+            get { return ((IList)innerList).IsFixedSize; }
+        }
+
+        #endregion
+
+        #region Implementation of IWpfContextInfo
+
+        #region UIElement DependencyProperty
+
+        public UIElement UIElement
+        {
+            get { return (UIElement)GetValue(UIElementProperty); }
+            set { SetValue(UIElementProperty, value); }
+        }
+
+        public static readonly DependencyProperty UIElementProperty = DependencyProperty.Register(
+            "UIElement",
+            typeof(UIElement),
+            typeof(WpfContextSourceCollection),
+            new PropertyMetadata(default(UIElement), UIElementChanged));
+
+        private static void UIElementChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.OldValue == e.NewValue)
+                return;
+
+            var uiElement = (UIElement)e.NewValue;
+            var collection = (WpfContextSourceCollection)dependencyObject;
+            foreach (IWpfContextSource contextSource in collection)
+            {
+                contextSource.UIElement = uiElement;
+            }
+        }
+
+        #endregion
 
         #region ContextChanged Event
 
         /// <summary>
-        /// Raised when <see cref="Contexts"/> property changes.
+        /// Raised when <see cref="Context"/> property changes.
         /// </summary>
         public event EventHandler ContextChanged;
-
-        /// <summary>
-        /// Raises the <see cref="ContextChanged"/> event.
-        /// </summary>
-        private void OnContextChanged()
-        {
-            OnContextChanged(EventArgs.Empty);
-        }
 
         /// <summary>
         /// Raises the <see cref="ContextChanged"/> event.
@@ -56,130 +235,18 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        public IEnumerable<ContextInfo> Contexts
+        IEnumerable<ContextInfo> IWpfContextSource.Contexts
         {
-            get
-            {
-                var contexts = this
-                    .SelectMany(item => ((IWpfContextSource)item).Contexts)
-                    .ToArray();
-
-                return contexts;
-            }
+            get { return this.SelectMany(item => item.Contexts); }
         }
 
         #endregion
 
-
-        private UIElement uiElement;
-
-        public UIElement UIElement
+        void item_ContextChanged(object sender, EventArgs e)
         {
-            get { return uiElement; }
-            set
-            {
-                if (uiElement != null)
-                    DeregisterElement(uiElement);
-
-                uiElement = value;
-
-                if (uiElement != null)
-                    RegisterUIElement(uiElement);
-            }
+            this.OnContextChanged(EventArgs.Empty);
         }
-
-        private void RegisterUIElement(UIElement element)
-        {
-            //Do not hook up the event model in design mode
-            if (DesignerProperties.GetIsInDesignMode(element))
-                return;
-
-            foreach (var wpfContextSource in this)
-            {
-                ((IWpfContextSource)wpfContextSource).UIElement = element;
-            }
-        }
-
-        private void DeregisterElement(UIElement element)
-        {
-            //Do not hook up the event model in design mode
-            if (DesignerProperties.GetIsInDesignMode(element))
-                return;
-
-            foreach (var wpfContextSource in this)
-            {
-                ((IWpfContextSource)wpfContextSource).UIElement = null;
-            }
-        }
-
-
-        void contextSource_ContextChanged(object sender, EventArgs e)
-        {
-            this.OnContextChanged();
-        }
-
-
-        //A full list of previous elements is required to support Reset actions, so that old elements can be unloaded correctly.
-        List<Freezable> prevList = new List<Freezable>(); 
-
-        private void this_CollectionChanged (object sender, NotifyCollectionChangedEventArgs e)
-        {
-            switch (e.Action)
-            {
-                case NotifyCollectionChangedAction.Move:
-                    //Do nothing. Order is not important
-                    break;
-
-                case NotifyCollectionChangedAction.Add:
-                case NotifyCollectionChangedAction.Remove:
-                case NotifyCollectionChangedAction.Replace:
-                case NotifyCollectionChangedAction.Reset:
-
-                    bool isReset = (e.Action != NotifyCollectionChangedAction.Reset);
-
-                    var oldItems = (!isReset) ? e.OldItems : prevList;
-                    var newItems = (!isReset) ? e.NewItems : this;
-
-
-                    if (oldItems != null)
-                    {
-                        foreach (var oldItem in oldItems)
-                        {
-                            var wpfContextSource = (IWpfContextSource)oldItem;
-                            wpfContextSource.ContextChanged -= contextSource_ContextChanged;
-                            wpfContextSource.UIElement = null;
-
-                            if (!isReset)
-                                prevList.Remove((Freezable)oldItem);
-                        }
-                    }
-
-                    if (newItems != null)
-                    {
-                        foreach (var newItem in newItems)
-                        {
-                            if (!(newItem is IWpfContextSource))
-                                throw new ArgumentException(string.Format("Items must be of type {0}.",
-                                                                          typeof (IWpfContextSource).Name));
-
-                            var wpfContextSource = (IWpfContextSource)newItem;
-                            wpfContextSource.UIElement = this.UIElement;
-                            wpfContextSource.ContextChanged += contextSource_ContextChanged;
-
-                            if (!isReset)
-                                prevList.Add((Freezable)newItem);
-                        }
-                    }
-
-                    if (isReset)
-                        prevList = new List<Freezable>(this);
-                    break;
-
-                default:
-                    throw new InvalidOperationException(string.Format("Unsupproted action {0}", e.Action));
-            }
-        }
-
 
     }
+
 }

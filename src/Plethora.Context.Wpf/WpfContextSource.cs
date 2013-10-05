@@ -4,9 +4,9 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextSource : Freezable, IWpfContextSource
+    public class WpfContextSource : FrameworkElement, IWpfContextSource
     {
-        #region Properties
+        #region Implementation of IWpfContextInfo
 
         #region UIElement DependencyProperty
 
@@ -24,16 +24,44 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region Name DependencyProperty
+        #region ContextChanged Event
 
-        public string Name
+        /// <summary>
+        /// Raised when <see cref="Context"/> property changes.
+        /// </summary>
+        public event EventHandler ContextChanged;
+
+        /// <summary>
+        /// Raises the <see cref="ContextChanged"/> event.
+        /// </summary>
+        protected virtual void OnContextChanged(EventArgs e)
         {
-            get { return (string)GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            var handler = ContextChanged;
+            if (handler != null)
+                handler(this, e);
         }
 
-        public static readonly DependencyProperty NameProperty = DependencyProperty.Register(
-            "Name",
+        #endregion
+
+        IEnumerable<ContextInfo> IWpfContextSource.Contexts
+        {
+            get { return new[] { this.Context }; }
+        }
+
+        #endregion
+
+        #region Properties
+
+        #region ContextName DependencyProperty
+
+        public string ContextName
+        {
+            get { return (string)GetValue(ContextNameProperty); }
+            set { SetValue(ContextNameProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContextNameProperty = DependencyProperty.Register(
+            "ContextName",
             typeof(string),
             typeof(WpfContextSource),
             new PropertyMetadata(default(string), PropertyChangedCallback));
@@ -74,35 +102,7 @@ namespace Plethora.Context.Wpf
 
         public ContextInfo Context
         {
-            get { return new ContextInfo(this.Name, this.Rank, this.Data); }
-        }
-
-        #endregion
-
-        #region Implementation of IWpfContextInfo
-
-        #region ContextChanged Event
-
-        /// <summary>
-        /// Raised when <see cref="Context"/> property changes.
-        /// </summary>
-        public event EventHandler ContextChanged;
-
-        /// <summary>
-        /// Raises the <see cref="ContextChanged"/> event.
-        /// </summary>
-        protected virtual void OnContextChanged(EventArgs e)
-        {
-            var handler = ContextChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        #endregion
-
-        IEnumerable<ContextInfo> IWpfContextSource.Contexts
-        {
-            get { return new[] {this.Context}; }
+            get { return new ContextInfo(this.ContextName, this.Rank, this.Data); }
         }
 
         #endregion
@@ -116,11 +116,5 @@ namespace Plethora.Context.Wpf
         }
 
         #endregion
-
-
-        protected override Freezable CreateInstanceCore()
-        {
-            return new WpfContextSource();
-        }
     }
 }

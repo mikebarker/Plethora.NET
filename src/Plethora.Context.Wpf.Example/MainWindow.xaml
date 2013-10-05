@@ -9,12 +9,14 @@
             <Setter Property="Margin" Value ="5" />
         </Style>
 
-        <wpf:WpfContextSourceCollection x:Key="contractContext">
-            <wpf:WpfContextSource Name="Contract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
-            <wpf:WpfContextSource Name="SignedContract" Data="{Binding Path=UIElement.Text, RelativeSource={RelativeSource Self}}"/>
-        </wpf:WpfContextSourceCollection>
 
-        <wpf:WpfContextSource x:Key="textboxContext" Name="Textbox" Data="{Binding Path=UIElement, RelativeSource={RelativeSource Self}}"/>
+        <wpf:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+
+        <wpf:WpfContextSourceTemplateCollection x:Key="contractContext">
+            <wpf:WpfContextSourceTemplate Name="Contract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <wpf:WpfContextSourceTemplate Name="SignedContract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <StaticResource ResourceKey="textboxContext" />
+        </wpf:WpfContextSourceTemplateCollection>
 
         <wpf:WpfContextMenu x:Key="contextMenu" />
 
@@ -29,7 +31,7 @@
         <StackPanel Grid.Column="0" >
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
-                <TextBox wpf:WpfContext.ContextSource="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
+                <TextBox wpf:WpfContext.ContextSourceTemplate="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
                     1234
                 </TextBox>
             </DockPanel>
@@ -38,12 +40,12 @@
                 <TextBox ContextMenu="{StaticResource contextMenu}">
                     VOD.L
 
-                    <wpf:WpfContext.ContextSource>
-                        <wpf:WpfContextSourceCollection >
+                    <wpf:WpfContext.ContextSourceTemplate>
+                        <wpf:WpfContextSourceTemplateCollection>
                             <StaticResource ResourceKey="textboxContext" />
-                            <wpf:WpfContextSource Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
-                        </wpf:WpfContextSourceCollection>
-                    </wpf:WpfContext.ContextSource>
+                            <wpf:WpfContextSourceTemplate Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </wpf:WpfContextSourceTemplateCollection>
+                    </wpf:WpfContext.ContextSourceTemplate>
                 </TextBox>
             </DockPanel>
             
