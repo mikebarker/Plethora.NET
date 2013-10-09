@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Data;
 
 namespace Plethora.Context.Wpf
 {
@@ -20,8 +21,16 @@ namespace Plethora.Context.Wpf
 
             UIElement element = (UIElement)dependencyObject;
             IWpfContextSourceTemplate contextTemplate = (IWpfContextSourceTemplate)e.NewValue;
-            IWpfContextSource contextSource = contextTemplate.CreateContent();
+            WpfContextSourceBase contextSource = contextTemplate.CreateContent();
             contextSource.UIElement = element;
+
+            if (element is FrameworkElement)
+            {
+                Binding dataContextBinding = new Binding();
+                dataContextBinding.Source = element;
+                dataContextBinding.Path = new PropertyPath("DataContext");
+                BindingOperations.SetBinding(contextSource, FrameworkElement.DataContextProperty, dataContextBinding);
+            }
 
             var provider = GetContextProvider(element);
             provider.ContextSource = contextSource;

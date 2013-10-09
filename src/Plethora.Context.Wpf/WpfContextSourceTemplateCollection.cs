@@ -37,7 +37,7 @@ namespace Plethora.Context.Wpf
             }
         }
 
-        public IWpfContextSource CreateContent()
+        public WpfContextSourceBase CreateContent()
         {
             var collection = new WpfContextSourceCollection();
 

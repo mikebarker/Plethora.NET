@@ -9,27 +9,27 @@ namespace Plethora.Context.Wpf
     /// <summary>
     /// A collection of context sources.
     /// </summary>
-    public class WpfContextSourceCollection : FrameworkElement, IList<IWpfContextSource>, IList, IWpfContextSource
+    public class WpfContextSourceCollection : WpfContextSourceBase, IList<WpfContextSourceBase>, IList
     {
-        private readonly List<IWpfContextSource> innerList = new List<IWpfContextSource>();
+        private readonly List<WpfContextSourceBase> innerList = new List<WpfContextSourceBase>();
 
-        #region IEnumerable<IWpfContextSource>
+        #region IEnumerable<WpfContextSourceBase>
 
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
         }
 
-        public IEnumerator<IWpfContextSource> GetEnumerator()
+        public IEnumerator<WpfContextSourceBase> GetEnumerator()
         {
             return innerList.GetEnumerator();
         }
 
         #endregion
 
-        #region ICollection<IWpfContextSource>
+        #region ICollection<WpfContextSourceBase>
 
-        public void Add(IWpfContextSource item)
+        public void Add(WpfContextSourceBase item)
         {
             innerList.Add(item);
             item.ContextChanged += item_ContextChanged;
@@ -37,24 +37,24 @@ namespace Plethora.Context.Wpf
 
         public void Clear()
         {
-            foreach (IWpfContextSource item in innerList)
+            foreach (WpfContextSourceBase item in innerList)
             {
                 item.ContextChanged -= item_ContextChanged;
             }
             innerList.Clear();
         }
 
-        public bool Contains(IWpfContextSource item)
+        public bool Contains(WpfContextSourceBase item)
         {
             return innerList.Contains(item);
         }
 
-        public void CopyTo(IWpfContextSource[] array, int arrayIndex)
+        public void CopyTo(WpfContextSourceBase[] array, int arrayIndex)
         {
             innerList.CopyTo(array, arrayIndex);
         }
 
-        public bool Remove(IWpfContextSource item)
+        public bool Remove(WpfContextSourceBase item)
         {
             item.ContextChanged -= item_ContextChanged;
             return innerList.Remove(item);
@@ -65,21 +65,21 @@ namespace Plethora.Context.Wpf
             get { return innerList.Count; }
         }
 
-        bool ICollection<IWpfContextSource>.IsReadOnly
+        bool ICollection<WpfContextSourceBase>.IsReadOnly
         {
-            get { return ((ICollection<IWpfContextSource>)innerList).IsReadOnly; }
+            get { return ((ICollection<WpfContextSourceBase>)innerList).IsReadOnly; }
         }
 
         #endregion
 
-        #region IList<IWpfContextSource>
+        #region IList<WpfContextSourceBase>
 
-        public int IndexOf(IWpfContextSource item)
+        public int IndexOf(WpfContextSourceBase item)
         {
             return innerList.IndexOf(item);
         }
 
-        public void Insert(int index, IWpfContextSource item)
+        public void Insert(int index, WpfContextSourceBase item)
         {
             innerList.Insert(index, item);
             item.ContextChanged += item_ContextChanged;
@@ -92,7 +92,7 @@ namespace Plethora.Context.Wpf
             innerList.RemoveAt(index);
         }
 
-        public IWpfContextSource this[int index]
+        public WpfContextSourceBase this[int index]
         {
             get { return innerList[index]; }
             set
@@ -134,32 +134,32 @@ namespace Plethora.Context.Wpf
 
         int IList.Add(object value)
         {
-            var item = (IWpfContextSource)value;
+            var item = (WpfContextSourceBase)value;
             this.Add(item);
             return innerList.Count - 1;
         }
 
         bool IList.Contains(object value)
         {
-            var item = (IWpfContextSource)value; 
+            var item = (WpfContextSourceBase)value; 
             return this.Contains(item);
         }
 
         int IList.IndexOf(object value)
         {
-            var item = (IWpfContextSource)value; 
+            var item = (WpfContextSourceBase)value; 
             return this.IndexOf(item);
         }
 
         void IList.Insert(int index, object value)
         {
-            var item = (IWpfContextSource)value;
+            var item = (WpfContextSourceBase)value;
             this.Insert(index, item);
         }
 
         void IList.Remove(object value)
         {
-            var item = (IWpfContextSource)value; 
+            var item = (WpfContextSourceBase)value; 
             this.Remove(item);
         }
 
@@ -168,7 +168,7 @@ namespace Plethora.Context.Wpf
             get { return this[index]; }
             set
             {
-                var item = (IWpfContextSource)value;
+                var item = (WpfContextSourceBase)value;
                 this[index] = item;
             }
         }
@@ -185,57 +185,19 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region Implementation of IWpfContextInfo
+        #region Implementation of WpfContextSourceBase
 
-        #region UIElement DependencyProperty
-
-        public UIElement UIElement
+        protected override void UIElementChanged(UIElement uiElement)
         {
-            get { return (UIElement)GetValue(UIElementProperty); }
-            set { SetValue(UIElementProperty, value); }
-        }
+            base.UIElementChanged(uiElement);
 
-        public static readonly DependencyProperty UIElementProperty = DependencyProperty.Register(
-            "UIElement",
-            typeof(UIElement),
-            typeof(WpfContextSourceCollection),
-            new PropertyMetadata(default(UIElement), UIElementChanged));
-
-        private static void UIElementChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
-        {
-            if (e.OldValue == e.NewValue)
-                return;
-
-            var uiElement = (UIElement)e.NewValue;
-            var collection = (WpfContextSourceCollection)dependencyObject;
-            foreach (IWpfContextSource contextSource in collection)
+            foreach (WpfContextSourceBase contextSource in this.innerList)
             {
                 contextSource.UIElement = uiElement;
             }
         }
 
-        #endregion
-
-        #region ContextChanged Event
-
-        /// <summary>
-        /// Raised when <see cref="Context"/> property changes.
-        /// </summary>
-        public event EventHandler ContextChanged;
-
-        /// <summary>
-        /// Raises the <see cref="ContextChanged"/> event.
-        /// </summary>
-        protected virtual void OnContextChanged(EventArgs e)
-        {
-            var handler = ContextChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        #endregion
-
-        IEnumerable<ContextInfo> IWpfContextSource.Contexts
+        public override IEnumerable<ContextInfo> Contexts
         {
             get { return this.SelectMany(item => item.Contexts); }
         }

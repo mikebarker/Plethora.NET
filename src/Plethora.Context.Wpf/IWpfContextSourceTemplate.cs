@@ -2,6 +2,6 @@
 {
     public interface IWpfContextSourceTemplate
     {
-        IWpfContextSource CreateContent();
+        WpfContextSourceBase CreateContent();
     }
 }

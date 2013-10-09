@@ -3,14 +3,17 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wpf="clr-namespace:Plethora.Context.Wpf;assembly=Plethora.Context.Wpf"
         Title="MainWindow" Height="350" Width="525">
-    
+
     <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value ="5,0,5,0" />
+        </Style>
         <Style TargetType="{x:Type TextBox}">
             <Setter Property="Margin" Value ="5" />
         </Style>
 
 
-        <wpf:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+        <wpf:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Rank="5" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
 
         <wpf:WpfContextSourceTemplateCollection x:Key="contractContext">
             <wpf:WpfContextSourceTemplate Name="Contract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -24,10 +27,10 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="280*"/>
+            <ColumnDefinition Width="220*"/>
         </Grid.ColumnDefinitions>
-        
+
         <StackPanel Grid.Column="0" >
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
@@ -48,10 +51,10 @@
                     </wpf:WpfContext.ContextSourceTemplate>
                 </TextBox>
             </DockPanel>
-            
+
             <TextBox Name="ContextTextBox" wpf:WpfContext.IsActivityItem="True" />
         </StackPanel>
-        
-        <StackPanel Grid.Column="1" Name="ContextStack" wpf:WpfContext.IsActivityItem="True" />
+
+        <StackPanel Grid.Column="1" Name="ContextActionStack" wpf:WpfContext.IsActivityItem="True" />
     </Grid>
 </Window>
