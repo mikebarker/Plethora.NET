@@ -11,18 +11,24 @@ namespace Plethora.Context.Wpf.Example
     /// </summary>
     public partial class MainWindow : Window
     {
+        private WpfCallbackDelay callbackDelay;
+
         public MainWindow()
         {
             InitializeComponent();
 
-            ContextManager.DefaultInstance.ContextChanged += DefaultInstance_ContextChanged;
+            callbackDelay = new WpfCallbackDelay(ContextManager_ContextChanged, 10);
+            ContextManager.DefaultInstance.ContextChanged += callbackDelay.Handler;
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "View Contract"));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "Edit Contract"));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("SignedContract", "View Signed Contract", false));
             ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Instrument", "View Instrument"));
+            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Cut"));
+            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Copy"));
+            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Paste"));
         }
 
-        void DefaultInstance_ContextChanged(object sender, EventArgs e)
+        void ContextManager_ContextChanged(object sender, EventArgs e)
         {
             var contexts = ContextManager.DefaultInstance.GetContexts();
 
@@ -33,16 +39,18 @@ namespace Plethora.Context.Wpf.Example
 
             var actions = ContextManager.DefaultInstance.GetActions(contexts);
 
-            this.ContextStack.Children.Clear();
-            foreach (var action in actions)
+            this.ContextActionStack.Children.Clear();
+            foreach (var action in actions.OrderByDescending(ActionHelper.GetRank).ThenBy(a => a.ActionName))
             {
+                var contextAction = action;
+
                 Button btn = new Button();
                 btn.Height = 48;
-                btn.Content = action.ActionName;
-                btn.IsEnabled = action.CanExecute;
-                btn.Click += delegate { action.Execute(); };
+                btn.Content = contextAction.ActionName;
+                btn.IsEnabled = contextAction.CanExecute;
+                btn.Click += delegate { contextAction.Execute(); };
 
-                this.ContextStack.Children.Add(btn);
+                this.ContextActionStack.Children.Add(btn);
             }
         }
 
@@ -108,12 +116,17 @@ namespace Plethora.Context.Wpf.Example
 
             public int GetRank(ContextInfo context)
             {
-                return 0;
+                return context.Rank;
             }
 
             #endregion
 
 
+        }
+
+        private void GarbageButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            GC.Collect(2);
         }
     }
 }

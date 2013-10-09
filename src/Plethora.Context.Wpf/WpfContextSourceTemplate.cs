@@ -53,7 +53,7 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        public IWpfContextSource CreateContent()
+        public WpfContextSourceBase CreateContent()
         {
             WpfContextSource instance = new WpfContextSource();
 

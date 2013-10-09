@@ -4,46 +4,11 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextSource : FrameworkElement, IWpfContextSource
+    public class WpfContextSource : WpfContextSourceBase
     {
-        #region Implementation of IWpfContextInfo
+        #region Implementation of WpfContextSourceBase
 
-        #region UIElement DependencyProperty
-
-        public UIElement UIElement
-        {
-            get { return (UIElement)GetValue(UIElementProperty); }
-            set { SetValue(UIElementProperty, value); }
-        }
-
-        public static readonly DependencyProperty UIElementProperty = DependencyProperty.Register(
-            "UIElement",
-            typeof(UIElement),
-            typeof(WpfContextSource),
-            new PropertyMetadata(default(UIElement)));
-
-        #endregion
-
-        #region ContextChanged Event
-
-        /// <summary>
-        /// Raised when <see cref="Context"/> property changes.
-        /// </summary>
-        public event EventHandler ContextChanged;
-
-        /// <summary>
-        /// Raises the <see cref="ContextChanged"/> event.
-        /// </summary>
-        protected virtual void OnContextChanged(EventArgs e)
-        {
-            var handler = ContextChanged;
-            if (handler != null)
-                handler(this, e);
-        }
-
-        #endregion
-
-        IEnumerable<ContextInfo> IWpfContextSource.Contexts
+        public override IEnumerable<ContextInfo> Contexts
         {
             get { return new[] { this.Context }; }
         }
@@ -111,8 +76,8 @@ namespace Plethora.Context.Wpf
 
         private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            var wpfContextInfo = (WpfContextSource)dependencyObject;
-            wpfContextInfo.OnContextChanged(EventArgs.Empty);
+            var contextSource = (WpfContextSource)dependencyObject;
+            contextSource.OnContextChanged(EventArgs.Empty);
         }
 
         #endregion

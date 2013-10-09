@@ -64,6 +64,8 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="WpfContextSourceBase.cs" />
+    <Compile Include="WpfCallbackDelay.cs" />
     <Compile Include="WpfContextSourceTemplateCollection.cs" />
     <Compile Include="IWpfContextSourceTemplate.cs" />
     <Compile Include="DepencyObjectHelper.cs" />
