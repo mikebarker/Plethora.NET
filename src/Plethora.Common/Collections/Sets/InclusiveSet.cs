@@ -98,11 +98,6 @@ namespace Plethora.Collections.Sets
             get { return true; }
         }
 
-        protected override bool IsNativeSubtract
-        {
-            get { return true; }
-        }
-
         #endregion
 
     }
