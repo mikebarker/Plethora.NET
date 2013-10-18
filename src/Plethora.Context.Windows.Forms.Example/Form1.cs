@@ -83,14 +83,16 @@ namespace Plethora.Context.Windows.Forms.Example
             var actions = contextManager.GetActions(contexts);
 
             this.groupBox2.Controls.Clear();
-            foreach (var action in actions)
+            foreach (var action in actions.OrderByDescending(ActionHelper.GetRank).ThenBy(a => a.ActionName))
             {
+                var contextAction = action;
+
                 Button btn = new Button();
                 btn.Dock = DockStyle.Top;
                 btn.Height = 48;
-                btn.Text = action.ActionName;
-                btn.Enabled = action.CanExecute;
-                btn.Click += delegate { action.Execute(); };
+                btn.Text = contextAction.ActionName;
+                btn.Enabled = contextAction.CanExecute;
+                btn.Click += delegate { contextAction.Execute(); };
 
                 this.groupBox2.Controls.Add(btn);
             }

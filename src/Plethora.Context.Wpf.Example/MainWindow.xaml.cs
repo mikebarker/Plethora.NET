@@ -82,7 +82,7 @@ namespace Plethora.Context.Wpf.Example
 
             public string GetActionName(ContextInfo context)
             {
-                return this.actionName + " [" + context.Data + "]";
+                return this.actionName;
             }
 
             public bool CanExecute(ContextInfo context)
@@ -101,7 +101,7 @@ namespace Plethora.Context.Wpf.Example
 
             public string GetActionDescription(ContextInfo context)
             {
-                return "Execute " + GetActionName(context);
+                return "Execute " + GetActionName(context) + " [" + context.Data + "]";
             }
 
             public Image GetImage(ContextInfo context)

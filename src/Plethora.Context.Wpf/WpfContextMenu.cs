@@ -1,12 +1,23 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Plethora.Context.Wpf
 {
+    public class StringCollection : ObservableCollection<string>
+    {
+    }
+
     public class WpfContextMenu : ContextMenu
     {
+        public WpfContextMenu()
+        {
+            SetValue(SuppressedContextsPropertyKey, new StringCollection());
+            SetValue(SuppressedActionsPropertyKey, new StringCollection());
+        }
+
         #region MaxGroupItems Dependency Property
 
         public static readonly DependencyProperty MaxGroupItemsProperty = DependencyProperty.Register(
@@ -55,6 +66,89 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
+        #region SuppressedContexts Dependency Property
+
+        public static readonly DependencyPropertyKey SuppressedContextsPropertyKey = DependencyProperty.RegisterReadOnly(
+            "SuppressedContexts",
+            typeof(StringCollection),
+            typeof(WpfContextMenu),
+            new PropertyMetadata(null, SuppressedContextsChanged));
+
+        public static readonly DependencyProperty SuppressedContextsProperty =
+            SuppressedContextsPropertyKey.DependencyProperty;
+
+        public StringCollection SuppressedContexts
+        {
+            get { return (StringCollection)GetValue(SuppressedContextsProperty); }
+        }
+
+        private static void SuppressedContextsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            var menu = (WpfContextMenu)dependencyObject;
+            menu.suppressedContextsHashSet = null;
+        }
+
+        private HashSet<string> suppressedContextsHashSet;
+
+        private HashSet<string> SuppressedContextsHashSet
+        {
+            get
+            {
+                if (suppressedContextsHashSet == null)
+                {
+                    var suppressedContexts = this.SuppressedContexts;
+                    if ((suppressedContexts != null) && (suppressedContexts.Count != 0))
+                        suppressedContextsHashSet = new HashSet<string>(suppressedContexts);
+                }
+
+                return suppressedContextsHashSet;
+            }
+        }
+
+        #endregion
+
+        #region SuppressedActions Dependency Property
+
+        private static readonly DependencyPropertyKey SuppressedActionsPropertyKey = DependencyProperty.RegisterReadOnly(
+            "SuppressedActions",
+            typeof (StringCollection),
+            typeof (WpfContextMenu),
+            new PropertyMetadata(null, SuppressedActionsChanged));
+
+        public static readonly DependencyProperty SuppressedActionsProperty =
+            SuppressedActionsPropertyKey.DependencyProperty;
+
+        public StringCollection SuppressedActions
+        {
+            get { return (StringCollection)GetValue(SuppressedActionsProperty); }
+        }
+
+        private static void SuppressedActionsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        {
+            var menu = (WpfContextMenu)dependencyObject;
+            menu.suppressedActionsHashSet = null;
+        }
+
+        private HashSet<string> suppressedActionsHashSet;
+
+        private HashSet<string> SuppressedActionsHashSet
+        {
+            get
+            {
+                if (suppressedActionsHashSet == null)
+                {
+                    var suppressedActions = this.SuppressedActions;
+                    if ((suppressedActions != null) && (suppressedActions.Count != 0))
+                        suppressedActionsHashSet = new HashSet<string>(suppressedActions);
+                }
+
+                return suppressedActionsHashSet;
+            }
+        }
+
+        #endregion
+
+
         protected override void OnOpened(RoutedEventArgs e)
         {
             UIElement target = this.PlacementTarget;
@@ -63,10 +157,17 @@ namespace Plethora.Context.Wpf
             this.Items.Clear();
 
             var contexts = contextManager.GetContexts();
+            var suppressedContexts = this.SuppressedContextsHashSet;
+            if (suppressedContexts != null)
+                contexts = contexts.Where(context => !suppressedContexts.Contains(context.Name));
+
             var contextActions = contextManager.GetActions(contexts);
+            var suppressedActions = this.SuppressedActionsHashSet;
+            if (suppressedActions != null)
+                contextActions = contextActions.Where(action => !suppressedActions.Contains(action.ActionName));
 
             //Group by the IUiAction.Group property if available, otherwise by "" as returned from ActionHelper.GetGroup(...)
-            //Order by the IUiAction.Rank property is available
+            //Order by the IUiAction.Rank property if available
             var groupedActions = contextActions
                 .GroupBy(ActionHelper.GetGroupSafe)
                 .Select(group => new { GroupName = group.Key, Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance) })
