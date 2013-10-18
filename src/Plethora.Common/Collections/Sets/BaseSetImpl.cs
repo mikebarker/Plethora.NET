@@ -100,18 +100,5 @@ namespace Plethora.Collections.Sets
         {
             get { return false; }
         }
-
-
-        /// <summary>
-        /// Gets a flag indicating whether the implementation natively supports set subtraction.
-        /// </summary>
-        /// <remarks>
-        /// Subtraction is not commutative and so this property is never called, but it is
-        /// provided for completeness.
-        /// </remarks>
-        protected virtual bool IsNativeSubtract
-        {
-            get { return false; }
-        }
     }
 }
