@@ -3,7 +3,7 @@
 namespace Plethora.Collections.Sets
 {
     /// <summary>
-    /// A base implementation of the <see cref="ISet{T}"/> interface.
+    /// A base implementation of the <see cref="ISetCoreCore{T}"/> interface.
     /// </summary>
     /// <typeparam name="T">The type of the elements in the set.</typeparam>
     /// <remarks>
@@ -20,9 +20,9 @@ namespace Plethora.Collections.Sets
     ///   methods as this can result in a recursive loop.
     ///  </para>
     /// </remarks>
-    public abstract class BaseSetImpl<T> : ISet<T>
+    public abstract class BaseSetImpl<T> : ISetCore<T>
     {
-        #region Implementation of ISet<T>
+        #region Implementation of ISetCore<T>
 
         /// <summary>
         /// Gets a flag indicating whether an element is included in the set.
@@ -31,11 +31,12 @@ namespace Plethora.Collections.Sets
         /// <returns>True if the element is represented; else false.</returns>
         public abstract bool Contains(T element);
 
+        public abstract bool? IsEmpty { get; }
 
         /// <summary>
         /// Returns a set representing the union of this and another set.
         /// </summary>
-        public virtual ISet<T> Union(ISet<T> other)
+        public virtual ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
             if (other == null)
@@ -54,7 +55,7 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Returns a set representing the intersection of this and another set.
         /// </summary>
-        public virtual ISet<T> Intersect(ISet<T> other)
+        public virtual ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
             if (other == null)
@@ -73,14 +74,27 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Returns a set representing the set difference of this and another set.
         /// </summary>
-        public virtual ISet<T> Subtract(ISet<T> other)
+        public virtual ISetCore<T> Subtract(ISetCore<T> other)
         {
             //Validation
             if (other == null)
                 throw new ArgumentNullException("other");
 
+            if (other is EmptySet<T>)
+                return this;
+
+            if (other is CompleteSet<T>)
+                return EmptySet<T>.Instance;
 
             return new SubtractionSet<T>(this, other);
+        }
+
+        /// <summary>
+        /// Returns the inverse set of this set.
+        /// </summary>
+        public virtual ISetCore<T> Inverse()
+        {
+            return new InverseSet<T>(this);
         }
 
         #endregion

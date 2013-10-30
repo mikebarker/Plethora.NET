@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace Plethora.Collections.Sets
 {
-    public sealed class InclusiveSet<T> : BaseSetImpl<T>, ISet<T>
+    public sealed class InclusiveSet<T> : BaseSetImpl<T>, ISetCore<T>
     {
         #region Fields
 
-        private readonly HashSet<T> includedElements;
+        internal readonly HashSet<T> includedElements;
 
         #endregion
 
@@ -29,20 +29,30 @@ namespace Plethora.Collections.Sets
             this.includedElements = new HashSet<T>(includedElements);
         }
 
+        private InclusiveSet(HashSet<T> includedElements)
+        {
+            this.includedElements = includedElements;
+        }
+
         #endregion
 
-        #region Implentation Of ISet<T>
+        #region Implentation Of ISetCore<T>
 
         public override bool Contains(T element)
         {
             return this.includedElements.Contains(element);
         }
-        
+
+        public override bool? IsEmpty
+        {
+            get { return (this.includedElements.Count == 0); }
+        }
+
         #endregion
         
         #region Overrides of BaseSetImpl<T>
 
-        public override ISet<T> Union(ISet<T> other)
+        public override ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
             if (other == null)
@@ -61,13 +71,20 @@ namespace Plethora.Collections.Sets
                 var newElements = this.includedElements
                     .Concat(otherInclusive.includedElements);
 
-                return new InclusiveSet<T>(newElements);
+                HashSet<T> newHashSet = new HashSet<T>(newElements);
+                if (newHashSet.Count == 0)
+                    return EmptySet<T>.Instance;
+
+                if (newHashSet.Count == this.includedElements.Count)
+                    return this;
+
+                return new InclusiveSet<T>(newHashSet);
             }
 
             return base.Union(other);
         }
 
-        public override ISet<T> Intersect(ISet<T> other)
+        public override ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
             if (other == null)
@@ -77,20 +94,38 @@ namespace Plethora.Collections.Sets
             var newElements = this.includedElements
                 .Where(element => other.Contains(element));
 
-            return new InclusiveSet<T>(newElements);
+            HashSet<T> newHashSet = new HashSet<T>(newElements);
+            if (newHashSet.Count == 0)
+                return EmptySet<T>.Instance;
+
+            if (newHashSet.Count == this.includedElements.Count)
+                return this;
+
+            return new InclusiveSet<T>(newHashSet);
         }
 
-        public override ISet<T> Subtract(ISet<T> other)
+        public override ISetCore<T> Subtract(ISetCore<T> other)
         {
             //Validation
             if (other == null)
                 throw new ArgumentNullException("other");
 
-
             var newElements = this.includedElements
                 .Where(element => !other.Contains(element));
 
-            return new InclusiveSet<T>(newElements);
+            HashSet<T> newHashSet = new HashSet<T>(newElements);
+            if (newHashSet.Count == 0)
+                return EmptySet<T>.Instance;
+
+            if (newHashSet.Count == this.includedElements.Count)
+                return this;
+
+            return new InclusiveSet<T>(newHashSet);
+        }
+
+        public override ISetCore<T> Inverse()
+        {
+            return new ExclusiveSet<T>(this.includedElements);
         }
 
         protected override bool IsNativeIntersect
@@ -100,5 +135,9 @@ namespace Plethora.Collections.Sets
 
         #endregion
 
+        public IEnumerable<T> IncludedElements
+        {
+            get { return this.includedElements; }
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace Plethora.Collections.Sets
 {
-    public interface ISet<T>
+    public interface ISetCore<T>
     {
         /// <summary>
         /// Gets a flag indicating whether an element is included in the set.
@@ -9,20 +9,29 @@
         /// <returns>True if the element is represented; else false.</returns>
         bool Contains(T element);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        bool? IsEmpty { get; }
 
         /// <summary>
         /// Returns a set representing the union of this and another set.
         /// </summary>
-        ISet<T> Union(ISet<T> other);
+        ISetCore<T> Union(ISetCore<T> other);
 
         /// <summary>
         /// Returns a set representing the intersection of this and another set.
         /// </summary>
-        ISet<T> Intersect(ISet<T> other);
+        ISetCore<T> Intersect(ISetCore<T> other);
 
         /// <summary>
         /// Returns a set representing the set difference of this and another set.
         /// </summary>
-        ISet<T> Subtract(ISet<T> other);
+        ISetCore<T> Subtract(ISetCore<T> other);
+
+        /// <summary>
+        /// Returns the inverse set of this set.
+        /// </summary>
+        ISetCore<T> Inverse();
     }
 }

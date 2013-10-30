@@ -92,5 +92,24 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsTrue(A_u_B.Contains(8));
             Assert.IsTrue(A_u_B.Contains(9));
         }
+
+        [Test]
+        public void Inverse()
+        {
+            //exec
+            var notA = A.Inverse();
+
+            //test
+            Assert.IsFalse(notA.Contains(0));
+            Assert.IsTrue(notA.Contains(1));
+            Assert.IsTrue(notA.Contains(2));
+            Assert.IsTrue(notA.Contains(3));
+            Assert.IsFalse(notA.Contains(4));
+            Assert.IsFalse(notA.Contains(5));
+            Assert.IsTrue(notA.Contains(6));
+            Assert.IsFalse(notA.Contains(7));
+            Assert.IsFalse(notA.Contains(8));
+            Assert.IsFalse(notA.Contains(9));
+        }
     }
 }
