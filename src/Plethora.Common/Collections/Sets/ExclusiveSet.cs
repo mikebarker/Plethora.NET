@@ -4,11 +4,11 @@ using System.Linq;
 
 namespace Plethora.Collections.Sets
 {
-    public sealed class ExclusiveSet<T> : BaseSetImpl<T>, ISet<T>
+    public sealed class ExclusiveSet<T> : BaseSetImpl<T>, ISetCore<T>
     {
         #region Fields
 
-        private readonly HashSet<T> excludedElements;
+        internal readonly HashSet<T> excludedElements;
 
         #endregion
 
@@ -37,12 +37,17 @@ namespace Plethora.Collections.Sets
         {
             return !this.excludedElements.Contains(element);
         }
-        
+
+        public override bool? IsEmpty
+        {
+            get { return false; }
+        }
+
         #endregion
-        
+
         #region Overrides of BaseSetImpl<T>
 
-        public override ISet<T> Union(ISet<T> other)
+        public override ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
             if (other == null)
@@ -55,14 +60,14 @@ namespace Plethora.Collections.Sets
             return new ExclusiveSet<T>(newElements);
         }
 
-        public override ISet<T> Intersect(ISet<T> other)
+        public override ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
             if (other == null)
                 throw new ArgumentNullException("other");
 
 
-            //Short-cut method to union two inclusive sets.
+            //Short-cut method to intersect two exclusive sets.
             // There is no advantage to be gain in setting IsNativeIntersect to true, as
             // this method is only useful if both objects are ExclusiveSets. If this
             // is the case, nothing is to be gained by making the call commutative.
@@ -80,6 +85,42 @@ namespace Plethora.Collections.Sets
             return base.Intersect(other);
         }
 
+        public override ISetCore<T> Subtract(ISetCore<T> other)
+        {
+            //Validation
+            if (other == null)
+                throw new ArgumentNullException("other");
+
+
+            //Short-cut method to subtract an exclusive set.
+            var otherExclusive = other as ExclusiveSet<T>;
+            if (otherExclusive != null)
+            {
+                var newElements = otherExclusive.excludedElements
+                    .Where(element => !this.excludedElements.Contains(element));
+
+                return new InclusiveSet<T>(newElements);
+            }
+
+            //Short-cut method to subtract an inclusive set.
+            var otherInclusive = other as InclusiveSet<T>;
+            if (otherInclusive != null)
+            {
+                var newElements = this.excludedElements
+                    .Concat(otherInclusive.includedElements);
+
+                return new ExclusiveSet<T>(newElements);
+            }
+
+
+            return base.Subtract(other);
+        }
+
+        public override ISetCore<T> Inverse()
+        {
+            return new InclusiveSet<T>(this.excludedElements);
+        }
+
         protected override bool IsNativeUnion
         {
             get { return true; }
@@ -87,5 +128,9 @@ namespace Plethora.Collections.Sets
 
         #endregion
 
+        public IEnumerable<T> ExcludedElements
+        {
+            get { return this.excludedElements; }
+        }
     }
 }

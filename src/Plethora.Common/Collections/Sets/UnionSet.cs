@@ -5,12 +5,12 @@ namespace Plethora.Collections.Sets
     /// <summary>
     /// Represents the union of two underlying sets.
     /// </summary>
-    internal sealed class UnionSet<T> : BaseSetImpl<T>, ISet<T>
+    internal sealed class UnionSet<T> : BaseSetImpl<T>, ISetCore<T>
     {
         #region Fields
 
-        private readonly ISet<T> a;
-        private readonly ISet<T> b;
+        private readonly ISetCore<T> a;
+        private readonly ISetCore<T> b;
 
         #endregion
 
@@ -19,7 +19,7 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Initializes an instance of the <see cref="UnionSet{T}"/> class.
         /// </summary>
-        public UnionSet(ISet<T> a, ISet<T> b)
+        public UnionSet(ISetCore<T> a, ISetCore<T> b)
         {
             //Validation
             if (a == null)
@@ -42,6 +42,26 @@ namespace Plethora.Collections.Sets
             return
                 a.Contains(element) ||
                 b.Contains(element);
+        }
+
+        public override bool? IsEmpty
+        {
+            get
+            {
+                if ((a.IsEmpty == true) &&
+                    (b.IsEmpty == true))
+                {
+                    return true;
+                }
+
+                if ((a.IsEmpty == false) ||
+                    (b.IsEmpty == false))
+                {
+                    return false;
+                }
+
+                return null;
+            }
         }
 
         #endregion

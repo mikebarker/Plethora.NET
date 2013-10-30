@@ -8,11 +8,14 @@ namespace Plethora.Collections
     {
         public static IEnumerable<T> GetByKey<TKey, T>(this SortedByKeyList<TKey, T> list, TKey key)
         {
-            return GetByRange(list, new Range<TKey>(key, key, true, true));
+            return GetByRange(list, new Range<TKey>(key, key, true, true, list.Comparer));
         }
 
         public static IEnumerable<T> GetByRange<TKey, T>(this SortedByKeyList<TKey, T> list, Range<TKey> range)
         {
+            if (list == null)
+                throw new ArgumentNullException("list");
+
             if (list.Comparer.Compare(range.Min, range.Max) > 0) // min > max
                 throw new ArgumentException(ResourceProvider.ArgMustBeLessThan("range.Min", "range.Max"), "range");
 

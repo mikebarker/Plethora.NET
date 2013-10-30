@@ -13,8 +13,8 @@ namespace Plethora.Test.Collections.Sets
         [SetUp]
         public void SetUp()
         {
-            A = new MockSet<int>(1, 2, 3, 6);
-            B = new MockSet<int>(3, 4, 5);
+            A = new MockSetCore<int>(1, 2, 3, 6);
+            B = new MockSetCore<int>(3, 4, 5);
         }
 
         [Test]
@@ -72,6 +72,25 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_minus_B.Contains(7));
             Assert.IsFalse(A_minus_B.Contains(8));
             Assert.IsFalse(A_minus_B.Contains(9));
+        }
+
+        [Test]
+        public void Inverse()
+        {
+            //exec
+            var notA = A.Inverse();
+
+            //test
+            Assert.IsTrue(notA.Contains(0));
+            Assert.IsFalse(notA.Contains(1));
+            Assert.IsFalse(notA.Contains(2));
+            Assert.IsFalse(notA.Contains(3));
+            Assert.IsTrue(notA.Contains(4));
+            Assert.IsTrue(notA.Contains(5));
+            Assert.IsFalse(notA.Contains(6));
+            Assert.IsTrue(notA.Contains(7));
+            Assert.IsTrue(notA.Contains(8));
+            Assert.IsTrue(notA.Contains(9));
         }
     }
 }

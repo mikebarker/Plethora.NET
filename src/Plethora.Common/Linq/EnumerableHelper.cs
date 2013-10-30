@@ -193,6 +193,52 @@ namespace Plethora.Linq
         }
         #endregion
 
+        #region ToCollectionIfRequired<T>
+
+        /// <summary>
+        /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="ICollection{T}"/> if required,
+        /// otherwise returns the source directly.
+        /// </summary>
+        /// <typeparam name="T">The type of the collection.</typeparam>
+        /// <param name="source">The <see cref="IEnumerable{T}"/> to be converted.</param>
+        /// <returns>
+        /// The <paramref name="source"/> if it is already an <see cref="ICollection{T}"/>, else
+        /// an <see cref="ICollection{T}"/> containing the elements from <paramref name="source"/>.
+        /// </returns>
+        public static ICollection<T> ToCollectionIfRequired<T>(this IEnumerable<T> source)
+        {
+            var sourceCollection = source as ICollection<T>;
+            if (sourceCollection != null)
+                return sourceCollection;
+
+            return source.ToList();
+        }
+
+        #endregion
+        
+        #region ToListIfRequired<T>
+
+        /// <summary>
+        /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="IList{T}"/> if required,
+        /// otherwise returns the source directly.
+        /// </summary>
+        /// <typeparam name="T">The type of the list.</typeparam>
+        /// <param name="source">The <see cref="IEnumerable{T}"/> to be converted.</param>
+        /// <returns>
+        /// The <paramref name="source"/> if it is already an <see cref="IList{T}"/>, else
+        /// an <see cref="IList{T}"/> containing the elements from <paramref name="source"/>.
+        /// </returns>
+        public static IList<T> ToListIfRequired<T>(this IEnumerable<T> source)
+        {
+            var sourceList = source as IList<T>;
+            if (sourceList != null)
+                return sourceList;
+
+            return source.ToList();
+        }
+
+        #endregion
+
         #region AsEnumerable
 
         /// <summary>

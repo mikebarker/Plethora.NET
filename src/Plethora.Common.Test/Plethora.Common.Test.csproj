@@ -88,6 +88,8 @@
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />
     <Compile Include="Collections\Sets\BaseSetImpl_Test.cs" />
+    <Compile Include="Collections\Sets\CompleteSet_Test.cs" />
+    <Compile Include="Collections\Sets\EmptySet_Test.cs" />
     <Compile Include="Collections\Sets\ExclusiveSet_Test.cs" />
     <Compile Include="Collections\Sets\InclusiveExclusiveInteraction_Test.cs" />
     <Compile Include="Collections\Sets\InclusiveSet_Test.cs" />

@@ -5,32 +5,27 @@ namespace Plethora.Collections.Sets
     /// <summary>
     /// Represents the intersection of two underlying sets.
     /// </summary>
-    internal sealed class IntersectionSet<T> : BaseSetImpl<T>, ISetCore<T>
+    internal sealed class InverseSet<T> : BaseSetImpl<T>, ISetCore<T>
     {
         #region Fields
 
         private readonly ISetCore<T> a;
-        private readonly ISetCore<T> b;
 
         #endregion
 
         #region Constructors
 
         /// <summary>
-        /// Initializes an instance of the <see cref="IntersectionSet{T}"/> class.
+        /// Initializes an instance of the <see cref="InverseSet{T}"/> class.
         /// </summary>
-        public IntersectionSet(ISetCore<T> a, ISetCore<T> b)
+        public InverseSet(ISetCore<T> a)
         {
             //Validation
             if (a == null)
                 throw new ArgumentNullException("a");
 
-            if (b == null)
-                throw new ArgumentNullException("b");
-
 
             this.a = a;
-            this.b = b;
         }
 
         #endregion
@@ -39,20 +34,23 @@ namespace Plethora.Collections.Sets
 
         public override bool Contains(T element)
         {
-            return
-                a.Contains(element) &&
-                b.Contains(element);
+            return !a.Contains(element);
+        }
+
+        public override ISetCore<T> Inverse()
+        {
+            return a;
         }
 
         public override bool? IsEmpty
         {
             get
             {
-                if ((a.IsEmpty == true) ||
-                    (b.IsEmpty == true))
-                {
+                if (a.IsEmpty == true)
+                    return false;
+
+                if (a.IsEmpty == false)
                     return true;
-                }
 
                 return null;
             }
