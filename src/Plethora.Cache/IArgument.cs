@@ -26,7 +26,7 @@ namespace Plethora.Cache
     /// then the <see cref="IArgument{TData,TArgument}"/> implementation should describe the ID (or IDs)
     /// of data required. It may represent a single ID (e.g. 10564) or a range (e.g. 10200-10800).
     /// </remarks>
-    public interface IArgument<TData, TArgument>
+    public interface IArgument<in TData, TArgument>
     {
         /// <summary>
         /// Gets a value indicating whether two arguments overlap in the key-space which they represent.
