@@ -66,6 +66,7 @@
     <Compile Include="ComplexExample\PriceArg.cs" />
     <Compile Include="ComplexExample\PriceCache.cs" />
     <Compile Include="ComplexExample\PriceSource.cs" />
+    <Compile Include="ComplexExample\RangeSet.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="SimpleExample\Foo.cs" />
     <Compile Include="SimpleExample\SimpleProgram.cs" />
@@ -75,6 +76,10 @@
     <ProjectReference Include="..\Plethora.Cache\Plethora.Cache.csproj">
       <Project>{C80DB42E-C7EA-4CF4-9F23-564F86983D01}</Project>
       <Name>Plethora.Cache</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
+      <Name>Plethora.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

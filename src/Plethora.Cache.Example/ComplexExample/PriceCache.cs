@@ -10,7 +10,7 @@ namespace Plethora.Cache.Example.ComplexExample
 
         public IEnumerable<Price> GetStockPrices(int stockId, DateTime from, DateTime to)
         {
-            PriceArg arg = new PriceArg(stockId, stockId, from, to);
+            PriceArg arg = new PriceArg(stockId, from, to);
 
             List<PriceArg> arguments = new List<PriceArg> { arg };
             IEnumerable<Price> prices = GetData(arguments, 5000);
@@ -24,7 +24,15 @@ namespace Plethora.Cache.Example.ComplexExample
         /// </summary>
         protected override IEnumerable<Price> GetDataFromSource(IEnumerable<PriceArg> arguments, int millisecondsTimeout)
         {
-            return arguments.SelectMany(argument => this.source.GetPrices(argument));
+            IEnumerable<Price> prices = Enumerable.Empty<Price>();
+            foreach (PriceArg argument in arguments)
+            {
+                foreach (long stockId in argument.StockIds)
+                {
+                    prices = prices.Concat(this.source.GetPrices(stockId, argument.MinDate, argument.MaxDate));
+                }
+            }
+            return prices;
         }
 
         #endregion

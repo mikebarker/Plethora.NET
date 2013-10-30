@@ -65,10 +65,9 @@
     <Compile Include="CacheBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="IArgument.cs" />
-    <Compile Include="Spacial\DimensionDefinition.cs" />
     <Compile Include="Spacial\SpacialArgument.cs" />
     <Compile Include="Spacial\SpacialDefinition.cs" />
-    <Compile Include="Spacial\SpacialRegion.cs" />
+    <Compile Include="Spacial\SpacialOperations.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">

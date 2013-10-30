@@ -1,232 +1,160 @@
-﻿using System;
+﻿using Plethora.Collections.Sets;
 
 namespace Plethora.Cache.Spacial
 {
-    public class SpacialDefinition<T1>
+    public struct SpaceRegion<T1>
     {
-        #region Fields
+        private readonly ISetCore<T1> dimension1;
 
-        private readonly DimensionDefinition<T1> dimension1;
-        #endregion
-
-        #region Constructors
-
-        public SpacialDefinition(
-            DimensionDefinition<T1> dimension1)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpaceRegion{T1}"/> class.
+        /// </summary>
+        public SpaceRegion(ISetCore<T1> dimension1)
         {
-            //Validation
-            if (dimension1 == null)
-                throw new ArgumentNullException("dimension1");
-
-
             this.dimension1 = dimension1;
         }
-        #endregion
-        
-        #region Public Members
 
-        public SpacialRegion<T1> CreateRegion(
-            Range<T1> dim1)
+        public ISetCore<T1> Dimension1
         {
-            return new SpacialRegion<T1>(this, dim1);
+            get { return dimension1; }
         }
-        #endregion
 
-        #region Internal Members
-
-        internal DimensionDefinition<T1> Dimension1
+        public bool IsEmpty
         {
-            get { return this.dimension1; }
+            get
+            {
+                return
+                    (this.dimension1.IsEmpty == true);
+            }
         }
-        #endregion
     }
 
-    public class SpacialDefinition<T1, T2>
+    public struct SpaceRegion<T1, T2>
     {
-        #region Fields
+        private readonly ISetCore<T1> dimension1;
+        private readonly ISetCore<T2> dimension2;
 
-        private readonly DimensionDefinition<T1> dimension1;
-        private readonly DimensionDefinition<T2> dimension2;
-        #endregion
-
-        #region Constructors
-
-        public SpacialDefinition(
-            DimensionDefinition<T1> dimension1,
-            DimensionDefinition<T2> dimension2)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpaceRegion{T1, T2}"/> class.
+        /// </summary>
+        public SpaceRegion(ISetCore<T1> dimension1, ISetCore<T2> dimension2)
         {
-            //Validation
-            if (dimension1 == null)
-                throw new ArgumentNullException("dimension1");
-
-            if (dimension2 == null)
-                throw new ArgumentNullException("dimension2");
-
-
             this.dimension1 = dimension1;
             this.dimension2 = dimension2;
         }
-        #endregion
-        
-        #region Public Members
 
-        public SpacialRegion<T1, T2> CreateRegion(
-            Range<T1> dim1,
-            Range<T2> dim2)
+        public ISetCore<T1> Dimension1
         {
-            return new SpacialRegion<T1, T2>(this, dim1, dim2);
-        }
-        #endregion
-
-        #region Internal Members
-
-        internal DimensionDefinition<T1> Dimension1
-        {
-            get { return this.dimension1; }
+            get { return dimension1; }
         }
 
-        internal DimensionDefinition<T2> Dimension2
+        public ISetCore<T2> Dimension2
         {
-            get { return this.dimension2; }
+            get { return dimension2; }
         }
-        #endregion
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return
+                    (this.dimension1.IsEmpty == true) ||
+                    (this.dimension2.IsEmpty == true);
+            }
+        }
     }
 
-    public class SpacialDefinition<T1, T2, T3>
+    public struct SpaceRegion<T1, T2, T3>
     {
-        #region Fields
+        private readonly ISetCore<T1> dimension1;
+        private readonly ISetCore<T2> dimension2;
+        private readonly ISetCore<T3> dimension3;
 
-        private readonly DimensionDefinition<T1> dimension1;
-        private readonly DimensionDefinition<T2> dimension2;
-        private readonly DimensionDefinition<T3> dimension3;
-        #endregion
-
-        #region Constructors
-
-        public SpacialDefinition(
-            DimensionDefinition<T1> dimension1,
-            DimensionDefinition<T2> dimension2,
-            DimensionDefinition<T3> dimension3)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpaceRegion{T1,T2,T3}"/> class.
+        /// </summary>
+        public SpaceRegion(ISetCore<T1> dimension1, ISetCore<T2> dimension2, ISetCore<T3> dimension3)
         {
-            //Validation
-            if (dimension1 == null)
-                throw new ArgumentNullException("dimension1");
-
-            if (dimension2 == null)
-                throw new ArgumentNullException("dimension2");
-
-            if (dimension3 == null)
-                throw new ArgumentNullException("dimension3");
-
-
             this.dimension1 = dimension1;
             this.dimension2 = dimension2;
             this.dimension3 = dimension3;
         }
-        #endregion
-        
-        #region Public Members
 
-        public SpacialRegion<T1, T2, T3> CreateRegion(
-            Range<T1> dim1,
-            Range<T2> dim2,
-            Range<T3> dim3)
+        public ISetCore<T1> Dimension1
         {
-            return new SpacialRegion<T1, T2, T3>(this, dim1, dim2, dim3);
-        }
-        #endregion
-
-        #region Internal Members
-
-        internal DimensionDefinition<T1> Dimension1
-        {
-            get { return this.dimension1; }
+            get { return dimension1; }
         }
 
-        internal DimensionDefinition<T2> Dimension2
+        public ISetCore<T2> Dimension2
         {
-            get { return this.dimension2; }
+            get { return dimension2; }
         }
 
-        internal DimensionDefinition<T3> Dimension3
+        public ISetCore<T3> Dimension3
         {
-            get { return this.dimension3; }
+            get { return dimension3; }
         }
-        #endregion
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return
+                    (this.dimension1.IsEmpty == true) ||
+                    (this.dimension2.IsEmpty == true) ||
+                    (this.dimension3.IsEmpty == true);
+            }
+        }
     }
 
-    public class SpacialDefinition<T1, T2, T3, T4>
+    public struct SpaceRegion<T1, T2, T3, T4>
     {
-        #region Fields
+        private readonly ISetCore<T1> dimension1;
+        private readonly ISetCore<T2> dimension2;
+        private readonly ISetCore<T3> dimension3;
+        private readonly ISetCore<T4> dimension4;
 
-        private readonly DimensionDefinition<T1> dimension1;
-        private readonly DimensionDefinition<T2> dimension2;
-        private readonly DimensionDefinition<T3> dimension3;
-        private readonly DimensionDefinition<T4> dimension4;
-        #endregion
-
-        #region Constructors
-
-        public SpacialDefinition(
-            DimensionDefinition<T1> dimension1,
-            DimensionDefinition<T2> dimension2,
-            DimensionDefinition<T3> dimension3,
-            DimensionDefinition<T4> dimension4)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SpaceRegion{T1,T2,T3,T4}"/> class.
+        /// </summary>
+        public SpaceRegion(ISetCore<T1> dimension1, ISetCore<T2> dimension2, ISetCore<T3> dimension3, ISetCore<T4> dimension4)
         {
-            //Validation
-            if (dimension1 == null)
-                throw new ArgumentNullException("dimension1");
-
-            if (dimension2 == null)
-                throw new ArgumentNullException("dimension2");
-
-            if (dimension3 == null)
-                throw new ArgumentNullException("dimension3");
-
-            if (dimension4 == null)
-                throw new ArgumentNullException("dimension4");
-
-
             this.dimension1 = dimension1;
             this.dimension2 = dimension2;
             this.dimension3 = dimension3;
             this.dimension4 = dimension4;
         }
-        #endregion
-        
-        #region Public Members
 
-        public SpacialRegion<T1, T2, T3, T4> CreateRegion(
-            Range<T1> dim1,
-            Range<T2> dim2,
-            Range<T3> dim3,
-            Range<T4> dim4)
+        public ISetCore<T1> Dimension1
         {
-            return new SpacialRegion<T1, T2, T3, T4>(this, dim1, dim2, dim3, dim4);
-        }
-        #endregion
-
-        #region Internal Members
-
-        internal DimensionDefinition<T1> Dimension1
-        {
-            get { return this.dimension1; }
+            get { return dimension1; }
         }
 
-        internal DimensionDefinition<T2> Dimension2
+        public ISetCore<T2> Dimension2
         {
-            get { return this.dimension2; }
+            get { return dimension2; }
         }
 
-        internal DimensionDefinition<T3> Dimension3
+        public ISetCore<T3> Dimension3
         {
-            get { return this.dimension3; }
+            get { return dimension3; }
         }
 
-        internal DimensionDefinition<T4> Dimension4
+        public ISetCore<T4> Dimension4
         {
-            get { return this.dimension4; }
+            get { return dimension4; }
         }
-        #endregion
+
+        public bool IsEmpty
+        {
+            get
+            {
+                return
+                    (this.dimension1.IsEmpty == true) ||
+                    (this.dimension2.IsEmpty == true) ||
+                    (this.dimension3.IsEmpty == true) ||
+                    (this.dimension4.IsEmpty == true);
+            }
+        }
     }
 }

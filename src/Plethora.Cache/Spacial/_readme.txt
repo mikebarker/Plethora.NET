@@ -37,7 +37,7 @@ The regions may be visualised as (where A is the larger bordered region, and B i
                 |??????#### c ####\\\\|
                 +---------------------+
                           Date
-            
+
 For each of these defined regions ('a' to 'd'), the measures derived from 'B' must be limited
 by the bounds of 'A'. That is, if A.maxDate < B.minDate-1 then the region 'c' must be limited
 from A.minDate to A.maxDate (and not to B.minDate-1)
@@ -55,14 +55,3 @@ and must not be returned. e.g. Consider the case:
 
 In this case regions 'b' and 'c' are bound by the region 'A'. Note also that 'd' is not a valid
 region in this case, as 'A' has no content in that area of the key-space.
-
-
-CLASSES IN .SPACIAL NAMESPACE
-=============================
-'DimensionDefinition' describes a single dimension.
-'SpacialDefinition' describes the set of dimnesions which make up the complete key space.
-
-'Range<>' is used to describe a sub-set of a single dimension (e.g. from 1 Jan 2000 to 31 Dec 2005)
-'Tuple<>' is used to describe a point in the complete key-space (e.g. VOD.L on 27 Mar 2004)
-
-'SpacialRegion' is used to describe a sub-set of the key-space (that is a range across each dimension).

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace Plethora.Cache.Example.ComplexExample
@@ -29,17 +28,14 @@ namespace Plethora.Cache.Example.ComplexExample
             }
         }
 
-        public List<Price> GetPrices(PriceArg arg)
+        public List<Price> GetPrices(long stockId, DateTime minDate, DateTime maxDate)
         {
             Thread.Sleep(3000);
 
             List<Price> rtn = new List<Price>();
-            for (long i = arg.MinStockId; i <= arg.MaxStockId; i++)
+            for (DateTime date = minDate; date <= maxDate; date = date.AddDays(1))
             {
-                for (DateTime date = arg.MinDate; date <= arg.MaxDate; date=date.AddDays(1))
-                {
-                    rtn.Add(this.prices[i][date]);
-                }
+                rtn.Add(this.prices[stockId][date]);
             }
             return rtn;
         }
