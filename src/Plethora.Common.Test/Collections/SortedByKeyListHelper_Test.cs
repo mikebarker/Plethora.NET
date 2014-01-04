@@ -474,26 +474,6 @@ namespace Plethora.Test.Collections
 
         
         [Test]
-        public void GetByRange_Error_MinAfterMax()
-        {
-            //Setup
-            var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2010, 01, 01), new DateTime(2000, 01, 01));
-
-            try
-            {
-                //Exec
-                list.GetByRange(range);
-
-                Assert.Fail();
-            }
-            catch (ArgumentException ex)
-            {
-                Assert.IsNotNull(ex);
-            }
-        }
-
-        [Test]
         public void GetByRange_FirstElement()
         {
             //Setup

@@ -6,6 +6,12 @@ using System.Text;
 
 namespace Plethora
 {
+    public interface IEqualityHelper<in T> : IEqualityComparer<T>
+    {
+        string GetToString(T t);
+    }
+
+
     /// <summary>
     /// Ensures the consistant application of properties when evaluating ToString, GetHashCode, Equals methods.
     /// </summary>
@@ -48,7 +54,7 @@ namespace Plethora
     ///   ]]>
     ///   </code>
     /// </remarks>
-    public abstract class EqualityHelper<T> : IEqualityComparer<T>
+    public abstract class EqualityHelper<T> : IEqualityHelper<T>
     {
         #region Fields
 
@@ -567,9 +573,6 @@ namespace Plethora
                 if (exp4 == null)
                     throw new ArgumentNullException("exp4");
 
-                if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
-
                 if (exp5 == null)
                     throw new ArgumentNullException("exp5");
 
@@ -663,9 +666,6 @@ namespace Plethora
 
                 if (exp3 == null)
                     throw new ArgumentNullException("exp3");
-
-                if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
 
                 if (exp4 == null)
                     throw new ArgumentNullException("exp4");
@@ -772,9 +772,6 @@ namespace Plethora
 
                 if (exp3 == null)
                     throw new ArgumentNullException("exp3");
-
-                if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
 
                 if (exp4 == null)
                     throw new ArgumentNullException("exp4");
@@ -890,9 +887,6 @@ namespace Plethora
 
                 if (exp3 == null)
                     throw new ArgumentNullException("exp3");
-
-                if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
 
                 if (exp4 == null)
                     throw new ArgumentNullException("exp4");

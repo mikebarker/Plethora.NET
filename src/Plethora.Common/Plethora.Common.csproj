@@ -76,6 +76,7 @@
     <Compile Include="Collections\SortedList.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
+    <Compile Include="Collections\ReverseComparer.cs" />
     <Compile Include="WeakEvent.cs" />
     <Compile Include="Threading\LiteLock.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
