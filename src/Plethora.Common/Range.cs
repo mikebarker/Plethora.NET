@@ -38,7 +38,7 @@ namespace Plethora
         /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
         public Range(T min, T max, bool minInclusive, bool maxInclusive)
-            : this (min, max, minInclusive,maxInclusive, Comparer<T>.Default)
+            : this(min, max, minInclusive,maxInclusive, Comparer<T>.Default)
         {
         }
 

@@ -98,6 +98,7 @@
     <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
+    <Compile Include="Collections\ReverseComparer_Test.cs" />
     <Compile Include="WeakEvent_Test.cs" />
     <Compile Include="WeakDelegate_Test.cs" />
     <Compile Include="Data\DataRecordHelper_Test.cs" />
