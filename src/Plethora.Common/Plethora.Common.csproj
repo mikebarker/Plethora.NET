@@ -77,6 +77,11 @@
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="Collections\ReverseComparer.cs" />
+    <Compile Include="Data\DbCommandRetryEventHandler.cs" />
+    <Compile Include="Data\DbExecutorConfig.cs" />
+    <Compile Include="Data\DbExecutor.cs" />
+    <Compile Include="Data\IExceptionTester.cs" />
+    <Compile Include="Data\SqlClient\SqlExceptionTester.cs" />
     <Compile Include="WeakEvent.cs" />
     <Compile Include="Threading\LiteLock.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
@@ -144,6 +149,7 @@
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
     <Reference Include="System.Data" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
