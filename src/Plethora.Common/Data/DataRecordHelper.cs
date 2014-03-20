@@ -23,10 +23,18 @@ namespace Plethora.Data
             object baseObjValue;
             try
             {
-                //test if conversion is required
-                baseObjValue = (objValue.GetType() == baseType)
-                    ? objValue
-                    : Convert.ChangeType(objValue, baseType);
+                //test for enum
+                if ((typeOfT.IsEnum) && (objValue is string))
+                {
+                    baseObjValue = Enum.Parse(typeOfT, (string)objValue);
+                }
+                else
+                {
+                    //test if conversion is required
+                    baseObjValue = (objValue.GetType() == baseType)
+                        ? objValue
+                        : Convert.ChangeType(objValue, baseType);
+                }
             }
             catch (Exception ex)
             {
@@ -43,6 +51,11 @@ namespace Plethora.Data
             {
                 var genericArg1 = type.GetGenericArguments()[0];
                 return genericArg1;
+            }
+
+            if (type.IsEnum)
+            {
+                return type.GetEnumUnderlyingType();
             }
 
             return type;
