@@ -10,12 +10,32 @@ namespace Plethora.Data
 {
     public static class DbExecutor
     {
-        private static readonly object configLock = new object();
-        private static int defaultRetryCount = 3;
-        private static Dictionary<string, string> substituteText = new Dictionary<string, string>();
-        private static Dictionary<string, int> substituteTimeout = new Dictionary<string, int>();
-        private static Dictionary<string, int> retryCounts = new Dictionary<string, int>();
+        private class Config
+        {
+            public int DefaultRetryCount { get; private set; }
+            public Dictionary<string, string> SubstituteText { get; private set; }
+            public Dictionary<string, int> SubstituteTimeout { get; private set; }
+            public Dictionary<string, int> RetryCounts { get; private set; }
 
+            public Config()
+                : this(3, new Dictionary<string, string>(), new Dictionary<string, int>(), new Dictionary<string, int>())
+            {
+            }
+
+            public Config(
+                int defaultRetryCount,
+                Dictionary<string, string> substituteText,
+                Dictionary<string, int> substituteTimeout,
+                Dictionary<string, int> retryCounts)
+            {
+                this.DefaultRetryCount = defaultRetryCount;
+                this.SubstituteText = substituteText;
+                this.SubstituteTimeout = substituteTimeout;
+                this.RetryCounts = retryCounts;
+            }
+        }
+
+        private static volatile Config config = new Config();
         private static string configFile;
         private static FileSystemWatcher configFileWatcher;
 
@@ -127,27 +147,17 @@ namespace Plethora.Data
                 throw new InvalidOperationException("The command object does not have its command text property set.");
 
 
-            int tmp_defaultRetryCount;
-            Dictionary<string, string> tmp_substituteText;
-            Dictionary<string, int> tmp_substituteTimeout;
-            Dictionary<string, int> tmp_retryCounts;
-
-            lock (configLock)
-            {
-                tmp_defaultRetryCount = defaultRetryCount;
-                tmp_substituteText = substituteText;
-                tmp_substituteTimeout = substituteTimeout;
-                tmp_retryCounts = retryCounts;
-            }
+            //Keep an atomic local copy of the config, to prevent changes during execution.
+            Config local_config = config;
 
             string commandText;
-            if (tmp_substituteText.TryGetValue(command.CommandText, out commandText))
+            if (local_config.SubstituteText.TryGetValue(command.CommandText, out commandText))
             {
                 command.CommandText = commandText;
             }
 
             int timeout;
-            if (tmp_substituteTimeout.TryGetValue(command.CommandText, out timeout))
+            if (local_config.SubstituteTimeout.TryGetValue(command.CommandText, out timeout))
             {
                 command.CommandTimeout = timeout;
             }
@@ -158,9 +168,9 @@ namespace Plethora.Data
             //The retry logic can only be utilised if not already inside a transaction.
             if ((Transaction.Current == null) && (command.Transaction == null))
             {
-                if (!tmp_retryCounts.TryGetValue(command.CommandText, out retryCount))
+                if (!local_config.RetryCounts.TryGetValue(command.CommandText, out retryCount))
                 {
-                    retryCount = tmp_defaultRetryCount;
+                    retryCount = local_config.DefaultRetryCount;
                 }
 
                 exceptionTester = ExceptionTester;
@@ -211,13 +221,7 @@ namespace Plethora.Data
 
         private static void ResetConfig()
         {
-            lock (configLock)
-            {
-                defaultRetryCount = 3;
-                substituteText = new Dictionary<string, string>();
-                substituteTimeout = new Dictionary<string, int>();
-                retryCounts = new Dictionary<string, int>();
-            }
+            config = new Config();
         }
 
         private static void ConfigFileChanged(object sender, FileSystemEventArgs e)
@@ -233,24 +237,22 @@ namespace Plethora.Data
             //Read the file and reset the dictionaries.
             try
             {
-                DbExecutorConfig config;
+                DbExecutorConfig executorConfig;
                 using (StreamReader sr = new StreamReader(configFilePath))
                 {
-                    config = DbExecutorConfigHelper.ReadConfig(sr);
+                    executorConfig = DbExecutorConfigHelper.ReadConfig(sr);
                 }
 
-                int newDefaultRetryCount = config.defaultRetryCount;
-                Dictionary<string, string> newSubstituteText = config.redirections.ToDictionary(r => r.commandText, r => r.substitute);
-                Dictionary<string, int> newSubstituteTimeout = config.timeouts.ToDictionary(r => r.commandText, r => r.timeoutSec);
-                Dictionary<string, int> newRetryCounts = config.retries.ToDictionary(r => r.commandText, r => r.retryCount);
+                int newDefaultRetryCount = executorConfig.defaultRetryCount;
+                Dictionary<string, string> newSubstituteText = executorConfig.redirections.ToDictionary(r => r.commandText, r => r.substitute);
+                Dictionary<string, int> newSubstituteTimeout = executorConfig.timeouts.ToDictionary(r => r.commandText, r => r.timeoutSec);
+                Dictionary<string, int> newRetryCounts = executorConfig.retries.ToDictionary(r => r.commandText, r => r.retryCount);
 
-                lock (configLock)
-                {
-                    defaultRetryCount = newDefaultRetryCount;
-                    substituteText = newSubstituteText;
-                    substituteTimeout = newSubstituteTimeout;
-                    retryCounts = newRetryCounts;
-                }
+                config = new Config(
+                    newDefaultRetryCount,
+                    newSubstituteText,
+                    newSubstituteTimeout,
+                    newRetryCounts);
             }
             catch (Exception)
             {
