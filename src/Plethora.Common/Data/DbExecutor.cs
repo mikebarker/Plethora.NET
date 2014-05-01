@@ -121,7 +121,7 @@ namespace Plethora.Data
             return ExecuteWithRetry(command, cmd => cmd.ExecuteNonQuery());
         }
 
-        public static object ExecuteScalerWithRetry(this IDbCommand command)
+        public static object ExecuteScalarWithRetry(this IDbCommand command)
         {
             return ExecuteWithRetry(command, cmd => cmd.ExecuteScalar());
         }

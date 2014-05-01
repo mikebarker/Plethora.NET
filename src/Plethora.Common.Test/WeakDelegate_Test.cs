@@ -25,9 +25,10 @@ namespace Plethora.Test
             publisher.TriggerEvent();
 
             //test
-            GC.KeepAlive(subscriber);
             Assert.AreEqual(2, callbackCount);
             Assert.AreEqual(false, targetCollected);
+
+            GC.KeepAlive(subscriber);
         }
 
         [Test]
@@ -108,6 +109,76 @@ namespace Plethora.Test
             Assert.AreEqual(callbackDelegate, weakDelegate);
         }
 
+        [Test]
+        public void Helper_IsTargetAlive_StaticMethod()
+        {
+            //setup
+            int callbackCount = 0;
+            StaticSubscriber.Action = () => callbackCount++;
+
+            //exec
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
+                StaticSubscriber.Callback,
+                handler => { });
+
+            //test
+            Assert.AreEqual(true, weakDelegate.IsTargetAlive());
+        }
+
+        [Test]
+        public void Helper_IsTargetAlive_NotWeakDelegate()
+        {
+            //setup
+            Publisher publisher = new Publisher();
+
+            //exec
+            Action @delegate = publisher.TriggerEvent;
+
+            //test
+            Assert.AreEqual(true, @delegate.IsTargetAlive());
+        }
+
+        [Test]
+        public void Helper_IsTargetAlive_TargetKeptAlive()
+        {
+            //setup
+            Publisher publisher = new Publisher();
+
+            Subscriber subscriber = new Subscriber(() => { });
+
+            //exec
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
+                subscriber.Callback,
+                handler => { });
+            publisher.Event += weakDelegate;
+
+            //test
+            Assert.AreEqual(true, weakDelegate.IsTargetAlive());
+
+            GC.KeepAlive(subscriber);
+        }
+
+        [Test]
+        public void Helper_IsTargetAlive_TargetCollected()
+        {
+            //setup
+            Publisher publisher = new Publisher();
+
+            int callbackCount = 0;
+            Subscriber subscriber = new Subscriber(() => callbackCount++);
+
+            //exec
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
+                subscriber.Callback,
+                handler => publisher.Event -= handler);
+            publisher.Event += weakDelegate;
+
+            subscriber = null;
+            GC.Collect(2);
+
+            //test
+            Assert.AreEqual(false, weakDelegate.IsTargetAlive());
+        }
 
 
 

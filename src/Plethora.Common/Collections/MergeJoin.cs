@@ -722,100 +722,105 @@ namespace Plethora.Collections
             if (valueEqualityComparer == null)
                 throw new ArgumentNullException("valueEqualityComparer");
 
-            if (onMatch == null)
-                onMatch = delegate { };
-
-            if (onDifferent == null)
-                onDifferent = delegate { };
-
-            if (onLeftOnly == null)
-                onLeftOnly = delegate { };
-
-            if (onRightOnly == null)
-                onRightOnly = delegate { };
-
-
 
             //Get the enumerators
-            var leftEnumerator = leftSet.GetEnumerator();
-            var rightEnumerator = rightSet.GetEnumerator();
-
-            //Move to first elements
-            bool leftIsFinished = !leftEnumerator.MoveNext();
-            bool rightIsFinished = !rightEnumerator.MoveNext();
-
-            //Loop through the ordered collections
-            while (!leftIsFinished && !rightIsFinished)
+            using (var leftEnumerator = leftSet.GetEnumerator())
+            using (var rightEnumerator = rightSet.GetEnumerator())
             {
-                var leftPair = leftEnumerator.Current;
-                var rightPair = rightEnumerator.Current;
+                //Move to first elements
+                bool leftIsFinished = !leftEnumerator.MoveNext();
+                bool rightIsFinished = !rightEnumerator.MoveNext();
 
-                TKey leftKey = leftPair.Key;
-                TKey rightKey = rightPair.Key;
-
-                int result = keyComparer.Compare(leftKey, rightKey);
-                if (result == 0)     // leftKey == rightKey
+                //Loop through the ordered collections
+                while (!leftIsFinished && !rightIsFinished)
                 {
-                    #region In Both
+                    var leftPair = leftEnumerator.Current;
+                    var rightPair = rightEnumerator.Current;
 
-                    TValue leftValue = leftPair.Value;
-                    TValue rightValue = rightPair.Value;
+                    TKey leftKey = leftPair.Key;
+                    TKey rightKey = rightPair.Key;
 
-                    if (valueEqualityComparer.Equals(leftValue, rightValue))
+                    int result = keyComparer.Compare(leftKey, rightKey);
+                    if (result == 0) // leftKey == rightKey
                     {
-                        //Values match
-                        onMatch(leftKey, leftValue);
+                        #region In Both
+
+                        TValue leftValue = leftPair.Value;
+                        TValue rightValue = rightPair.Value;
+
+                        if (valueEqualityComparer.Equals(leftValue, rightValue))
+                        {
+                            //Values match
+                            if (!ReferenceEquals(onMatch, null))
+                                onMatch(leftKey, leftValue);
+                        }
+                        else
+                        {
+                            //Values do not match
+                            if (!ReferenceEquals(onDifferent, null))
+                                onDifferent(leftKey, leftValue, rightValue);
+                        }
+
+
+                        // increment both
+                        leftIsFinished = !leftEnumerator.MoveNext();
+                        rightIsFinished = !rightEnumerator.MoveNext();
+
+                        #endregion
                     }
-                    else
+                    else if (result < 0) // leftKey < rightKey   (in the left only)
                     {
-                        //Values do not match
-                        onDifferent(leftKey, leftValue, rightValue);
+                        #region Left Only
+
+                        if (!ReferenceEquals(onLeftOnly, null))
+                        {
+                            TValue leftValue = leftPair.Value;
+                            onLeftOnly(leftKey, leftValue);
+                        }
+
+                        // increment left
+                        leftIsFinished = !leftEnumerator.MoveNext();
+
+                        #endregion
+                    }
+                    else if (result > 0) // leftKey > rightKey   (in the right only)
+                    {
+                        #region Right Only
+
+                        if (!ReferenceEquals(onRightOnly, null))
+                        {
+                            TValue rightValue = rightPair.Value;
+                            onRightOnly(rightKey, rightValue);
+                        }
+
+                        // increment right
+                        rightIsFinished = !rightEnumerator.MoveNext();
+
+                        #endregion
+                    }
+                }
+
+                while (!leftIsFinished)
+                {
+                    if (!ReferenceEquals(onLeftOnly, null))
+                    {
+                        var leftPair = leftEnumerator.Current;
+                        onLeftOnly(leftPair.Key, leftPair.Value);
                     }
 
-
-                    // increment both
                     leftIsFinished = !leftEnumerator.MoveNext();
-                    rightIsFinished = !rightEnumerator.MoveNext();
-                    #endregion
                 }
-                else if (result < 0) // leftKey < rightKey   (in the left only)
+
+                while (!rightIsFinished)
                 {
-                    #region Left Only
+                    if (!ReferenceEquals(onRightOnly, null))
+                    {
+                        var rightPair = rightEnumerator.Current;
+                        onRightOnly(rightPair.Key, rightPair.Value);
+                    }
 
-                    TValue leftValue = leftPair.Value;
-                    onLeftOnly(leftKey, leftValue);
-
-                    // increment left
-                    leftIsFinished = !leftEnumerator.MoveNext();
-                    #endregion
-                }
-                else if (result > 0) // leftKey > rightKey   (in the right only)
-                {
-                    #region Right Only
-
-                    TValue rightValue = rightPair.Value;
-                    onRightOnly(rightKey, rightValue);
-
-                    // increment right
                     rightIsFinished = !rightEnumerator.MoveNext();
-                    #endregion
                 }
-            }
-
-            while (!leftIsFinished)
-            {
-                var leftPair = leftEnumerator.Current;
-                onLeftOnly(leftPair.Key, leftPair.Value);
-
-                leftIsFinished = !leftEnumerator.MoveNext();
-            }
-
-            while (!rightIsFinished)
-            {
-                var rightPair = rightEnumerator.Current;
-                onRightOnly(rightPair.Key, rightPair.Value);
-
-                rightIsFinished = !rightEnumerator.MoveNext();
             }
         }
 

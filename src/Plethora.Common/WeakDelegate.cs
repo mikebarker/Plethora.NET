@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Plethora
 {
@@ -10,11 +11,6 @@ namespace Plethora
     /// </summary>
     public static class WeakDelegate
     {
-        private class DelegateReference<TDelegate>
-        {
-            public TDelegate _delegate;  //Do not delete, used by reflection
-        }
-
         #region Public Methods
 
         /// <summary>
@@ -76,7 +72,7 @@ namespace Plethora
 
             var weakDelegate = InternalCreateWeakDelegate(
                 @delegate,
-                onTargetCollected,
+                new DelegateReference_Action<TDelegate>(onTargetCollected),
                 delegate(BinaryExpression targetIsNotNullExp, MethodCallExpression callExp, MethodCallExpression onTargetNull)
                 {
                     var ifNotNullExp = Expression.IfThenElse(targetIsNotNullExp,
@@ -93,7 +89,7 @@ namespace Plethora
         /// Create a wrapper around a delegate to maintain only a weak reference to the invocation target.
         /// </summary>
         /// <typeparam name="TDelegate">The type of the delegate to be wrapped in a weak reference.</typeparam>
-        /// <typeparam name="TResult">The return type of the <typeparamref name="TDelegate"/> delagte type.</typeparam>
+        /// <typeparam name="TResult">The return type of the <typeparamref name="TDelegate"/> delegate type.</typeparam>
         /// <param name="delegate">The delegate to be wrapped.</param>
         /// <param name="onTargetCollected">
         /// Function to be called when it is noticed that the target has been garbage collected, to return a default value.
@@ -155,7 +151,7 @@ namespace Plethora
 
             var weakDelegate = InternalCreateWeakDelegate(
                 @delegate,
-                onTargetCollected,
+                new DelegateReference_Func<TDelegate, TResult>(onTargetCollected),
                 delegate(BinaryExpression targetIsNotNullExp, MethodCallExpression callExp, MethodCallExpression onTargetNull)
                 {
                     var resultExp = Expression.Variable(typeof(TResult), "result");
@@ -178,7 +174,7 @@ namespace Plethora
 
         private static TDelegate InternalCreateWeakDelegate<TDelegate>(
             TDelegate @delegate,
-            Delegate onTargetCollected,
+            DelegateReference<TDelegate> delegateReference,
             Func<BinaryExpression, MethodCallExpression, MethodCallExpression, Expression> generateBody)
         {
             var del = (Delegate)(object)@delegate;
@@ -190,6 +186,8 @@ namespace Plethora
             WeakReference weakTarget = new WeakReference(del.Target);
             MethodInfo method = del.Method;
 
+            delegateReference._weakTarget = weakTarget;
+
             /* ****************************
              * Encoding as an expression:
              * ****************************
@@ -199,20 +197,16 @@ namespace Plethora
              *   if (target != null)
              *       result = (TResult)method.Invoke(target, parameters);
              *   else
-             *       result = onTargetCollected(delegateReference._delegate);
+             *       result = delegateReference.OnTargetCollected();
              * 
              *   return result;
              * */
 
 
-            DelegateReference<TDelegate> delegateReference = new DelegateReference<TDelegate>();
+            Type type = delegateReference.GetType();
+            MethodInfo onTargetCollected = type.GetMethod("OnTargetCollected", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            var delegateReferenceExp = Expression.Constant(delegateReference);
-            var thisDelegateExp = Expression.Field(delegateReferenceExp, "_delegate");
-
-            MethodCallExpression onTargetCollectedCallExp = (onTargetCollected.Target == null)
-                ? Expression.Call(onTargetCollected.Method, thisDelegateExp)
-                : Expression.Call(Expression.Constant(onTargetCollected.Target), onTargetCollected.Method, thisDelegateExp);
+            MethodCallExpression onTargetCollectedCallExp = Expression.Call(Expression.Constant(delegateReference), onTargetCollected);
 
 
 
@@ -245,6 +239,108 @@ namespace Plethora
             return weakDelegate;
         }
 
+
         #endregion
+
+        #region DelegateReference
+
+        internal abstract class DelegateReference
+        {
+            public WeakReference _weakTarget;
+
+            public bool IsTargetAlive
+            {
+                get
+                {
+                    var isTargetAlive = this._weakTarget.IsAlive;
+                    if (!isTargetAlive)
+                    {
+                        this.CallOnTargetCollected();
+                    }
+
+                    return isTargetAlive;
+                }
+            }
+
+            protected abstract void CallOnTargetCollected();
+        }
+
+        private abstract class DelegateReference<TDelegate> : DelegateReference
+        {
+            public TDelegate _delegate;
+        }
+
+        private class DelegateReference_Action<TDelegate> : DelegateReference<TDelegate>
+        {
+            private readonly Action<TDelegate> onTargetCollected;
+            private bool onTargetCollectedCalled = false;
+
+            public DelegateReference_Action(Action<TDelegate> onTargetCollected)
+            {
+                this.onTargetCollected = onTargetCollected;
+            }
+
+            protected override void CallOnTargetCollected()
+            {
+                OnTargetCollected();
+            }
+
+            private void OnTargetCollected()    // Do not change signature, used by reflection
+            {
+                if (this.onTargetCollectedCalled)
+                    return;
+
+                this.onTargetCollected(this._delegate);
+                this.onTargetCollectedCalled = true;
+            }
+        }
+
+        private class DelegateReference_Func<TDelegate, TResult> : DelegateReference<TDelegate>
+        {
+            private readonly Func<TDelegate, TResult> onTargetCollected;
+            private bool onTargetCollectedCalled = false;
+
+            public DelegateReference_Func(Func<TDelegate, TResult> onTargetCollected)
+            {
+                this.onTargetCollected = onTargetCollected;
+            }
+
+            protected override void CallOnTargetCollected()
+            {
+                OnTargetCollected();
+            }
+
+            private TResult OnTargetCollected() // Do not change signature, used by reflection
+            {
+                if (this.onTargetCollectedCalled)
+                    return default(TResult);
+
+                var result = this.onTargetCollected(this._delegate);
+                this.onTargetCollectedCalled = true;
+                return result;
+            }
+        }
+
+        #endregion
+    }
+
+
+    public static class WeakDelegateHelper
+    {
+        public static bool IsTargetAlive(this Delegate @delegate)
+        {
+            Closure closure = @delegate.Target as Closure;
+            if (closure != null)
+            {
+                WeakDelegate.DelegateReference delegateReference = closure.Constants
+                    .OfType<WeakDelegate.DelegateReference>()
+                    .SingleOrDefault();
+
+                if (delegateReference != null)
+                    return delegateReference.IsTargetAlive;
+            }
+
+            return true;
+        }
     }
 }
