@@ -8,7 +8,6 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using System.Security.Permissions;
 
 // Assembly Properties
 #if DEBUG 
@@ -24,7 +23,7 @@ using System.Security.Permissions;
 
 // Version
 [assembly: AssemblyVersion("0.12.*")]
-[assembly: AssemblyFileVersion("0.12.2.0")]
+[assembly: AssemblyFileVersion("0.12.3.0")]
 
 // Interoperability
 [assembly: ComVisible(false)]
