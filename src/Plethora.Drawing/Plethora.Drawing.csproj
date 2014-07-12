@@ -53,6 +53,9 @@
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.Common.cs">
+      <Link>Properties\AssemblyInfo.Common.cs</Link>
+    </Compile>
     <Compile Include="Drawing\ColorBase.cs" />
     <Compile Include="Drawing\ColorCmy.cs" />
     <Compile Include="Drawing\ColorCmyk.cs" />
