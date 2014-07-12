@@ -307,6 +307,13 @@ namespace Plethora.Collections
 
         #region Implementation of IKeyedCollection<TKey,T>
 
+        /// <summary>
+        /// Adds the item to the collection, or if an item already exists with a matching key the item is updated.
+        /// </summary>
+        /// <param name="item">The item to be added or updated.</param>
+        /// <returns>
+        /// true if <paramref name="item"/> was added to the <see cref="ICollection{T}"/>; otherwise, false.
+        /// </returns>
         public bool Upsert(T item)
         {
             var key = GetKey(item);
