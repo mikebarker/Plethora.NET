@@ -52,7 +52,7 @@ namespace Plethora.Cache
         /// true if the <see cref="IArgument{TData,TArgument}"/>s overlap in the key-space they represent.
         /// </returns>
         /// <remarks>
-        ///  If one considers the aruments which represent the following sets over the key space:
+        ///  If one considers the arguments which represent the following sets over the key space:
         ///  <code>
         ///  <![CDATA[
         ///            (B)
