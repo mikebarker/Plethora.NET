@@ -2,13 +2,24 @@
 
 namespace Plethora
 {
+    /// <summary>
+    /// A weak wrapper for <see cref="IObserver{T}"/> objects.
+    /// </summary>
+    /// <typeparam name="T">The type of the object that provides notification information.</typeparam>
+    /// <seealso cref="WeakSubscriptionHelper.WeakSubscribe{T}(IObservable{T}, IObserver{T})"/>
     public class WeakObserver<T> : IObserver<T>
     {
         private WeakReference<IObserver<T>> innerObserver;
         private Action onObserverCollected;
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="WeakObserver{T}"/> class.
+        /// </summary>
+        /// <param name="observer"></param>
+        /// <param name="onObserverCollected"></param>
         public WeakObserver(IObserver<T> observer, Action onObserverCollected)
         {
+            //Validation
             if (observer == null)
                 throw new ArgumentNullException("observer");
 
@@ -20,6 +31,10 @@ namespace Plethora
         }
 
 
+        /// <summary>
+        /// Provides the observer with new data.
+        /// </summary>
+        /// <param name="value">The current notification information.</param>
         public void OnNext(T value)
         {
             IObserver<T> observer = GetObserver();
@@ -29,6 +44,10 @@ namespace Plethora
             observer.OnNext(value);
         }
 
+        /// <summary>
+        /// Notifies the observer that the provider has experienced an error condition.
+        /// </summary>
+        /// <param name="error">An object that provides additional information about the error.</param>
         public void OnError(Exception error)
         {
             IObserver<T> observer = GetObserver();
@@ -38,6 +57,9 @@ namespace Plethora
             observer.OnError(error);
         }
 
+        /// <summary>
+        /// Notifies the observer that the provider has finished sending push-based notifications.
+        /// </summary>
         public void OnCompleted()
         {
             IObserver<T> observer = GetObserver();
@@ -47,6 +69,14 @@ namespace Plethora
             observer.OnCompleted();
         }
 
+
+        /// <summary>
+        /// Deferences the weak reference and cleans up the references and subscription when the 
+        /// inner observer has been collected.
+        /// </summary>
+        /// <returns>
+        /// The internal obsever; or null if it has been collected.
+        /// </returns>
         private IObserver<T> GetObserver()
         {
             if (innerObserver == null)
@@ -67,10 +97,27 @@ namespace Plethora
         }
     }
 
+    /// <summary>
+    /// Provides static methods for working with weakly referenced <see cref="IObserver{T}"/> instances.
+    /// </summary>
     public static class WeakSubscriptionHelper
     {
+        /// <summary>
+        /// Creates a weak wrapper around an <see cref="IObserver{T}"/> instances, and notifies the provider that an observer is to receive notifications.
+        /// </summary>
+        /// <typeparam name="T">The type of the object that provides notification information.</typeparam>
+        /// <param name="observable">The object that is to provide notifications.</param>
+        /// <param name="observer">The object that is to receive notifications.</param>
+        /// <returns>
+        /// A reference to an interface that allows observers to stop receiving notifications before the provider has finished sending them.
+        /// </returns>
         public static IDisposable WeakSubscribe<T>(this IObservable<T> observable, IObserver<T> observer)
         {
+            //Notice that the call to the Dispose method is required within the constructor of the WeakObserver, which
+            // occurs before the disposable has been created. Therefore, we create a DisposableContainer. This allows
+            // the reference to the IDisposable to be set after construction, but also allows its Dispose method to be
+            // utilised before the inner IDisposable has been set.
+
             DisposableContainer disposableContainer = new DisposableContainer();
 
             WeakObserver<T> weakObserver = new WeakObserver<T>(
@@ -83,6 +130,9 @@ namespace Plethora
             return disposableContainer;
         }
 
+        /// <summary>
+        /// Container class for <see cref="IDisposable"/> which allows the inner disposable to be set after construction.
+        /// </summary>
         private sealed class DisposableContainer : IDisposable
         {
             private IDisposable disposable;
@@ -101,14 +151,12 @@ namespace Plethora
                 Dispose(false);
             }
 
-            // Public implementation of Dispose pattern callable by consumers. 
             public void Dispose()
             {
                 Dispose(true);
                 GC.SuppressFinalize(this);
             }
 
-            // Protected implementation of Dispose pattern. 
             private void Dispose(bool disposing)
             {
                 if (disposed)
