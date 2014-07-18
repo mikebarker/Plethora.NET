@@ -77,8 +77,10 @@
     <Compile Include="!MockClasses\MockDataRecord.cs" />
     <Compile Include="!MockClasses\MockSet.cs" />
     <Compile Include="!UtilityClasses\EmptyAsyncResult.cs" />
+    <Compile Include="!UtilityClasses\Observer.cs" />
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="!UtilityClasses\Style.cs" />
+    <Compile Include="!UtilityClasses\Subject.cs" />
     <Compile Include="!UtilityClasses\TreeElement.cs" />
     <Compile Include="!MockClasses\MockTextWriter.cs" />
     <Compile Include="Collections\AutoKeyedCollection_Test.cs" />
@@ -122,6 +124,7 @@
     <Compile Include="StringFormat\StringFormatHelper_Test.cs" />
     <Compile Include="StringHelper_Test.cs" />
     <Compile Include="Timing\OperationTimeout_Test.cs" />
+    <Compile Include="WeakObserver_Test.cs" />
     <Compile Include="WeakReference_Test.cs" />
   </ItemGroup>
   <ItemGroup>

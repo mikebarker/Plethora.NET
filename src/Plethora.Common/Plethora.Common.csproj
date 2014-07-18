@@ -140,6 +140,7 @@
     <Compile Include="Threading\AsyncException.cs" />
     <Compile Include="Timing\OperationTimeout.cs" />
     <Compile Include="WeakDelegate.cs" />
+    <Compile Include="WeakObserver.cs" />
     <Compile Include="WeakReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
