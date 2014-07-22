@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Plethora.Test.UtilityClasses
 {
+    /// <summary>
+    /// A light version of the Reactive Extensions' Subject class, so that the library doesn't have to be referenced.
+    /// </summary>
     class Subject<T> : IObservable<T>, IObserver<T>
     {
         readonly List<IObserver<T>> observers = new List<IObserver<T>>();

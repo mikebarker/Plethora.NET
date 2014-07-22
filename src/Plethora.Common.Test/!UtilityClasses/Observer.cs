@@ -2,6 +2,9 @@
 
 namespace Plethora.Test.UtilityClasses
 {
+    /// <summary>
+    /// A light-weight implementation of the Reactive Extensions' observer, so that the library doesn't have to be referenced.
+    /// </summary>
     class Observer<T> : IObserver<T>
     {
         private readonly Action<T> onNext;
