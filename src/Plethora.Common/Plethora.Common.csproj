@@ -57,9 +57,9 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
-    <Compile Include="Collections\ReadonlyDictionary.cs" />
+    <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Collections\ListIndexItterator.cs" />
-    <Compile Include="Collections\ReadonlyHashSet.cs" />
+    <Compile Include="Collections\ReadOnlyHashSet.cs" />
     <Compile Include="Collections\Sets\BaseSetImpl.cs" />
     <Compile Include="Collections\Sets\CompleteSet.cs" />
     <Compile Include="Collections\Sets\EmptySet.cs" />
