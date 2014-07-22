@@ -8,18 +8,18 @@ namespace Plethora.Collections
 {
     [DebuggerDisplay("Count = {Count}")]
     [Serializable]
-    public class ReadonlyHashSet<T> : ISet<T>, ISerializable, IDeserializationCallback
+    public class ReadOnlyHashSet<T> : ISet<T>, ISerializable, IDeserializationCallback
     {
         private readonly HashSet<T> innerHashSet;
 
         #region Constructors
 
-        public ReadonlyHashSet(IEnumerable<T> enumerable)
+        public ReadOnlyHashSet(IEnumerable<T> enumerable)
             : this(enumerable, EqualityComparer<T>.Default)
         {
         }
 
-        public ReadonlyHashSet(IEnumerable<T> enumerable, IEqualityComparer<T> comparer)
+        public ReadOnlyHashSet(IEnumerable<T> enumerable, IEqualityComparer<T> comparer)
         {
             innerHashSet = new HashSet<T>(enumerable, comparer);
             innerHashSet.TrimExcess();
@@ -174,11 +174,11 @@ namespace Plethora.Collections
         #endregion
     }
 
-    public static class ReadonlyHashSetHelper
+    public static class ReadOnlyHashSetHelper
     {
-        public static ReadonlyHashSet<T> AsReadonly<T>(this HashSet<T> hashSet)
+        public static ReadOnlyHashSet<T> AsReadonly<T>(this HashSet<T> hashSet)
         {
-            return new ReadonlyHashSet<T>(hashSet);
+            return new ReadOnlyHashSet<T>(hashSet);
         }
     }
 }

@@ -8,20 +8,31 @@ namespace Plethora.Collections
 {
     [DebuggerDisplay("Count = {Count}")]
     [Serializable]
-    public class ReadonlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ISerializable, IDeserializationCallback
+    public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ISerializable, IDeserializationCallback
     {
         private readonly Dictionary<TKey, TValue> innerDictionary;
 
         #region Constructors
 
-        public ReadonlyDictionary(IDictionary<TKey, TValue> dictionary)
+        public ReadOnlyDictionary(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
             : this(dictionary, EqualityComparer<TKey>.Default)
         {
         }
 
-        public ReadonlyDictionary(IDictionary<TKey, TValue> dictionary, IEqualityComparer<TKey> comparer)
+        public ReadOnlyDictionary(IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IEqualityComparer<TKey> comparer)
         {
-            innerDictionary = new Dictionary<TKey, TValue>(dictionary, comparer);
+            var collection = enumerable as ICollection<KeyValuePair<TKey, TValue>>;
+            this.innerDictionary = (collection == null)
+                ? new Dictionary<TKey, TValue>(comparer)
+                : new Dictionary<TKey, TValue>(collection.Count, comparer);
+
+            foreach (var keyValuePair in enumerable)
+            {
+                TKey key = keyValuePair.Key;
+                TValue value = keyValuePair.Value;
+
+                this.innerDictionary.Add(key, value);
+            }
         }
 
         #endregion
@@ -141,11 +152,11 @@ namespace Plethora.Collections
         #endregion
     }
 
-    public static class ReadonlyDictionaryHelper
+    public static class ReadOnlyDictionaryHelper
     {
-        public static ReadonlyDictionary<TKey, TValue> AsReadonly<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
+        public static ReadOnlyDictionary<TKey, TValue> AsReadonly<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
         {
-            return new ReadonlyDictionary<TKey, TValue>(dictionary);
+            return new ReadOnlyDictionary<TKey, TValue>(dictionary);
         }
     }
 }
