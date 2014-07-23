@@ -246,6 +246,75 @@ namespace Plethora.Test.Data
             }
         }
 
+
+        [Test]
+        public void GetAs_NullableEnum_Null()
+        {
+            MockDataRecord dataRecord = new MockDataRecord();
+            dataRecord.SetValue(1, DBNull.Value);
+
+            var result = dataRecord.GetAs<DayOfWeek?>(1);
+
+            //test
+            Assert.AreEqual(null, result);
+        }
+
+        [Test]
+        public void GetAs_NullableEnum_FromString()
+        {
+            MockDataRecord dataRecord = new MockDataRecord();
+            dataRecord.SetValue(1, "Tuesday");
+
+            var result = dataRecord.GetAs<DayOfWeek?>(1);
+
+            //test
+            Assert.AreEqual(DayOfWeek.Tuesday, result);
+        }
+
+        [Test]
+        public void GetAs_NullableEnum_Error_NotValidEnum()
+        {
+            MockDataRecord dataRecord = new MockDataRecord();
+            dataRecord.SetValue(1, "Hello");
+
+            //exec
+            try
+            {
+                var result = dataRecord.GetAs<DayOfWeek?>(1);
+
+                Assert.Fail();
+            }
+            catch (InvalidCastException ex)
+            {
+                Assert.IsNotNull(ex);
+            }
+        }
+
+        [Test]
+        public void GetAs_NullableEnum_FromInt32()
+        {
+            MockDataRecord dataRecord = new MockDataRecord();
+            dataRecord.SetValue(1, (int)DayOfWeek.Tuesday);
+
+            var result = dataRecord.GetAs<DayOfWeek?>(1);
+
+            //test
+            Assert.AreEqual(DayOfWeek.Tuesday, result);
+        }
+
+        [Test]
+        public void GetAs_NullableEnum_FromInt64()
+        {
+            MockDataRecord dataRecord = new MockDataRecord();
+            dataRecord.SetValue(1, (long)DayOfWeek.Tuesday);
+
+            var result = dataRecord.GetAs<DayOfWeek?>(1);
+
+            //test
+            Assert.AreEqual(DayOfWeek.Tuesday, result);
+        }
+
+
         [Test]
         public void GetAs_Enum_FromString()
         {

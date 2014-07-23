@@ -7,65 +7,62 @@ namespace Plethora.Data
     {
         public static T GetAs<T>(this IDataRecord dataRecord, int index)
         {
-            Type typeOfT = typeof(T);
-
             if (dataRecord.IsDBNull(index))
             {
-                if (IsNullable(typeOfT))
+                if (typeof(T).IsClass || typeof(T).IsNullable())
                     return default(T);
                 else
                     throw new InvalidCastException(ResourceProvider.InvalidCast());
             }
 
-            Type baseType = GetBaseValueType(typeOfT);
-            object objValue = dataRecord.GetValue(index);
 
-            object baseObjValue;
             try
             {
-                //test for enum
-                if ((typeOfT.IsEnum) && (objValue is string))
-                {
-                    baseObjValue = Enum.Parse(typeOfT, (string)objValue);
-                }
-                else
-                {
-                    //test if conversion is required
-                    baseObjValue = (objValue.GetType() == baseType)
-                        ? objValue
-                        : Convert.ChangeType(objValue, baseType);
-                }
+                object value = dataRecord.GetValue(index);
+                var returnValue = (T)GetAsType(typeof(T), value);
+                return returnValue;
             }
             catch (Exception ex)
             {
                 throw new InvalidCastException(ResourceProvider.InvalidCast(), ex);
             }
-
-            return (T)baseObjValue;
         }
 
 
-        private static Type GetBaseValueType(Type type)
+        private static object GetAsType(Type returnType, object value)
         {
-            if ((type.IsGenericType) && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
+            if (returnType.IsInstanceOfType(value))
+                return value;
+
+            if (returnType.IsEnum)
             {
-                var genericArg1 = type.GetGenericArguments()[0];
-                return genericArg1;
+                if (value is string)
+                    return Enum.Parse(returnType, (string)value);
+
+                object underlyingValue = GetAsType(returnType.GetEnumUnderlyingType(), value);
+                object enumValue = Enum.ToObject(returnType, underlyingValue);
+                return enumValue;
             }
 
-            if (type.IsEnum)
+            if (returnType.IsNullable())
             {
-                return type.GetEnumUnderlyingType();
+                if (value == null)
+                    return null; //Unboxing will take care of type conversion.
+
+                Type underlyingType = Nullable.GetUnderlyingType(returnType);
+
+                //Because of boxing of the underlying type, and the treatment of boxed value by Nullable<T>,
+                // no further type conversion needs to be done here.
+                object underlyingValue = GetAsType(underlyingType, value);
+                return underlyingValue;
             }
 
-            return type;
+            object convertedValue = Convert.ChangeType(value, returnType);
+            return convertedValue;
         }
 
-        private static bool IsNullable(Type type)
+        private static bool IsNullable(this Type type)
         {
-            if (type.IsClass)
-                return true;
-
             if ((type.IsGenericType) && (type.GetGenericTypeDefinition() == typeof(Nullable<>)))
                 return true;
 
