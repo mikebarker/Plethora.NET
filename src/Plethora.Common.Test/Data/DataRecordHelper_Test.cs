@@ -369,5 +369,19 @@ namespace Plethora.Test.Data
             //test
             Assert.AreEqual(DayOfWeek.Tuesday, result);
         }
+
+        [Test]
+        public void GetAs_Guid_FromString()
+        {
+            //setup
+            MockDataRecord dataRecord = new MockDataRecord();
+            dataRecord.SetValue(1, "4947C8BD-E0A9-4580-8109-23BC1A4602C3");
+
+            //exec
+            var result = dataRecord.GetAs<Guid>(1);
+
+            //test
+            Assert.AreEqual(new Guid("4947C8BD-E0A9-4580-8109-23BC1A4602C3"), result);
+        }
     }
 }
