@@ -57,6 +57,12 @@ namespace Plethora.Data
                 return underlyingValue;
             }
 
+            if ((returnType == typeof(Guid)) && (value is string))
+            {
+                Guid guidValue = Guid.Parse((string)value);
+                return guidValue;
+            }
+
             object convertedValue = Convert.ChangeType(value, returnType);
             return convertedValue;
         }
