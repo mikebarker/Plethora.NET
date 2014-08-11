@@ -13,6 +13,25 @@ namespace Plethora
     {
         #region Public Methods
 
+        #region IsInteger
+
+        public static bool IsInteger(this decimal d)
+        {
+            return ((d % 1m) == 0m);
+        }
+
+        public static bool IsInteger(this double d)
+        {
+            return ((d % 1.0) == 0.0);
+        }
+
+        public static bool IsInteger(this float d)
+        {
+            return ((d % 1.0f) == 0.0f);
+        }
+
+        #endregion
+
         #region Translate
 
         /// <summary>
