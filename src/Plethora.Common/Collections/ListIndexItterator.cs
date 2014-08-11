@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Plethora.Collections
 {
-    public class ListIndexItterator<T> : IEnumerator<T>, IEnumerable<T>
+    public class ListIndexItterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<T>
     {
         #region Fields
 
@@ -108,6 +108,65 @@ namespace Plethora.Collections
         public T Current
         {
             get { return this.current; }
+        }
+
+        #endregion
+
+        #region Implementation of ICollection<T>
+
+        void ICollection<T>.Add(T item)
+        {
+            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+        }
+
+        void ICollection<T>.Clear()
+        {
+            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+        }
+
+        public bool Contains(T item)
+        {
+            for (int i = this.startIndex; i <= this.endIndex; i++)
+            {
+                if (EqualityComparer<T>.Default.Equals(this.list[i], item))
+                    return true;
+            }
+            return false;
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            List<T> l = this.list as List<T>;
+            if (l != null)
+            {
+                l.CopyTo(
+                    this.startIndex,
+                    array,
+                    arrayIndex,
+                    this.endIndex - this.startIndex + 1);
+            }
+            else
+            {
+                for (int i = this.startIndex; i <= this.endIndex; i++)
+                {
+                    array[arrayIndex++] = list[i];
+                }
+            }
+        }
+
+        public int Count
+        {
+            get { return this.endIndex - this.startIndex + 1; }
+        }
+
+        bool ICollection<T>.IsReadOnly
+        {
+            get { return true; }
+        }
+
+        bool ICollection<T>.Remove(T item)
+        {
+            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
         }
 
         #endregion
