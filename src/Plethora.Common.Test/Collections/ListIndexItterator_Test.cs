@@ -34,7 +34,7 @@ namespace Plethora.Test.Collections
         }
 
         [Test]
-        public void ctor_Fail_StartLessThen0()
+        public void ctor_Fail_StartLessThan0()
         {
             bool isCaught = false;
             try
@@ -50,7 +50,7 @@ namespace Plethora.Test.Collections
         }
 
         [Test]
-        public void ctor_Fail_CountLessThen0()
+        public void ctor_Fail_CountLessThan0()
         {
             bool isCaught = false;
             try
@@ -115,6 +115,99 @@ namespace Plethora.Test.Collections
 
             bool areEqual = itterator.SequenceEqual(new[] { 3, 4, 5, 6 });
             Assert.IsTrue(areEqual);
+        }
+
+        [Test]
+        public void Contains_True()
+        {
+            //Setup
+            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+
+            //Exec
+            bool result = itterator.Contains(5);
+
+            //Test
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void Contains_False()
+        {
+            //Setup
+            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+
+            //Exec
+            bool result = itterator.Contains(1);
+
+            //Test
+            Assert.IsFalse(result);
+        }
+
+        [Test]
+        public void Contains_EdgeCases()
+        {
+            //Setup
+            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+
+            //Exec
+            bool beforeStart = itterator.Contains(2);
+            bool atStart = itterator.Contains(3);
+            bool atEnd = itterator.Contains(6);
+            bool afterEnd = itterator.Contains(7);
+
+
+            //Test
+            Assert.IsFalse(beforeStart);
+            Assert.IsTrue(atStart);
+            Assert.IsTrue(atEnd);
+            Assert.IsFalse(afterEnd);
+        }
+
+        [Test]
+        public void CopyTo_ZeroIndex()
+        {
+            //Setup
+            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+
+            //Exec
+            int[] array = new int[10];
+            itterator.CopyTo(array, 0);
+
+            //Test
+            Assert.AreEqual(3, array[0]);
+            Assert.AreEqual(4, array[1]);
+            Assert.AreEqual(5, array[2]);
+            Assert.AreEqual(6, array[3]);
+        }
+
+        [Test]
+        public void CopyTo_NonZeroIndex()
+        {
+            //Setup
+            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+
+            //Exec
+            int[] array = new int[10];
+            itterator.CopyTo(array, 5);
+
+            //Test
+            Assert.AreEqual(3, array[5]);
+            Assert.AreEqual(4, array[6]);
+            Assert.AreEqual(5, array[7]);
+            Assert.AreEqual(6, array[8]);
+        }
+
+        [Test]
+        public void Count()
+        {
+            //Setup
+            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+
+            //Exec
+            var count = itterator.Count;
+
+            //Test
+            Assert.AreEqual(4, count);
         }
     }
 }

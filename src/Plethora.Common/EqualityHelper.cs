@@ -92,7 +92,12 @@ namespace Plethora
                 if (i != 0)
                     sb.Append("; ");
 
-                sb.Append(propertyName + "={" + i + "}");
+                sb.Append(propertyName);
+                sb.Append("={");
+                sb.Append(i);
+                if (expression.ReturnType == typeof(DateTime))
+                    sb.Append(":u");
+                sb.Append("}");
                 i++;
             }
 
