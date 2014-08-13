@@ -84,6 +84,7 @@
     <Compile Include="!UtilityClasses\TreeElement.cs" />
     <Compile Include="!MockClasses\MockTextWriter.cs" />
     <Compile Include="Collections\AutoKeyedCollection_Test.cs" />
+    <Compile Include="Collections\AutoSortedList_Test.cs" />
     <Compile Include="Collections\ListIndexItterator_Test.cs" />
     <Compile Include="Collections\MergeJoin_Test.cs" />
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
@@ -97,7 +98,6 @@
     <Compile Include="Collections\Sets\InclusiveSet_Test.cs" />
     <Compile Include="Collections\SortedByKeyListHelper_Test.cs" />
     <Compile Include="Collections\SortedByKeyList_Test.cs" />
-    <Compile Include="Collections\SortedList_Test.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
     <Compile Include="Collections\ReverseComparer_Test.cs" />

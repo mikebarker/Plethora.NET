@@ -14,7 +14,7 @@ namespace Plethora.Collections
     /// </typeparam>
     [DebuggerDisplay("Count = {Count}")]
     [Serializable]
-    public class SortedList<T> : IList<T>
+    public class AutoSortedList<T> : IList<T>
     {
         #region Fields
 
@@ -26,32 +26,32 @@ namespace Plethora.Collections
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>, with a duplicate policy 
+        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/> and using the
         /// default comparer for <typeparamref name="T"/>.
         /// </summary>
-        public SortedList()
+        public AutoSortedList()
             : this(DuplicatesPolicy.Error, Comparer<T>.Default)
         {
             
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>, with a duplicate policy 
+        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/>.
         /// </summary>
         /// <param name="comparer">The comparer used to sort the list.</param>
-        public SortedList(IComparer<T> comparer)
+        public AutoSortedList(IComparer<T> comparer)
             : this(DuplicatesPolicy.Error, comparer)
         {
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>.
+        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>.
         /// </summary>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
         /// <param name="comparer">The comparer used to sort the list.</param>
-        public SortedList(DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
+        public AutoSortedList(DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
         {
             //Validation
             if ((duplicatesPolicy != DuplicatesPolicy.Allow) &&
@@ -73,12 +73,12 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>.
+        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>.
         /// </summary>
         /// <param name="enumerable">The collection whose elements are to be copied to the sorted list.</param>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
         /// <param name="comparer">The comparer used to sort the list.</param>
-        public SortedList(IEnumerable<T> enumerable, DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
+        public AutoSortedList(IEnumerable<T> enumerable, DuplicatesPolicy duplicatesPolicy, IComparer<T> comparer)
             : this(duplicatesPolicy, comparer)
         {
             this.AddRange(enumerable);

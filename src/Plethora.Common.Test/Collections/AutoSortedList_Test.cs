@@ -7,9 +7,9 @@ using Plethora.Test.UtilityClasses;
 namespace Plethora.Test.Collections
 {
     [TestFixture]
-    public class SortedList_Test
+    public class AutoSortedList_Test
     {
-        private SortedList<Person> sortedList;
+        private AutoSortedList<Person> autoSortedList;
 
         [SetUp]
         public void SetUp()
@@ -23,22 +23,22 @@ namespace Plethora.Test.Collections
         public void ctor_Empty()
         {
             //exec
-            sortedList = new SortedList<Person>();
+            this.autoSortedList = new AutoSortedList<Person>();
 
             //test
-            Assert.IsNotNull(sortedList);
-            Assert.AreEqual(0, sortedList.Count);
+            Assert.IsNotNull(this.autoSortedList);
+            Assert.AreEqual(0, this.autoSortedList.Count);
         }
 
         [Test]
         public void ctor_Comparer()
         {
             //exec
-            sortedList = new SortedList<Person>(new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(new Person.NameComparer());
 
             //test
-            Assert.IsNotNull(sortedList);
-            Assert.AreEqual(0, sortedList.Count);
+            Assert.IsNotNull(this.autoSortedList);
+            Assert.AreEqual(0, this.autoSortedList.Count);
         }
 
         [Test]
@@ -47,7 +47,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>(null);
+                this.autoSortedList = new AutoSortedList<Person>(null);
 
                 Assert.Fail();
             }
@@ -61,11 +61,11 @@ namespace Plethora.Test.Collections
         public void ctor_DuplicatesPolicyComparer()
         {
             //exec
-            sortedList = new SortedList<Person>(DuplicatesPolicy.Error, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Error, new Person.NameComparer());
 
             //test
-            Assert.IsNotNull(sortedList);
-            Assert.AreEqual(0, sortedList.Count);
+            Assert.IsNotNull(this.autoSortedList);
+            Assert.AreEqual(0, this.autoSortedList.Count);
         }
 
         [Test]
@@ -74,7 +74,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>((DuplicatesPolicy)78, new Person.NameComparer());
+                this.autoSortedList = new AutoSortedList<Person>((DuplicatesPolicy)78, new Person.NameComparer());
 
                 Assert.Fail();
             }
@@ -90,7 +90,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>(DuplicatesPolicy.Error, null);
+                this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Error, null);
 
                 Assert.Fail();
             }
@@ -107,14 +107,14 @@ namespace Plethora.Test.Collections
             Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
             //exec
-            sortedList = new SortedList<Person>(array, DuplicatesPolicy.Error, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(array, DuplicatesPolicy.Error, new Person.NameComparer());
 
             //test
-            Assert.IsNotNull(sortedList);
-            Assert.AreEqual(3, sortedList.Count);
-            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
-            Assert.AreEqual(Person.Bob_Jameson, sortedList[2]);
+            Assert.IsNotNull(this.autoSortedList);
+            Assert.AreEqual(3, this.autoSortedList.Count);
+            Assert.AreEqual(Person.Fred_Carlile, this.autoSortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, this.autoSortedList[1]);
+            Assert.AreEqual(Person.Bob_Jameson, this.autoSortedList[2]);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>(null, DuplicatesPolicy.Error, new Person.NameComparer());
+                this.autoSortedList = new AutoSortedList<Person>(null, DuplicatesPolicy.Error, new Person.NameComparer());
 
                 Assert.Fail();
             }
@@ -142,7 +142,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>(array, (DuplicatesPolicy)78, new Person.NameComparer());
+                this.autoSortedList = new AutoSortedList<Person>(array, (DuplicatesPolicy)78, new Person.NameComparer());
 
                 Assert.Fail();
             }
@@ -161,7 +161,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>(array, DuplicatesPolicy.Error, null);
+                this.autoSortedList = new AutoSortedList<Person>(array, DuplicatesPolicy.Error, null);
 
                 Assert.Fail();
             }
@@ -180,7 +180,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList = new SortedList<Person>(array, DuplicatesPolicy.Error, new Person.NameComparer());
+                this.autoSortedList = new AutoSortedList<Person>(array, DuplicatesPolicy.Error, new Person.NameComparer());
 
                 Assert.Fail();
             }
@@ -197,17 +197,17 @@ namespace Plethora.Test.Collections
         public void Add()
         {
             //setup
-            int preAddCount = sortedList.Count;
+            int preAddCount = this.autoSortedList.Count;
 
             //exec
-            sortedList.Add(Person.Jill_Dorrman);
+            this.autoSortedList.Add(Person.Jill_Dorrman);
 
             //test
-            Assert.AreEqual(preAddCount + 1, sortedList.Count);
-            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
-            Assert.AreEqual(Person.Jill_Dorrman, sortedList[2]);
-            Assert.AreEqual(Person.Bob_Jameson, sortedList[3]);
+            Assert.AreEqual(preAddCount + 1, this.autoSortedList.Count);
+            Assert.AreEqual(Person.Fred_Carlile, this.autoSortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, this.autoSortedList[1]);
+            Assert.AreEqual(Person.Jill_Dorrman, this.autoSortedList[2]);
+            Assert.AreEqual(Person.Bob_Jameson, this.autoSortedList[3]);
         }
 
         [Test]
@@ -216,7 +216,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.Add(null);
+                this.autoSortedList.Add(null);
 
                 Assert.Fail();
             }
@@ -235,7 +235,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.Add(Person.Bob_Jameson2);
+                this.autoSortedList.Add(Person.Bob_Jameson2);
 
                 Assert.Fail();
             }
@@ -250,17 +250,17 @@ namespace Plethora.Test.Collections
         {
             //setup
             PresetDuplicatesReplace();
-            int preAddCount = sortedList.Count;
+            int preAddCount = this.autoSortedList.Count;
 
             //exec
-            sortedList.Add(Person.Bob_Jameson2);
+            this.autoSortedList.Add(Person.Bob_Jameson2);
 
             //test
-            Assert.AreEqual(preAddCount, sortedList.Count);
-            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
-            Assert.AreNotEqual(Person.Bob_Jameson, sortedList[2]);
-            Assert.AreEqual(Person.Bob_Jameson2, sortedList[2]);
+            Assert.AreEqual(preAddCount, this.autoSortedList.Count);
+            Assert.AreEqual(Person.Fred_Carlile, this.autoSortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, this.autoSortedList[1]);
+            Assert.AreNotEqual(Person.Bob_Jameson, this.autoSortedList[2]);
+            Assert.AreEqual(Person.Bob_Jameson2, this.autoSortedList[2]);
         }
 
         [Test]
@@ -268,17 +268,17 @@ namespace Plethora.Test.Collections
         {
             //setup
             PresetDuplicatesIgnor();
-            int preAddCount = sortedList.Count;
+            int preAddCount = this.autoSortedList.Count;
 
             //exec
-            sortedList.Add(Person.Bob_Jameson2);
+            this.autoSortedList.Add(Person.Bob_Jameson2);
 
             //test
-            Assert.AreEqual(preAddCount, sortedList.Count);
-            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
-            Assert.AreEqual(Person.Bob_Jameson, sortedList[2]);
-            Assert.AreNotEqual(Person.Bob_Jameson2, sortedList[2]);
+            Assert.AreEqual(preAddCount, this.autoSortedList.Count);
+            Assert.AreEqual(Person.Fred_Carlile, this.autoSortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, this.autoSortedList[1]);
+            Assert.AreEqual(Person.Bob_Jameson, this.autoSortedList[2]);
+            Assert.AreNotEqual(Person.Bob_Jameson2, this.autoSortedList[2]);
         }
 
         [Test]
@@ -286,18 +286,18 @@ namespace Plethora.Test.Collections
         {
             //setup
             PresetDuplicatesAllow();
-            int preAddCount = sortedList.Count;
+            int preAddCount = this.autoSortedList.Count;
 
             //exec
-            sortedList.Add(Person.Bob_Jameson2);
+            this.autoSortedList.Add(Person.Bob_Jameson2);
 
             //test
-            Assert.AreEqual(preAddCount + 1, sortedList.Count);
-            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Person.Amy_Cathson, sortedList[1]);
+            Assert.AreEqual(preAddCount + 1, this.autoSortedList.Count);
+            Assert.AreEqual(Person.Fred_Carlile, this.autoSortedList[0]);
+            Assert.AreEqual(Person.Amy_Cathson, this.autoSortedList[1]);
             Assert.IsTrue(
-                (sortedList[2].Equals(Person.Bob_Jameson) && sortedList[3].Equals(Person.Bob_Jameson2)) ||
-                (sortedList[2].Equals(Person.Bob_Jameson2) && sortedList[3].Equals(Person.Bob_Jameson)) );
+                (this.autoSortedList[2].Equals(Person.Bob_Jameson) && this.autoSortedList[3].Equals(Person.Bob_Jameson2)) ||
+                (this.autoSortedList[2].Equals(Person.Bob_Jameson2) && this.autoSortedList[3].Equals(Person.Bob_Jameson)) );
         }
         #endregion
 
@@ -307,10 +307,10 @@ namespace Plethora.Test.Collections
         public void Clear()
         {
             //exec
-            sortedList.Clear();
+            this.autoSortedList.Clear();
 
             //test
-            Assert.AreEqual(0, sortedList.Count);
+            Assert.AreEqual(0, this.autoSortedList.Count);
         }
         #endregion
 
@@ -320,7 +320,7 @@ namespace Plethora.Test.Collections
         public void Contains_True()
         {
             //exec
-            bool result = sortedList.Contains(Person.Bob_Jameson);
+            bool result = this.autoSortedList.Contains(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
@@ -330,7 +330,7 @@ namespace Plethora.Test.Collections
         public void Contains_False()
         {
             //exec
-            bool result = sortedList.Contains(Person.Jill_Dorrman);
+            bool result = this.autoSortedList.Contains(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
@@ -342,7 +342,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.Contains(null);
+                this.autoSortedList.Contains(null);
 
                 Assert.Fail();
             }
@@ -362,7 +362,7 @@ namespace Plethora.Test.Collections
             Person[] array = new Person[3];
 
             //exec
-            sortedList.CopyTo(array, 0);
+            this.autoSortedList.CopyTo(array, 0);
 
             //test
             Assert.AreEqual(0, Array.IndexOf(array, Person.Fred_Carlile));
@@ -377,7 +377,7 @@ namespace Plethora.Test.Collections
             Person[] array = new Person[5];
 
             //exec
-            sortedList.CopyTo(array, 2);
+            this.autoSortedList.CopyTo(array, 2);
 
             //test
             Assert.AreEqual(2, Array.IndexOf(array, Person.Fred_Carlile));
@@ -392,7 +392,7 @@ namespace Plethora.Test.Collections
         public void Count()
         {
             //exec
-            int count = sortedList.Count;
+            int count = this.autoSortedList.Count;
 
             //test
             Assert.AreEqual(3, count);
@@ -405,13 +405,13 @@ namespace Plethora.Test.Collections
         public void GetEnumerator()
         {
             //exec
-            var enumerator = sortedList.GetEnumerator();
+            var enumerator = this.autoSortedList.GetEnumerator();
 
             //test
             Assert.IsNotNull(enumerator);
 
             int i = 0;
-            foreach (var person in sortedList)
+            foreach (var person in this.autoSortedList)
             {
                 if ((person != Person.Bob_Jameson) &&
                     (person != Person.Fred_Carlile) &&
@@ -431,7 +431,7 @@ namespace Plethora.Test.Collections
         public void IsReadOnly()
         {
             //exec
-            bool isReadonly = ((IList<Person>)sortedList).IsReadOnly;
+            bool isReadonly = ((IList<Person>)this.autoSortedList).IsReadOnly;
 
             //test
             Assert.IsFalse(isReadonly);
@@ -444,22 +444,22 @@ namespace Plethora.Test.Collections
         public void Remove_InCollection()
         {
             //exec
-            bool result = sortedList.Remove(Person.Bob_Jameson);
+            bool result = this.autoSortedList.Remove(Person.Bob_Jameson);
 
             //test
             Assert.IsTrue(result);
-            Assert.AreEqual(2, sortedList.Count);
+            Assert.AreEqual(2, this.autoSortedList.Count);
         }
 
         [Test]
         public void Remove_NotInCollection()
         {
             //exec
-            bool result = sortedList.Remove(Person.Jill_Dorrman);
+            bool result = this.autoSortedList.Remove(Person.Jill_Dorrman);
 
             //test
             Assert.IsFalse(result);
-            Assert.AreEqual(3, sortedList.Count);
+            Assert.AreEqual(3, this.autoSortedList.Count);
         }
 
         [Test]
@@ -468,7 +468,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.Remove(null);
+                this.autoSortedList.Remove(null);
 
                 Assert.Fail();
             }
@@ -485,12 +485,12 @@ namespace Plethora.Test.Collections
         public void RemoveAt_InCollection()
         {
             //exec
-            sortedList.RemoveAt(1);
+            this.autoSortedList.RemoveAt(1);
 
             //test
-            Assert.AreEqual(2, sortedList.Count);
-            Assert.AreEqual(Person.Fred_Carlile, sortedList[0]);
-            Assert.AreEqual(Person.Bob_Jameson, sortedList[1]);
+            Assert.AreEqual(2, this.autoSortedList.Count);
+            Assert.AreEqual(Person.Fred_Carlile, this.autoSortedList[0]);
+            Assert.AreEqual(Person.Bob_Jameson, this.autoSortedList[1]);
         }
 
         [Test]
@@ -499,7 +499,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.RemoveAt(5);
+                this.autoSortedList.RemoveAt(5);
 
                 Assert.Fail();
             }
@@ -515,7 +515,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.RemoveAt(-2);
+                this.autoSortedList.RemoveAt(-2);
 
                 Assert.Fail();
             }
@@ -532,22 +532,22 @@ namespace Plethora.Test.Collections
         public void RemoveAll()
         {
             //exec
-            int count = sortedList.RemoveAll(person => person.FamilyName.StartsWith("C"));
+            int count = this.autoSortedList.RemoveAll(person => person.FamilyName.StartsWith("C"));
 
             //test
             Assert.AreEqual(2, count);
-            Assert.AreEqual(1, sortedList.Count);
+            Assert.AreEqual(1, this.autoSortedList.Count);
         }
 
         [Test]
         public void RemoveAll_None()
         {
             //exec
-            int count = sortedList.RemoveAll(person => false);
+            int count = this.autoSortedList.RemoveAll(person => false);
 
             //test
             Assert.AreEqual(0, count);
-            Assert.AreEqual(3, sortedList.Count);
+            Assert.AreEqual(3, this.autoSortedList.Count);
         }
 
         [Test]
@@ -556,7 +556,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.RemoveAll(null);
+                this.autoSortedList.RemoveAll(null);
 
                 Assert.Fail();
             }
@@ -573,10 +573,10 @@ namespace Plethora.Test.Collections
         public void RemoveRange()
         {
             //exec
-            sortedList.RemoveRange(0, 2);
+            this.autoSortedList.RemoveRange(0, 2);
 
             //test
-            Assert.AreEqual(1, sortedList.Count);
+            Assert.AreEqual(1, this.autoSortedList.Count);
         }
 
         [Test]
@@ -585,7 +585,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.RemoveRange(-1, 2);
+                this.autoSortedList.RemoveRange(-1, 2);
 
                 Assert.Fail();
             }
@@ -601,7 +601,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.RemoveRange(0, -2);
+                this.autoSortedList.RemoveRange(0, -2);
 
                 Assert.Fail();
             }
@@ -617,7 +617,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //exec
-                sortedList.RemoveRange(1, 5);
+                this.autoSortedList.RemoveRange(1, 5);
 
                 Assert.Fail();
             }
@@ -633,33 +633,33 @@ namespace Plethora.Test.Collections
 
         private void PresetDuplicatesError()
         {
-            sortedList = new SortedList<Person>(DuplicatesPolicy.Error, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Error, new Person.NameComparer());
             PresetPopulate();
         }
 
         private void PresetDuplicatesIgnor()
         {
-            sortedList = new SortedList<Person>(DuplicatesPolicy.Ignor, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Ignor, new Person.NameComparer());
             PresetPopulate();
         }
 
         private void PresetDuplicatesReplace()
         {
-            sortedList = new SortedList<Person>(DuplicatesPolicy.Replace, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Replace, new Person.NameComparer());
             PresetPopulate();
         }
 
         private void PresetDuplicatesAllow()
         {
-            sortedList = new SortedList<Person>(DuplicatesPolicy.Allow, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Allow, new Person.NameComparer());
             PresetPopulate();
         }
 
         private void PresetPopulate()
         {
-            sortedList.Add(Person.Bob_Jameson);
-            sortedList.Add(Person.Fred_Carlile);
-            sortedList.Add(Person.Amy_Cathson);
+            this.autoSortedList.Add(Person.Bob_Jameson);
+            this.autoSortedList.Add(Person.Fred_Carlile);
+            this.autoSortedList.Add(Person.Amy_Cathson);
             //Person.Jill_Dorrman not added
         }
         #endregion
