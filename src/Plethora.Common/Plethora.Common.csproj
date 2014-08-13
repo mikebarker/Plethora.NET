@@ -57,6 +57,7 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="Collections\AutoSortedList.cs" />
     <Compile Include="Collections\FuncComparer.cs" />
     <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Collections\ListIndexItterator.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Collections\SortedByKeyListHelper.cs" />
     <Compile Include="Collections\DuplicatesPolicy.cs" />
     <Compile Include="Collections\SortedByKeyList.cs" />
-    <Compile Include="Collections\SortedList.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="Collections\ReverseComparer.cs" />

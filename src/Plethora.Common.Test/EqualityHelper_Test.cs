@@ -73,7 +73,7 @@ namespace Plethora.Test
             var result = equalityHelper.GetToString(Person.Bob_Jameson);
 
             //test
-            string dob = Person.Bob_Jameson.DateOfBirth.ToString(); //Allow for culture
+            string dob = Person.Bob_Jameson.DateOfBirth.ToString("u"); //utilises sortable format
             Assert.AreEqual("Person {FamilyName=Jameson; GivenName=Bob; DateOfBirth=" + dob + "}", result);
         }
 

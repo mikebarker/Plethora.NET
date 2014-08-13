@@ -21,7 +21,7 @@ namespace Plethora.Collections
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>, with a duplicate policy 
+        /// Initializes a new instance of <see cref="SortedByKeyList{TKey, T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/> and using the
         /// default comparer for <typeparamref name="T"/>.
         /// </summary>
@@ -32,7 +32,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>, with a duplicate policy 
+        /// Initializes a new instance of <see cref="SortedByKeyList{TKey, T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/>.
         /// </summary>
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
@@ -43,7 +43,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/> using the
+        /// Initializes a new instance of <see cref="SortedByKeyList{TKey, T}"/> using the
         /// default comparer for <typeparamref name="T"/>.
         /// </summary>
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
@@ -54,7 +54,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>.
+        /// Initializes a new instance of <see cref="SortedByKeyList{TKey, T}"/>.
         /// </summary>
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
@@ -85,7 +85,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="SortedList{T}"/>.
+        /// Initializes a new instance of <see cref="SortedByKeyList{TKey, T}"/>.
         /// </summary>
         /// <param name="getKeyFunc">The function which gets the key for an element.</param>
         /// <param name="enumerable">The collection whose elements are to be copied to the sorted list.</param>
