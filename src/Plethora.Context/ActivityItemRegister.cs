@@ -4,6 +4,39 @@ using System.Linq;
 
 namespace Plethora.Context
 {
+    /// <summary>
+    /// The <see cref="ActivityItemRegister"/> is a singleton instance register which
+    /// can be used to track UI elements which should not cause a context change when
+    /// selected.
+    /// </summary>
+    /// <remarks>
+    /// An example of a UI items which should not cause a context change is a panel
+    /// which provides more information or actions regarding the selected context.
+    /// </remarks>
+    /// <example>
+    ///  <para>
+    ///   Consider a UI similar to Visual Studio with a main centeral work-space, and
+    ///   a right-hand panel which provides additional information. e.g.
+    ///  </para>
+    ///  <para>
+    ///     +-----------------------+-------+
+    ///     | Main                  |Context|
+    ///     | Work-space            | Panel |
+    ///     |                       |       |
+    ///     |                       |       |
+    ///     |                       |       |
+    ///     |                       |       |
+    ///     |                       |       |
+    ///     +-----------------------+-------+
+    ///  </para>
+    ///  <para>
+    ///   As the user navigates within the main work space the context panel's content
+    ///   will change. At some point the user may wish to follow a hyperlink presented
+    ///   within the side panel. With-out registering the context panel in the activity
+    ///   register, the movement away from the main workspace will cause a ContextChanged
+    ///   event and clear the panel before the user's action can be made.
+    ///  </para>
+    /// </example>
     public class ActivityItemRegister
     {
         #region Singleton Implementation

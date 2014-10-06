@@ -123,10 +123,5 @@ namespace Plethora.Context.Wpf.Example
 
 
         }
-
-        private void GarbageButton_OnClick(object sender, RoutedEventArgs e)
-        {
-            GC.Collect(2);
-        }
     }
 }

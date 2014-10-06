@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Plethora.Context
 {
+    /// <summary>
+    /// An implementation of the <see cref="IContextProvider"/> interface which 
+    /// caches the context results until the context has changed.
+    /// </summary>
     public abstract class CachedContextProvider : ContextProviderBase
     {
         #region Fields
@@ -57,7 +61,15 @@ namespace Plethora.Context
 
         #region Abstract Methods
 
+        /// <summary>
+        /// Abstract method which acquires the context from the underlying source.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IEnumerable{T}"/> of <see cref="ContextInfo"/> objects which
+        /// represents the context of the underlying source.
+        /// </returns>
         protected abstract IEnumerable<ContextInfo> GetContexts();
+
         #endregion
         
         #region Private Methods

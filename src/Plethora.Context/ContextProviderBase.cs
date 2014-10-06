@@ -3,6 +3,10 @@ using System.Collections.Generic;
 
 namespace Plethora.Context
 {
+    /// <summary>
+    /// An implementation of the <see cref="IContextProvider"/> interface which
+    /// provides common methods to call the context change events.
+    /// </summary>
     public abstract class ContextProviderBase : IContextProvider, IDisposable
     {
         #region Implementation of IContextProvider
