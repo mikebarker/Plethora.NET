@@ -6,6 +6,14 @@ namespace Plethora.Context.Wpf
     /// <summary>
     /// Class used to introduce delay into a wpf callback.
     /// </summary>
+    /// <remarks>
+    /// This can be used to prevent multiple event triggers from firing,
+    /// and instead bundling them all into one.
+    /// </remarks>
+    /// <example>
+    ///     WpfCallbackDelay callbackDelay = new WpfCallbackDelay(ContextManager_ContextChanged, 10);
+    ///     ContextManager.DefaultInstance.ContextChanged += callbackDelay.Handler;
+    /// </example>
     public class WpfCallbackDelay
     {
         private readonly object lockObj = new object();
@@ -23,6 +31,9 @@ namespace Plethora.Context.Wpf
             timer.Interval = new TimeSpan(0, 0, 0, 0, delayMilliSeconds);
         }
 
+        /// <summary>
+        /// The callback <see cref="EventHandler"/> which can be registered with an event.
+        /// </summary>
         public void Handler(object sender, EventArgs e)
         {
             if (timer.Dispatcher.CheckAccess())
