@@ -18,8 +18,10 @@ namespace Plethora.Collections
         {
             #region Fields
 
-            private readonly IEnumerator<WeakReference<T>> innerEnumerator;
+            private readonly WeakCollection<T> weakCollection;
             private T current;
+            private int index;
+
             #endregion
 
             #region Constructors
@@ -30,8 +32,8 @@ namespace Plethora.Collections
                     throw new ArgumentNullException("weakCollection");
 
 
-                this.innerEnumerator = weakCollection.innerList.GetEnumerator();
-                this.current = null;
+                this.weakCollection = weakCollection;
+                this.Reset();
             }
             #endregion
 
@@ -43,8 +45,7 @@ namespace Plethora.Collections
             /// </summary>
             public void Dispose()
             {
-                this.current = null;
-                this.innerEnumerator.Dispose();
+                this.Reset();
             }
             #endregion
 
@@ -84,17 +85,25 @@ namespace Plethora.Collections
             /// </exception>
             public bool MoveNext()
             {
+                this.index++;
+
                 while (true)
                 {
-                    bool result = innerEnumerator.MoveNext();
-                    if (!result)
-                        return false;
-
-                    var currentTarget = innerEnumerator.Current.Target;
-                    if (currentTarget != null)
+                    if (index >= this.weakCollection.innerList.Count)
                     {
-                        this.current = currentTarget;
+                        this.current = null;
+                        this.index = -1;
+                        return false;
+                    }
+
+                    this.current = this.weakCollection.innerList[index].Target;
+                    if (this.current != null)
+                    {
                         return true;
+                    }
+                    else
+                    {
+                        this.weakCollection.innerList.RemoveAt(index);
                     }
                 }
             }
@@ -109,7 +118,7 @@ namespace Plethora.Collections
             public void Reset()
             {
                 this.current = null;
-                this.innerEnumerator.Reset();
+                this.index = -1;
             }
 
             /// <summary>
