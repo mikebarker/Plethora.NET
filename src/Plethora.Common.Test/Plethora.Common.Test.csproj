@@ -98,6 +98,7 @@
     <Compile Include="Collections\Sets\InclusiveSet_Test.cs" />
     <Compile Include="Collections\SortedByKeyListHelper_Test.cs" />
     <Compile Include="Collections\SortedByKeyList_Test.cs" />
+    <Compile Include="Collections\WeakCollection_Test.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper_Test.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke_Test.cs" />
     <Compile Include="Collections\ReverseComparer_Test.cs" />
