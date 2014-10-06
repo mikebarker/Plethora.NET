@@ -23,7 +23,7 @@ using System.Runtime.InteropServices;
 
 // Version
 [assembly: AssemblyVersion("0.12.*")]
-[assembly: AssemblyFileVersion("0.12.4.5")]
+[assembly: AssemblyFileVersion("0.12.4.6")]
 
 // Interoperability
 [assembly: ComVisible(false)]
