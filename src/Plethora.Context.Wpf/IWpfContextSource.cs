@@ -4,6 +4,9 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
+    /// <summary>
+    /// A source of contexts.
+    /// </summary>
     public interface IWpfContextSource
     {
         event EventHandler ContextChanged;

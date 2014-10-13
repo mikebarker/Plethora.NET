@@ -7,6 +7,7 @@ namespace Plethora.Context
     /// An implementation of the <see cref="IContextProvider"/> interface which
     /// provides common methods to call the context change events.
     /// </summary>
+    /// <seealso cref="IContextProvider"/>
     public abstract class ContextProviderBase : IContextProvider, IDisposable
     {
         #region Implementation of IContextProvider
