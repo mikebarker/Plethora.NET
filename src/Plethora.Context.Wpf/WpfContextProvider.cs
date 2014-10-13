@@ -82,7 +82,7 @@ namespace Plethora.Context.Wpf
             element.GotFocus += element_GotFocus;
             element.LostFocus += element_LostFocus;
 
-            var contextManager = WpfContext.GetManagerForElement(element);
+            var contextManager = WpfContext.GetContextManagerForElement(element);
             contextManager.RegisterProvider(this);
 
             if (ContextSource != null)

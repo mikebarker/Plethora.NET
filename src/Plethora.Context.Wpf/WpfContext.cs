@@ -70,23 +70,44 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region Manager Attached Property
+        #region ContextManager Attached Property
 
-        public static readonly DependencyProperty ManagerProperty =
+        public static readonly DependencyProperty ContextManagerProperty =
             DependencyProperty.RegisterAttached(
-                "Manager",
+                "ContextManager",
                 typeof(ContextManager),
                 typeof(WpfContext),
                 new PropertyMetadata(default(ContextManager)));
 
-        public static void SetManager(DependencyObject dependencyObject, ContextManager value)
+        public static void SetContextManager(DependencyObject dependencyObject, ContextManager value)
         {
-            dependencyObject.SetValue(ManagerProperty, value);
+            dependencyObject.SetValue(ContextManagerProperty, value);
         }
 
-        public static ContextManager GetManager(DependencyObject dependencyObject)
+        public static ContextManager GetContextManager(DependencyObject dependencyObject)
         {
-            return (ContextManager)dependencyObject.GetValue(ManagerProperty);
+            return (ContextManager)dependencyObject.GetValue(ContextManagerProperty);
+        }
+
+        #endregion
+
+        #region ActionManager Attached Property
+
+        public static readonly DependencyProperty ActionManagerProperty =
+            DependencyProperty.RegisterAttached(
+                "ActionManager",
+                typeof(ActionManager),
+                typeof(WpfContext),
+                new PropertyMetadata(default(ActionManager)));
+
+        public static void SetActionManager(DependencyObject dependencyObject, ActionManager value)
+        {
+            dependencyObject.SetValue(ActionManagerProperty, value);
+        }
+
+        public static ActionManager GetActionManager(DependencyObject dependencyObject)
+        {
+            return (ActionManager)dependencyObject.GetValue(ActionManagerProperty);
         }
 
         #endregion
@@ -123,35 +144,77 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        public static ContextManager GetManagerForElement(UIElement element)
+        public static ContextManager GetContextManagerForElement(UIElement element)
         {
-            bool isDefault;
-            return GetManagerForElement(element, out isDefault);
+            bool isGlobal;
+            return GetContextManagerForElement(element, out isGlobal);
         }
 
-        public static ContextManager GetManagerForElement(UIElement element, out bool isDefault)
+        public static ContextManager GetContextManagerForElement(UIElement element, out bool isGlobal)
         {
-            DependencyObject obj = element;
+            ContextManager contextManager = GetDependencyPropertyFromLogicalTree(element, ContextManagerProperty) as ContextManager;
 
-            isDefault = false;
-            ContextManager contextManager = null;
+            if (contextManager == null)
+            {
+                isGlobal = true;
+                return ContextManager.GlobalInstance;
+            }
+            else
+            {
+                isGlobal = false;
+                return contextManager;
+            }
+        }
+
+
+        public static ActionManager GetActionManagerForElement(UIElement element)
+        {
+            bool isGlobal;
+            return GetActionManagerForElement(element, out isGlobal);
+        }
+
+        public static ActionManager GetActionManagerForElement(UIElement element, out bool isGlobal)
+        {
+            ActionManager actionManager = GetDependencyPropertyFromLogicalTree(element, ActionManagerProperty) as ActionManager;
+
+            if (actionManager == null)
+            {
+                isGlobal = true;
+                return ActionManager.GlobalInstance;
+            }
+            else
+            {
+                isGlobal = false;
+                return actionManager;
+            }
+        }
+
+
+        /// <summary>
+        /// Searches up the logical tree to retrieve the first instance of a <see cref="DependencyProperty"/>
+        /// assigned to a <see cref="DependencyObject"/> or one of its parents.
+        /// </summary>
+        /// <param name="obj">The <see cref="DependencyObject"/> from which the searched is initiated.</param>
+        /// <param name="dependencyProperty">The <see cref="DependencyProperty"/> for which the value is required.</param>
+        /// <returns>
+        /// The value of the first instance of the <see cref="DependencyProperty"/> located in the logical tree.
+        /// </returns>
+        public static object GetDependencyPropertyFromLogicalTree(
+            DependencyObject obj,
+            DependencyProperty dependencyProperty)
+        {
+            object item = null;
             while (obj != null)
             {
-                contextManager = GetManager(obj);
+                item = obj.GetValue(dependencyProperty);
 
-                if (contextManager != null)
+                if (item != null)
                     break;
 
                 obj = LogicalTreeHelper.GetParent(obj);
             }
 
-            if (contextManager == null)
-            {
-                isDefault = true;
-                contextManager = ContextManager.DefaultInstance;
-            }
-
-            return contextManager;
+            return item;
         }
 
     }

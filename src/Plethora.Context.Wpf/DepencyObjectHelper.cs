@@ -53,8 +53,8 @@ namespace Plethora.Context.Wpf
                 clone.Converter = binding.Converter;
                 clone.ConverterCulture = binding.ConverterCulture;
                 clone.ConverterParameter = binding.ConverterParameter;
-//TODO:
-//.Net 4.5:     clone.Delay = binding.Delay;
+//TODO: .Net 4.5
+//              clone.Delay = binding.Delay;
                 clone.FallbackValue = binding.FallbackValue;
                 clone.IsAsync = binding.IsAsync;
                 clone.Mode = binding.Mode;
@@ -68,8 +68,8 @@ namespace Plethora.Context.Wpf
                 clone.UpdateSourceTrigger = binding.UpdateSourceTrigger;
                 clone.ValidatesOnDataErrors = binding.ValidatesOnDataErrors;
                 clone.ValidatesOnExceptions = binding.ValidatesOnExceptions;
-//TODO:
-//.Net 4.5:     clone.ValidatesOnNotifyDataErrors = binding.ValidatesOnNotifyDataErrors;
+//TODO: .Net 4.5
+//              clone.ValidatesOnNotifyDataErrors = binding.ValidatesOnNotifyDataErrors;
                 clone.XPath = binding.XPath;
 
                 if (binding.ElementName != null)

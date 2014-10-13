@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Plethora.Context.Wpf.Example.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wpf="clr-namespace:Plethora.Context.Wpf;assembly=Plethora.Context.Wpf"
+        xmlns:context="clr-namespace:Plethora.Context.Wpf;assembly=Plethora.Context.Wpf"
         Title="MainWindow" Height="350" Width="525">
 
     <Window.Resources>
@@ -13,15 +13,15 @@
         </Style>
 
 
-        <wpf:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Rank="5" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+        <context:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Rank="5" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
 
-        <wpf:WpfContextSourceTemplateCollection x:Key="contractContext">
-            <wpf:WpfContextSourceTemplate Name="Contract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
-            <wpf:WpfContextSourceTemplate Name="SignedContract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
+        <context:WpfContextSourceTemplateCollection x:Key="contractContext">
+            <context:WpfContextSourceTemplate Name="Contract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <context:WpfContextSourceTemplate Name="SignedContract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
             <StaticResource ResourceKey="textboxContext" />
-        </wpf:WpfContextSourceTemplateCollection>
+        </context:WpfContextSourceTemplateCollection>
 
-        <wpf:WpfContextMenu x:Key="contextMenu" />
+        <context:WpfContextMenu x:Key="contextMenu" />
 
     </Window.Resources>
 
@@ -34,7 +34,7 @@
         <StackPanel Grid.Column="0" >
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
-                <TextBox wpf:WpfContext.ContextSourceTemplate="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
+                <TextBox context:WpfContext.ContextSourceTemplate="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
                     1234
                 </TextBox>
             </DockPanel>
@@ -43,18 +43,18 @@
                 <TextBox ContextMenu="{StaticResource contextMenu}">
                     VOD.L
 
-                    <wpf:WpfContext.ContextSourceTemplate>
-                        <wpf:WpfContextSourceTemplateCollection>
+                    <context:WpfContext.ContextSourceTemplate>
+                        <context:WpfContextSourceTemplateCollection>
                             <StaticResource ResourceKey="textboxContext" />
-                            <wpf:WpfContextSourceTemplate Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"/>
-                        </wpf:WpfContextSourceTemplateCollection>
-                    </wpf:WpfContext.ContextSourceTemplate>
+                            <context:WpfContextSourceTemplate Name="Instrument" Data="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </context:WpfContextSourceTemplateCollection>
+                    </context:WpfContext.ContextSourceTemplate>
                 </TextBox>
             </DockPanel>
 
-            <TextBox Name="ContextTextBox" wpf:WpfContext.IsActivityItem="True" />
+            <TextBox Name="ContextTextBox" context:WpfContext.IsActivityItem="True" />
         </StackPanel>
 
-        <StackPanel Grid.Column="1" Name="ContextActionStack" wpf:WpfContext.IsActivityItem="True" />
+        <StackPanel Grid.Column="1" Name="ContextActionStack" context:WpfContext.IsActivityItem="True" />
     </Grid>
 </Window>

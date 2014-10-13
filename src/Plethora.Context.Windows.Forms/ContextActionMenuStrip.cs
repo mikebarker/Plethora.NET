@@ -60,6 +60,57 @@ namespace Plethora.Context.Windows.Forms
 
         #endregion
 
+        #region ActionManager Property
+
+        private static readonly object ActionManagerChanged_EventKey = new object();
+        private const ActionManager ActionManager_DefaultValue = null;
+
+        /// <summary>
+        /// Raised when the value of <see cref="ActionManager"/> has changed.
+        /// </summary>
+        [Browsable(true)]
+        [Category("Action")]
+        [Description("Raised when the value of ActionManager has changed")]
+        public event EventHandler ActionManagerChanged
+        {
+            add { base.Events.AddHandler(ActionManagerChanged_EventKey, value); }
+            remove { base.Events.RemoveHandler(ActionManagerChanged_EventKey, value); }
+        }
+
+        private ActionManager actionManager = ActionManager_DefaultValue;
+
+        /// <summary>
+        /// Gets and sets description
+        /// </summary>
+        [Browsable(true)]
+        [Category("Behaviour")]
+        [DefaultValue(ActionManager_DefaultValue)]
+        [Description("Description")]
+        public virtual ActionManager ActionManager
+        {
+            get { return actionManager; }
+            set
+            {
+                if (this.actionManager == value)
+                    return;
+
+                this.actionManager = value;
+                this.OnActionManagerChanged(EventArgs.Empty);
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="ActionManagerChanged"/> event.
+        /// </summary>
+        protected virtual void OnActionManagerChanged(EventArgs e)
+        {
+            var handler = base.Events[ActionManagerChanged_EventKey] as EventHandler;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        #endregion
+
         #region MaxGroupItems Property
 
         private static readonly object MaxGroupItemsChanged_EventKey = new object();
@@ -218,7 +269,14 @@ namespace Plethora.Context.Windows.Forms
 
         protected override void OnOpening(CancelEventArgs e)
         {
-            if (this.contextManager == null)
+            if (this.ContextManager == null)
+            {
+                Debug.Write("ContextManager not set.");
+                e.Cancel = true;
+                return;
+            }
+
+            if (this.ActionManager == null)
             {
                 Debug.Write("ContextManager not set.");
                 e.Cancel = true;
@@ -232,11 +290,11 @@ namespace Plethora.Context.Windows.Forms
             this.Items.Clear();
 
             var contexts = this.ContextManager.GetContexts();
-            var contextActions = this.ContextManager.GetActions(contexts);
+            var actions = this.ActionManager.GetActions(contexts);
 
-            //Group by the IUiAction.Group property if available, otherwise by "" as returned from ActionHelper.GetGroup(...)
+            //Group by the IUiAction.Group property if available, otherwise by string.Empty [""] as returned from ActionHelper.GetGroup(...)
             //Order by the IUiAction.Rank property is available
-            var groupedActions = contextActions
+            var groupedActions = actions
                 .GroupBy(ActionHelper.GetGroupSafe)
                 .Select(group => new { GroupName = group.Key, Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance) })
                 .OrderBy(g => g.Actions.First(), ActionHelper.SortOrderComparer.Instance);

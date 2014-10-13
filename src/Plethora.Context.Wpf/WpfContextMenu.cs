@@ -152,7 +152,8 @@ namespace Plethora.Context.Wpf
         protected override void OnOpened(RoutedEventArgs e)
         {
             UIElement target = this.PlacementTarget;
-            var contextManager = WpfContext.GetManagerForElement(target);
+            var contextManager = WpfContext.GetContextManagerForElement(target);
+            var actionManager = WpfContext.GetActionManagerForElement(target);
 
             this.Items.Clear();
 
@@ -161,14 +162,14 @@ namespace Plethora.Context.Wpf
             if (suppressedContexts != null)
                 contexts = contexts.Where(context => !suppressedContexts.Contains(context.Name));
 
-            var contextActions = contextManager.GetActions(contexts);
+            var actions = actionManager.GetActions(contexts);
             var suppressedActions = this.SuppressedActionsHashSet;
             if (suppressedActions != null)
-                contextActions = contextActions.Where(action => !suppressedActions.Contains(action.ActionName));
+                actions = actions.Where(action => !suppressedActions.Contains(action.ActionName));
 
-            //Group by the IUiAction.Group property if available, otherwise by "" as returned from ActionHelper.GetGroup(...)
+            //Group by the IUiAction.Group property if available, otherwise by string.Empty [""] as returned from ActionHelper.GetGroup(...)
             //Order by the IUiAction.Rank property if available
-            var groupedActions = contextActions
+            var groupedActions = actions
                 .GroupBy(ActionHelper.GetGroupSafe)
                 .Select(group => new { GroupName = group.Key, Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance) })
                 .OrderBy(g => g.Actions.First(), ActionHelper.SortOrderComparer.Instance);

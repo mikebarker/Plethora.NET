@@ -18,26 +18,27 @@ namespace Plethora.Context.Wpf.Example
             InitializeComponent();
 
             callbackDelay = new WpfCallbackDelay(ContextManager_ContextChanged, 10);
-            ContextManager.DefaultInstance.ContextChanged += callbackDelay.Handler;
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "View Contract"));
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "Edit Contract"));
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("SignedContract", "View Signed Contract", false));
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Instrument", "View Instrument"));
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Cut"));
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Copy"));
-            ContextManager.DefaultInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Paste"));
+            ContextManager.GlobalInstance.ContextChanged += callbackDelay.Handler;
+
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "View Contract"));
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "Edit Contract"));
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("SignedContract", "View Signed Contract", false));
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Instrument", "View Instrument"));
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Cut"));
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Copy"));
+            ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Paste"));
         }
 
         void ContextManager_ContextChanged(object sender, EventArgs e)
         {
-            var contexts = ContextManager.DefaultInstance.GetContexts();
+            var contexts = ContextManager.GlobalInstance.GetContexts();
 
             var contextText = contexts
                 .Select(context => string.Format("{0} [{1}]", context.Name, context.Data));
 
             this.ContextTextBox.Text = string.Join("\r\n", contextText);
 
-            var actions = ContextManager.DefaultInstance.GetActions(contexts);
+            var actions = ActionManager.GlobalInstance.GetActions(contexts);
 
             this.ContextActionStack.Children.Clear();
             foreach (var action in actions.OrderByDescending(ActionHelper.GetRank).ThenBy(a => a.ActionName))

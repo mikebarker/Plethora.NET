@@ -4,7 +4,7 @@ using System.Windows;
 
 namespace Plethora.Context.Wpf
 {
-    public class WpfContextSource : WpfContextSourceBase
+    internal class WpfContextSource : WpfContextSourceBase
     {
         #region Implementation of WpfContextSourceBase
 
