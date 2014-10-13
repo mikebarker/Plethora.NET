@@ -62,6 +62,7 @@
     <Compile Include="ContextAugmentor.cs" />
     <Compile Include="ContextInfo.cs" />
     <Compile Include="ContextInfoComparer.cs" />
+    <Compile Include="ActionManager.cs" />
     <Compile Include="ContextManager.cs" />
     <Compile Include="ContextProviderBase.cs" />
     <Compile Include="IActionFactory.cs" />

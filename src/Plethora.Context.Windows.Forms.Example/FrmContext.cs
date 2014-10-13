@@ -9,13 +9,16 @@ namespace Plethora.Context.Windows.Forms.Example
     public partial class FrmContext : Form
     {
         private readonly ContextManager contextManager;
+        private readonly ActionManager actionManager;
 
         public FrmContext()
         {
             InitializeComponent();
 
-            contextManager = ContextManager.DefaultInstance;
+            contextManager = ContextManager.GlobalInstance;
             contextManager.ContextChanged += contextManager_ContextChanged;
+
+            actionManager = ActionManager.GlobalInstance;
         }
 
         protected override void OnClosed(EventArgs e)
@@ -36,7 +39,7 @@ namespace Plethora.Context.Windows.Forms.Example
             this.textBox2.Clear();
 
             var contexts = contextManager.GetContexts();
-            var actions = contextManager.GetActions(contexts);
+            var actions = actionManager.GetActions(contexts);
 
             foreach (var context in contexts.OrderByDescending(c => c.Rank).ThenBy(c => (c.Data as IComparable) ?? -1))
             {

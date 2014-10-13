@@ -9,7 +9,7 @@ namespace Plethora.Context.Wpf
     /// <summary>
     /// A collection of context sources.
     /// </summary>
-    public class WpfContextSourceCollection : WpfContextSourceBase, IList<WpfContextSourceBase>, IList
+    internal class WpfContextSourceCollection : WpfContextSourceBase, IList<WpfContextSourceBase>, IList
     {
         private readonly List<WpfContextSourceBase> innerList = new List<WpfContextSourceBase>();
 

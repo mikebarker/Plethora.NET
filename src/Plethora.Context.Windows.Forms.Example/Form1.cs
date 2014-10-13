@@ -33,6 +33,7 @@ namespace Plethora.Context.Windows.Forms.Example
 
 
         private readonly ContextManager contextManager;
+        private readonly ActionManager actionManager;
 
         public Form1()
         {
@@ -41,7 +42,8 @@ namespace Plethora.Context.Windows.Forms.Example
             FrmContext contextForm = new FrmContext();
             contextForm.Show();
 
-            contextManager = ContextManager.DefaultInstance;
+            contextManager = ContextManager.GlobalInstance;
+            actionManager = ActionManager.GlobalInstance;
 
             contextActionMenuStrip.ContextManager = contextManager;
 
@@ -59,16 +61,16 @@ namespace Plethora.Context.Windows.Forms.Example
 
             //Register actions
             ContextActionTemplate viewContractAction = new ContextActionTemplate("Contract", c => "View Contract #" + ((long)c.Data));
-            contextManager.RegisterActionTemplate(viewContractAction);
+            actionManager.RegisterActionTemplate(viewContractAction);
 
             ContextActionTemplate editContractAction = new ContextActionTemplate("Contract", c => "Edit Contract #" + ((long)c.Data));
-            contextManager.RegisterActionTemplate(editContractAction);
+            actionManager.RegisterActionTemplate(editContractAction);
 
             ContextActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument #" + ((long)c.Data));
-            contextManager.RegisterActionTemplate(viewInstrumentAction);
+            actionManager.RegisterActionTemplate(viewInstrumentAction);
 
             IMultiActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
-            contextManager.RegisterActionTemplate(viewMultiInstrumentAction);
+            actionManager.RegisterActionTemplate(viewMultiInstrumentAction);
 
 
             contextManager.ContextChanged += contextManager_ContextChanged;
@@ -80,7 +82,7 @@ namespace Plethora.Context.Windows.Forms.Example
         private void contextManager_ContextChanged(object sender, EventArgs e)
         {
             var contexts = contextManager.GetContexts();
-            var actions = contextManager.GetActions(contexts);
+            var actions = actionManager.GetActions(contexts);
 
             this.groupBox2.Controls.Clear();
             foreach (var action in actions.OrderByDescending(ActionHelper.GetRank).ThenBy(a => a.ActionName))
