@@ -35,7 +35,7 @@
     /// same context name.
     /// </remarks>
     /// <example>
-    /// An <see cref="IMultiActionTemplate"/> may be cancel multiple trades selected within
+    /// An <see cref="IMultiActionTemplate"/> may be defined to cancel multiple trades selected within
     /// a grid.
     /// </example>
     /// <seealso cref="IUiMultiActionTemplate"/>
