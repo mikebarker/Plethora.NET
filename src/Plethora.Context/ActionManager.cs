@@ -30,7 +30,7 @@ namespace Plethora.Context
         #region Fields
 
         private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
-        private readonly ICollection<IActionFactory> actionFactories = new List<IActionFactory>();
+        private readonly ICollection<IActionFactory> actionFactories = new List<IActionFactory>(0);
         private volatile TemplateActionFactory templateActionFactory;
 
         #endregion

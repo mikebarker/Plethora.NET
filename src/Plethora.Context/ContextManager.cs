@@ -18,7 +18,7 @@ namespace Plethora.Context
         /// The global instance of the <see cref="ContextManager"/>.
         /// </summary>
         /// <remarks>
-        /// Implementations can utilise the global instacne or choose to define a local instance if preferred.
+        /// Implementations can utilise the global instance or choose to define a local instance if preferred.
         /// </remarks>
         public static ContextManager GlobalInstance
         {
@@ -31,7 +31,7 @@ namespace Plethora.Context
 
         private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
         private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
-        private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>();
+        private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>(0);
 
         #endregion
 
@@ -57,6 +57,9 @@ namespace Plethora.Context
             remove { contextChanged.Remove(value); }
         }
 
+        /// <summary>
+        /// Raises the <see cref="ContextChanged"/> event.
+        /// </summary>
         protected virtual void OnContextChanged(object sender, EventArgs e)
         {
             foreach (var handler in contextChanged.GetInvocationList())
