@@ -3,6 +3,84 @@ using System.Windows.Data;
 
 namespace Plethora.Context.Wpf
 {
+    /// <summary>
+    /// A template class which may be defined as a resource and used in several instance throughout XAML mark-up.
+    /// </summary>
+    /// <remarks>
+    /// This class inherits from <see cref="FreezableCollection{T}"/> to allow the WPF DataContext
+    /// to flow through the context source tree.
+    /// </remarks>
+    /// <example>
+    /// This is used within XAML as follows:
+    ///  <code>
+    ///   <![CDATA[
+    /// 
+    ///     <UserControl.Resources>
+    /// 
+    ///         <context:WpfContextSourceTemplate x:Key="contextGrid"
+    ///             Name="XamDataGrid" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}" />
+    /// 
+    ///         <context:WpfContextSourceTemplate x:Key="contextStock"
+    ///             Name="Stock" Data="{Binding Path=ActiveDataItem.StockMnemonic, RelativeSource={RelativeSource TemplatedParent}}"/>
+    /// 
+    ///         <context:WpfContextSourceTemplate x:Key="contextContract"
+    ///             Name="Contract" Data="{Binding Path=ActiveDataItem.ContractId, RelativeSource={RelativeSource TemplatedParent}}" />
+    /// 
+    ///         <context:WpfContextSourceTemplate x:Key="contextClient"
+    ///             Name="Client" Data="{Binding Path=ActiveDataItem.ClientCode, RelativeSource={RelativeSource TemplatedParent}}" />
+    /// 
+    ///         <context:WpfContextSourceTemplateCollection x:Key="contextCollectionTrade">
+    ///             <StaticResource ResourceKey="contextStock" />
+    ///             <StaticResource ResourceKey="contextContract" />
+    ///             <StaticResource ResourceKey="contextClient" />
+    ///         </context:WpfContextSourceTemplateCollection>
+    /// 
+    ///         <context:WpfContextSourceTemplateCollection x:Key="contextCollectionTradeGridRow">
+    ///             <StaticResource ResourceKey="contextCollectionTrade" />
+    ///             <StaticResource ResourceKey="contextGrid" />
+    ///         </context:WpfContextSourceTemplateCollection>
+    /// 
+    ///     </UserControl.Resources>
+    /// 
+    ///   ]]>
+    ///  </code>
+    /// 
+    /// These resources may then be referenced in the XAML mark-up of the <see cref="UIElement"/> as:
+    ///  <code>
+    ///   <![CDATA[
+    ///            <DataPresenter:XamDataGrid Name="TradeGrid"
+    ///                                       DataSource="{Binding ItemsCollectionView}"
+    ///                                       ActiveDataItem="{Binding Path=SelectedItem, Mode=OneWayToSource}">
+    ///
+    ///                <!-- Context source using a multiple templates -->
+    ///                <context:WpfContext.ContextSourceTemplate>
+    ///                    <context:WpfContextSourceTemplateCollection>
+    ///                        <StaticResource ResourceKey="contextGrid" />
+    ///
+    ///                        <StaticResource ResourceKey="contextStock" />
+    ///                        <StaticResource ResourceKey="contextContract" />
+    ///                        <StaticResource ResourceKey="contextClient" />
+    ///                    </context:WpfContextSourceTemplateCollection>
+    ///                </context:WpfContext.ContextSourceTemplate>
+    ///   ...
+    ///   ...
+    ///            </DataPresenter>
+    ///   
+    ///            <DataPresenter:XamDataGrid Name="TradeGrid2"
+    ///                                       DataSource="{Binding ItemsCollectionView}"
+    ///                                       ActiveDataItem="{Binding Path=SelectedItem, Mode=OneWayToSource}">
+    ///
+    ///                <!-- Simple context source using a single template -->
+    ///                <context:WpfContext.ContextSourceTemplate>
+    ///                    <StaticResource ResourceKey="contextCollectionTradeGridRow" />
+    ///                </context:WpfContext.ContextSourceTemplate>
+    ///   ...
+    ///   ...
+    ///            </DataPresenter>
+    ///   ]]>
+    ///  </code>
+    /// </example>
+    /// <seealso cref="WpfContextSourceTemplateCollection"/>
     public class WpfContextSourceTemplate : Freezable, IWpfContextSourceTemplate
     {
         #region Name DependencyProperty
@@ -53,7 +131,7 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        public WpfContextSourceBase CreateContent()
+        WpfContextSourceBase IWpfContextSourceTemplate.CreateContent()
         {
             WpfContextSource instance = new WpfContextSource();
 
@@ -64,6 +142,11 @@ namespace Plethora.Context.Wpf
             return instance;
         }
 
+        /// <summary>
+        /// This method modifies bindings to TemplatedParent, and allows the context source to be 
+        /// defined as a resource as a template, and used in several instance within the XAML mark-up
+        /// to provide <see cref="WpfContextSource"/> items.
+        /// </summary>
         private static void ModifyTemplateParent(Binding binding)
         {
             //Redirect TemplateParent binding to use the UIElement property of the source

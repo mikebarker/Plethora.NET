@@ -12,10 +12,12 @@ namespace Plethora.Context.Wpf
     ///   Elements added to this class must implement the <see cref="IWpfContextSource"/> interface.
     ///  </para>
     ///  <para>
-    ///   This class inherits from <see cref="FreezableCollection{T}"/> to allow the DataContext
+    ///   This class inherits from <see cref="FreezableCollection{T}"/> to allow the WPF DataContext
     ///   to flow through the context source tree.
     ///  </para>
     /// </remarks>
+    /// <example>See the example presented in <see cref="WpfContextSourceTemplate"/>.</example>
+    /// <seealso cref="WpfContextSourceTemplate"/>
     public class WpfContextSourceTemplateCollection : FreezableCollection<Freezable>, IWpfContextSourceTemplate
     {
         public WpfContextSourceTemplateCollection()
@@ -37,7 +39,7 @@ namespace Plethora.Context.Wpf
             }
         }
 
-        public WpfContextSourceBase CreateContent()
+        WpfContextSourceBase IWpfContextSourceTemplate.CreateContent()
         {
             var collection = new WpfContextSourceCollection();
 

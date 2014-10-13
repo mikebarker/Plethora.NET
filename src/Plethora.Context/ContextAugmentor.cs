@@ -18,7 +18,7 @@ namespace Plethora.Context
     ///  A <see cref="ContextAugmentor"/> can therefore be defined to create the
     ///  additional asset, currency and exchange contexts from a trade context.
     ///  A second <see cref="ContextAugmentor"/> can be defined to create the country context
-    /// from the asset context.
+    ///  from the asset context.
     /// </para>
     /// </example>
     public class ContextAugmentor

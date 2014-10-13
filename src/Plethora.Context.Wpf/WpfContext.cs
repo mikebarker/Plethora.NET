@@ -3,9 +3,12 @@ using System.Windows.Data;
 
 namespace Plethora.Context.Wpf
 {
+    /// <summary>
+    /// Helper class which defines the attached properties required for using context within WPF XAML mark-up.
+    /// </summary>
     public static class WpfContext
     {
-        #region ContextSource Attached Property
+        #region ContextSourceTemplate Attached Property
 
         public static readonly DependencyProperty ContextSourceTemplateProperty =
             DependencyProperty.RegisterAttached(
@@ -144,49 +147,51 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
+        /// <summary>
+        /// Get the <see cref="ContextManager"/> from the <see cref="UIElement"/> or one of its parents (from the logical tree).
+        /// </summary>
+        /// <param name="element">
+        /// The <see cref="UIElement"/> for which the <see cref="ContextManager"/> is required.
+        /// </param>
+        /// <returns>
+        /// Returns the value of the <see cref="ContextManagerProperty"/> defined against the <paramref name="element"/>.
+        /// If <paramref name="element"/> does not have a value for <see cref="ContextManagerProperty"/> then its logical 
+        /// parent is tested. This process is repeated until an value is located.
+        /// If no value is assigned to <see cref="ContextManagerProperty"/> within the logical tree, then 
+        /// <see cref="ContextManager.GlobalInstance"/> is returned.
+        /// </returns>
         public static ContextManager GetContextManagerForElement(UIElement element)
-        {
-            bool isGlobal;
-            return GetContextManagerForElement(element, out isGlobal);
-        }
-
-        public static ContextManager GetContextManagerForElement(UIElement element, out bool isGlobal)
         {
             ContextManager contextManager = GetDependencyPropertyFromLogicalTree(element, ContextManagerProperty) as ContextManager;
 
             if (contextManager == null)
-            {
-                isGlobal = true;
                 return ContextManager.GlobalInstance;
-            }
-            else
-            {
-                isGlobal = false;
-                return contextManager;
-            }
+
+            return contextManager;
         }
 
 
+        /// <summary>
+        /// Get the <see cref="ActionManager"/> from the <see cref="UIElement"/> or one of its parents (from the logical tree).
+        /// </summary>
+        /// <param name="element">
+        /// The <see cref="UIElement"/> for which the <see cref="ActionManager"/> is required.
+        /// </param>
+        /// <returns>
+        /// Returns the value of the <see cref="ActionManagerProperty"/> defined against the <paramref name="element"/>.
+        /// If <paramref name="element"/> does not have a value for <see cref="ActionManagerProperty"/> then its logical 
+        /// parent is tested. This process is repeated until an value is located.
+        /// If no value is assigned to <see cref="ActionManagerProperty"/> within the logical tree, then 
+        /// <see cref="ActionManager.GlobalInstance"/> is returned.
+        /// </returns>
         public static ActionManager GetActionManagerForElement(UIElement element)
-        {
-            bool isGlobal;
-            return GetActionManagerForElement(element, out isGlobal);
-        }
-
-        public static ActionManager GetActionManagerForElement(UIElement element, out bool isGlobal)
         {
             ActionManager actionManager = GetDependencyPropertyFromLogicalTree(element, ActionManagerProperty) as ActionManager;
 
             if (actionManager == null)
-            {
-                isGlobal = true;
                 return ActionManager.GlobalInstance;
-            }
-            else
-            {
-                isGlobal = false;
-                return actionManager;
-            }
+
+            return actionManager;
         }
 
 
@@ -199,7 +204,7 @@ namespace Plethora.Context.Wpf
         /// <returns>
         /// The value of the first instance of the <see cref="DependencyProperty"/> located in the logical tree.
         /// </returns>
-        public static object GetDependencyPropertyFromLogicalTree(
+        private static object GetDependencyPropertyFromLogicalTree(
             DependencyObject obj,
             DependencyProperty dependencyProperty)
         {

@@ -10,6 +10,9 @@ namespace Plethora.Context.Wpf
     {
     }
 
+    /// <summary>
+    /// A WPF <see cref="ContextMenu"/> which auto-populates from the actions currently under context.
+    /// </summary>
     public class WpfContextMenu : ContextMenu
     {
         public WpfContextMenu()

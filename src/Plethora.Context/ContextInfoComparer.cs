@@ -10,12 +10,13 @@ namespace Plethora.Context
     /// Two contexts are considered equal if both the <see cref="ContextInfo.Name"/> and
     /// <see cref="ContextInfo.Data"/> properties match.
     /// </remarks>
-    public sealed class ContextInfoComparer : IEqualityComparer<ContextInfo>
+    internal sealed class ContextInfoComparer : IEqualityComparer<ContextInfo>
     {
         #region Constants
 
         private const int HASHCODE_INITIAL = 0x7D068CCE;
         private const int HASHCODE_ELEMENT = -0x5AAAAAD7;
+
         #endregion
 
         #region Implementation of IEqualityComparer<ContextInfo>
