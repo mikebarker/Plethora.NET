@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Plethora.Context.Wpf
@@ -74,10 +75,30 @@ namespace Plethora.Context.Wpf
 
         #region Private Methods
 
+        private string prevContextName;
+        private int prevRank;
+        private object prevData;
+
+        private bool HasContextChanged()
+        {
+            if (!string.Equals(this.prevContextName, this.ContextName) ||
+                !int.Equals(this.prevRank, this.Rank) ||
+                !object.Equals(this.prevData, this.Data))
+            {
+                this.prevContextName = this.ContextName;
+                this.prevRank = this.Rank;
+                this.prevData = this.Data;
+
+                return true;
+            }
+            return false;
+        }
+
         private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             var contextSource = (WpfContextSource)dependencyObject;
-            contextSource.OnContextChanged(EventArgs.Empty);
+            if (contextSource.HasContextChanged())
+                contextSource.OnContextChanged(EventArgs.Empty);
         }
 
         #endregion
