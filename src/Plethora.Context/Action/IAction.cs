@@ -1,4 +1,4 @@
-﻿namespace Plethora.Context
+﻿namespace Plethora.Context.Action
 {
     /// <summary>
     /// An interface which provides action information.

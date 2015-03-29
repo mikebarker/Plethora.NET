@@ -59,9 +59,7 @@
     </Compile>
     <Compile Include="Collections\AutoSortedList.cs" />
     <Compile Include="Collections\FuncComparer.cs" />
-    <Compile Include="Collections\ReadOnlyDictionary.cs" />
     <Compile Include="Collections\ListIndexItterator.cs" />
-    <Compile Include="Collections\ReadOnlyHashSet.cs" />
     <Compile Include="Collections\Sets\BaseSetImpl.cs" />
     <Compile Include="Collections\Sets\CompleteSet.cs" />
     <Compile Include="Collections\Sets\EmptySet.cs" />

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using Plethora.Context.Action;
 
 namespace Plethora.Context.Windows.Forms.Example
 {
@@ -60,16 +61,16 @@ namespace Plethora.Context.Windows.Forms.Example
 
 
             //Register actions
-            ContextActionTemplate viewContractAction = new ContextActionTemplate("Contract", c => "View Contract #" + ((long)c.Data));
+            IActionTemplate viewContractAction = new ContextActionTemplate("Contract", c => "View Contract #" + ((long)c.Data));
             actionManager.RegisterActionTemplate(viewContractAction);
 
-            ContextActionTemplate editContractAction = new ContextActionTemplate("Contract", c => "Edit Contract #" + ((long)c.Data));
+            IActionTemplate editContractAction = new ContextActionTemplate("Contract", c => "Edit Contract #" + ((long)c.Data));
             actionManager.RegisterActionTemplate(editContractAction);
 
-            ContextActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument #" + ((long)c.Data));
+            IActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument #" + ((long)c.Data));
             actionManager.RegisterActionTemplate(viewInstrumentAction);
 
-            IMultiActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
+            IActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
             actionManager.RegisterActionTemplate(viewMultiInstrumentAction);
 
 
@@ -190,61 +191,56 @@ namespace Plethora.Context.Windows.Forms.Example
         }
     }
 
-    class ContextActionTemplate : IActionTemplate
+    class ContextActionTemplate : ActionTemplate
     {
-        private readonly string contextName;
         private readonly Func<ContextInfo, string> getActionName;
 
         public ContextActionTemplate(string contextName, Func<ContextInfo, string> getActionName)
+            : base (contextName)
         {
-            this.contextName = contextName;
             this.getActionName = getActionName;
         }
 
-        public string ContextName { get { return this.contextName; } }
-
-        public string GetActionName(ContextInfo info)
+        protected override string GetActionName(ContextInfo info)
         {
             return getActionName(info);
         }
 
-        public bool CanExecute(ContextInfo info)
+        protected override bool GetCanExecuteAction(ContextInfo context)
         {
             return true;
         }
 
-        public void Execute(ContextInfo info)
+        protected override System.Action GetExecuteAction(ContextInfo context)
         {
-            MessageBox.Show("Executed: " + GetActionName(info), "Executed Action", MessageBoxButtons.OK);
+            return () => MessageBox.Show("Executed: " + GetActionName(context), "Executed Action", MessageBoxButtons.OK);
         }
     }
 
-    class MultiContextActionTemplate : IMultiActionTemplate
+    class MultiContextActionTemplate : MultiActionTemplate
     {
-        private readonly string contextName;
         private readonly Func<ContextInfo[], string> getActionName;
 
         public MultiContextActionTemplate(string contextName, Func<ContextInfo[], string> getActionName)
+            : base(contextName)
         {
-            this.contextName = contextName;
             this.getActionName = getActionName;
         }
 
-        public string ContextName { get { return this.contextName; } }
-
-        public string GetActionName(ContextInfo[] info)
+        protected override string GetActionName(ContextInfo[] contexts)
         {
-            return getActionName(info);
+            return getActionName(contexts);
         }
 
-        public bool CanExecute(ContextInfo[] info)
+        protected override bool GetCanExecuteAction(ContextInfo[] contexts)
         {
             return true;
         }
 
-        public void Execute(ContextInfo[] info)
+        protected override System.Action GetExecuteAction(ContextInfo[] contexts)
         {
-            MessageBox.Show("Executed: " + GetActionName(info), "Executed Action", MessageBoxButtons.OK);
+            return
+                () => MessageBox.Show("Executed: " + GetActionName(contexts), "Executed Action", MessageBoxButtons.OK);
         }
     }
 }
