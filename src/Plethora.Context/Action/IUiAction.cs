@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace Plethora.Context
+namespace Plethora.Context.Action
 {
     /// <summary>
     /// Extends the <see cref="IAction"/> interface to include visual elements.

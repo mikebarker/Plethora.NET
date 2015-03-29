@@ -47,7 +47,7 @@ namespace Plethora.Context.Wpf
             }
             else
             {
-                Action startTimer = delegate
+                System.Action startTimer = delegate
                     {
                         lock (lockObj)
                         {

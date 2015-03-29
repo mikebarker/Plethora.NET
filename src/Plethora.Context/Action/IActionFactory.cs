@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Plethora.Context
+namespace Plethora.Context.Action
 {
     /// <summary>
     /// A factory which creates actions given set of contexts.

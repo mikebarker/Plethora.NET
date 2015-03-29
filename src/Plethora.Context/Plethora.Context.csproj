@@ -56,23 +56,26 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
-    <Compile Include="ActionHelper.cs" />
+    <Compile Include="Action\ActionHelper.cs" />
+    <Compile Include="Action\ActionManager.cs" />
+    <Compile Include="Action\ActionTemplate.cs" />
+    <Compile Include="Action\ActionTemplate.Multi.cs" />
+    <Compile Include="Action\ActionTemplate.Ui.cs" />
+    <Compile Include="Action\ActionTemplate.UiMulti.cs" />
+    <Compile Include="Action\IAction.cs" />
+    <Compile Include="Action\IActionFactory.cs" />
+    <Compile Include="Action\IActionTemplate.cs" />
+    <Compile Include="Action\IUiAction.cs" />
+    <Compile Include="Action\TemplateActionFactory.cs" />
     <Compile Include="ActivityItemRegister.cs" />
     <Compile Include="CachedContextProvider.cs" />
     <Compile Include="ContextAugmentor.cs" />
     <Compile Include="ContextInfo.cs" />
     <Compile Include="ContextInfoComparer.cs" />
-    <Compile Include="ActionManager.cs" />
     <Compile Include="ContextManager.cs" />
     <Compile Include="ContextProviderBase.cs" />
-    <Compile Include="IActionFactory.cs" />
-    <Compile Include="IActionTemplate.cs" />
-    <Compile Include="IUiActionTemplate.cs" />
-    <Compile Include="IUiAction.cs" />
-    <Compile Include="IAction.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TemplateActionFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
 
-namespace Plethora.Context
+namespace Plethora.Context.Action
 {
     /// <summary>
     /// Helper class for working with <see cref="IAction"/> and <see cref="IUiAction"/> objects.

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Plethora.Context.Action;
 using Image = System.Drawing.Image;
 
 namespace Plethora.Context.Wpf.Example
@@ -56,7 +57,7 @@ namespace Plethora.Context.Wpf.Example
         }
 
 
-        class GenericActionTemplate : IUiActionTemplate
+        class GenericActionTemplate : UiActionTemplate
         {
             private readonly string contextName;
             private readonly string actionName;
@@ -68,6 +69,7 @@ namespace Plethora.Context.Wpf.Example
             }
 
             public GenericActionTemplate(string contextName, string actionName, bool canExecute)
+                : base(contextName)
             {
                 this.contextName = contextName;
                 this.actionName = actionName;
@@ -76,46 +78,41 @@ namespace Plethora.Context.Wpf.Example
 
             #region Implementation of IActionTemplate
 
-            public string ContextName
-            {
-                get { return contextName; }
-            }
-
-            public string GetActionName(ContextInfo context)
+            protected override string GetActionName(ContextInfo context)
             {
                 return this.actionName;
             }
 
-            public bool CanExecute(ContextInfo context)
+            protected override bool GetCanExecuteAction(ContextInfo context)
             {
                 return this.canExecute;
             }
 
-            public void Execute(ContextInfo context)
+            protected override System.Action GetExecuteAction(ContextInfo context)
             {
-                MessageBox.Show("Executed " + GetActionName(context), "Execute Action", MessageBoxButton.OK);
+                return () => MessageBox.Show("Executed " + GetActionName(context), "Execute Action", MessageBoxButton.OK);
             }
 
             #endregion
 
             #region Implementation of IUiActionTemplate
 
-            public string GetActionDescription(ContextInfo context)
+            protected override string GetDescription(ContextInfo context)
             {
                 return "Execute " + GetActionName(context) + " [" + context.Data + "]";
             }
 
-            public Image GetImage(ContextInfo context)
+            protected override Image GetImage(ContextInfo context)
             {
                 return null;
             }
 
-            public string GetGroup(ContextInfo context)
+            protected override string GetGroup(ContextInfo context)
             {
                 return this.contextName;
             }
 
-            public int GetRank(ContextInfo context)
+            protected override int GetRank(ContextInfo context)
             {
                 return context.Rank;
             }
