@@ -13,7 +13,7 @@
         </Style>
 
 
-        <context:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Rank="5" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
+        <context:WpfContextSourceTemplate x:Key="textboxContext" Name="Textbox" Rank="-5" Data="{Binding RelativeSource={RelativeSource TemplatedParent}}"/>
 
         <context:WpfContextSourceTemplateCollection x:Key="contractContext">
             <context:WpfContextSourceTemplate Name="Contract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
@@ -40,9 +40,16 @@
             </DockPanel>
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Instrument:</TextBlock>
-                <TextBox ContextMenu="{StaticResource contextMenu}">
+                <TextBox >
                     VOD.L
 
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Alpha" />
+                            <context:WpfContextMenuItem />
+                            <MenuItem Header="Omega" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
                     <context:WpfContext.ContextSourceTemplate>
                         <context:WpfContextSourceTemplateCollection>
                             <StaticResource ResourceKey="textboxContext" />
