@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,12 +11,14 @@ namespace Plethora.Context.Wpf
     /// <summary>
     /// A WPF <see cref="ContextMenu"/> which auto-populates from the actions currently under context.
     /// </summary>
-    public class WpfContextMenu : ContextMenu
+    public class WpfContextMenuItem : MenuItem
     {
-        public WpfContextMenu()
+        public WpfContextMenuItem()
         {
             SetValue(SuppressedContextsPropertyKey, new StringObservableCollection());
             SetValue(SuppressedActionsPropertyKey, new StringObservableCollection());
+
+            this.Visibility = Visibility.Collapsed;
         }
 
         #region MaxGroupItems Dependency Property
@@ -23,7 +26,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty MaxGroupItemsProperty = DependencyProperty.Register(
             "MaxGroupItems", 
             typeof (int),
-            typeof (WpfContextMenu),
+            typeof (WpfContextMenuItem),
             new PropertyMetadata(-1));
 
         public int MaxGroupItems
@@ -39,7 +42,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty ShowUnavailableActionsProperty = DependencyProperty.Register(
             "ShowUnavailableActions",
             typeof(bool),
-            typeof(WpfContextMenu),
+            typeof(WpfContextMenuItem),
             new PropertyMetadata(true));
 
         public bool ShowUnavailableActions
@@ -55,7 +58,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty DisableGroupingProperty = DependencyProperty.Register(
             "DisableGrouping",
             typeof(bool),
-            typeof(WpfContextMenu),
+            typeof(WpfContextMenuItem),
             new PropertyMetadata(false));
 
         public bool DisableGrouping
@@ -71,7 +74,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyPropertyKey SuppressedContextsPropertyKey = DependencyProperty.RegisterReadOnly(
             "SuppressedContexts",
             typeof(StringObservableCollection),
-            typeof(WpfContextMenu),
+            typeof(WpfContextMenuItem),
             new PropertyMetadata(null, SuppressedContextsChanged));
 
         public static readonly DependencyProperty SuppressedContextsProperty =
@@ -84,7 +87,7 @@ namespace Plethora.Context.Wpf
 
         private static void SuppressedContextsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            var menu = (WpfContextMenu)dependencyObject;
+            var menu = (WpfContextMenuItem)dependencyObject;
             menu.suppressedContextsHashSet = null;
         }
 
@@ -94,14 +97,14 @@ namespace Plethora.Context.Wpf
         {
             get
             {
-                if (suppressedContextsHashSet == null)
+                if (this.suppressedContextsHashSet == null)
                 {
                     var suppressedContexts = this.SuppressedContexts;
                     if ((suppressedContexts != null) && (suppressedContexts.Count != 0))
-                        suppressedContextsHashSet = new HashSet<string>(suppressedContexts);
+                        this.suppressedContextsHashSet = new HashSet<string>(suppressedContexts);
                 }
 
-                return suppressedContextsHashSet;
+                return this.suppressedContextsHashSet;
             }
         }
 
@@ -112,7 +115,7 @@ namespace Plethora.Context.Wpf
         private static readonly DependencyPropertyKey SuppressedActionsPropertyKey = DependencyProperty.RegisterReadOnly(
             "SuppressedActions",
             typeof(StringObservableCollection),
-            typeof(WpfContextMenu),
+            typeof(WpfContextMenuItem),
             new PropertyMetadata(null, SuppressedActionsChanged));
 
         public static readonly DependencyProperty SuppressedActionsProperty =
@@ -125,7 +128,7 @@ namespace Plethora.Context.Wpf
 
         private static void SuppressedActionsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
-            var menu = (WpfContextMenu)dependencyObject;
+            var menu = (WpfContextMenuItem)dependencyObject;
             menu.suppressedActionsHashSet = null;
         }
 
@@ -135,27 +138,60 @@ namespace Plethora.Context.Wpf
         {
             get
             {
-                if (suppressedActionsHashSet == null)
+                if (this.suppressedActionsHashSet == null)
                 {
                     var suppressedActions = this.SuppressedActions;
                     if ((suppressedActions != null) && (suppressedActions.Count != 0))
-                        suppressedActionsHashSet = new HashSet<string>(suppressedActions);
+                        this.suppressedActionsHashSet = new HashSet<string>(suppressedActions);
                 }
 
-                return suppressedActionsHashSet;
+                return this.suppressedActionsHashSet;
             }
         }
 
         #endregion
 
-
-        protected override void OnOpened(RoutedEventArgs e)
+        protected override void OnInitialized(EventArgs e)
         {
-            UIElement target = this.PlacementTarget;
+            base.OnInitialized(e);
+
+            ContextMenu newContextMenu = this.Parent as ContextMenu;
+            if (newContextMenu != null)
+            {
+                newContextMenu.Opened += ContextMenu_Opened;
+                newContextMenu.Closed += ContextMenu_Closed;
+            }
+        }
+
+        private void ClearItem()
+        {
+            var parent = this.Parent as ContextMenu;
+            if (parent == null)
+                return;
+
+            for (int i = parent.Items.Count - 1; i >= 0; i--)
+            {
+                var item = parent.Items[i] as MenuItem;
+                if (item == null)
+                    continue;
+
+                if (ReferenceEquals(item.Tag, this))
+                    parent.Items.RemoveAt(i);
+            }
+        }
+
+        void ContextMenu_Opened(object sender, RoutedEventArgs e)
+        {
+            var parent = this.Parent as ContextMenu;
+            if (parent == null)
+                return;
+
+            UIElement target = parent.PlacementTarget;
+
             var contextManager = WpfContext.GetContextManagerForElement(target);
             var actionManager = WpfContext.GetActionManagerForElement(target);
 
-            this.Items.Clear();
+            ClearItem();
 
             var contexts = contextManager.GetContexts();
             var suppressedContexts = this.SuppressedContextsHashSet;
@@ -186,18 +222,23 @@ namespace Plethora.Context.Wpf
             {
                 anyActions = true;
 
+                bool isRootItemCollection;
                 ItemCollection itemCollection; // set to the root menu or a sub-menu
                 if (disableGrouping || string.Empty.Equals(group.GroupName))
                 {
-                    itemCollection = this.Items;
+                    itemCollection = parent.Items;
+                    isRootItemCollection = true;
                 }
                 else
                 {
-                    var item = new MenuItem();
-                    item.Header = group.GroupName;
+                    var menuItem = new MenuItem();
+                    menuItem.Tag = this;
+                    menuItem.Header = group.GroupName;
 
-                    this.Items.Add(item);
-                    itemCollection = item.Items;
+                    var index = parent.Items.IndexOf(this);
+                    parent.Items.Insert(index, menuItem);
+                    itemCollection = menuItem.Items;
+                    isRootItemCollection = false;
                 }
 
                 foreach (IAction contextAction in group.Actions.Take(maxItems))
@@ -209,28 +250,33 @@ namespace Plethora.Context.Wpf
                         continue;
 
                     MenuItem menuItem = new MenuItem();
+                    menuItem.Tag = this;
                     menuItem.Header = action.ActionName;
                     menuItem.IsEnabled = canExecute;
                     menuItem.Icon = ActionHelper.GetImage(action);
                     menuItem.ToolTip = ActionHelper.GetActionDescription(action);
                     menuItem.Click += delegate { action.Execute(); };
 
-                    itemCollection.Add(menuItem);
+                    if (isRootItemCollection)
+                    {
+                        var index = itemCollection.IndexOf(this);
+                        itemCollection.Insert(index, menuItem);
+                    }
+                    else
+                    {
+                        itemCollection.Add(menuItem);
+                    }
                 }
             }
 
             if (!anyActions)
-                this.Visibility= Visibility.Hidden;
-
-            base.OnOpened(e);
+                this.Visibility = Visibility.Hidden;
         }
 
-        protected override void OnClosed(RoutedEventArgs e)
+        void ContextMenu_Closed(object sender, RoutedEventArgs e)
         {
             //Do not hold onto references unnecessarily
-            this.Items.Clear();
-
-            base.OnClosed(e);
+            ClearItem();
         }
     }
 }
