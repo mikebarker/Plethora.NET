@@ -9,9 +9,23 @@ namespace Plethora.Context.Action
     public static class ActionHelper
     {
         /// <summary>
-        /// The default rank for an <see cref="IAction"/> is not otherwise specified.
+        /// The default rank for an <see cref="IAction"/> if not otherwise specified.
         /// </summary>
         public const int DefaultRank = 0;
+
+        /// <summary>
+        /// Gets the <see cref="IUiAction.ActionText"/> property value if the <paramref name="action"/> is
+        /// an instance of <see cref="IUiAction"/>, otherwise <see cref="IAction.ActionName"/>.
+        /// </summary>
+        /// <param name="action">The <see cref="IAction"/> for which the text is required.</param>
+        public static string GetActionText(IAction action)
+        {
+            var uiAction = (action as IUiAction);
+            if (uiAction == null)
+                return action.ActionName;
+
+            return uiAction.ActionText;
+        }
 
         /// <summary>
         /// Gets the <see cref="IUiAction.Group"/> property value if the <paramref name="action"/> is

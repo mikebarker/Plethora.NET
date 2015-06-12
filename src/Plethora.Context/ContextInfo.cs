@@ -19,7 +19,7 @@ namespace Plethora.Context
         #region Constructors
 
         /// <summary>
-        /// Initialises a new instance of the <see cref="Context"/> class.
+        /// Initialises a new instance of the <see cref="ContextInfo"/> class.
         /// </summary>
         /// <param name="name">
         /// Identifies the name or "high-level type" of the context. <example>Trade</example>
@@ -90,5 +90,60 @@ namespace Plethora.Context
         }
 
         #endregion
+
+        /// <summary>
+        /// Determines whether the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>.
+        /// </summary>
+        /// <returns>
+        /// true if the specified <see cref="T:System.Object"/> is equal to the current <see cref="T:System.Object"/>; otherwise, false.
+        /// </returns>
+        /// <param name="obj">The <see cref="T:System.Object"/> to compare with the current <see cref="T:System.Object"/>. </param>
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj))
+            {
+                return false;
+            }
+
+            if (ReferenceEquals(this, obj))
+            {
+                return true;
+            }
+
+            if (obj.GetType() != this.GetType())
+            {
+                return false;
+            }
+
+            return Equals((ContextInfo)obj);
+        }
+
+        /// <summary>
+        /// Serves as a hash function for a particular type. 
+        /// </summary>
+        /// <returns>
+        /// A hash code for the current <see cref="T:System.Object"/>.
+        /// </returns>
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (this.rank * 397) ^ (this.name != null ? this.name.GetHashCode() : 0);
+            }
+        }
+
+        /// <summary>
+        /// The equals method.
+        /// </summary>
+        /// <param name="other">
+        /// The other.
+        /// </param>
+        /// <returns>
+        /// The <see cref="bool"/>.
+        /// </returns>
+        protected bool Equals(ContextInfo other)
+        {
+            return this.rank == other.rank && string.Equals(this.name, other.name);
+        }
     }
 }
