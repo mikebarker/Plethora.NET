@@ -8,6 +8,11 @@ namespace Plethora.Context.Action
     public interface IUiAction : IAction
     {
         /// <summary>
+        /// Gets the text to be displayed to the user.
+        /// </summary>
+        string ActionText { get; }
+
+        /// <summary>
         /// Gets the description of the action.
         /// </summary>
         /// <example>

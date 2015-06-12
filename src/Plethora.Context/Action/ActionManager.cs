@@ -48,7 +48,8 @@ namespace Plethora.Context.Action
         ///  </para>
         ///  <para>
         ///   Consider using <see cref="RegisterActionTemplate(IActionTemplate)"/>
-        ///   if actions can be templated.
+        ///   or <see cref="RegisterActionTemplate(IMultiActionTemplate)"/> if actions
+        ///   can be templated.
         ///  </para>
         /// </remarks>
         /// <seealso cref="GetActions"/>
@@ -122,9 +123,71 @@ namespace Plethora.Context.Action
         }
 
         /// <summary>
+        /// Registers an action template with this <see cref="ContextManager"/>.
+        /// </summary>
+        /// <param name="template">The action template to be registered.</param>
+        /// <remarks>
+        ///  <para>
+        ///   The template is used to create a list of available actions based on
+        ///   a collection of in-scope contexts.
+        ///  </para>
+        ///  <para>
+        ///   The <see cref="IMultiActionTemplate"/> differs from the <see cref="IActionTemplate"/>
+        ///   in that an <see cref="IActionTemplate"/> will define an action if a
+        ///   single context with a context name is in scope. <see cref="IMultiActionTemplate"/>
+        ///   will define an action if multiple conexts are in-scope with the same context name.
+        ///  </para>
+        /// </remarks>
+        public void RegisterActionTemplate(IMultiActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            rwLock.EnterWriteLock();
+            try
+            {
+                if (templateActionFactory == null)
+                {
+                    templateActionFactory = new TemplateActionFactory();
+                    actionFactories.Add(templateActionFactory);
+                }
+
+                templateActionFactory.RegisterActionTemplate(template);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
+            }
+        }
+
+        /// <summary>
         /// Deregisters an action template.
         /// </summary>
         public void DeregisterActionTemplate(IActionTemplate template)
+        {
+            //Validation
+            if (template == null)
+                throw new ArgumentNullException("template");
+
+            rwLock.EnterWriteLock();
+            try
+            {
+                if (templateActionFactory == null)
+                    return;
+
+                templateActionFactory.DeregisterActionTemplate(template);
+            }
+            finally
+            {
+                rwLock.ExitWriteLock();
+            }
+        }
+
+        /// <summary>
+        /// Deregisters an action template.
+        /// </summary>
+        public void DeregisterActionTemplate(IMultiActionTemplate template)
         {
             //Validation
             if (template == null)
@@ -163,7 +226,7 @@ namespace Plethora.Context.Action
                 var actions = actionFactories
                     .Select(factory => factory.GetActions(contextsByName))
                     .Where(actionList => actionList != null)
-                    .SelectMany(actionList => actionList)
+                    .SelectMany(action => action)
                     .Where(action => action != null)
                     .ToList();
 
