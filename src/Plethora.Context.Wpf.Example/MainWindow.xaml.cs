@@ -78,41 +78,46 @@ namespace Plethora.Context.Wpf.Example
 
             #region Implementation of IActionTemplate
 
-            protected override string GetActionName(ContextInfo context)
+            public override string GetActionName(ContextInfo context)
             {
                 return this.actionName;
             }
 
-            protected override bool GetCanExecuteAction(ContextInfo context)
+            public override bool CanExecute(ContextInfo context)
             {
                 return this.canExecute;
             }
 
-            protected override System.Action GetExecuteAction(ContextInfo context)
+            public override void Execute(ContextInfo context)
             {
-                return () => MessageBox.Show("Executed " + GetActionName(context), "Execute Action", MessageBoxButton.OK);
+                MessageBox.Show("Executed " + GetActionName(context), "Execute Action", MessageBoxButton.OK);
             }
 
             #endregion
 
             #region Implementation of IUiActionTemplate
 
-            protected override string GetDescription(ContextInfo context)
+            public override string GetActionText(ContextInfo context)
+            {
+                return "Execute " + GetActionName(context);
+            }
+
+            public override string GetActionDescription(ContextInfo context)
             {
                 return "Execute " + GetActionName(context) + " [" + context.Data + "]";
             }
 
-            protected override Image GetImage(ContextInfo context)
+            public override Image GetImage(ContextInfo context)
             {
                 return null;
             }
 
-            protected override string GetGroup(ContextInfo context)
+            public override string GetGroup(ContextInfo context)
             {
                 return this.contextName;
             }
 
-            protected override int GetRank(ContextInfo context)
+            public override int GetRank(ContextInfo context)
             {
                 return context.Rank;
             }

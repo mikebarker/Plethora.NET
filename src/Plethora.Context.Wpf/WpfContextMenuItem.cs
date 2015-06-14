@@ -151,6 +151,22 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
+        #region ItemsAdapter Dependency Property
+
+        public static readonly DependencyProperty ItemsAdapterProperty = DependencyProperty.Register(
+            "ItemsAdapter",
+            typeof(IActionItemsAdapter),
+            typeof(WpfContextMenuItem),
+            new PropertyMetadata(null));
+
+        public IActionItemsAdapter ItemsAdapter
+        {
+            get { return (IActionItemsAdapter)GetValue(ItemsAdapterProperty); }
+            set { SetValue(ItemsAdapterProperty, value); }
+        }
+
+        #endregion
+
         protected override void OnInitialized(EventArgs e)
         {
             base.OnInitialized(e);
@@ -202,6 +218,9 @@ namespace Plethora.Context.Wpf
             var suppressedActions = this.SuppressedActionsHashSet;
             if (suppressedActions != null)
                 actions = actions.Where(action => !suppressedActions.Contains(action.ActionName));
+
+            if (this.ItemsAdapter != null)
+                actions = this.ItemsAdapter.Convert(actions);
 
             //Group by the IUiAction.Group property if available, otherwise by string.Empty [""] as returned from ActionHelper.GetGroup(...)
             //Order by the IUiAction.Rank property if available

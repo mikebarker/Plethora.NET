@@ -70,7 +70,7 @@ namespace Plethora.Context.Windows.Forms.Example
             IActionTemplate viewInstrumentAction = new ContextActionTemplate("Instrument", c => "View Instrument #" + ((long)c.Data));
             actionManager.RegisterActionTemplate(viewInstrumentAction);
 
-            IActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
+            IMultiActionTemplate viewMultiInstrumentAction = new MultiContextActionTemplate("Instrument", array => "View All Instruments");
             actionManager.RegisterActionTemplate(viewMultiInstrumentAction);
 
 
@@ -201,19 +201,19 @@ namespace Plethora.Context.Windows.Forms.Example
             this.getActionName = getActionName;
         }
 
-        protected override string GetActionName(ContextInfo info)
+        public override string GetActionName(ContextInfo info)
         {
             return getActionName(info);
         }
 
-        protected override bool GetCanExecuteAction(ContextInfo context)
+        public override bool CanExecute(ContextInfo context)
         {
             return true;
         }
 
-        protected override System.Action GetExecuteAction(ContextInfo context)
+        public override void Execute(ContextInfo context)
         {
-            return () => MessageBox.Show("Executed: " + GetActionName(context), "Executed Action", MessageBoxButtons.OK);
+            MessageBox.Show("Executed: " + GetActionName(context), "Executed Action", MessageBoxButtons.OK);
         }
     }
 
@@ -227,20 +227,19 @@ namespace Plethora.Context.Windows.Forms.Example
             this.getActionName = getActionName;
         }
 
-        protected override string GetActionName(ContextInfo[] contexts)
+        public override string GetActionName(ContextInfo[] contexts)
         {
             return getActionName(contexts);
         }
 
-        protected override bool GetCanExecuteAction(ContextInfo[] contexts)
+        public override bool CanExecute(ContextInfo[] contexts)
         {
             return true;
         }
 
-        protected override System.Action GetExecuteAction(ContextInfo[] contexts)
+        public override void Execute(ContextInfo[] contexts)
         {
-            return
-                () => MessageBox.Show("Executed: " + GetActionName(contexts), "Executed Action", MessageBoxButtons.OK);
+            MessageBox.Show("Executed: " + GetActionName(contexts), "Executed Action", MessageBoxButtons.OK);
         }
     }
 }

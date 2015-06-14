@@ -2,20 +2,22 @@
 
 namespace Plethora.Context.Action
 {
-    public abstract class MultiUiActionTemplate : MultiActionTemplate
+    public abstract class MultiUiActionTemplate : MultiActionTemplate, IUiMultiActionTemplate
     {
         protected MultiUiActionTemplate(string contextName)
             : base(contextName)
         {
         }
 
-        protected abstract string GetDescription(ContextInfo[] contexts);
+        public abstract string GetActionText(ContextInfo[] contexts);
 
-        protected abstract Image GetImage(ContextInfo[] contexts);
+        public abstract string GetActionDescription(ContextInfo[] contexts);
 
-        protected abstract string GetGroup(ContextInfo[] contexts);
+        public abstract Image GetImage(ContextInfo[] contexts);
 
-        protected abstract int GetRank(ContextInfo[] contexts);
+        public abstract string GetGroup(ContextInfo[] contexts);
+
+        public abstract int GetRank(ContextInfo[] contexts);
 
 
         public override IAction CreateAction(ContextInfo[] contexts)
@@ -25,14 +27,15 @@ namespace Plethora.Context.Action
 
 
             string actionName = GetActionName(contexts);
-            string description = GetDescription(contexts);
+            string text = GetActionText(contexts);
+            string description = GetActionDescription(contexts);
             Image image = GetImage(contexts);
             string group = GetGroup(contexts);
             int rank = GetRank(contexts);
-            bool canExecute = GetCanExecuteAction(contexts);
-            System.Action execute = GetExecuteAction(contexts);
+            bool canExecute = CanExecute(contexts);
+            System.Action execute = () => Execute(contexts);
 
-            IAction action = new UiContextAction(actionName, description, image, group, rank, canExecute, execute);
+            IAction action = new UiContextAction(actionName, text, description, image, group, rank, canExecute, execute);
             return action;
         }
     }

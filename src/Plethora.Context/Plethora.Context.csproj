@@ -66,6 +66,7 @@
     <Compile Include="Action\IActionFactory.cs" />
     <Compile Include="Action\IActionTemplate.cs" />
     <Compile Include="Action\IUiAction.cs" />
+    <Compile Include="Action\IUiActionTemplate.cs" />
     <Compile Include="Action\TemplateActionFactory.cs" />
     <Compile Include="ActivityItemRegister.cs" />
     <Compile Include="CachedContextProvider.cs" />
