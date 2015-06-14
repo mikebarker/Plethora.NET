@@ -2,7 +2,7 @@
 
 namespace Plethora.Context.Action
 {
-    public abstract class MultiActionTemplate : IActionTemplate
+    public abstract class MultiActionTemplate : IMultiActionTemplate
     {
         private readonly string contextName;
 
@@ -22,11 +22,11 @@ namespace Plethora.Context.Action
             get { return this.contextName; }
         }
 
-        protected abstract string GetActionName(ContextInfo[] context);
+        public abstract string GetActionName(ContextInfo[] context);
 
-        protected abstract bool GetCanExecuteAction(ContextInfo[] context);
+        public abstract bool CanExecute(ContextInfo[] context);
 
-        protected abstract System.Action GetExecuteAction(ContextInfo[] context);
+        public abstract void Execute(ContextInfo[] context);
 
         public virtual IAction CreateAction(ContextInfo[] contexts)
         {
@@ -34,8 +34,8 @@ namespace Plethora.Context.Action
                 return null;
 
             string actionName = GetActionName(contexts);
-            bool canExecute = GetCanExecuteAction(contexts);
-            System.Action execute = GetExecuteAction(contexts);
+            bool canExecute = CanExecute(contexts);
+            System.Action execute = () => Execute(contexts);
 
             IAction action = new ContextAction(actionName, canExecute, execute);
             return action;

@@ -2,6 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:context="clr-namespace:Plethora.Context.Wpf;assembly=Plethora.Context.Wpf"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:collections="clr-namespace:Plethora.Collections;assembly=Plethora.Common"
         Title="MainWindow" Height="350" Width="525">
 
     <Window.Resources>
@@ -23,6 +25,21 @@
 
         <context:WpfContextMenu x:Key="contextMenu" />
 
+        <context:ItemsPrecedenceAdapter x:Key="itemsPrecedenceAdapter">
+            <context:ItemsPrecedenceAdapter.PrecedenceLists>
+                <x:Array Type="system:String">
+                    <system:String>Edit Contract</system:String>
+                    <system:String>View Signed Contract</system:String>
+                    <system:String>View Contract</system:String>
+                </x:Array>
+                <x:Array Type="system:String">
+                    <system:String>Paste</system:String>
+                    <system:String>Copy</system:String>
+                    <system:String>Cut</system:String>
+                </x:Array>
+            </context:ItemsPrecedenceAdapter.PrecedenceLists>
+        </context:ItemsPrecedenceAdapter>
+        
     </Window.Resources>
 
     <Grid>
@@ -34,8 +51,14 @@
         <StackPanel Grid.Column="0" >
             <DockPanel>
                 <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
-                <TextBox context:WpfContext.ContextSourceTemplate="{StaticResource contractContext}" ContextMenu="{StaticResource contextMenu}">
+                <TextBox context:WpfContext.ContextSourceTemplate="{StaticResource contractContext}">
                     1234
+
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <context:WpfContextMenuItem DisableGrouping="True" ItemsAdapter="{StaticResource itemsPrecedenceAdapter}" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
                 </TextBox>
             </DockPanel>
             <DockPanel>

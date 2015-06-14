@@ -2,20 +2,22 @@
 
 namespace Plethora.Context.Action
 {
-    public abstract class UiActionTemplate : ActionTemplate
+    public abstract class UiActionTemplate : ActionTemplate, IUiActionTemplate
     {
         protected UiActionTemplate(string contextName)
             : base(contextName)
         {
         }
 
-        protected abstract string GetDescription(ContextInfo context);
+        public abstract string GetActionText(ContextInfo context);
 
-        protected abstract Image GetImage(ContextInfo context);
+        public abstract string GetActionDescription(ContextInfo context);
 
-        protected abstract string GetGroup(ContextInfo context);
+        public abstract Image GetImage(ContextInfo context);
 
-        protected abstract int GetRank(ContextInfo context);
+        public abstract string GetGroup(ContextInfo context);
+
+        public abstract int GetRank(ContextInfo context);
 
 
         public override IAction CreateAction(ContextInfo[] contexts)
@@ -27,20 +29,22 @@ namespace Plethora.Context.Action
             ContextInfo context = contexts[0];
 
             string actionName = GetActionName(context);
-            string description = GetDescription(context);
+            string text = GetActionText(context);
+            string description = GetActionDescription(context);
             Image image = GetImage(context);
             string group = GetGroup(context);
             int rank = GetRank(context);
-            bool canExecute = GetCanExecuteAction(context);
-            System.Action execute = GetExecuteAction(context);
+            bool canExecute = CanExecute(context);
+            System.Action execute = () => Execute(context);
 
-            IAction action = new UiContextAction(actionName, description, image, group, rank, canExecute, execute);
+            IAction action = new UiContextAction(actionName, text, description, image, group, rank, canExecute, execute);
             return action;
         }
     }
 
     public class UiContextAction : ContextAction, IUiAction, IAction
     {
+        private readonly string text;
         private readonly string description;
         private readonly Image image;
         private readonly string group;
@@ -48,6 +52,7 @@ namespace Plethora.Context.Action
 
         public UiContextAction(
             string actionName,
+            string text,
             string description,
             Image image,
             string group,
@@ -56,10 +61,16 @@ namespace Plethora.Context.Action
             System.Action execute)
             : base(actionName, canExecute, execute)
         {
+            this.text = text;
             this.description = description;
             this.image = image;
             this.group = group;
             this.rank = rank;
+        }
+
+        public string ActionText
+        {
+            get { return this.text; }
         }
 
         public string ActionDescription
