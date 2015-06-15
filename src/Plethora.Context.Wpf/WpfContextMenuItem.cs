@@ -15,9 +15,11 @@ namespace Plethora.Context.Wpf
     {
         public WpfContextMenuItem()
         {
-            SetValue(SuppressedContextsPropertyKey, new StringObservableCollection());
-            SetValue(SuppressedActionsPropertyKey, new StringObservableCollection());
+            SetValue(SuppressedContextPatternsPropertyKey, new StringObservableCollection());
+            SetValue(SuppressedActionPatternsPropertyKey, new StringObservableCollection());
 
+            //Do not show this item in the menu to the user
+            // Sub items will be added as appropriate
             this.Visibility = Visibility.Collapsed;
         }
 
@@ -69,84 +71,38 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region SuppressedContexts Dependency Property
+        #region SuppressedContextPatterns Dependency Property
 
-        public static readonly DependencyPropertyKey SuppressedContextsPropertyKey = DependencyProperty.RegisterReadOnly(
-            "SuppressedContexts",
+        public static readonly DependencyPropertyKey SuppressedContextPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
+            "SuppressedContextPatterns",
             typeof(StringObservableCollection),
             typeof(WpfContextMenuItem),
-            new PropertyMetadata(null, SuppressedContextsChanged));
+            new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SuppressedContextsProperty =
-            SuppressedContextsPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty SuppressedContextPatternsProperty =
+            SuppressedContextPatternsPropertyKey.DependencyProperty;
 
-        public StringObservableCollection SuppressedContexts
+        public StringObservableCollection SuppressedContextPatterns
         {
-            get { return (StringObservableCollection)GetValue(SuppressedContextsProperty); }
-        }
-
-        private static void SuppressedContextsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
-        {
-            var menu = (WpfContextMenuItem)dependencyObject;
-            menu.suppressedContextsHashSet = null;
-        }
-
-        private HashSet<string> suppressedContextsHashSet;
-
-        private HashSet<string> SuppressedContextsHashSet
-        {
-            get
-            {
-                if (this.suppressedContextsHashSet == null)
-                {
-                    var suppressedContexts = this.SuppressedContexts;
-                    if ((suppressedContexts != null) && (suppressedContexts.Count != 0))
-                        this.suppressedContextsHashSet = new HashSet<string>(suppressedContexts);
-                }
-
-                return this.suppressedContextsHashSet;
-            }
+            get { return (StringObservableCollection)GetValue(SuppressedContextPatternsProperty); }
         }
 
         #endregion
 
-        #region SuppressedActions Dependency Property
+        #region SuppressedActionPatterns Dependency Property
 
-        private static readonly DependencyPropertyKey SuppressedActionsPropertyKey = DependencyProperty.RegisterReadOnly(
-            "SuppressedActions",
+        private static readonly DependencyPropertyKey SuppressedActionPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
+            "SuppressedActionPatterns",
             typeof(StringObservableCollection),
             typeof(WpfContextMenuItem),
-            new PropertyMetadata(null, SuppressedActionsChanged));
+            new PropertyMetadata(null));
 
-        public static readonly DependencyProperty SuppressedActionsProperty =
-            SuppressedActionsPropertyKey.DependencyProperty;
+        public static readonly DependencyProperty SuppressedActionPatternsProperty =
+            SuppressedActionPatternsPropertyKey.DependencyProperty;
 
-        public StringObservableCollection SuppressedActions
+        public StringObservableCollection SuppressedActionPatterns
         {
-            get { return (StringObservableCollection)GetValue(SuppressedActionsProperty); }
-        }
-
-        private static void SuppressedActionsChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
-        {
-            var menu = (WpfContextMenuItem)dependencyObject;
-            menu.suppressedActionsHashSet = null;
-        }
-
-        private HashSet<string> suppressedActionsHashSet;
-
-        private HashSet<string> SuppressedActionsHashSet
-        {
-            get
-            {
-                if (this.suppressedActionsHashSet == null)
-                {
-                    var suppressedActions = this.SuppressedActions;
-                    if ((suppressedActions != null) && (suppressedActions.Count != 0))
-                        this.suppressedActionsHashSet = new HashSet<string>(suppressedActions);
-                }
-
-                return this.suppressedActionsHashSet;
-            }
+            get { return (StringObservableCollection)GetValue(SuppressedActionPatternsProperty); }
         }
 
         #endregion
@@ -196,6 +152,24 @@ namespace Plethora.Context.Wpf
             }
         }
 
+        private bool IsSuppressed(ContextInfo context)
+        {
+            if ((this.SuppressedContextPatterns == null) || (this.SuppressedContextPatterns.Count == 0))
+                return false;
+
+            return this.SuppressedContextPatterns
+                .Any(suppressedAction => WildcardSearch.IsMatch(context.Name, suppressedAction));
+        }
+
+        private bool IsSuppressed(IAction action)
+        {
+            if ((this.SuppressedActionPatterns == null) || (this.SuppressedActionPatterns.Count == 0))
+                return false;
+
+            return this.SuppressedActionPatterns
+                .Any(suppressedAction => WildcardSearch.IsMatch(action.ActionName, suppressedAction));
+        }
+
         void ContextMenu_Opened(object sender, RoutedEventArgs e)
         {
             var parent = this.Parent as ContextMenu;
@@ -210,14 +184,10 @@ namespace Plethora.Context.Wpf
             ClearItem();
 
             var contexts = contextManager.GetContexts();
-            var suppressedContexts = this.SuppressedContextsHashSet;
-            if (suppressedContexts != null)
-                contexts = contexts.Where(context => !suppressedContexts.Contains(context.Name));
+            contexts = contexts.Where(context => !this.IsSuppressed(context));
 
             var actions = actionManager.GetActions(contexts);
-            var suppressedActions = this.SuppressedActionsHashSet;
-            if (suppressedActions != null)
-                actions = actions.Where(action => !suppressedActions.Contains(action.ActionName));
+            actions = actions.Where(action => !this.IsSuppressed(action));
 
             if (this.ItemsAdapter != null)
                 actions = this.ItemsAdapter.Convert(actions);
@@ -236,11 +206,8 @@ namespace Plethora.Context.Wpf
             bool showUnavailableActions = this.ShowUnavailableActions;
             bool disableGrouping = this.DisableGrouping;
 
-            bool anyActions = false;
             foreach (var group in groupedActions)
             {
-                anyActions = true;
-
                 bool isRootItemCollection;
                 ItemCollection itemCollection; // set to the root menu or a sub-menu
                 if (disableGrouping || string.Empty.Equals(group.GroupName))
@@ -270,7 +237,7 @@ namespace Plethora.Context.Wpf
 
                     MenuItem menuItem = new MenuItem();
                     menuItem.Tag = this;
-                    menuItem.Header = action.ActionName;
+                    menuItem.Header = ActionHelper.GetActionText(action);
                     menuItem.IsEnabled = canExecute;
                     menuItem.Icon = ActionHelper.GetImage(action);
                     menuItem.ToolTip = ActionHelper.GetActionDescription(action);
@@ -288,8 +255,9 @@ namespace Plethora.Context.Wpf
                 }
             }
 
-            if (!anyActions)
-                this.Visibility = Visibility.Hidden;
+            //Do not show an empty context menu
+            if (parent.Items.Count == 0)
+                parent.IsOpen = false;
         }
 
         void ContextMenu_Closed(object sender, RoutedEventArgs e)
