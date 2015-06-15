@@ -11,53 +11,58 @@ namespace Plethora.Context.Wpf
     /// and instead bundling them all into one.
     /// </remarks>
     /// <example>
-    ///     WpfCallbackDelay callbackDelay = new WpfCallbackDelay(ContextManager_ContextChanged, 10);
+    /// <code>
+    /// <![CDATA[
+    ///     WpfCallbackDelay<EventArgs> callbackDelay = new WpfCallbackDelay<EventArgs>(ContextManager_ContextChanged, 10);
     ///     ContextManager.DefaultInstance.ContextChanged += callbackDelay.Handler;
+    /// ]]>
+    /// </code>
     /// </example>
-    public class WpfCallbackDelay
+    public class WpfCallbackDelay<TEventArgs>
+        where TEventArgs : EventArgs
     {
         private readonly object lockObj = new object();
         private object originalSender;
-        private EventArgs originalArgs;
+        private TEventArgs originalArgs;
 
-        private readonly EventHandler callback;
+        private readonly EventHandler<TEventArgs> callback;
         private readonly DispatcherTimer timer = new DispatcherTimer();
 
-        public WpfCallbackDelay(EventHandler callback, int delayMilliSeconds)
+        public CallbackDelay(EventHandler<TEventArgs> callback, int delayMilliSeconds)
         {
             this.callback = callback;
-            timer = new DispatcherTimer();
-            timer.Tick += timer_Tick;
-            timer.Interval = new TimeSpan(0, 0, 0, 0, delayMilliSeconds);
+            this.timer = new DispatcherTimer();
+            this.timer.Tick += timer_Tick;
+            this.timer.Interval = new TimeSpan(0, 0, 0, 0, delayMilliSeconds);
         }
 
         /// <summary>
         /// The callback <see cref="EventHandler"/> which can be registered with an event.
         /// </summary>
-        public void Handler(object sender, EventArgs e)
+        public void Handler(object sender, TEventArgs e)
         {
-            if (timer.Dispatcher.CheckAccess())
+            if (this.timer.Dispatcher.CheckAccess())
             {
                 lock(lockObj)
                 {
                     originalSender = sender;
                     originalArgs = e;
-                    timer.Start();
+                    this.timer.Start();
                 }
             }
             else
             {
-                System.Action startTimer = delegate
+                Action startTimer = delegate
                     {
                         lock (lockObj)
                         {
                             originalSender = sender;
                             originalArgs = e;
-                            timer.Start();
+                            this.timer.Start();
                         }
                     };
 
-                timer.Dispatcher.Invoke(startTimer);
+                this.timer.Dispatcher.Invoke(startTimer);
             }
 
         }
@@ -65,11 +70,11 @@ namespace Plethora.Context.Wpf
         void timer_Tick(object sender, EventArgs e)
         {
             object _sender;
-            EventArgs _args;
+            TEventArgs _args;
 
             lock (lockObj)
             {
-                timer.Stop();
+                this.timer.Stop();
                 _sender = originalSender;
                 _args = originalArgs;
             }
