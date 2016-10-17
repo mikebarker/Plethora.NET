@@ -75,10 +75,12 @@
     <Compile Include="ContextInfoComparer.cs" />
     <Compile Include="ContextManager.cs" />
     <Compile Include="ContextProviderBase.cs" />
+    <Compile Include="IContextAugmentor.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>

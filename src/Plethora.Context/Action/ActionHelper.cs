@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Drawing;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Plethora.Context.Action
 {
@@ -73,17 +73,17 @@ namespace Plethora.Context.Action
         }
 
         /// <summary>
-        /// Gets the <see cref="IUiAction.Image"/> property value if the <paramref name="action"/> is
+        /// Gets the <see cref="IUiAction.ImageUri"/> property value if the <paramref name="action"/> is
         /// an instance of <see cref="IUiAction"/>, otherwise null.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the image is required.</param>
-        public static Image GetImage(IAction action)
+        public static Uri GetImageUri(IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
                 return null;
 
-            return uiAction.Image;
+            return uiAction.ImageUri;
         }
 
         /// <summary>

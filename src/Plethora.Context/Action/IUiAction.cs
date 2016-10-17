@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System;
 
 namespace Plethora.Context.Action
 {
@@ -23,7 +23,7 @@ namespace Plethora.Context.Action
         /// <summary>
         /// Gets the visual image associated with the action.
         /// </summary>
-        Image Image { get; }
+        Uri ImageUri { get; }
 
         /// <summary>
         /// Gets the group of this <see cref="IUiAction"/>.

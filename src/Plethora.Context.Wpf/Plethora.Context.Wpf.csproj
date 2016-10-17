@@ -64,9 +64,9 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="ActionsPrecedenceAdapter.cs" />
+    <Compile Include="IActionsAdapter.cs" />
     <Compile Include="WpfContextMenuItem.cs" />
-    <Compile Include="IActionItemsAdapter.cs" />
-    <Compile Include="ItemsPrecedenceAdapter.cs" />
     <Compile Include="WpfContextSourceBase.cs" />
     <Compile Include="WpfCallbackDelay.cs" />
     <Compile Include="WpfContextSourceTemplateCollection.cs" />

@@ -82,6 +82,7 @@
     <Compile Include="Data\DbExecutor.cs" />
     <Compile Include="Data\IExceptionTester.cs" />
     <Compile Include="Data\SqlClient\SqlExceptionTester.cs" />
+    <Compile Include="WildcardSearch.cs" />
     <Compile Include="WeakEvent.cs" />
     <Compile Include="Threading\LiteLock.cs" />
     <Compile Include="Threading\WorkQueue.cs" />

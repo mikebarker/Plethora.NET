@@ -6,9 +6,9 @@ using Plethora.Context.Action;
 
 namespace Plethora.Context.Wpf
 {
-    public class ItemsPrecedenceAdapter : DependencyObject, IActionItemsAdapter
+    public class ActionsPrecedenceAdapter : DependencyObject, IActionsAdapter
     {
-        public ItemsPrecedenceAdapter()
+        public ActionsPrecedenceAdapter()
         {
             this.SetValue(PrecedenceListsPropertyKey, new ObservableCollection<IList<string>>());
         }
@@ -18,7 +18,7 @@ namespace Plethora.Context.Wpf
         private static readonly DependencyPropertyKey PrecedenceListsPropertyKey = DependencyProperty.RegisterReadOnly(
             "PrecedenceLists",
             typeof(ObservableCollection<IList<string>>),
-            typeof(ItemsPrecedenceAdapter),
+            typeof(ActionsPrecedenceAdapter),
             new PropertyMetadata(null));
 
         public static readonly DependencyProperty PrecedenceListsProperty =
