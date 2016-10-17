@@ -1,4 +1,4 @@
-﻿using System.Drawing;
+﻿using System;
 
 namespace Plethora.Context.Action
 {
@@ -15,7 +15,7 @@ namespace Plethora.Context.Action
 
         string GetActionDescription(ContextInfo context);
 
-        Image GetImage(ContextInfo context);
+        Uri GetImageUri(ContextInfo context);
 
         string GetGroup(ContextInfo context);
 
@@ -40,7 +40,7 @@ namespace Plethora.Context.Action
 
         string GetActionDescription(ContextInfo[] context);
 
-        Image GetImage(ContextInfo[] context);
+        Uri GetImageUri(ContextInfo[] context);
 
         string GetGroup(ContextInfo[] context);
 

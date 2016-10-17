@@ -81,17 +81,16 @@ namespace Plethora.Context.Wpf
 
         private bool HasContextChanged()
         {
-            if (!string.Equals(this.prevContextName, this.ContextName) ||
-                !int.Equals(this.prevRank, this.Rank) ||
-                !object.Equals(this.prevData, this.Data))
-            {
-                this.prevContextName = this.ContextName;
-                this.prevRank = this.Rank;
-                this.prevData = this.Data;
+            bool result =
+                !string.Equals(this.prevContextName, this.ContextName) ||
+                !(this.prevRank == this.Rank) ||
+                !object.Equals(this.prevData, this.Data);
 
-                return true;
-            }
-            return false;
+            this.prevContextName = this.ContextName;
+            this.prevRank = this.Rank;
+            this.prevData = this.Data;
+
+            return result;
         }
 
         private static void PropertyChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)

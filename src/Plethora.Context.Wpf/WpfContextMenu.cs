@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using Plethora.Collections;
 using Plethora.Context.Action;
 
@@ -208,10 +211,13 @@ namespace Plethora.Context.Wpf
                     if ((!canExecute) && (!showUnavailableActions))
                         continue;
 
+                    Uri imageUri = ActionHelper.GetImageUri(action);
+
                     MenuItem menuItem = new MenuItem();
                     menuItem.Header = action.ActionName;
                     menuItem.IsEnabled = canExecute;
-                    menuItem.Icon = ActionHelper.GetImage(action);
+                    if (imageUri != null)
+                        menuItem.Icon = new Image { Source = new BitmapImage(imageUri) };
                     menuItem.ToolTip = ActionHelper.GetActionDescription(action);
                     menuItem.Click += delegate { action.Execute(); };
 

@@ -79,8 +79,8 @@ namespace Plethora.Context.Wpf
             if (DesignerProperties.GetIsInDesignMode(element))
                 return;
 
-            element.GotFocus += element_GotFocus;
-            element.LostFocus += element_LostFocus;
+            element.GotKeyboardFocus += element_GotKeyboardFocus;
+            element.LostKeyboardFocus += element_LostKeyboardFocus;
 
             var contextManager = WpfContext.GetContextManagerForElement(element);
             contextManager.RegisterProvider(this);
@@ -89,16 +89,16 @@ namespace Plethora.Context.Wpf
                 contextSource.UIElement = element;
         }
 
-        private void element_GotFocus(object sender, RoutedEventArgs e)
+        private void element_GotKeyboardFocus(object sender, RoutedEventArgs e)
         {
             OnEnterContext();
         }
 
-        private void element_LostFocus(object sender, RoutedEventArgs e)
+        private void element_LostKeyboardFocus(object sender, RoutedEventArgs e)
         {
             UIElement source = (UIElement)sender;
             if (!ReferenceEquals(source, this.UIElement))
-                source.LostFocus -= element_LostFocus;
+                source.LostKeyboardFocus -= element_LostKeyboardFocus;
 
             UIElement activeControl = Keyboard.FocusedElement as UIElement;
             if (activeControl == null)
@@ -110,7 +110,7 @@ namespace Plethora.Context.Wpf
             if (IsActivityElement(activeControl))
             {
                 if (!ReferenceEquals(activeControl, this.UIElement))
-                    activeControl.LostFocus += element_LostFocus;
+                    activeControl.LostKeyboardFocus += element_LostKeyboardFocus;
             }
             else
             {

@@ -12,13 +12,13 @@ namespace Plethora.Context.Wpf.Example
     /// </summary>
     public partial class MainWindow : Window
     {
-        private WpfCallbackDelay callbackDelay;
+        private WpfCallbackDelay<EventArgs> callbackDelay;
 
         public MainWindow()
         {
             InitializeComponent();
 
-            callbackDelay = new WpfCallbackDelay(ContextManager_ContextChanged, 10);
+            callbackDelay = new WpfCallbackDelay<EventArgs>(ContextManager_ContextChanged, 10);
             ContextManager.GlobalInstance.ContextChanged += callbackDelay.Handler;
 
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "View Contract"));
@@ -107,7 +107,7 @@ namespace Plethora.Context.Wpf.Example
                 return "Execute " + GetActionName(context) + " [" + context.Data + "]";
             }
 
-            public override Image GetImage(ContextInfo context)
+            public override Uri GetImageUri(ContextInfo context)
             {
                 return null;
             }

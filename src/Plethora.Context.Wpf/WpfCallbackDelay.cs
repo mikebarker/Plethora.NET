@@ -28,7 +28,7 @@ namespace Plethora.Context.Wpf
         private readonly EventHandler<TEventArgs> callback;
         private readonly DispatcherTimer timer = new DispatcherTimer();
 
-        public CallbackDelay(EventHandler<TEventArgs> callback, int delayMilliSeconds)
+        public WpfCallbackDelay(EventHandler<TEventArgs> callback, int delayMilliSeconds)
         {
             this.callback = callback;
             this.timer = new DispatcherTimer();
@@ -52,7 +52,7 @@ namespace Plethora.Context.Wpf
             }
             else
             {
-                Action startTimer = delegate
+                System.Action startTimer = delegate
                     {
                         lock (lockObj)
                         {

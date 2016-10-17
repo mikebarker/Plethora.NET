@@ -3,7 +3,7 @@ using Plethora.Context.Action;
 
 namespace Plethora.Context.Wpf
 {
-    public interface IActionItemsAdapter
+    public interface IActionsAdapter
     {
         IEnumerable<IAction> Convert(IEnumerable<IAction> actions);
     }

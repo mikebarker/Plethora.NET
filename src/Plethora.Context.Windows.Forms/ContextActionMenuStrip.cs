@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Plethora.Context.Action;
@@ -333,10 +334,13 @@ namespace Plethora.Context.Windows.Forms
                     if ((!canExecute) && (!showUnavailableActions))
                         continue;
 
+                    Uri imageUri = ActionHelper.GetImageUri(action);
+
                     ToolStripItem menuItem = new ToolStripMenuItem();
                     menuItem.Text = action.ActionName;
                     menuItem.Enabled = canExecute;
-                    menuItem.Image = ActionHelper.GetImage(action);
+                    if (imageUri != null)
+                        menuItem.Image = new Bitmap(imageUri.AbsolutePath);
                     menuItem.ToolTipText = ActionHelper.GetActionDescription(action);
                     menuItem.Click += delegate { action.Execute(); };
 

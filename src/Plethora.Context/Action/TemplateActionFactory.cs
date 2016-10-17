@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Plethora.Context.Action
 {
@@ -201,9 +200,9 @@ namespace Plethora.Context.Action
                 get { return this.Template.GetActionDescription(this.Context); }
             }
 
-            public Image Image
+            public Uri ImageUri
             {
-                get { return this.Template.GetImage(this.Context); }
+                get { return this.Template.GetImageUri(this.Context); }
             }
 
             public string Group
@@ -296,9 +295,9 @@ namespace Plethora.Context.Action
                 get { return this.Template.GetActionDescription(this.Contexts); }
             }
 
-            public Image Image
+            public Uri ImageUri
             {
-                get { return this.Template.GetImage(this.Contexts); }
+                get { return this.Template.GetImageUri(this.Contexts); }
             }
 
             public string Group

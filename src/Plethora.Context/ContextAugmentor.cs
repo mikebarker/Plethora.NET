@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Alpha.ApplicationFramework.Context;
 
 namespace Plethora.Context
 {
@@ -21,7 +22,7 @@ namespace Plethora.Context
     ///  from the asset context.
     /// </para>
     /// </example>
-    public class ContextAugmentor
+    public class ContextAugmentor : IContextAugmentor
     {
         private readonly string contextName;
         private readonly Func<ContextInfo, IEnumerable<ContextInfo>> augmentationFunc;
@@ -54,7 +55,7 @@ namespace Plethora.Context
             get { return this.contextName; }
         }
 
-        public IEnumerable<ContextInfo> AugmentContext(ContextInfo context)
+        public IEnumerable<ContextInfo> Augment(ContextInfo context)
         {
             return this.augmentationFunc(context);
         }

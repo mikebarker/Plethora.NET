@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 using Plethora.Collections;
 using Plethora.Context.Action;
 
@@ -15,8 +16,9 @@ namespace Plethora.Context.Wpf
     {
         public WpfContextMenuItem()
         {
-            SetValue(SuppressedContextPatternsPropertyKey, new StringObservableCollection());
-            SetValue(SuppressedActionPatternsPropertyKey, new StringObservableCollection());
+            base.SetValue(SuppressedContextPatternsPropertyKey, new StringObservableCollection());
+            base.SetValue(SuppressedActionPatternsPropertyKey, new StringObservableCollection());
+            base.SetValue(SuppressedGroupPatternsPropertyKey, new StringObservableCollection());
 
             //Do not show this item in the menu to the user
             // Sub items will be added as appropriate
@@ -107,18 +109,36 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region ItemsAdapter Dependency Property
+        #region SuppressedGroupPatterns Dependency Property
 
-        public static readonly DependencyProperty ItemsAdapterProperty = DependencyProperty.Register(
-            "ItemsAdapter",
-            typeof(IActionItemsAdapter),
+        private static readonly DependencyPropertyKey SuppressedGroupPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
+            "SuppressedGroupPatterns",
+            typeof(StringObservableCollection),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
 
-        public IActionItemsAdapter ItemsAdapter
+        public static readonly DependencyProperty SuppressedGroupPatternsProperty =
+            SuppressedGroupPatternsPropertyKey.DependencyProperty;
+
+        public StringObservableCollection SuppressedGroupPatterns
         {
-            get { return (IActionItemsAdapter)GetValue(ItemsAdapterProperty); }
-            set { SetValue(ItemsAdapterProperty, value); }
+            get { return (StringObservableCollection)GetValue(SuppressedGroupPatternsProperty); }
+        }
+
+        #endregion
+
+        #region ItemsAdapter Dependency Property
+
+        public static readonly DependencyProperty ActionsAdapterProperty = DependencyProperty.Register(
+            "ItemsAdapter",
+            typeof(IActionsAdapter),
+            typeof(WpfContextMenuItem),
+            new PropertyMetadata(null));
+
+        public IActionsAdapter ActionsAdapter
+        {
+            get { return (IActionsAdapter)GetValue(ActionsAdapterProperty); }
+            set { SetValue(ActionsAdapterProperty, value); }
         }
 
         #endregion
@@ -132,6 +152,8 @@ namespace Plethora.Context.Wpf
             {
                 newContextMenu.Opened += ContextMenu_Opened;
                 newContextMenu.Closed += ContextMenu_Closed;
+
+                WpfContext.SetIsActivityItem(newContextMenu, true);
             }
         }
 
@@ -170,6 +192,15 @@ namespace Plethora.Context.Wpf
                 .Any(suppressedAction => WildcardSearch.IsMatch(action.ActionName, suppressedAction));
         }
 
+        private bool IsGroupingSuppressedFor(string groupName)
+        {
+            if ((this.SuppressedGroupPatterns == null) || (this.SuppressedGroupPatterns.Count == 0))
+                return false;
+
+            return this.SuppressedGroupPatterns
+                .Any(suppressedGroup => WildcardSearch.IsMatch(groupName, suppressedGroup));
+        }
+
         void ContextMenu_Opened(object sender, RoutedEventArgs e)
         {
             var parent = this.Parent as ContextMenu;
@@ -181,7 +212,7 @@ namespace Plethora.Context.Wpf
             var contextManager = WpfContext.GetContextManagerForElement(target);
             var actionManager = WpfContext.GetActionManagerForElement(target);
 
-            ClearItem();
+            this.ClearItem();
 
             var contexts = contextManager.GetContexts();
             contexts = contexts.Where(context => !this.IsSuppressed(context));
@@ -189,15 +220,21 @@ namespace Plethora.Context.Wpf
             var actions = actionManager.GetActions(contexts);
             actions = actions.Where(action => !this.IsSuppressed(action));
 
-            if (this.ItemsAdapter != null)
-                actions = this.ItemsAdapter.Convert(actions);
+            if (this.ActionsAdapter != null)
+                actions = this.ActionsAdapter.Convert(actions);
 
             //Group by the IUiAction.Group property if available, otherwise by string.Empty [""] as returned from ActionHelper.GetGroup(...)
             //Order by the IUiAction.Rank property if available
             var groupedActions = actions
                 .GroupBy(ActionHelper.GetGroupSafe)
-                .Select(group => new { GroupName = group.Key, Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance) })
-                .OrderBy(g => g.Actions.First(), ActionHelper.SortOrderComparer.Instance);
+                .Select(group => new
+                        {
+                            GroupName = group.Key,
+                            IsGroupingSuppressed = string.Empty.Equals(group.Key) || this.IsGroupingSuppressedFor(group.Key),
+                            Actions = group.OrderBy(a => a, ActionHelper.SortOrderComparer.Instance)
+                        })
+                .OrderBy(g => g.IsGroupingSuppressed ? 0 : 1)
+                .ThenBy(g => g.Actions.First(), ActionHelper.SortOrderComparer.Instance);
 
             var maxItems = this.MaxGroupItems;
             if (maxItems < 0)
@@ -210,7 +247,7 @@ namespace Plethora.Context.Wpf
             {
                 bool isRootItemCollection;
                 ItemCollection itemCollection; // set to the root menu or a sub-menu
-                if (disableGrouping || string.Empty.Equals(group.GroupName))
+                if (disableGrouping || group.IsGroupingSuppressed)
                 {
                     itemCollection = parent.Items;
                     isRootItemCollection = true;
@@ -235,11 +272,14 @@ namespace Plethora.Context.Wpf
                     if ((!canExecute) && (!showUnavailableActions))
                         continue;
 
+                    Uri imageUri = ActionHelper.GetImageUri(action);
+
                     MenuItem menuItem = new MenuItem();
                     menuItem.Tag = this;
                     menuItem.Header = ActionHelper.GetActionText(action);
                     menuItem.IsEnabled = canExecute;
-                    menuItem.Icon = ActionHelper.GetImage(action);
+                    if (imageUri != null)
+                        menuItem.Icon = new Image { Source = new BitmapImage(imageUri) };
                     menuItem.ToolTip = ActionHelper.GetActionDescription(action);
                     menuItem.Click += delegate { action.Execute(); };
 
@@ -263,7 +303,7 @@ namespace Plethora.Context.Wpf
         void ContextMenu_Closed(object sender, RoutedEventArgs e)
         {
             //Do not hold onto references unnecessarily
-            ClearItem();
+            this.ClearItem();
         }
     }
 }

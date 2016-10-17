@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Alpha.ApplicationFramework.Context;
 
 namespace Plethora.Context
 {
+    // TODO: Memory leaks: Should the ContextManager use weak delegates to subscribe to the providers' events?
+
     /// <summary>
     /// The pricipal manager of all elements related to contexts. 
     /// </summary>
@@ -31,7 +34,7 @@ namespace Plethora.Context
 
         private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
         private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
-        private readonly Dictionary<string, ICollection<ContextAugmentor>> augmentors = new Dictionary<string, ICollection<ContextAugmentor>>(0);
+        private readonly Dictionary<string, ICollection<IContextAugmentor>> augmentors = new Dictionary<string, ICollection<IContextAugmentor>>(0);
 
         #endregion
 
@@ -122,7 +125,7 @@ namespace Plethora.Context
         /// The augmentor is used to provide addition contexts, based on a current
         /// in-scope context.
         /// </remarks>
-        public void RegisterAugmentor(ContextAugmentor augmentor)
+        public void RegisterAugmentor(IContextAugmentor augmentor)
         {
             //Validation
             if (augmentor == null)
@@ -131,10 +134,10 @@ namespace Plethora.Context
             rwLock.EnterWriteLock();
             try
             {
-                ICollection<ContextAugmentor> list;
+                ICollection<IContextAugmentor> list;
                 if (!augmentors.TryGetValue(augmentor.ContextName, out list))
                 {
-                    list = new List<ContextAugmentor>();
+                    list = new List<IContextAugmentor>();
                     augmentors.Add(augmentor.ContextName, list);
                 }
 
@@ -149,7 +152,7 @@ namespace Plethora.Context
         /// <summary>
         /// Deregisters an augmentor.
         /// </summary>
-        public void DeregisterAugmentor(ContextAugmentor augmentor)
+        public void DeregisterAugmentor(IContextAugmentor augmentor)
         {
             //Validation
             if (augmentor == null)
@@ -158,7 +161,7 @@ namespace Plethora.Context
             rwLock.EnterWriteLock();
             try
             {
-                ICollection<ContextAugmentor> list;
+                ICollection<IContextAugmentor> list;
                 if (augmentors.TryGetValue(augmentor.ContextName, out list))
                     list.Remove(augmentor);
             }
@@ -255,12 +258,12 @@ namespace Plethora.Context
         {
             IEnumerable<ContextInfo> augmentedContexts = Enumerable.Empty<ContextInfo>();
 
-            ICollection<ContextAugmentor> augmentorList;
+            ICollection<IContextAugmentor> augmentorList;
             if (this.augmentors.TryGetValue(context.Name, out augmentorList))
             {
                 foreach (var augmentor in augmentorList)
                 {
-                    var additionalContexts = augmentor.AugmentContext(context);
+                    IEnumerable<ContextInfo> additionalContexts = augmentor.Augment(context);
                     if (additionalContexts != null)
                         augmentedContexts = augmentedContexts.Concat(additionalContexts);
                 }
