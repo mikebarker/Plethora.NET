@@ -216,26 +216,31 @@ namespace Plethora.Context.Action
         /// </returns>
         public IEnumerable<IAction> GetActions(IEnumerable<ContextInfo> contexts)
         {
+            IEnumerable<IActionFactory> factories;
             rwLock.EnterReadLock();
             try
             {
-                var contextsByName = contexts
-                    .GroupBy(context => context.Name)
-                    .ToDictionary(group => group.Key, group => group.ToArray());
-
-                var actions = actionFactories
-                    .Select(factory => factory.GetActions(contextsByName))
-                    .Where(actionList => actionList != null)
-                    .SelectMany(action => action)
-                    .Where(action => action != null)
-                    .ToList();
-
-                return actions;
+                //Copy the actionFactories to a new list to minimise the time required
+                // within the lock.
+                factories = actionFactories.ToList();
             }
             finally
             {
                 rwLock.ExitReadLock();
             }
+
+            var contextsByName = contexts
+                .GroupBy(context => context.Name)
+                .ToDictionary(group => group.Key, group => group.ToArray());
+
+            var actions = factories
+                .Select(factory => factory.GetActions(contextsByName))
+                .Where(actionList => actionList != null)
+                .SelectMany(action => action)
+                .Where(action => action != null)
+                .ToList();
+
+            return actions;
         }
 
         #endregion

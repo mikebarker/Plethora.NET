@@ -21,9 +21,9 @@ namespace Plethora.Context.Action
         string ActionDescription { get; }
 
         /// <summary>
-        /// Gets the visual image associated with the action.
+        /// Gets a key of the visual image associated with the action.
         /// </summary>
-        Uri ImageUri { get; }
+        object ImageKey { get; }
 
         /// <summary>
         /// Gets the group of this <see cref="IUiAction"/>.

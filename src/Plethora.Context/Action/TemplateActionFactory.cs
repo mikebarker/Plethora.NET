@@ -200,9 +200,9 @@ namespace Plethora.Context.Action
                 get { return this.Template.GetActionDescription(this.Context); }
             }
 
-            public Uri ImageUri
+            public object ImageKey
             {
-                get { return this.Template.GetImageUri(this.Context); }
+                get { return this.Template.GetImageKey(this.Context); }
             }
 
             public string Group
@@ -295,9 +295,9 @@ namespace Plethora.Context.Action
                 get { return this.Template.GetActionDescription(this.Contexts); }
             }
 
-            public Uri ImageUri
+            public object ImageKey
             {
-                get { return this.Template.GetImageUri(this.Contexts); }
+                get { return this.Template.GetImageKey(this.Contexts); }
             }
 
             public string Group

@@ -64,6 +64,7 @@
     <Compile Include="Action\ActionTemplate.UiMulti.cs" />
     <Compile Include="Action\IAction.cs" />
     <Compile Include="Action\IActionFactory.cs" />
+    <Compile Include="Action\IActionsAdapter.cs" />
     <Compile Include="Action\IActionTemplate.cs" />
     <Compile Include="Action\IUiAction.cs" />
     <Compile Include="Action\IUiActionTemplate.cs" />

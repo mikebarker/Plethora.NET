@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using Plethora.Context.Action;
 
-namespace Plethora.Context.Wpf
+namespace Plethora.Context.Action
 {
     public interface IActionsAdapter
     {

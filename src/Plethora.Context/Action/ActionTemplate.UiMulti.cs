@@ -13,7 +13,7 @@ namespace Plethora.Context.Action
 
         public abstract string GetActionDescription(ContextInfo[] contexts);
 
-        public abstract Uri GetImageUri(ContextInfo[] contexts);
+        public abstract object GetImageKey(ContextInfo[] contexts);
 
         public abstract string GetGroup(ContextInfo[] contexts);
 
@@ -29,13 +29,13 @@ namespace Plethora.Context.Action
             string actionName = GetActionName(contexts);
             string text = GetActionText(contexts);
             string description = GetActionDescription(contexts);
-            Uri imageUri = GetImageUri(contexts);
+            object imageKey = GetImageKey(contexts);
             string group = GetGroup(contexts);
             int rank = GetRank(contexts);
             bool canExecute = CanExecute(contexts);
             System.Action execute = () => Execute(contexts);
 
-            IAction action = new UiContextAction(actionName, text, description, imageUri, group, rank, canExecute, execute);
+            IAction action = new UiContextAction(actionName, text, description, imageKey, group, rank, canExecute, execute);
             return action;
         }
     }

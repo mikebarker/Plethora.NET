@@ -73,17 +73,17 @@ namespace Plethora.Context.Action
         }
 
         /// <summary>
-        /// Gets the <see cref="IUiAction.ImageUri"/> property value if the <paramref name="action"/> is
+        /// Gets the <see cref="IUiAction.ImageKey"/> property value if the <paramref name="action"/> is
         /// an instance of <see cref="IUiAction"/>, otherwise null.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the image is required.</param>
-        public static Uri GetImageUri(IAction action)
+        public static object GetImageKey(IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
                 return null;
 
-            return uiAction.ImageUri;
+            return uiAction.ImageKey;
         }
 
         /// <summary>

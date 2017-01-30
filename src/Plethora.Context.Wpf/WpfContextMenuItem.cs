@@ -1,9 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media.Imaging;
+using System.Windows.Data;
+using System.Windows.Media;
 using Plethora.Collections;
 using Plethora.Context.Action;
 
@@ -127,10 +128,10 @@ namespace Plethora.Context.Wpf
 
         #endregion
 
-        #region ItemsAdapter Dependency Property
+        #region ActionsAdapter Dependency Property
 
         public static readonly DependencyProperty ActionsAdapterProperty = DependencyProperty.Register(
-            "ItemsAdapter",
+            "ActionsAdapter",
             typeof(IActionsAdapter),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
@@ -139,6 +140,22 @@ namespace Plethora.Context.Wpf
         {
             get { return (IActionsAdapter)GetValue(ActionsAdapterProperty); }
             set { SetValue(ActionsAdapterProperty, value); }
+        }
+
+        #endregion
+
+        #region ImageKeyConverter Dependency Property
+
+        public static readonly DependencyProperty ImageKeyConverterProperty = DependencyProperty.Register(
+            "ImageKeyConverter",
+            typeof(IValueConverter),
+            typeof(WpfContextMenuItem),
+            new PropertyMetadata(null));
+
+        public IValueConverter ImageKeyConverter
+        {
+            get { return (IValueConverter)GetValue(ImageKeyConverterProperty); }
+            set { SetValue(ImageKeyConverterProperty, value); }
         }
 
         #endregion
@@ -157,7 +174,7 @@ namespace Plethora.Context.Wpf
             }
         }
 
-        private void ClearItem()
+        private void ClearItems()
         {
             var parent = this.Parent as ContextMenu;
             if (parent == null)
@@ -212,7 +229,7 @@ namespace Plethora.Context.Wpf
             var contextManager = WpfContext.GetContextManagerForElement(target);
             var actionManager = WpfContext.GetActionManagerForElement(target);
 
-            this.ClearItem();
+            this.ClearItems();
 
             var contexts = contextManager.GetContexts();
             contexts = contexts.Where(context => !this.IsSuppressed(context));
@@ -243,6 +260,8 @@ namespace Plethora.Context.Wpf
             bool showUnavailableActions = this.ShowUnavailableActions;
             bool disableGrouping = this.DisableGrouping;
 
+            IValueConverter imageKeyConverter = this.ImageKeyConverter;
+
             foreach (var group in groupedActions)
             {
                 bool isRootItemCollection;
@@ -272,16 +291,28 @@ namespace Plethora.Context.Wpf
                     if ((!canExecute) && (!showUnavailableActions))
                         continue;
 
-                    Uri imageUri = ActionHelper.GetImageUri(action);
-
                     MenuItem menuItem = new MenuItem();
                     menuItem.Tag = this;
                     menuItem.Header = ActionHelper.GetActionText(action);
                     menuItem.IsEnabled = canExecute;
-                    if (imageUri != null)
-                        menuItem.Icon = new Image { Source = new BitmapImage(imageUri) };
                     menuItem.ToolTip = ActionHelper.GetActionDescription(action);
                     menuItem.Click += delegate { action.Execute(); };
+
+                    if (imageKeyConverter != null)
+                    {
+                        object imageKey = ActionHelper.GetImageKey(action);
+
+                        if (imageKey != null)
+                        {
+                            ImageSource imageSource = (ImageSource)imageKeyConverter.Convert(
+                                imageKey,
+                                typeof(ImageSource),
+                                null,
+                                CultureInfo.CurrentCulture);
+
+                            menuItem.Icon = new Image { Source = imageSource };
+                        }
+                    }
 
                     if (isRootItemCollection)
                     {
@@ -303,7 +334,7 @@ namespace Plethora.Context.Wpf
         void ContextMenu_Closed(object sender, RoutedEventArgs e)
         {
             //Do not hold onto references unnecessarily
-            this.ClearItem();
+            this.ClearItems();
         }
     }
 }
