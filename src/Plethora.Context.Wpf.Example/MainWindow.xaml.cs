@@ -107,7 +107,7 @@ namespace Plethora.Context.Wpf.Example
                 return "Execute " + GetActionName(context) + " [" + context.Data + "]";
             }
 
-            public override Uri GetImageUri(ContextInfo context)
+            public override object GetImageKey(ContextInfo context)
             {
                 return null;
             }

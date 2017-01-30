@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:system="clr-namespace:System;assembly=mscorlib"
-        xmlns:collections="clr-namespace:Plethora.Collections;assembly=Plethora.Common"
         xmlns:context="clr-namespace:Plethora.Context.Wpf;assembly=Plethora.Context.Wpf"
         Title="MainWindow" Height="350" Width="525">
 
@@ -22,8 +21,6 @@
             <context:WpfContextSourceTemplate Name="SignedContract" Data="{Binding Path=Text, RelativeSource={RelativeSource TemplatedParent}}"/>
             <StaticResource ResourceKey="textboxContext" />
         </context:WpfContextSourceTemplateCollection>
-
-        <context:WpfContextMenu x:Key="contextMenu" />
 
         <context:ActionsPrecedenceAdapter x:Key="itemsPrecedenceAdapter">
             <context:ActionsPrecedenceAdapter.PrecedenceLists>

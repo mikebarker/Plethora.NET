@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-namespace Plethora.Context.Action
+﻿namespace Plethora.Context.Action
 {
     public abstract class UiActionTemplate : ActionTemplate, IUiActionTemplate
     {
@@ -14,7 +11,7 @@ namespace Plethora.Context.Action
 
         public abstract string GetActionDescription(ContextInfo context);
 
-        public abstract Uri GetImageUri(ContextInfo context);
+        public abstract object GetImageKey(ContextInfo context);
 
         public abstract string GetGroup(ContextInfo context);
 
@@ -32,13 +29,13 @@ namespace Plethora.Context.Action
             string actionName = GetActionName(context);
             string text = GetActionText(context);
             string description = GetActionDescription(context);
-            Uri imageUri = GetImageUri(context);
+            object imageKey = GetImageKey(context);
             string group = GetGroup(context);
             int rank = GetRank(context);
             bool canExecute = CanExecute(context);
             System.Action execute = () => Execute(context);
 
-            IAction action = new UiContextAction(actionName, text, description, imageUri, group, rank, canExecute, execute);
+            IAction action = new UiContextAction(actionName, text, description, imageKey, group, rank, canExecute, execute);
             return action;
         }
     }
@@ -47,7 +44,7 @@ namespace Plethora.Context.Action
     {
         private readonly string text;
         private readonly string description;
-        private readonly Uri imageUri;
+        private readonly object imageKey;
         private readonly string group;
         private readonly int rank;
 
@@ -55,7 +52,7 @@ namespace Plethora.Context.Action
             string actionName,
             string text,
             string description,
-            Uri imageUri,
+            object imageKey,
             string group,
             int rank,
             bool canExecute,
@@ -64,7 +61,7 @@ namespace Plethora.Context.Action
         {
             this.text = text;
             this.description = description;
-            this.imageUri = imageUri;
+            this.imageKey = imageKey;
             this.group = group;
             this.rank = rank;
         }
@@ -79,9 +76,9 @@ namespace Plethora.Context.Action
             get { return this.description; }
         }
 
-        public Uri ImageUri
+        public object ImageKey
         {
-            get { return this.imageUri; }
+            get { return this.imageKey; }
         }
 
         public string Group

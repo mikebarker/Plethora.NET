@@ -15,7 +15,7 @@ namespace Plethora.Context.Action
 
         string GetActionDescription(ContextInfo context);
 
-        Uri GetImageUri(ContextInfo context);
+        object GetImageKey(ContextInfo context);
 
         string GetGroup(ContextInfo context);
 
@@ -40,7 +40,7 @@ namespace Plethora.Context.Action
 
         string GetActionDescription(ContextInfo[] context);
 
-        Uri GetImageUri(ContextInfo[] context);
+        object GetImageKey(ContextInfo[] context);
 
         string GetGroup(ContextInfo[] context);
 

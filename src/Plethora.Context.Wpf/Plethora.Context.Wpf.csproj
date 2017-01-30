@@ -65,7 +65,6 @@
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
     <Compile Include="ActionsPrecedenceAdapter.cs" />
-    <Compile Include="IActionsAdapter.cs" />
     <Compile Include="WpfContextMenuItem.cs" />
     <Compile Include="WpfContextSourceBase.cs" />
     <Compile Include="WpfCallbackDelay.cs" />
@@ -75,7 +74,6 @@
     <Compile Include="IWpfContextSource.cs" />
     <Compile Include="WpfContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WpfContextMenu.cs" />
     <Compile Include="WpfContextProvider.cs" />
     <Compile Include="WpfContextSource.cs" />
     <Compile Include="WpfContextSourceCollection.cs" />
