@@ -40,14 +40,14 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Returns the resource string 'ArgInvaliadOffsetLength' with
+        /// Returns the resource string 'ArgInvalidOffsetLength' with
         /// substitutions made.
         /// </summary>
         /// <param name="offsetArg">The name of the offset argument.</param>
         /// <param name="lengthArg">The name of the length argument.</param>
-        public static string ArgInvaliadOffsetLength(string offsetArg, string lengthArg)
+        public static string ArgInvalidOffsetLength(string offsetArg, string lengthArg)
         {
-            return StringFormat(Resources.ArgInvaliadOffsetLength, offsetArg, lengthArg);
+            return StringFormat(Resources.ArgInvalidOffsetLength, offsetArg, lengthArg);
         }
 
         /// <summary>

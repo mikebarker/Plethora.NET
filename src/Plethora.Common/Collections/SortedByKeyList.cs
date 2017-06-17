@@ -418,7 +418,7 @@ namespace Plethora.Collections
                 throw new ArgumentOutOfRangeException("count", count, ResourceProvider.ArgMustBeGreaterThanZero("count"));
 
             if ((this.innerList.Count - index) < count)
-                throw new ArgumentException(ResourceProvider.ArgInvaliadOffsetLength("index", "count"));
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength("index", "count"));
             
             if (searchKey == null)
                 throw new ArgumentNullException("searchKey");
