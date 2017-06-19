@@ -90,6 +90,7 @@
     <Compile Include="Collections\AutoSortedList_Test.cs" />
     <Compile Include="Collections\ListIndexItterator_Test.cs" />
     <Compile Include="Collections\MergeJoin_Test.cs" />
+    <Compile Include="Collections\MruDictionary_Test.cs" />
     <Compile Include="Collections\ReadOnlyKeyedCollection_Test.cs" />
     <Compile Include="Collections\Heirarchy_Test.cs" />
     <Compile Include="Collections\KeyedCollection_Test.cs" />

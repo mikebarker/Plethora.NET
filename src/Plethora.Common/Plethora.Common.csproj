@@ -56,13 +56,18 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="!JetBrains.Annotations.cs" />
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\JetBrains.Annotations.cs">
+      <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
     <Compile Include="Collections\AutoSortedList.cs" />
     <Compile Include="Collections\FuncComparer.cs" />
     <Compile Include="Collections\ListIndexItterator.cs" />
+    <Compile Include="Collections\MruDictionary.cs" />
+    <Compile Include="Collections\ReadOnlyCollectionWrapper.cs" />
+    <Compile Include="Collections\ReferenceEqualityComparer.cs" />
     <Compile Include="Collections\Sets\BaseSetImpl.cs" />
     <Compile Include="Collections\Sets\CompleteSet.cs" />
     <Compile Include="Collections\Sets\EmptySet.cs" />
@@ -85,6 +90,7 @@
     <Compile Include="Data\DbExecutor.cs" />
     <Compile Include="Data\IExceptionTester.cs" />
     <Compile Include="Data\SqlClient\SqlExceptionTester.cs" />
+    <Compile Include="Linq\Expressions\ExpressionHelper.cs" />
     <Compile Include="WildcardSearch.cs" />
     <Compile Include="WeakEvent.cs" />
     <Compile Include="Threading\LiteLock.cs" />

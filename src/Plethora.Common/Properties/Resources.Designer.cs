@@ -79,6 +79,33 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Target array type is not compatible with the type of items in the collection.
+        /// </summary>
+        internal static string ArgArrayInvalidType {
+            get {
+                return ResourceManager.GetString("ArgArrayInvalidType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only single dimensional arrays are supported for the requested action..
+        /// </summary>
+        internal static string ArgArrayMultiDimensionNotSupported {
+            get {
+                return ResourceManager.GetString("ArgArrayMultiDimensionNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The lower bound of target array must be zero..
+        /// </summary>
+        internal static string ArgArrayNonZeroLowerBound {
+            get {
+                return ResourceManager.GetString("ArgArrayNonZeroLowerBound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;{0}&apos; was invalid..
         /// </summary>
         internal static string ArgInvalid {
