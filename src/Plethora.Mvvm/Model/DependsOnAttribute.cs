@@ -8,7 +8,7 @@ namespace Plethora.Mvvm.Model
     /// An <see cref="Attribute"/> which can be applied to properties to signify that they are
     /// dependent on another property.
     /// </summary>
-    /// <see cref="DependentNotifyPropertyChangedImpl"/>
+    /// <see cref="DependentNotifyPropertyChanged"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
     public class DependsOnAttribute : Attribute
     {

@@ -89,7 +89,7 @@
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="Model\DependentNotifyPropertyChanged_Tests.cs" />
     <Compile Include="Model\ModelBase_Tests.cs" />
-    <Compile Include="Model\NotifyPropertyChangedBase_Tests.cs" />
+    <Compile Include="Model\NotifyPropertyChanged_Tests.cs" />
     <Compile Include="Model\TrackChangesObservableCollection_Tests.cs" />
   </ItemGroup>
   <ItemGroup>
