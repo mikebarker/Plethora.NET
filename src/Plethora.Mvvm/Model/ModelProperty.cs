@@ -11,16 +11,16 @@ namespace Plethora.Mvvm.Model
     /// </summary>
     internal interface IModelProperty : ITrackChanges
     {
-        bool IsUnchangedDefaultValue(IModelPropertyMetaData propertyMetaData);
+        bool IsUnchangedDefaultValue(IModelPropertyMetadata propertyMetadata);
     }
 
     /// <summary>
-    /// Generic implementation of <see cref="IModelPropertyMetaData"/>
+    /// Generic implementation of <see cref="IModelPropertyMetadata"/>
     /// </summary>
     /// <typeparam name="T">
     /// The data type of this property.
     /// </typeparam>
-    [DebuggerDisplay("{Value}")]
+    [DebuggerDisplay("{" + nameof(Value) + "}")]
     internal sealed class ModelProperty<T> : IModelProperty
     {
         private T originalValue;
@@ -64,21 +64,21 @@ namespace Plethora.Mvvm.Model
             this.currentValue = this.originalValue;
         }
 
-        bool IModelProperty.IsUnchangedDefaultValue([CanBeNull] IModelPropertyMetaData propertyMetaData)
+        bool IModelProperty.IsUnchangedDefaultValue([CanBeNull] IModelPropertyMetadata propertyMetadata)
         {
-            if (propertyMetaData != null && !(propertyMetaData is ModelPropertyMetaData<T>))
+            if (propertyMetadata != null && !(propertyMetadata is ModelPropertyMetadata<T>))
             {
                 throw new ArgumentException(
-                    string.Format("propertyMetaData is not of the expected type {0}", typeof(ModelPropertyMetaData<T>)),
-                    "propertyMetaData");
+                    string.Format(nameof(propertyMetadata) + " is not of the expected type {0}", typeof(ModelPropertyMetadata<T>)),
+                    nameof(propertyMetadata));
             }
 
-            return this.IsUnchangedDefaultValue((ModelPropertyMetaData<T>)propertyMetaData);
+            return this.IsUnchangedDefaultValue((ModelPropertyMetadata<T>)propertyMetadata);
         }
 
-        public bool IsUnchangedDefaultValue([CanBeNull] ModelPropertyMetaData<T> propertyMetaData)
+        public bool IsUnchangedDefaultValue([CanBeNull] ModelPropertyMetadata<T> propertyMetadata)
         {
-            T defaultValue = ModelPropertyMetaDataHelper.GetDefaultValueSafe(propertyMetaData);
+            T defaultValue = ModelPropertyMetadataHelper.GetDefaultValueSafe(propertyMetadata);
 
             return
                 EqualityComparer<T>.Default.Equals(this.originalValue, defaultValue) &&

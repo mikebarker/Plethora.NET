@@ -219,8 +219,8 @@ namespace Plethora.Windows.Forms.Styles
             set
             {
                 if (value.HasValue && value.Value <= 0)
-                    throw new ArgumentOutOfRangeException("value", value,
-                        ResourceProvider.ArgMustBeGreaterThanZero("value"));
+                    throw new ArgumentOutOfRangeException(nameof(value), value,
+                        ResourceProvider.ArgMustBeGreaterThanZero(nameof(value)));
 
                 if (this.fontSize == value)
                     return;
@@ -438,7 +438,7 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
 
             if (this.ForeColor != Color.Empty)
@@ -499,7 +499,7 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
 
             this.ForeColor = control.ForeColor;
@@ -523,7 +523,7 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (style == null)
-                throw new ArgumentNullException("style");
+                throw new ArgumentNullException(nameof(style));
 
 
             if (style.ForeColor == Color.Empty)
@@ -579,7 +579,7 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
 
             var combinedStyle = CombineStyles(styles);

@@ -15,11 +15,11 @@ namespace Plethora.Drawing
     {
         #region Fields
 
-        private int alfa;
-        private int cyan;
-        private int magenta;
-        private int yellow;
-        private int key;
+        private readonly int alfa;
+        private readonly int cyan;
+        private readonly int magenta;
+        private readonly int yellow;
+        private readonly int key;
         #endregion
 
         #region Constructors
@@ -60,7 +60,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int A
         {
-            get { return alfa; }
+            get { return this.alfa; }
         }
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int C
         {
-            get { return cyan; }
+            get { return this.cyan; }
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int M
         {
-            get { return magenta; }
+            get { return this.magenta; }
         }
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int Y
         {
-            get { return yellow; }
+            get { return this.yellow; }
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int K
         {
-            get { return key; }
+            get { return this.key; }
         }
         #endregion
 
@@ -151,24 +151,24 @@ namespace Plethora.Drawing
         {
             //Validation
             if ((alfa < 0) || (alfa > ColorBase.FullAlfa))
-                throw new ArgumentOutOfRangeException("alfa", alfa,
-                  ResourceProvider.ArgMustBeBetween("alfa", 0, ColorBase.FullAlfa));
+                throw new ArgumentOutOfRangeException(nameof(alfa), alfa,
+                  ResourceProvider.ArgMustBeBetween(nameof(alfa), 0, ColorBase.FullAlfa));
 
             if ((cyan < 0) || (cyan > ColorBase.ComponentMaximum))
-                throw new ArgumentOutOfRangeException("cyan", cyan,
-                  ResourceProvider.ArgMustBeBetween("cyan", 0, ColorBase.ComponentMaximum));
+                throw new ArgumentOutOfRangeException(nameof(cyan), cyan,
+                  ResourceProvider.ArgMustBeBetween(nameof(cyan), 0, ColorBase.ComponentMaximum));
 
             if ((magenta < 0) || (magenta > ColorBase.ComponentMaximum))
-                throw new ArgumentOutOfRangeException("magenta", magenta,
-                  ResourceProvider.ArgMustBeBetween("magenta", 0, ColorBase.ComponentMaximum));
+                throw new ArgumentOutOfRangeException(nameof(magenta), magenta,
+                  ResourceProvider.ArgMustBeBetween(nameof(magenta), 0, ColorBase.ComponentMaximum));
 
             if ((yellow < 0) || (yellow > ColorBase.ComponentMaximum))
-                throw new ArgumentOutOfRangeException("yellow", yellow,
-                  ResourceProvider.ArgMustBeBetween("yellow", 0, ColorBase.ComponentMaximum));
+                throw new ArgumentOutOfRangeException(nameof(yellow), yellow,
+                  ResourceProvider.ArgMustBeBetween(nameof(yellow), 0, ColorBase.ComponentMaximum));
 
             if ((key < 0) || (key > ColorBase.ComponentMaximum))
-                throw new ArgumentOutOfRangeException("key", key,
-                  ResourceProvider.ArgMustBeBetween("key", 0, ColorBase.ComponentMaximum));
+                throw new ArgumentOutOfRangeException(nameof(key), key,
+                  ResourceProvider.ArgMustBeBetween(nameof(key), 0, ColorBase.ComponentMaximum));
 
 
             return new ColorCmyk(alfa, cyan, magenta, yellow, key);
@@ -279,11 +279,11 @@ namespace Plethora.Drawing
         /// </returns>
         public Color ToColor()
         {
-            int _cyan = GetCmyComponent(C, K);
-            int _magenta = GetCmyComponent(M, K);
-            int _yellow = GetCmyComponent(Y, K);
+            int _cyan = GetCmyComponent(this.C, this.K);
+            int _magenta = GetCmyComponent(this.M, this.K);
+            int _yellow = GetCmyComponent(this.Y, this.K);
 
-            ColorCmy colorCmy = ColorCmy.FromCmy(alfa, _cyan, _magenta, _yellow);
+            ColorCmy colorCmy = ColorCmy.FromCmy(this.alfa, _cyan, _magenta, _yellow);
             return colorCmy.ToColor();
         }
         #endregion
@@ -339,7 +339,7 @@ namespace Plethora.Drawing
                 return false;
 
             ColorCmyk other = (ColorCmyk)obj;
-            return Equals(other);
+            return this.Equals(other);
         }
 
         /// <summary>
@@ -351,7 +351,7 @@ namespace Plethora.Drawing
         /// </returns>
         public override int GetHashCode()
         {
-            return HashCodeHelper.GetHashCode(alfa, cyan, magenta, yellow, key);
+            return HashCodeHelper.GetHashCode(this.alfa, this.cyan, this.magenta, this.yellow, this.key);
         }
 
         /// <summary>

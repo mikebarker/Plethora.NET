@@ -33,10 +33,10 @@ namespace Plethora.ComponentModel
         public ControlDropDownHelper(Control control, Func<Control, Point> dropDownLocationProvider)
         {
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
             if (dropDownLocationProvider == null)
-                throw new ArgumentNullException("dropDownLocationProvider");
+                throw new ArgumentNullException(nameof(dropDownLocationProvider));
 
 
             this.control = control;
@@ -86,7 +86,7 @@ namespace Plethora.ComponentModel
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 if (value == this.dropDownLocationProvider)
                     return;

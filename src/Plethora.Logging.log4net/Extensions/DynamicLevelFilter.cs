@@ -23,7 +23,7 @@ namespace Plethora.Logging.log4net.Extensions
         {
             //Validation
             if (loggingEvent == null)
-                throw new ArgumentNullException("loggingEvent");
+                throw new ArgumentNullException(nameof(loggingEvent));
 
             if ((GlobalLevel != null) && (loggingEvent.Level < GlobalLevel))
             {

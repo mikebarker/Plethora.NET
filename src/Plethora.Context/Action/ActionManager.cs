@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context.Action
 {
     /// <summary>
@@ -20,6 +22,7 @@ namespace Plethora.Context.Action
         /// <remarks>
         /// Implementations can utilise the global instance or choose to define a local instance if preferred.
         /// </remarks>
+        [NotNull]
         public static ActionManager GlobalInstance
         {
             get { return globalInstance; }
@@ -53,40 +56,40 @@ namespace Plethora.Context.Action
         ///  </para>
         /// </remarks>
         /// <seealso cref="GetActions"/>
-        public void RegisterFactory(IActionFactory factory)
+        public void RegisterFactory([NotNull] IActionFactory factory)
         {
             //Validation
             if (factory == null)
-                throw new ArgumentNullException("factory");
+                throw new ArgumentNullException(nameof(factory));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
                 this.actionFactories.Add(factory);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
         /// <summary>
         /// Deregisters an action factory.
         /// </summary>
-        public void DeregisterFactory(IActionFactory factory)
+        public void DeregisterFactory([NotNull] IActionFactory factory)
         {
             //Validation
             if (factory == null)
-                throw new ArgumentNullException("factory");
+                throw new ArgumentNullException(nameof(factory));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
                 this.actionFactories.Remove(factory);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
@@ -99,26 +102,26 @@ namespace Plethora.Context.Action
         /// The template is used to create a list of available actions based on
         /// an in-scope context.
         /// </remarks>
-        public void RegisterActionTemplate(IActionTemplate template)
+        public void RegisterActionTemplate([NotNull] IActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                if (templateActionFactory == null)
+                if (this.templateActionFactory == null)
                 {
-                    templateActionFactory = new TemplateActionFactory();
-                    actionFactories.Add(templateActionFactory);
+                    this.templateActionFactory = new TemplateActionFactory();
+                    this.actionFactories.Add(this.templateActionFactory);
                 }
 
-                templateActionFactory.RegisterActionTemplate(template);
+                this.templateActionFactory.RegisterActionTemplate(template);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
@@ -138,72 +141,72 @@ namespace Plethora.Context.Action
         ///   will define an action if multiple conexts are in-scope with the same context name.
         ///  </para>
         /// </remarks>
-        public void RegisterActionTemplate(IMultiActionTemplate template)
+        public void RegisterActionTemplate([NotNull] IMultiActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                if (templateActionFactory == null)
+                if (this.templateActionFactory == null)
                 {
-                    templateActionFactory = new TemplateActionFactory();
-                    actionFactories.Add(templateActionFactory);
+                    this.templateActionFactory = new TemplateActionFactory();
+                    this.actionFactories.Add(this.templateActionFactory);
                 }
 
-                templateActionFactory.RegisterActionTemplate(template);
+                this.templateActionFactory.RegisterActionTemplate(template);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
         /// <summary>
         /// Deregisters an action template.
         /// </summary>
-        public void DeregisterActionTemplate(IActionTemplate template)
+        public void DeregisterActionTemplate([NotNull] IActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                if (templateActionFactory == null)
+                if (this.templateActionFactory == null)
                     return;
 
-                templateActionFactory.DeregisterActionTemplate(template);
+                this.templateActionFactory.DeregisterActionTemplate(template);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
         /// <summary>
         /// Deregisters an action template.
         /// </summary>
-        public void DeregisterActionTemplate(IMultiActionTemplate template)
+        public void DeregisterActionTemplate([NotNull] IMultiActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                if (templateActionFactory == null)
+                if (this.templateActionFactory == null)
                     return;
 
-                templateActionFactory.DeregisterActionTemplate(template);
+                this.templateActionFactory.DeregisterActionTemplate(template);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
@@ -214,19 +217,20 @@ namespace Plethora.Context.Action
         /// <returns>
         /// A list of available actions for the given contexts.
         /// </returns>
-        public IEnumerable<IAction> GetActions(IEnumerable<ContextInfo> contexts)
+        [NotNull, ItemNotNull]
+        public IEnumerable<IAction> GetActions([NotNull, ItemNotNull] IEnumerable<ContextInfo> contexts)
         {
             IEnumerable<IActionFactory> factories;
-            rwLock.EnterReadLock();
+            this.rwLock.EnterReadLock();
             try
             {
                 //Copy the actionFactories to a new list to minimise the time required
                 // within the lock.
-                factories = actionFactories.ToList();
+                factories = this.actionFactories.ToList();
             }
             finally
             {
-                rwLock.ExitReadLock();
+                this.rwLock.ExitReadLock();
             }
 
             var contextsByName = contexts

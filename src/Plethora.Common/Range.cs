@@ -48,7 +48,7 @@ namespace Plethora
         public Range(T min, T max, bool minInclusive, bool maxInclusive, IComparer<T> comparer)
         {
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
 
             if (comparer.Compare(min, max) > 0) // min > max
                 throw new ArgumentException(ResourceProvider.ArgMustBeLessThanEqualTo("range.Min", "range.Max"));
@@ -69,7 +69,7 @@ namespace Plethora
         /// </summary>
         public T Min
         {
-            get { return min; }
+            get { return this.min; }
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Plethora
         /// </summary>
         public bool MinInclusive
         {
-            get { return minInclusive; }
+            get { return this.minInclusive; }
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Plethora
         /// </summary>
         public T Max
         {
-            get { return max; }
+            get { return this.max; }
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Plethora
         /// </summary>
         public bool MaxInclusive
         {
-            get { return maxInclusive; }
+            get { return this.maxInclusive; }
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Plethora
         /// </summary>
         public IComparer<T> Comparer
         {
-            get { return comparer; }
+            get { return this.comparer; }
         }
 
         #endregion
@@ -120,17 +120,17 @@ namespace Plethora
         {
             int result;
 
-            result = this.comparer.Compare(min, item);
+            result = this.comparer.Compare(this.min, item);
             if (result > 0) // min > item
                 return false;
-            else if ((result == 0) && (!minInclusive))
+            else if ((result == 0) && (!this.minInclusive))
                 return false;
 
 
-            result = this.comparer.Compare(item, max);
+            result = this.comparer.Compare(item, this.max);
             if (result > 0) // item > max
                 return false;
-            else if ((result == 0) && (!maxInclusive))
+            else if ((result == 0) && (!this.maxInclusive))
                 return false;
 
             return true;
@@ -143,10 +143,8 @@ namespace Plethora
         public bool Equals(Range<T> other)
         {
             return
-                EqualityComparer<T>.Default.Equals(min, other.min) &&
-                EqualityComparer<T>.Default.Equals(max, other.max) &&
-                minInclusive == other.minInclusive &&
-                maxInclusive == other.maxInclusive;
+                EqualityComparer<T>.Default.Equals(this.min, other.min) &&
+                EqualityComparer<T>.Default.Equals(this.max, other.max) && this.minInclusive == other.minInclusive && this.maxInclusive == other.maxInclusive;
         }
 
         #endregion
@@ -158,7 +156,7 @@ namespace Plethora
             if (!(obj is Range<T>))
                 return false;
 
-            return Equals((Range<T>)obj);
+            return this.Equals((Range<T>)obj);
         }
 
         public override int GetHashCode()

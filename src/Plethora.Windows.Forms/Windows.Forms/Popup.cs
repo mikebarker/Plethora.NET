@@ -14,7 +14,7 @@ namespace Plethora.Windows.Forms
         {
             //Validation
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
             InitializeComponent();
 
@@ -234,7 +234,7 @@ namespace Plethora.Windows.Forms
         {
             //Validation
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
 
             var popup = new Popup(control);

@@ -68,7 +68,7 @@ namespace Plethora.fqi.Trees
             /// </returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
 
             #endregion
@@ -82,7 +82,7 @@ namespace Plethora.fqi.Trees
             /// <exception cref="NotSupportedException">The <see cref="ICollection{T}" /> is read-only.</exception>
             public void Add(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
 
                 IDeepTreeLayer<T> subtree;
                 object locationInfo;
@@ -117,7 +117,7 @@ namespace Plethora.fqi.Trees
             /// <param name="item">The object to locate in the <see cref="ICollection{T}" />.</param>
             public bool Contains(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
 
                 IDeepTreeLayer<T> subtree;
                 bool result = this.innerTree.TryGetValue(key, out subtree);
@@ -154,7 +154,7 @@ namespace Plethora.fqi.Trees
             /// <exception cref="NotSupportedException">The <see cref="ICollection{T}" /> is read-only.</exception>
             public bool Remove(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
 
                 IDeepTreeLayer<T> subtree;
                 bool result = this.innerTree.TryGetValue(key, out subtree);
@@ -210,7 +210,7 @@ namespace Plethora.fqi.Trees
             {
                 var memberRanges = ExpressionAnalyser.GetMemberRestrictions(expr);
 
-                return FilterBy(expr, memberRanges);
+                return this.FilterBy(expr, memberRanges);
             }
 
             /// <summary>
@@ -258,7 +258,7 @@ namespace Plethora.fqi.Trees
             /// </returns>
             public bool AddOrUpdate(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
 
                 IDeepTreeLayer<T> subtree;
                 object locationInfo;
@@ -363,23 +363,23 @@ namespace Plethora.fqi.Trees
                 public bool MoveNext()
                 {
                     if (!this.initialised)
-                        Reset();
+                        this.Reset();
 
                     bool result = false;
                     while (!result)
                     {
                         //Allow for the first itteration (where subTreeEnumeration is null)
-                        result = (subTreeEnumerator == null)
+                        result = (this.subTreeEnumerator == null)
                             ? false
-                            : subTreeEnumerator.MoveNext();
+                            : this.subTreeEnumerator.MoveNext();
 
                         if (!result)
                         {
-                            bool treeResult = treeEnumerator.MoveNext();
+                            bool treeResult = this.treeEnumerator.MoveNext();
                             if (!treeResult)
                                 return false;
 
-                            subTreeEnumerator = GetLayerEnumerator(treeEnumerator.Current.Value);
+                            this.subTreeEnumerator = this.GetLayerEnumerator(this.treeEnumerator.Current.Value);
                         }
                     }
 
@@ -402,10 +402,10 @@ namespace Plethora.fqi.Trees
                 /// </exception>
                 public void Reset()
                 {
-                    if (namedRanges != null)
+                    if (this.namedRanges != null)
                     {
                         ILateRange range;
-                        bool result = namedRanges.TryGetValue(this.indexedMember, out range);
+                        bool result = this.namedRanges.TryGetValue(this.indexedMember, out range);
                         if (result)
                         {
                             if (range.HasMin)
@@ -416,8 +416,8 @@ namespace Plethora.fqi.Trees
                         }
                     }
 
-                    subTreeEnumerator = null;
-                    treeEnumerator.Reset();
+                    this.subTreeEnumerator = null;
+                    this.treeEnumerator.Reset();
 
                     this.initialised = true;
                 }
@@ -430,7 +430,7 @@ namespace Plethora.fqi.Trees
                 /// </returns>
                 public T Current
                 {
-                    get { return subTreeEnumerator.Current; }
+                    get { return this.subTreeEnumerator.Current; }
                 }
 
                 /// <summary>
@@ -446,7 +446,7 @@ namespace Plethora.fqi.Trees
                 /// </exception>
                 object IEnumerator.Current
                 {
-                    get { return Current; }
+                    get { return this.Current; }
                 }
                 #endregion
             }

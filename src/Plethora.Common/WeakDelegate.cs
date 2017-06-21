@@ -4,6 +4,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
+using JetBrains.Annotations;
+
 namespace Plethora
 {
     /// <summary>
@@ -39,13 +41,13 @@ namespace Plethora
         {
             //Validation
             if (@delegate == null)
-                throw new ArgumentNullException("delegate");
+                throw new ArgumentNullException(nameof(@delegate));
 
             if (!typeof(Delegate).IsAssignableFrom(typeof(TDelegate)))
-                throw new ArgumentException("Type parameter TDelegate must be a subclass of Delegate.", "delegate");
+                throw new ArgumentException(ResourceProvider.GenericArgMustBeDelegate(), nameof(@delegate));
 
             if (onTargetCollected == null)
-                throw new ArgumentNullException("onTargetCollected");
+                throw new ArgumentNullException(nameof(onTargetCollected));
 
             var del = (Delegate)(object)@delegate;
 
@@ -110,13 +112,13 @@ namespace Plethora
         {
             //Validation
             if (@delegate == null)
-                throw new ArgumentNullException("delegate");
+                throw new ArgumentNullException(nameof(@delegate));
 
             if (!typeof(Delegate).IsAssignableFrom(typeof(TDelegate)))
-                throw new ArgumentException("Type parameter TDelegate must be a subclass of Delegate.", "delegate");
+                throw new ArgumentException(ResourceProvider.GenericArgMustBeDelegate(), nameof(@delegate));
 
             if (onTargetCollected == null)
-                throw new ArgumentNullException("onTargetCollected");
+                throw new ArgumentNullException(nameof(onTargetCollected));
 
             var del = (Delegate)(object)@delegate;
 
@@ -282,7 +284,7 @@ namespace Plethora
 
             protected override void CallOnTargetCollected()
             {
-                OnTargetCollected();
+                this.OnTargetCollected();
             }
 
             private void OnTargetCollected()    // Do not change signature, used by reflection
@@ -307,9 +309,10 @@ namespace Plethora
 
             protected override void CallOnTargetCollected()
             {
-                OnTargetCollected();
+                this.OnTargetCollected();
             }
 
+            [UsedImplicitly]
             private TResult OnTargetCollected() // Do not change signature, used by reflection
             {
                 if (this.onTargetCollectedCalled)

@@ -17,7 +17,7 @@ namespace Plethora.Collections
     /// class.
     /// </remarks>
     [Serializable]
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     public class KeyedCollection<TKey, T> : IKeyedCollection<TKey, T>
     {
         private class ReadOnlyDictionaryWrapper : IDictionary<TKey, T>
@@ -39,7 +39,7 @@ namespace Plethora.Collections
             {
                 //Validation
                 if (keyedCollection == null)
-                    throw new ArgumentNullException("keyedCollection");
+                    throw new ArgumentNullException(nameof(keyedCollection));
 
 
                 this.keyedCollection = keyedCollection;
@@ -50,7 +50,7 @@ namespace Plethora.Collections
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
             #endregion
 
@@ -179,10 +179,10 @@ namespace Plethora.Collections
         {
             //Validation
             if (keySelector == null)
-                throw new ArgumentNullException("keySelector");
+                throw new ArgumentNullException(nameof(keySelector));
 
             if (enumerable == null)
-                throw new ArgumentNullException("enumerable");
+                throw new ArgumentNullException(nameof(enumerable));
 
 
             this.keySelector = keySelector;
@@ -200,7 +200,7 @@ namespace Plethora.Collections
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
         #endregion
 
@@ -226,7 +226,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to add to the <see cref="ICollection{T}"/>.</param>
         public void Add(T item)
         {
-            var key = GetKey(item);
+            var key = this.GetKey(item);
             this.innerDictionary.Add(key, item);
         }
 
@@ -248,7 +248,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to locate in the <see cref="ICollection{T}"/>.</param>
         public bool Contains(T item)
         {
-            var key = GetKey(item);
+            var key = this.GetKey(item);
             return this.ContainsKey(key);
         }
 
@@ -278,7 +278,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
         public bool Remove(T item)
         {
-            var key = GetKey(item);
+            var key = this.GetKey(item);
             return this.innerDictionary.Remove(key);
         }
 
@@ -316,7 +316,7 @@ namespace Plethora.Collections
         /// </returns>
         public bool Upsert(T item)
         {
-            var key = GetKey(item);
+            var key = this.GetKey(item);
             bool result = this.innerDictionary.ContainsKey(key);
             this.innerDictionary[key] = item;
             return !result;
@@ -373,9 +373,9 @@ namespace Plethora.Collections
         private TKey GetKey(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
-            return keySelector(item);
+            return this.keySelector(item);
         }
         #endregion
     }

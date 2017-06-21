@@ -22,7 +22,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (a == null)
-                throw new ArgumentNullException("a");
+                throw new ArgumentNullException(nameof(a));
 
 
             this.a = a;
@@ -34,22 +34,22 @@ namespace Plethora.Collections.Sets
 
         public override bool Contains(T element)
         {
-            return !a.Contains(element);
+            return !this.a.Contains(element);
         }
 
         public override ISetCore<T> Inverse()
         {
-            return a;
+            return this.a;
         }
 
         public override bool? IsEmpty
         {
             get
             {
-                if (a.IsEmpty == true)
+                if (this.a.IsEmpty == true)
                     return false;
 
-                if (a.IsEmpty == false)
+                if (this.a.IsEmpty == false)
                     return true;
 
                 return null;

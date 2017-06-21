@@ -212,10 +212,10 @@ namespace Plethora.Format
         {
             //Validation
             if (format == null)
-                throw new ArgumentNullException("format");
+                throw new ArgumentNullException(nameof(format));
 
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
 
             this.FormatString = format;
@@ -637,7 +637,7 @@ namespace Plethora.Format
         public void AddSuffix(string suffix, double multiplier)
         {
             if (suffix == null)
-                throw new ArgumentNullException("suffix");
+                throw new ArgumentNullException(nameof(suffix));
 
             if (suffix.Length == 0)
                 throw new ArgumentException("suffix may not be an empty string.");
@@ -663,7 +663,7 @@ namespace Plethora.Format
         public bool RemoveSuffix(string suffix)
         {
             if (suffix == null)
-                throw new ArgumentNullException("suffix");
+                throw new ArgumentNullException(nameof(suffix));
 
             if (suffix.Length == 0)
                 throw new ArgumentException("suffix may not be an empty string.");
@@ -712,7 +712,7 @@ namespace Plethora.Format
         public bool TryGetSuffixValue(string suffix, out double multiplier)
         {
             if (suffix == null)
-                throw new ArgumentNullException("suffix");
+                throw new ArgumentNullException(nameof(suffix));
 
             if (suffix.Length == 0)
                 throw new ArgumentException("suffix may not be an empty string.");

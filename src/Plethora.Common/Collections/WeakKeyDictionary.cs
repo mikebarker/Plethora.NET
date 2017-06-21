@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 
 namespace Plethora.Collections
 {
@@ -33,10 +32,10 @@ namespace Plethora.Collections
             {
                 //validation
                 if (target == null)
-                    throw new ArgumentNullException("target");
+                    throw new ArgumentNullException(nameof(target));
 
                 if (comparer == null)
-                    throw new ArgumentNullException("comparer");
+                    throw new ArgumentNullException(nameof(comparer));
 
 
                 //Capture the hash code to prevent it changing if the
@@ -128,7 +127,7 @@ namespace Plethora.Collections
             {
                 //Validation
                 if (comparer == null)
-                    throw new ArgumentNullException("comparer");
+                    throw new ArgumentNullException(nameof(comparer));
 
                 this.innerComparer = comparer;
             }
@@ -209,7 +208,7 @@ namespace Plethora.Collections
         public WeakKeyDictionary(int capacity, IEqualityComparer<TKey> keyComparer)
         {
             if (capacity < 0)
-                throw new ArgumentOutOfRangeException("capacity", capacity, "Capacity may not be less than zero.");
+                throw new ArgumentOutOfRangeException(nameof(capacity), capacity, ResourceProvider.ArgMustBeGreaterThanZero("capacity"));
 
             this.weakKeyComparer = (keyComparer == null)
                 ? WeakKeyComparer.Default
@@ -224,7 +223,7 @@ namespace Plethora.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -244,7 +243,7 @@ namespace Plethora.Collections
         /// </remarks>
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            return innerDictionary
+            return this.innerDictionary
                 .Select(pair => new KeyValuePair<TKey, TValue>(pair.Key.Target, pair.Value))
                 .Where(pair => pair.Key != null)
                 .GetEnumerator();
@@ -255,7 +254,7 @@ namespace Plethora.Collections
 
         void ICollection<KeyValuePair<TKey,TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
-            Add(item.Key, item.Value);
+            this.Add(item.Key, item.Value);
         }
 
         public void Clear()
@@ -265,7 +264,7 @@ namespace Plethora.Collections
 
         bool ICollection<KeyValuePair<TKey,TValue>>.Contains(KeyValuePair<TKey, TValue> item)
         {
-            var weakPair = new KeyValuePair<WeakKey, TValue>(GetWeakKey(item.Key), item.Value);
+            var weakPair = new KeyValuePair<WeakKey, TValue>(this.GetWeakKey(item.Key), item.Value);
             return ((ICollection<KeyValuePair<WeakKey, TValue>>)this.innerDictionary).Contains(weakPair);
         }
 
@@ -276,7 +275,7 @@ namespace Plethora.Collections
 
         bool ICollection<KeyValuePair<TKey,TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
-            return Remove(item.Key);
+            return this.Remove(item.Key);
         }
 
         public int Count
@@ -286,7 +285,7 @@ namespace Plethora.Collections
 
         bool ICollection<KeyValuePair<TKey,TValue>>.IsReadOnly
         {
-            get { return ((ICollection<KeyValuePair<TKey,TValue>>)this.innerDictionary).IsReadOnly; }
+            get { return ((ICollection<KeyValuePair<WeakKey, TValue>>)this.innerDictionary).IsReadOnly; }
         }
 
         #endregion
@@ -296,18 +295,18 @@ namespace Plethora.Collections
         public bool ContainsKey(TKey key)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
-            var weakKey = GetWeakKey(key);
+            var weakKey = this.GetWeakKey(key);
             return this.innerDictionary.ContainsKey(weakKey);
         }
 
         public void Add(TKey key, TValue value)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
-            var weakKey = GetWeakKey(key);
+            var weakKey = this.GetWeakKey(key);
 
             this.innerDictionary.Add(weakKey, value);
         }
@@ -315,18 +314,18 @@ namespace Plethora.Collections
         public bool Remove(TKey key)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
-            var weakKey = GetWeakKey(key);
+            var weakKey = this.GetWeakKey(key);
             return this.innerDictionary.Remove(weakKey);
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
-            var weakKey = GetWeakKey(key);
+            var weakKey = this.GetWeakKey(key);
             return this.innerDictionary.TryGetValue(weakKey, out value);
         }
 
@@ -335,17 +334,17 @@ namespace Plethora.Collections
             get
             {
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
-                var weakKey = GetWeakKey(key);
+                var weakKey = this.GetWeakKey(key);
                 return this.innerDictionary[weakKey];
             }
             set
             {
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
-                var weakKey = GetWeakKey(key);
+                var weakKey = this.GetWeakKey(key);
                 this.innerDictionary[weakKey] = value;
             }
         }
@@ -385,7 +384,7 @@ namespace Plethora.Collections
         /// </returns>
         public bool TrimExcess()
         {
-            var deadKeyList = innerDictionary
+            var deadKeyList = this.innerDictionary
                 .Where(pair => !pair.Key.IsAlive)
                 .Select(pair => pair.Key)
                 .ToList();
@@ -395,7 +394,7 @@ namespace Plethora.Collections
 
             foreach (var deadKey in deadKeyList)
             {
-                innerDictionary.Remove(deadKey);
+                this.innerDictionary.Remove(deadKey);
             }
 
             return true;

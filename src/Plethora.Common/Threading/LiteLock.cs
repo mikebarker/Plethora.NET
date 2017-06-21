@@ -38,23 +38,23 @@ namespace Plethora.Threading
 
         public IDisposable AcquireLock()
         {
-            Monitor.Enter(@lock);
-            if (lockCount == 0)
-                lockThreadId = Thread.CurrentThread.ManagedThreadId;
-            lockCount++;
+            Monitor.Enter(this.@lock);
+            if (this.lockCount == 0)
+                this.lockThreadId = Thread.CurrentThread.ManagedThreadId;
+            this.lockCount++;
 
             return new Disposable(delegate
             {
-                lockCount--;
-                if (lockCount == 0)
-                    lockThreadId = -1;
-                Monitor.Exit(@lock);
+                this.lockCount--;
+                if (this.lockCount == 0)
+                    this.lockThreadId = -1;
+                Monitor.Exit(this.@lock);
             });
         }
 
         public bool IsLockAcquired
         {
-            get { return (lockThreadId == Thread.CurrentThread.ManagedThreadId); }
+            get { return (this.lockThreadId == Thread.CurrentThread.ManagedThreadId); }
         }
     }
 }

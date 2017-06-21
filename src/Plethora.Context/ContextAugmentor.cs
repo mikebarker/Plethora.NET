@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -35,14 +37,14 @@ namespace Plethora.Context
         /// <param name="augmentationFunc">
         /// The augmentation function which takes the base context and returns the derived contexts.
         /// </param>
-        public ContextAugmentor(string contextName, Func<ContextInfo, IEnumerable<ContextInfo>> augmentationFunc)
+        public ContextAugmentor([NotNull] string contextName, [NotNull] Func<ContextInfo, IEnumerable<ContextInfo>> augmentationFunc)
         {
             //Validation
             if (contextName == null)
-                throw new ArgumentNullException("contextName");
+                throw new ArgumentNullException(nameof(contextName));
 
             if (augmentationFunc == null)
-                throw new ArgumentNullException("augmentationFunc");
+                throw new ArgumentNullException(nameof(augmentationFunc));
 
 
             this.contextName = contextName;

@@ -39,10 +39,10 @@ namespace Plethora.ComponentModel
         {
             //Validation
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
             if (defaultPropertyName == null)
-                throw new ArgumentNullException("defaultPropertyName");
+                throw new ArgumentNullException(nameof(defaultPropertyName));
 
 
             this.allowInherit = allowInherit;

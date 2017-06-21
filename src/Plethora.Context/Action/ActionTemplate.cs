@@ -1,5 +1,7 @@
 ﻿using System;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context.Action
 {
     public abstract class ActionTemplate : IActionTemplate
@@ -7,11 +9,11 @@ namespace Plethora.Context.Action
         private readonly string contextName;
 
         protected ActionTemplate(
-            string contextName)
+            [NotNull] string contextName)
         {
             //Validation
             if (contextName == null)
-                throw new ArgumentNullException("contextName");
+                throw new ArgumentNullException(nameof(contextName));
 
 
             this.contextName = contextName;
@@ -28,7 +30,8 @@ namespace Plethora.Context.Action
 
         public abstract void Execute(ContextInfo context);
 
-        public virtual IAction CreateAction(ContextInfo[] contexts)
+        [CanBeNull]
+        public virtual IAction CreateAction([NotNull, ItemNotNull] ContextInfo[] contexts)
         {
             if (contexts.Length != 1)
                 return null;
@@ -36,9 +39,9 @@ namespace Plethora.Context.Action
 
             ContextInfo context = contexts[0];
 
-            string actionName = GetActionName(context);
-            bool canExecute = CanExecute(context);
-            System.Action execute = () => Execute(context);
+            string actionName = this.GetActionName(context);
+            bool canExecute = this.CanExecute(context);
+            System.Action execute = () => this.Execute(context);
 
             IAction action = new ContextAction(actionName, canExecute, execute);
             return action;
@@ -52,16 +55,16 @@ namespace Plethora.Context.Action
         private readonly System.Action execute;
 
         public ContextAction(
-            string actionName,
+            [NotNull] string actionName,
             bool canExecute,
-            System.Action execute)
+            [NotNull] System.Action execute)
         {
             //Validation
             if (actionName == null)
-                throw new ArgumentNullException("actionName");
+                throw new ArgumentNullException(nameof(actionName));
 
             if (execute == null)
-                throw new ArgumentNullException("execute");
+                throw new ArgumentNullException(nameof(execute));
 
 
             this.actionName = actionName;

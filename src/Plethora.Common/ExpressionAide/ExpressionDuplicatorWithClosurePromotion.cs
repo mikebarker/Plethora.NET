@@ -47,7 +47,7 @@ namespace Plethora.ExpressionAide
         public LambdaExecutor PromoteClosures(LambdaExpression expr)
         {
             IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
 
             return new LambdaExecutor(dupe, parameters);
         }
@@ -55,7 +55,7 @@ namespace Plethora.ExpressionAide
         public LambdaExecutor<TResult> PromoteClosures<TResult>(Expression<Func<TResult>> expr)
         {
             IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
 
             return new LambdaExecutor<TResult>(dupe, parameters);
         }
@@ -63,7 +63,7 @@ namespace Plethora.ExpressionAide
         public LambdaExecutor<T, TResult> PromoteClosures<T, TResult>(Expression<Func<T, TResult>> expr)
         {
             IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
 
             return new LambdaExecutor<T, TResult>(dupe, parameters);
         }
@@ -71,7 +71,7 @@ namespace Plethora.ExpressionAide
         public LambdaExecutor<T1, T2, TResult> PromoteClosures<T1, T2, TResult>(Expression<Func<T1, T2, TResult>> expr)
         {
             IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
 
             return new LambdaExecutor<T1, T2, TResult>(dupe, parameters);
         }
@@ -79,7 +79,7 @@ namespace Plethora.ExpressionAide
         public LambdaExecutor<T1, T2, T3, TResult> PromoteClosures<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, TResult>> expr)
         {
             IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
 
             return new LambdaExecutor<T1, T2, T3, TResult>(dupe, parameters);
         }
@@ -87,7 +87,7 @@ namespace Plethora.ExpressionAide
         public LambdaExecutor<T1, T2, T3, T4, TResult> PromoteClosures<T1, T2, T3, T4, TResult>(Expression<Func<T1, T2, T3, T4, TResult>> expr)
         {
             IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
 
             return new LambdaExecutor<T1, T2, T3, T4, TResult>(dupe, parameters);
         }
@@ -99,7 +99,7 @@ namespace Plethora.ExpressionAide
         {
             ParamDictionary parametersDic = new ParamDictionary();
             List<Step> path = new List<Step>();
-            var dupe = (LambdaExpression)Duplicate(expr, new Step(Direction.This), parametersDic, path);
+            var dupe = (LambdaExpression)this.Duplicate(expr, new Step(Direction.This), parametersDic, path);
 
             parameters = parametersDic;
             return dupe;

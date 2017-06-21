@@ -42,18 +42,18 @@ namespace Plethora.fqi.Trees
             {
                 bool result = false;
 
-                if (listEnumerator != null)
+                if (this.listEnumerator != null)
                 {
-                    result = listEnumerator.MoveNext();
+                    result = this.listEnumerator.MoveNext();
                 }
 
                 if (!result)
                 {
-                    result = treeEnumerator.MoveNext();
+                    result = this.treeEnumerator.MoveNext();
                     if (result)
                     {
-                        listEnumerator = treeEnumerator.Current.Value.GetEnumerator();
-                        result = listEnumerator.MoveNext();
+                        this.listEnumerator = this.treeEnumerator.Current.Value.GetEnumerator();
+                        result = this.listEnumerator.MoveNext();
                     }
                 }
 
@@ -73,7 +73,7 @@ namespace Plethora.fqi.Trees
 
             object IEnumerator.Current
             {
-                get { return Current; }
+                get { return this.Current; }
             }
             #endregion
 
@@ -112,10 +112,10 @@ namespace Plethora.fqi.Trees
             {
                 get
                 {
-                    if (listEnumerator == null)
+                    if (this.listEnumerator == null)
                         throw new InvalidOperationException("Enumeration either not started, or complete.");
 
-                    return listEnumerator.Current;
+                    return this.listEnumerator.Current;
                 }
             }
             #endregion
@@ -140,10 +140,10 @@ namespace Plethora.fqi.Trees
             {
                 get
                 {
-                    if (listEnumerator == null)
+                    if (this.listEnumerator == null)
                         throw new InvalidOperationException("Enumeration either not started, or complete.");
 
-                    return treeEnumerator.Current.Key;
+                    return this.treeEnumerator.Current.Key;
                 }
             }
             #endregion
@@ -168,10 +168,10 @@ namespace Plethora.fqi.Trees
             {
                 get 
                 {
-                    if (listEnumerator == null)
+                    if (this.listEnumerator == null)
                         throw new InvalidOperationException("Enumeration either not started, or complete.");
 
-                    return new KeyValuePair<TKey, TValue>(treeEnumerator.Current.Key, listEnumerator.Current);
+                    return new KeyValuePair<TKey, TValue>(this.treeEnumerator.Current.Key, this.listEnumerator.Current);
                 }
 
             }

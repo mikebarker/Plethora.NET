@@ -79,7 +79,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return IndexNotOfAny(str, values, 0, str.Length);
         }
@@ -106,7 +106,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return IndexNotOfAny(str, values, startIndex, str.Length - startIndex);
         }
@@ -137,18 +137,18 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             if (values == null)
-                throw new ArgumentNullException("values");
+                throw new ArgumentNullException(nameof(values));
 
             if ((startIndex < 0) || (startIndex >= str.Length))
-                throw new ArgumentOutOfRangeException("startIndex",
-                    ResourceProvider.ArgMustBeBetween("startIndex", "0", "str.Length"));
+                throw new ArgumentOutOfRangeException(nameof(startIndex),
+                    ResourceProvider.ArgMustBeBetween(nameof(startIndex), "0", "str.Length"));
 
             if ((count < 0) || ((startIndex + count) > str.Length))
-                throw new ArgumentOutOfRangeException("count",
-                    ResourceProvider.ArgMustBeBetween("count", "0", "str.Length - startIndex"));
+                throw new ArgumentOutOfRangeException(nameof(count),
+                    ResourceProvider.ArgMustBeBetween(nameof(count), "0", "str.Length - startIndex"));
 
 
             IList valuesList = ArrayList.FixedSize(values);
@@ -183,7 +183,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return LastIndexNotOfAny(str, values, str.Length - 1, str.Length);
         }
@@ -237,18 +237,18 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             if (values == null)
-                throw new ArgumentNullException("values");
+                throw new ArgumentNullException(nameof(values));
 
             if ((startIndex < 0) || (startIndex >= str.Length))
-                throw new ArgumentOutOfRangeException("startIndex",
-                    ResourceProvider.ArgMustBeBetween("startIndex", "0", "str.Length"));
+                throw new ArgumentOutOfRangeException(nameof(startIndex),
+                    ResourceProvider.ArgMustBeBetween(nameof(startIndex), "0", "str.Length"));
 
             if ((count < 0) || (startIndex - count < -1))
-                throw new ArgumentOutOfRangeException("count",
-                    ResourceProvider.ArgMustBeBetween("count", "0", "startIndex"));
+                throw new ArgumentOutOfRangeException(nameof(count),
+                    ResourceProvider.ArgMustBeBetween(nameof(count), "0", "startIndex"));
 
             IList valuesList = ArrayList.FixedSize(values);
 
@@ -280,7 +280,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return str.IndexOfAny(WhiteSpace);
         }
@@ -303,7 +303,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return str.IndexOfAny(WhiteSpace, startIndex);
         }
@@ -330,7 +330,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return str.IndexOfAny(WhiteSpace, startIndex, count);
         }
@@ -353,7 +353,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return str.LastIndexOfAny(WhiteSpace);
         }
@@ -376,7 +376,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return str.LastIndexOfAny(WhiteSpace, startIndex);
         }
@@ -403,7 +403,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             return str.LastIndexOfAny(WhiteSpace, startIndex, count);
         }
@@ -597,11 +597,11 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             if ((startIndex < 0) || (startIndex >= str.Length))
-                throw new ArgumentOutOfRangeException("startIndex",
-                    ResourceProvider.ArgMustBeBetween("startIndex", "0", "'str.Length'"));
+                throw new ArgumentOutOfRangeException(nameof(startIndex),
+                    ResourceProvider.ArgMustBeBetween(nameof(startIndex), "0", "'str.Length'"));
 
 
             Regex regex;
@@ -645,7 +645,7 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
 
             return LastIndexOfWord(str, str.Length - 1, true);
@@ -701,11 +701,11 @@ namespace Plethora
         {
             //Validation
             if (str == null)
-                throw new ArgumentNullException("str");
+                throw new ArgumentNullException(nameof(str));
 
             if ((startIndex < 0) || (startIndex >= str.Length))
-                throw new ArgumentOutOfRangeException("startIndex",
-                    ResourceProvider.ArgMustBeBetween("startIndex", "0", "'str.Length'"));
+                throw new ArgumentOutOfRangeException(nameof(startIndex),
+                    ResourceProvider.ArgMustBeBetween(nameof(startIndex), "0", "'str.Length'"));
 
 
             Regex regex;

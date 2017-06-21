@@ -35,7 +35,7 @@
 
         public ChangeDescriptor SetProperty(int version, string propertyName, object value)
         {
-            return SetProperty(version, propertyName, null, value);
+            return this.SetProperty(version, propertyName, null, value);
         }
 
         public ChangeDescriptor SetProperty(int version, string propertyName, object[] arguments, object value)

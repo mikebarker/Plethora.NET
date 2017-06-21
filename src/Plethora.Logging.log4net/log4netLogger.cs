@@ -16,7 +16,7 @@ namespace Plethora.Logging.log4net
         public log4netLogger(ILog log)
         {
             if (log == null)
-                throw new ArgumentNullException("log");
+                throw new ArgumentNullException(nameof(log));
 
             this.innerLog = log;
         }

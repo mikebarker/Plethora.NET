@@ -93,10 +93,10 @@ namespace Plethora
         {
             //Validation
             if (reflectedType == null)
-                throw new ArgumentNullException("reflectedType");
+                throw new ArgumentNullException(nameof(reflectedType));
 
             if (args == null)
-                throw new ArgumentNullException("args");
+                throw new ArgumentNullException(nameof(args));
 
 
             this.reflectedType = reflectedType;
@@ -122,10 +122,10 @@ namespace Plethora
         {
             //Validation
             if (assembly == null)
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException(nameof(assembly));
 
             if (fullName == null)
-                throw new ArgumentNullException("fullName");
+                throw new ArgumentNullException(nameof(fullName));
 
 
             Type reflectType = assembly.GetType(fullName);
@@ -139,10 +139,10 @@ namespace Plethora
         {
             //Validation
             if (assembly == null)
-                throw new ArgumentNullException("assembly");
+                throw new ArgumentNullException(nameof(assembly));
 
             if (fullName == null)
-                throw new ArgumentNullException("fullName");
+                throw new ArgumentNullException(nameof(fullName));
 
 
             Type reflectType = assembly.GetType(fullName);
@@ -172,7 +172,7 @@ namespace Plethora
             if ((!callingMethod.IsStatic) && (this.innerInstance == null))
                 throw new InvalidOperationException(ResourceProvider.StaticOnlyMirror());
 
-            MethodInfo mirroredMethod = GetMirroredMethod(reflectedType, callingMethod, genericArguments);
+            MethodInfo mirroredMethod = GetMirroredMethod(this.reflectedType, callingMethod, genericArguments);
 
 
             object instance = callingMethod.IsStatic

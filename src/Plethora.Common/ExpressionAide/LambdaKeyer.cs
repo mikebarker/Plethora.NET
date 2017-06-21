@@ -14,7 +14,7 @@ namespace Plethora.ExpressionAide
         public static string GetKey(Expression expression)
         {
             if (expression == null)
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException(nameof(expression));
 
             StringBuilder sb = new StringBuilder(1024);
             BuildString(expression, sb);
@@ -200,7 +200,7 @@ namespace Plethora.ExpressionAide
                 case ExpressionType.NewArrayBounds:
                     {
                         builder.Append("new");
-                        builder.Append(expression.Type.ToString());
+                        builder.Append(expression.Type);
                         break;
                     }
             }
@@ -212,7 +212,7 @@ namespace Plethora.ExpressionAide
 
         private static void BuildString(NewExpression expression, StringBuilder builder)
         {
-            Type type = (expression.Constructor == null) ? (expression.Type) : expression.Constructor.DeclaringType;
+            Type type = expression.Constructor.DeclaringType;
             builder.Append("new");
             int count = expression.Arguments.Count;
             builder.Append(type.Name);
@@ -241,7 +241,7 @@ namespace Plethora.ExpressionAide
 
         private static void BuildString(ParameterExpression expression, StringBuilder builder)
         {
-            builder.Append(expression.Name ?? "<param>");
+            builder.Append(expression.Name);
         }
 
         private static void BuildString(TypeBinaryExpression expression, StringBuilder builder)

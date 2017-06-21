@@ -30,7 +30,7 @@ namespace Plethora
         {
             //Validation
             if (typeof(T).IsSubclassOf(typeof(Enum)))
-                throw new ArgumentException(ResourceProvider.ArgMustBeOfType("T", typeof(Enum)), "T");
+                throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(T), typeof(Enum)), nameof(T));
 
 
             Array flagValues = Enum.GetValues(typeof(T));
@@ -78,13 +78,13 @@ namespace Plethora
         {
             //Validation
             if (separator == null)
-                throw new ArgumentNullException("separator");
+                throw new ArgumentNullException(nameof(separator));
 
             if (attributeType == null)
-                throw new ArgumentNullException("attributeType");
+                throw new ArgumentNullException(nameof(attributeType));
 
             if (attributeProperty == null)
-                throw new ArgumentNullException("attributeProperty");
+                throw new ArgumentNullException(nameof(attributeProperty));
 
 
             var enumToDescription = CreateEnumToDescrptionFunc(attributeType, attributeProperty);

@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
+using JetBrains.Annotations;
+
 namespace Plethora.ExpressionAide
 {
     public interface ILambdaExecutor
@@ -11,7 +13,7 @@ namespace Plethora.ExpressionAide
         object Execute(LambdaExpression lambda, params object[] args);
     }
 
-    public interface ILambdaExecutor<TLambda> : ILambdaExecutor
+    public interface ILambdaExecutor<in TLambda> : ILambdaExecutor
         where TLambda : LambdaExpression
     {
         object Execute(TLambda lambda, params object[] args);
@@ -41,7 +43,7 @@ namespace Plethora.ExpressionAide
         {
             this.dupeDelegate = dupe.Compile();
             this.path = FindMagicParameterPath(parameters);
-            this.invokeMethod = GetInvokeDelegateFor(dupeDelegate);
+            this.invokeMethod = this.GetInvokeDelegateFor(this.dupeDelegate);
         }
         #endregion
 
@@ -51,11 +53,11 @@ namespace Plethora.ExpressionAide
         {
             //Inject the additional parameter to override the constant expression
             object[] delegateArgs;
-            if (path != null)
+            if (this.path != null)
             {
                 delegateArgs = new object[args.Length + 1];
                 args.CopyTo(delegateArgs, 0);
-                delegateArgs[args.Length] = GetMagicParameter(lambda);
+                delegateArgs[args.Length] = this.GetMagicParameter(lambda);
             }
             else
             {
@@ -71,7 +73,7 @@ namespace Plethora.ExpressionAide
         private object GetMagicParameter(TLambda lambda)
         {
             Expression tmp = lambda;
-            foreach (var step in path)
+            foreach (var step in this.path)
             {
                 tmp = Move(tmp, step);
             }
@@ -203,12 +205,13 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
+        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
         private object InvokeMethod<TResult>(object[] args)
         {
             if (args.Length != 0)
                 throw new ArgumentException("Invalid number of arguments");
 
-            var del = (Func<TResult>)dupeDelegate;
+            var del = (Func<TResult>)this.dupeDelegate;
             return del.Invoke();
         }
 
@@ -216,6 +219,7 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
+        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
         private object InvokeMethod<T1, TResult>(object[] args)
         {
             if (args.Length != 1)
@@ -223,7 +227,7 @@ namespace Plethora.ExpressionAide
 
             T1 arg1 = (T1)args[0];
 
-            var del = (Func<T1, TResult>)dupeDelegate;
+            var del = (Func<T1, TResult>)this.dupeDelegate;
             return del.Invoke(arg1);
         }
 
@@ -231,6 +235,7 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
+        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
         private object InvokeMethod<T1, T2, TResult>(object[] args)
         {
             if (args.Length != 2)
@@ -239,7 +244,7 @@ namespace Plethora.ExpressionAide
             T1 arg1 = (T1)args[0];
             T2 arg2 = (T2)args[1];
 
-            var del = (Func<T1, T2, TResult>)dupeDelegate;
+            var del = (Func<T1, T2, TResult>)this.dupeDelegate;
             return del.Invoke(arg1, arg2);
         }
 
@@ -247,6 +252,7 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
+        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
         private object InvokeMethod<T1, T2, T3, TResult>(object[] args)
         {
             if (args.Length != 3)
@@ -256,7 +262,7 @@ namespace Plethora.ExpressionAide
             T2 arg2 = (T2)args[1];
             T3 arg3 = (T3)args[2];
 
-            var del = (Func<T1, T2, T3, TResult>)dupeDelegate;
+            var del = (Func<T1, T2, T3, TResult>)this.dupeDelegate;
             return del.Invoke(arg1, arg2, arg3);
         }
 
@@ -264,6 +270,7 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
+        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
         private object InvokeMethod<T1, T2, T3, T4, TResult>(object[] args)
         {
             if (args.Length != 4)
@@ -274,13 +281,13 @@ namespace Plethora.ExpressionAide
             T3 arg3 = (T3)args[2];
             T4 arg4 = (T4)args[3];
 
-            var del = (Func<T1, T2, T3, T4, TResult>)dupeDelegate;
+            var del = (Func<T1, T2, T3, T4, TResult>)this.dupeDelegate;
             return del.Invoke(arg1, arg2, arg3, arg4);
         }
 
         private object InvokeMethod(object[] args)
         {
-            return dupeDelegate.DynamicInvoke(args);
+            return this.dupeDelegate.DynamicInvoke(args);
         }
         #endregion
         #endregion

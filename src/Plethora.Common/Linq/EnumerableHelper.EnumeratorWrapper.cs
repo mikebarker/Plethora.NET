@@ -30,7 +30,7 @@ namespace Plethora.Linq
             {
                 //Validation
                 if (enumerator == null)
-                    throw new ArgumentNullException("enumerator");
+                    throw new ArgumentNullException(nameof(enumerator));
 
 
                 this.enumerator = enumerator;
@@ -47,7 +47,7 @@ namespace Plethora.Linq
             /// </returns>
             public IEnumerator<T> GetEnumerator()
             {
-                return enumerator;
+                return this.enumerator;
             }
 
             /// <summary>
@@ -58,7 +58,7 @@ namespace Plethora.Linq
             /// </returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
             #endregion
         }

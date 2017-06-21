@@ -68,7 +68,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (items == null)
-                throw new ArgumentNullException("items");
+                throw new ArgumentNullException(nameof(items));
 
             this.items = items;
         }
@@ -85,7 +85,7 @@ namespace Plethora.Collections
         protected TValue GetValue<TValue>(Func<T, TValue> valueSelector)
             where TValue : class
         {
-            return GetValue(valueSelector, false);
+            return this.GetValue(valueSelector, false);
         }
 
         /// <summary>
@@ -94,7 +94,7 @@ namespace Plethora.Collections
         protected TValue GetValue<TValue>(Func<T, TValue> valueSelector, bool highIndexPriority)
             where TValue : class
         {
-            var itteration = GetItteration(highIndexPriority);
+            var itteration = this.GetItteration(highIndexPriority);
             return GetValue(itteration, valueSelector);
         }
 
@@ -107,7 +107,7 @@ namespace Plethora.Collections
         protected TValue GetValue<TValue>(Func<T, TValue> valueSelector, TValue @default)
             where TValue : struct
         {
-            return GetValue(valueSelector, @default, false);
+            return this.GetValue(valueSelector, @default, false);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Plethora.Collections
         protected TValue GetValue<TValue>(Func<T, TValue> valueSelector, TValue @default, bool highIndexPriority)
             where TValue : struct
         {
-            var itteration = GetItteration(highIndexPriority);
+            var itteration = this.GetItteration(highIndexPriority);
 
             Func<T, TValue?> nullableValueSelector = delegate(T t)
                 {
@@ -141,7 +141,7 @@ namespace Plethora.Collections
         protected TValue? GetValue<TValue>(Func<T, TValue?> valueSelector)
             where TValue : struct
         {
-            return GetValue(valueSelector, false);
+            return this.GetValue(valueSelector, false);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Plethora.Collections
         protected TValue? GetValue<TValue>(Func<T, TValue?> valueSelector, bool highIndexPriority)
             where TValue : struct
         {
-            var itteration = GetItteration(highIndexPriority);
+            var itteration = this.GetItteration(highIndexPriority);
             return GetValue(itteration, valueSelector);
         }
         #endregion
@@ -168,8 +168,8 @@ namespace Plethora.Collections
         private IEnumerable<T> GetItteration(bool highIndexPriority)
         {
             var itterator =  (highIndexPriority)
-                ? ReverseItems()
-                : items;
+                ? this.ReverseItems()
+                : this.items;
             return itterator.Where(item => item != null);
         }
 

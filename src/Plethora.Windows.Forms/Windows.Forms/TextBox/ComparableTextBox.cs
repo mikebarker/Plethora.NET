@@ -92,7 +92,7 @@ namespace Plethora.Windows.Forms.Base
                 T result;
                 bool isValid = TryParseAndValidate(value, out result);
                 if (!isValid)
-                    throw new ArgumentException(ResourceProvider.ArgInvalid(@"Text"), "value");
+                    throw new ArgumentException(ResourceProvider.ArgInvalid(@"Text"), nameof(value));
 
                 //Setting the value sets the text using the base class.
                 this.Value = result;
@@ -242,7 +242,7 @@ namespace Plethora.Windows.Forms.Base
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 if (this.formatParser != value)
                 {
@@ -295,7 +295,7 @@ namespace Plethora.Windows.Forms.Base
                 if (!EqualityComparer<T>.Default.Equals(this.value,value))
                 {
                     if (!ValidateValue(value, false))
-                        throw new ArgumentException(ResourceProvider.ArgInvalid(@"value"), "value");
+                        throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(value)), nameof(value));
 
                     this.value = value;
                     OnValueChanged();
@@ -348,8 +348,8 @@ namespace Plethora.Windows.Forms.Base
             {
                 // value > maxValue
                 if (Comparer<T>.Default.Compare(value, maxValue) > 0)
-                    throw new ArgumentOutOfRangeException("value", value,
-                        ResourceProvider.ArgMustBeLessThanEqualTo(@"value", "MaxValue"));
+                    throw new ArgumentOutOfRangeException(nameof(value), value,
+                        ResourceProvider.ArgMustBeLessThanEqualTo(nameof(value), "MaxValue"));
 
                 // value == minValue
                 if (EqualityComparer<T>.Default.Equals(value, minValue))
@@ -402,8 +402,8 @@ namespace Plethora.Windows.Forms.Base
             {
                 // value < minValue
                 if (Comparer<T>.Default.Compare(value, minValue) < 0)
-                    throw new ArgumentOutOfRangeException("value", value,
-                        ResourceProvider.ArgMustBeGreaterThanEqualTo(@"value", "MinValue"));
+                    throw new ArgumentOutOfRangeException(nameof(value), value,
+                        ResourceProvider.ArgMustBeGreaterThanEqualTo(nameof(value), "MinValue"));
 
                 // value == maxValue
                 if (EqualityComparer<T>.Default.Equals(value, maxValue))
@@ -450,7 +450,7 @@ namespace Plethora.Windows.Forms.Base
             {
                 //Validation
                 if ((value != EditMode.Display) && (value != EditMode.Edit))
-                    throw new ArgumentException(ResourceProvider.ArgInvalid(@"value"), "value");
+                    throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(value)), nameof(value));
 
 
                 EditMode previousEditMode = this.EditMode;

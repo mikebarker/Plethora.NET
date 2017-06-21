@@ -40,15 +40,15 @@ namespace Plethora.fqi
         private MultiIndexedCollection(IEnumerable<IIndexSpecification> indexSpecifications)
         {
             if (indexSpecifications == null)
-                throw new ArgumentNullException("indexSpecifications");
+                throw new ArgumentNullException(nameof(indexSpecifications));
 
             if (!indexSpecifications.Any())
-                throw new ArgumentException("indexSpecifications must contain at least one index.", "indexSpecifications");
+                throw new ArgumentException("indexSpecifications must contain at least one index.", nameof(indexSpecifications));
 
 
             foreach (var index in indexSpecifications)
             {
-                indices.Add(new IndexedCollection<T>(index.IsUnique, index.IndexExpressions.ToArray()));
+                this.indices.Add(new IndexedCollection<T>(index.IsUnique, index.IndexExpressions.ToArray()));
             }
         }
         #endregion
@@ -63,9 +63,9 @@ namespace Plethora.fqi
         /// </returns>
         public IEnumerator<T> GetEnumerator()
         {
-            return (indices.Count == 0)
+            return (this.indices.Count == 0)
                        ? Enumerable.Empty<T>().GetEnumerator()
-                       : indices[0].GetEnumerator();
+                       : this.indices[0].GetEnumerator();
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace Plethora.fqi
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
         #endregion
 
@@ -89,7 +89,7 @@ namespace Plethora.fqi
         /// <exception cref="NotSupportedException">The <see cref="ICollection{T}" /> is read-only.</exception>
         public void Add(T item)
         {
-            foreach (var index in indices)
+            foreach (var index in this.indices)
             {
                 index.Add(item);
             }
@@ -101,7 +101,7 @@ namespace Plethora.fqi
         /// <exception cref="NotSupportedException">The <see cref="ICollection{T}" /> is read-only. </exception>
         public void Clear()
         {
-            foreach (var index in indices)
+            foreach (var index in this.indices)
             {
                 index.Clear();
             }
@@ -116,9 +116,9 @@ namespace Plethora.fqi
         /// </returns>
         public bool Contains(T item)
         {
-            return (indices.Count == 0)
+            return (this.indices.Count == 0)
                        ? false
-                       : indices[0].Contains(item);
+                       : this.indices[0].Contains(item);
         }
 
         /// <summary>
@@ -141,10 +141,10 @@ namespace Plethora.fqi
         {
             //Validation
             if (array == null)
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
 
             if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException("arrayIndex", arrayIndex, "arrayIndex may not be less than 0.");
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, "arrayIndex may not be less than 0.");
 
             if (array.Rank > 1)
                 throw new ArgumentException("array may not be multidimensional.");
@@ -152,17 +152,17 @@ namespace Plethora.fqi
             if (arrayIndex >= array.Length)
                 throw new ArgumentException("arrayIndex is equal to or greater than the length of array.");
 
-            if (indices.Count == 0)
+            if (this.indices.Count == 0)
                 return;
 
-            if (array.Length < arrayIndex + indices[0].Count)
+            if (array.Length < arrayIndex + this.indices[0].Count)
                 throw new ArgumentException(
                     "The number of elements in the source ICollection{T} is greater than the available space from arrayIndex to the end of the destination array.");
 
 
             //Copy the elements to the array
             int i = arrayIndex;
-            foreach (T t in indices[0])
+            foreach (T t in this.indices[0])
             {
                 array[i++] = t;
             }
@@ -179,7 +179,7 @@ namespace Plethora.fqi
         public bool Remove(T item)
         {
             bool result = true;
-            foreach (var index in indices)
+            foreach (var index in this.indices)
             {
                 result &= index.Remove(item);
             }
@@ -196,9 +196,9 @@ namespace Plethora.fqi
         {
             get
             {
-                return (indices.Count == 0)
+                return (this.indices.Count == 0)
                            ? 0
-                           : indices[0].Count;
+                           : this.indices[0].Count;
             }
         }
 
@@ -219,7 +219,7 @@ namespace Plethora.fqi
         public bool AddOrUpdate(T item)
         {
             bool result = true;
-            foreach (var index in indices)
+            foreach (var index in this.indices)
             {
                 result &= index.AddOrUpdate(item);
             }
@@ -234,7 +234,7 @@ namespace Plethora.fqi
         /// </summary>
         public IEnumerable<IIndexedCollection<T>> IndexedCollections
         {
-            get { return indices; }
+            get { return this.indices; }
         }
         #endregion
 

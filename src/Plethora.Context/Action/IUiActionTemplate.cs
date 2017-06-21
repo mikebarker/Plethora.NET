@@ -1,4 +1,4 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 
 namespace Plethora.Context.Action
 {
@@ -11,15 +11,19 @@ namespace Plethora.Context.Action
     /// <seealso cref="IUiMultiActionTemplate"/>
     public interface IUiActionTemplate : IActionTemplate
     {
-        string GetActionText(ContextInfo context);
+        [NotNull]
+        string GetActionText([NotNull] ContextInfo context);
 
-        string GetActionDescription(ContextInfo context);
+        [CanBeNull]
+        string GetActionDescription([NotNull] ContextInfo context);
 
-        object GetImageKey(ContextInfo context);
+        [CanBeNull]
+        object GetImageKey([NotNull] ContextInfo context);
 
-        string GetGroup(ContextInfo context);
+        [CanBeNull]
+        string GetGroup([NotNull] ContextInfo context);
 
-        int GetRank(ContextInfo context);
+        int GetRank([NotNull] ContextInfo context);
     }
 
     /// <summary>
@@ -36,14 +40,18 @@ namespace Plethora.Context.Action
     /// <seealso cref="IUiActionTemplate"/>
     public interface IUiMultiActionTemplate : IMultiActionTemplate
     {
-        string GetActionText(ContextInfo[] context);
+        [NotNull]
+        string GetActionText([NotNull, ItemNotNull] ContextInfo[] context);
 
-        string GetActionDescription(ContextInfo[] context);
+        [CanBeNull]
+        string GetActionDescription([NotNull, ItemNotNull] ContextInfo[] context);
 
-        object GetImageKey(ContextInfo[] context);
+        [CanBeNull]
+        object GetImageKey([NotNull, ItemNotNull] ContextInfo[] context);
 
-        string GetGroup(ContextInfo[] context);
+        [CanBeNull]
+        string GetGroup([NotNull, ItemNotNull] ContextInfo[] context);
 
-        int GetRank(ContextInfo[] context);
+        int GetRank([NotNull, ItemNotNull] ContextInfo[] context);
     }
 }

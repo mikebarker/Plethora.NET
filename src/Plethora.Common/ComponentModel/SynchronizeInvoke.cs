@@ -31,7 +31,7 @@ namespace Plethora.ComponentModel
         /// </returns>
         public bool InvokeRequired
         {
-            get { return !base.IsWorkerThread(); }
+            get { return !this.IsWorkerThread(); }
         }
         #endregion
     }

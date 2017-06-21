@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -22,37 +24,37 @@ namespace Plethora.Context
         {
             get
             {
-                lock (contextLock)
+                lock (this.contextLock)
                 {
                     //Cache the result to prevent thrashing of unnecessary calls to GetContext
-                    if (!isContextsCached)
+                    if (!this.isContextsCached)
                     {
-                        contexts = GetContexts();
-                        isContextsCached = true;
+                        this.contexts = this.GetContexts();
+                        this.isContextsCached = true;
                     }
 
-                    return contexts;
+                    return this.contexts;
                 }
             }
         }
 
         protected override void OnEnterContext(object sender, EventArgs e)
         {
-            ClearCache();
+            this.ClearCache();
 
             base.OnEnterContext(sender, e);
         }
 
         protected override void OnLeaveContext(object sender, EventArgs e)
         {
-            ClearCache();
+            this.ClearCache();
 
             base.OnLeaveContext(sender, e);
         }
 
         protected override void OnContextChanged(object sender, EventArgs e)
         {
-            ClearCache();
+            this.ClearCache();
 
             base.OnContextChanged(sender, e);
         }
@@ -68,6 +70,7 @@ namespace Plethora.Context
         /// An <see cref="IEnumerable{T}"/> of <see cref="ContextInfo"/> objects which
         /// represents the context of the underlying source.
         /// </returns>
+        [CanBeNull]
         protected abstract IEnumerable<ContextInfo> GetContexts();
 
         #endregion
@@ -76,10 +79,10 @@ namespace Plethora.Context
 
         private void ClearCache()
         {
-            lock (contextLock)
+            lock (this.contextLock)
             {
-                contexts = null;
-                isContextsCached = false;
+                this.contexts = null;
+                this.isContextsCached = false;
             }
         }
 

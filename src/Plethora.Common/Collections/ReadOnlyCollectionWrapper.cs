@@ -17,7 +17,7 @@ namespace Plethora.Collections
     /// Unlike <see cref="System.Collections.ObjectModel.ReadOnlyCollection{T}"/> this class can wrap any collection, not just a list.
     /// </remarks>
     [Serializable]
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     public class ReadOnlyCollectionWrapper<T> : IEnumerable<T>, IReadOnlyCollection<T>, ICollection<T>, ICollection
     {
         private readonly ICollection<T> innerCollection;
@@ -33,7 +33,7 @@ namespace Plethora.Collections
         public ReadOnlyCollectionWrapper([NotNull] ICollection<T> collection)
         {
             if (collection == null)
-                throw new ArgumentNullException("collection");
+                throw new ArgumentNullException(nameof(collection));
 
             this.innerCollection = collection;
         }
@@ -98,7 +98,7 @@ namespace Plethora.Collections
         /// <param name="arrayIndex">The zero-based index in array at which copying begins.</param>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            innerCollection.CopyTo(array, arrayIndex);
+            this.innerCollection.CopyTo(array, arrayIndex);
         }
 
         bool ICollection<T>.Remove([NotNull] T item)
@@ -114,7 +114,7 @@ namespace Plethora.Collections
         void ICollection.CopyTo(Array array, int index)
         {
             if (array == null)
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
 
             if (array.Rank != 1)
                 throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
@@ -123,10 +123,10 @@ namespace Plethora.Collections
                 throw new ArgumentException(ResourceProvider.ArgArrayNonZeroLowerBound());
 
             if (index < 0)
-                throw new ArgumentOutOfRangeException("index", index, ResourceProvider.ArgMustBeGreaterThanZero("index"));
+                throw new ArgumentOutOfRangeException(nameof(index), index, ResourceProvider.ArgMustBeGreaterThanZero(nameof(index)));
 
             if ((array.Length - index) < this.Count)
-                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength("index", "count"));
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(index), "count"));
 
             if (array is T[])
             {

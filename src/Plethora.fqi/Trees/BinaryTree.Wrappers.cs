@@ -45,7 +45,7 @@ namespace Plethora.fqi.Trees
             {
                 //Validation
                 if (array == null)
-                    throw new ArgumentNullException("array");
+                    throw new ArgumentNullException(nameof(array));
 
                 if (array.Rank != 1)
                     throw new ArgumentException("Only single dimensional arrays are supported for the requested action.");

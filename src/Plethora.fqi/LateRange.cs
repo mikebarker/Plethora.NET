@@ -71,14 +71,14 @@ namespace Plethora.fqi
         {
             get
             {
-                if (!HasMin)
+                if (!this.HasMin)
                     throw new InvalidOperationException("MinFunc not set.");
 
-                return minFunc;
+                return this.minFunc;
             }
             set
             {
-                HasMin = true;
+                this.HasMin = true;
                 this.minFunc = value;
             }
         }
@@ -87,14 +87,14 @@ namespace Plethora.fqi
         {
             get
             {
-                if (!HasMax)
+                if (!this.HasMax)
                     throw new InvalidOperationException("MaxFunc not set.");
 
-                return maxFunc;
+                return this.maxFunc;
             }
             set
             {
-                HasMax = true;
+                this.HasMax = true;
                 this.maxFunc = value;
             }
         }

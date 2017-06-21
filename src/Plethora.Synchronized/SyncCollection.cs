@@ -29,13 +29,13 @@ namespace Plethora.Synchronized
         {
             //Validation
             if (getKeyFunc == null)
-                throw new ArgumentNullException("getKeyFunc");
+                throw new ArgumentNullException(nameof(getKeyFunc));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
             if (synchInvoke == null)
-                throw new ArgumentNullException("synchInvoke");
+                throw new ArgumentNullException(nameof(synchInvoke));
 
 
             this.getKeyFunc = getKeyFunc;
@@ -54,12 +54,12 @@ namespace Plethora.Synchronized
         private readonly LiteLock listLock = new LiteLock();
         public IDisposable EnterLock()
         {
-            return listLock.AcquireLock();
+            return this.listLock.AcquireLock();
         }
 
         public bool IsLockEntered
         {
-            get { return listLock.IsLockAcquired; }
+            get { return this.listLock.IsLockAcquired; }
         }
 
 
@@ -68,16 +68,16 @@ namespace Plethora.Synchronized
         public void ApplyChange(ChangeDescriptor change)
         {
             if (change == null)
-                throw new ArgumentNullException("change");
+                throw new ArgumentNullException(nameof(change));
 
-            if (synchInvoke.InvokeRequired)
+            if (this.synchInvoke.InvokeRequired)
             {
-                Action<ChangeDescriptor> applyAction = ApplyChange_Internal;
-                synchInvoke.Invoke(applyAction, new object[] { change });
+                Action<ChangeDescriptor> applyAction = this.ApplyChange_Internal;
+                this.synchInvoke.Invoke(applyAction, new object[] { change });
             }
             else
             {
-                ApplyChange_Internal(change);
+                this.ApplyChange_Internal(change);
             }
         }
 
@@ -86,26 +86,26 @@ namespace Plethora.Synchronized
             switch (change.MemberName)
             {
                 case "Add":
-                    ApplyChange_Add(change);
+                    this.ApplyChange_Add(change);
                     break;
 
                 case "Remove":
-                    ApplyChange_Remove(change);
+                    this.ApplyChange_Remove(change);
                     break;
 
                 case "Clear":
-                    ApplyChange_Clear(change);
+                    this.ApplyChange_Clear(change);
                     break;
 
                 case "Item":
-                    ApplyChange_Item(change);
+                    this.ApplyChange_Item(change);
                     break;
 
                 default:
                     throw new InvalidOperationException(string.Format("Unknown change type {0} for change {1}.", change.MemberName, change));
             }
 
-            OnChangePublished(new ChangePublishedEventArgs(change));
+            this.OnChangePublished(new ChangePublishedEventArgs(change));
         }
 
         #endregion
@@ -184,7 +184,7 @@ namespace Plethora.Synchronized
             TKey key = (TKey)change.Arguments[0];
             int index;
             T item;
-            using (EnterLock())
+            using (this.EnterLock())
             {
                 index = this.innerList.IndexOfKey(key);
                 item = this.innerList[key];
@@ -193,8 +193,8 @@ namespace Plethora.Synchronized
             var changeDescriptorApplier = new ChangeDescriptorApplier(item);
             changeDescriptorApplier.Apply((ChangeDescriptor)change.Value);
 
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, item, index)); //TODO: this should possibly clone the object??
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, item, index)); //TODO: this should possibly clone the object??
         }
 
 
@@ -202,33 +202,33 @@ namespace Plethora.Synchronized
 
         private void Add(T item)
         {
-            TKey key = GetKey(item);
-            using(EnterLock())
+            TKey key = this.GetKey(item);
+            using(this.EnterLock())
             {
                 this.innerList.Add(key, item);
             }
 
-            OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
         }
 
         private void Clear()
         {
-            using (EnterLock())
+            using (this.EnterLock())
             {
                 this.innerList.Clear();
             }
 
-            OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
         private bool Remove(TKey key)
         {
             T item;
-            using (EnterLock())
+            using (this.EnterLock())
             {
                 int index = this.innerList.IndexOfKey(key);
                 if (index < 0)
@@ -239,9 +239,9 @@ namespace Plethora.Synchronized
                 this.innerList.RemoveAt(index);
             }
 
-            OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
             return true;
         }
 
@@ -257,7 +257,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnChangePublished(ChangePublishedEventArgs e)
         {
-            var handler = ChangePublished;
+            var handler = this.ChangePublished;
             if (handler != null)
                 handler(this, e);
         }
@@ -276,7 +276,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            var handler = CollectionChanged;
+            var handler = this.CollectionChanged;
             if (handler != null)
                 handler(this, e);
         }
@@ -295,7 +295,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            var handler = PropertyChanged;
+            var handler = this.PropertyChanged;
             if (handler != null)
                 handler(this, e);
         }
@@ -306,7 +306,7 @@ namespace Plethora.Synchronized
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -338,10 +338,10 @@ namespace Plethora.Synchronized
             {
                 //Validation
                 if (enumerator==null)
-                    throw new ArgumentNullException("enumerator");
+                    throw new ArgumentNullException(nameof(enumerator));
 
                 if (checkLockFunc == null)
-                    throw new ArgumentNullException("checkLockFunc");
+                    throw new ArgumentNullException(nameof(checkLockFunc));
 
 
                 this.enumerator = enumerator;
@@ -363,7 +363,7 @@ namespace Plethora.Synchronized
 
             public bool MoveNext()
             {
-                if (!checkLockFunc())
+                if (!this.checkLockFunc())
                     throw new InvalidOperationException("The lock must be acquired before the enumerator is used. Call the SyncCollection.EnterLock() method.");
 
                 return this.enumerator.MoveNext();
@@ -407,8 +407,8 @@ namespace Plethora.Synchronized
 
         public bool Contains(T item)
         {
-            TKey key = GetKey(item);
-            using (EnterLock())
+            TKey key = this.GetKey(item);
+            using (this.EnterLock())
             {
                 bool result = this.innerList.ContainsKey(key);
                 return result;
@@ -417,7 +417,7 @@ namespace Plethora.Synchronized
 
         void ICollection<T>.CopyTo(T[] array, int arrayIndex)
         {
-            using (EnterLock())
+            using (this.EnterLock())
             {
                 this.innerList.Values.CopyTo(array, arrayIndex);
             }
@@ -432,7 +432,7 @@ namespace Plethora.Synchronized
         {
             get
             {
-                using (EnterLock())
+                using (this.EnterLock())
                 {
                     return this.innerList.Count;
                 }
@@ -451,7 +451,7 @@ namespace Plethora.Synchronized
         public int IndexOf(T item)
         {
             TKey key = this.GetKey(item);
-            using (EnterLock())
+            using (this.EnterLock())
             {
                 int index = this.innerList.IndexOfKey(key);
                 return index;
@@ -472,7 +472,7 @@ namespace Plethora.Synchronized
         {
             get
             {
-                using (EnterLock())
+                using (this.EnterLock())
                 {
                     TKey key = this.innerList.Keys[index];
                     T item = this.innerList[key];

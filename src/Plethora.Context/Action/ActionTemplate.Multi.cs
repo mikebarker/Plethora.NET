@@ -1,5 +1,7 @@
 ﻿using System;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context.Action
 {
     public abstract class MultiActionTemplate : IMultiActionTemplate
@@ -7,11 +9,11 @@ namespace Plethora.Context.Action
         private readonly string contextName;
 
         protected MultiActionTemplate(
-            string contextName)
+            [NotNull] string contextName)
         {
             //Validation
             if (contextName == null)
-                throw new ArgumentNullException("contextName");
+                throw new ArgumentNullException(nameof(contextName));
 
 
             this.contextName = contextName;
@@ -28,14 +30,15 @@ namespace Plethora.Context.Action
 
         public abstract void Execute(ContextInfo[] context);
 
-        public virtual IAction CreateAction(ContextInfo[] contexts)
+        [CanBeNull]
+        public virtual IAction CreateAction([NotNull, ItemNotNull] ContextInfo[] contexts)
         {
             if (contexts.Length < 2)
                 return null;
 
-            string actionName = GetActionName(contexts);
-            bool canExecute = CanExecute(contexts);
-            System.Action execute = () => Execute(contexts);
+            string actionName = this.GetActionName(contexts);
+            bool canExecute = this.CanExecute(contexts);
+            System.Action execute = () => this.Execute(contexts);
 
             IAction action = new ContextAction(actionName, canExecute, execute);
             return action;

@@ -14,7 +14,7 @@ namespace Plethora.Context.Windows.Forms
         public ListViewContextProvider(ListView listView, params Func<ListView, IEnumerable<ContextInfo>>[] getContextCallbacks)
             : base(listView, getContextCallbacks)
         {
-            listView.SelectedIndexChanged += listView_SelectedIndexChanged;
+            listView.SelectedIndexChanged += this.listView_SelectedIndexChanged;
         }
         #endregion
 
@@ -26,7 +26,7 @@ namespace Plethora.Context.Windows.Forms
             {
                 var control = this.Control;
                 if (control != null)
-                    control.SelectedIndexChanged -= listView_SelectedIndexChanged;
+                    control.SelectedIndexChanged -= this.listView_SelectedIndexChanged;
             }
             base.Dispose(disposing);
         }

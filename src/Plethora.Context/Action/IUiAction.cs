@@ -1,4 +1,4 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 
 namespace Plethora.Context.Action
 {
@@ -10,6 +10,7 @@ namespace Plethora.Context.Action
         /// <summary>
         /// Gets the text to be displayed to the user.
         /// </summary>
+        [NotNull]
         string ActionText { get; }
 
         /// <summary>
@@ -18,11 +19,13 @@ namespace Plethora.Context.Action
         /// <example>
         /// A user interface may choose to render the description as a tool-tip.
         /// </example>
+        [CanBeNull]
         string ActionDescription { get; }
 
         /// <summary>
         /// Gets a key of the visual image associated with the action.
         /// </summary>
+        [CanBeNull]
         object ImageKey { get; }
 
         /// <summary>
@@ -34,6 +37,7 @@ namespace Plethora.Context.Action
         /// <example>
         /// A context menu may choose to place actions within a group in a sub-menu.
         /// </example>
+        [CanBeNull]
         string Group { get; }
 
         /// <summary>

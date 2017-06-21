@@ -71,7 +71,7 @@
     <Compile Include="Model\ITrackChanges.cs" />
     <Compile Include="Model\ModelBase.cs" />
     <Compile Include="Model\ModelProperty.cs" />
-    <Compile Include="Model\ModelPropertyMetaData.cs" />
+    <Compile Include="Model\ModelPropertyMetadata.cs" />
     <Compile Include="Model\NotifyPropertyChanged.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Model\TrackChangesObservableCollection.cs" />

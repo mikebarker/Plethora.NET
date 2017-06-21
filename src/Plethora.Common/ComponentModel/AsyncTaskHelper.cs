@@ -29,10 +29,10 @@ namespace Plethora.ComponentModel
         {
             //Validation
             if (syncInvoke == null)
-                throw new ArgumentNullException("syncInvoke");
+                throw new ArgumentNullException(nameof(syncInvoke));
 
             if (getter == null)
-                throw new ArgumentNullException("getter");
+                throw new ArgumentNullException(nameof(getter));
 
 
             if (syncInvoke.InvokeRequired)
@@ -61,10 +61,10 @@ namespace Plethora.ComponentModel
         {
             //Validation
             if (syncInvoke == null)
-                throw new ArgumentNullException("syncInvoke");
+                throw new ArgumentNullException(nameof(syncInvoke));
 
             if (task == null)
-                throw new ArgumentNullException("task");
+                throw new ArgumentNullException(nameof(task));
 
 
             if (syncInvoke.InvokeRequired)
@@ -105,16 +105,16 @@ namespace Plethora.ComponentModel
         {
             //Validation
             if (syncInvoke == null)
-                throw new ArgumentNullException("syncInvoke");
+                throw new ArgumentNullException(nameof(syncInvoke));
 
             if (task == null)
-                throw new ArgumentNullException("task");
+                throw new ArgumentNullException(nameof(task));
 
             if ((millisecondsTimeout < 0) && (millisecondsTimeout != Timeout.Infinite))
                 throw new ArgumentOutOfRangeException(
-                    "millisecondsTimeout",
+                    nameof(millisecondsTimeout),
                     millisecondsTimeout,
-                    ResourceProvider.ArgTimeout("millisecondsTimeout"));
+                    ResourceProvider.ArgTimeout(nameof(millisecondsTimeout)));
 
 
             if (syncInvoke.InvokeRequired)
@@ -209,16 +209,16 @@ namespace Plethora.ComponentModel
         {
             //Validation
             if (syncInvoke == null)
-                throw new ArgumentNullException("syncInvoke");
+                throw new ArgumentNullException(nameof(syncInvoke));
 
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             if (onComplete == null)
-                throw new ArgumentNullException("onComplete");
+                throw new ArgumentNullException(nameof(onComplete));
 
             if (onException == null)
-                throw new ArgumentNullException("onException");
+                throw new ArgumentNullException(nameof(onException));
 
 
             Action wrappedAction = delegate

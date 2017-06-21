@@ -12,12 +12,12 @@ namespace Plethora.Context.Wpf
 
         public UIElement UIElement
         {
-            get { return (UIElement)GetValue(UIElementProperty); }
-            set { SetValue(UIElementProperty, value); }
+            get { return (UIElement)this.GetValue(UIElementProperty); }
+            set { this.SetValue(UIElementProperty, value); }
         }
 
         public static readonly DependencyProperty UIElementProperty = DependencyProperty.Register(
-            "UIElement",
+            nameof(UIElement),
             typeof(UIElement),
             typeof(WpfContextSourceBase),
             new PropertyMetadata(default(UIElement), UIElementChanged));
@@ -51,7 +51,7 @@ namespace Plethora.Context.Wpf
         /// </summary>
         protected virtual void OnContextChanged(EventArgs e)
         {
-            var handler = ContextChanged;
+            var handler = this.ContextChanged;
             if (handler != null)
                 handler(this, e);
         }

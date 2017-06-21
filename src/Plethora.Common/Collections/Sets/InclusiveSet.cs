@@ -23,7 +23,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (includedElements == null)
-                throw new ArgumentNullException("includedElements");
+                throw new ArgumentNullException(nameof(includedElements));
 
 
             this.includedElements = new HashSet<T>(includedElements);
@@ -56,7 +56,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             //Short-cut method to union two inclusive sets.
@@ -88,7 +88,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             var newElements = this.includedElements
@@ -108,7 +108,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             var newElements = this.includedElements
                 .Where(element => !other.Contains(element));

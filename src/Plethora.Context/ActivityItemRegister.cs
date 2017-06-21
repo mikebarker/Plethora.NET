@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -44,6 +46,7 @@ namespace Plethora.Context
         /// <summary>
         /// Singleton instance of <see cref="ActivityItemRegister"/>.
         /// </summary>
+        [NotNull]
         public static readonly ActivityItemRegister Instance = new ActivityItemRegister();
 
         /// <summary>
@@ -58,21 +61,21 @@ namespace Plethora.Context
         private readonly Dictionary<int, List<WeakReference>> activityItemDictionary =
             new Dictionary<int, List<WeakReference>>(0);
 
-        public void RegisterActivityItem(Object item)
+        public void RegisterActivityItem([NotNull] Object item)
         {
             //Validation
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             int hashCode = item.GetHashCode();
 
-            lock (activityItemDictionary)
+            lock (this.activityItemDictionary)
             {
                 List<WeakReference> list;
-                if (!activityItemDictionary.TryGetValue(hashCode, out list))
+                if (!this.activityItemDictionary.TryGetValue(hashCode, out list))
                 {
                     list = new List<WeakReference>();
-                    activityItemDictionary[hashCode] = list;
+                    this.activityItemDictionary[hashCode] = list;
                 }
                 else
                 {
@@ -85,17 +88,17 @@ namespace Plethora.Context
             }
         }
 
-        public void DeregisterActivityItem(Object item)
+        public void DeregisterActivityItem([NotNull] Object item)
         {
             //Validation
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             int hashCode = item.GetHashCode();
-            lock (activityItemDictionary)
+            lock (this.activityItemDictionary)
             {
                 List<WeakReference> list;
-                if (!activityItemDictionary.TryGetValue(hashCode, out list))
+                if (!this.activityItemDictionary.TryGetValue(hashCode, out list))
                     return;
 
                 for (int i = 0; i < list.Count; i++)
@@ -117,12 +120,12 @@ namespace Plethora.Context
 
                 if (list.Count == 0)
                 {
-                    activityItemDictionary.Remove(hashCode);
+                    this.activityItemDictionary.Remove(hashCode);
                 }
             }
         }
 
-        public bool IsActivityItem(Object item)
+        public bool IsActivityItem([NotNull] Object item)
         {
             //Validation
             if (item == null)
@@ -130,10 +133,10 @@ namespace Plethora.Context
 
             int hashCode = item.GetHashCode();
 
-            lock (activityItemDictionary)
+            lock (this.activityItemDictionary)
             {
                 List<WeakReference> list;
-                if (activityItemDictionary.TryGetValue(hashCode, out list))
+                if (this.activityItemDictionary.TryGetValue(hashCode, out list))
                 {
                     for (int i = 0; i < list.Count; i++)
                     {
@@ -151,7 +154,7 @@ namespace Plethora.Context
                     }
 
                     if (list.Count == 0)
-                        activityItemDictionary.Remove(hashCode);
+                        this.activityItemDictionary.Remove(hashCode);
                 }
 
                 return false;

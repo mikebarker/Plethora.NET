@@ -21,7 +21,7 @@ namespace Plethora.Logging
             {
                 //Validation
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 loggerProvider = value;
             }
@@ -50,32 +50,32 @@ namespace Plethora.Logging
 
         public virtual bool IsVerboseEnabled
         {
-            get { return IsEnabledFor(LogLevel.Verbose); }
+            get { return this.IsEnabledFor(LogLevel.Verbose); }
         }
 
         public virtual bool IsDebugEnabled
         {
-            get { return IsEnabledFor(LogLevel.Debug); }
+            get { return this.IsEnabledFor(LogLevel.Debug); }
         }
 
         public virtual bool IsInfoEnabled
         {
-            get { return IsEnabledFor(LogLevel.Info); }
+            get { return this.IsEnabledFor(LogLevel.Info); }
         }
 
         public virtual bool IsWarnEnabled
         {
-            get { return IsEnabledFor(LogLevel.Warn); }
+            get { return this.IsEnabledFor(LogLevel.Warn); }
         }
 
         public virtual bool IsErrorEnabled
         {
-            get { return IsEnabledFor(LogLevel.Error); }
+            get { return this.IsEnabledFor(LogLevel.Error); }
         }
 
         public virtual bool IsFatalEnabled
         {
-            get { return IsEnabledFor(LogLevel.Fatal); }
+            get { return this.IsEnabledFor(LogLevel.Fatal); }
         }
 
         #endregion
@@ -84,22 +84,22 @@ namespace Plethora.Logging
 
         public virtual void Verbose(string message)
         {
-            Log(LogLevel.Verbose, null, () => message);
+            this.Log(LogLevel.Verbose, null, () => message);
         }
 
         public virtual void Verbose(string format, params object[] args)
         {
-            Log(LogLevel.Verbose, null, () => string.Format(format, args));
+            this.Log(LogLevel.Verbose, null, () => string.Format(format, args));
         }
 
         public virtual void Verbose(Exception exception, string message)
         {
-            Log(LogLevel.Verbose, exception, () => message);
+            this.Log(LogLevel.Verbose, exception, () => message);
         }
 
         public virtual void Verbose(Exception exception, string format, params object[] args)
         {
-            Log(LogLevel.Verbose, exception, () => string.Format(format, args));
+            this.Log(LogLevel.Verbose, exception, () => string.Format(format, args));
         }
         #endregion
 
@@ -107,22 +107,22 @@ namespace Plethora.Logging
 
         public virtual void Debug(string message)
         {
-            Log(LogLevel.Debug, null, () => message);
+            this.Log(LogLevel.Debug, null, () => message);
         }
 
         public virtual void Debug(string format, params object[] args)
         {
-            Log(LogLevel.Debug, null, () => string.Format(format, args));
+            this.Log(LogLevel.Debug, null, () => string.Format(format, args));
         }
 
         public virtual void Debug(Exception exception, string message)
         {
-            Log(LogLevel.Debug, exception, () => message);
+            this.Log(LogLevel.Debug, exception, () => message);
         }
 
         public virtual void Debug(Exception exception, string format, params object[] args)
         {
-            Log(LogLevel.Debug, exception, () => string.Format(format, args));
+            this.Log(LogLevel.Debug, exception, () => string.Format(format, args));
         }
         #endregion
 
@@ -130,22 +130,22 @@ namespace Plethora.Logging
 
         public virtual void Info(string message)
         {
-            Log(LogLevel.Info, null, () => message);
+            this.Log(LogLevel.Info, null, () => message);
         }
 
         public virtual void Info(string format, params object[] args)
         {
-            Log(LogLevel.Info, null, () => string.Format(format, args));
+            this.Log(LogLevel.Info, null, () => string.Format(format, args));
         }
 
         public virtual void Info(Exception exception, string message)
         {
-            Log(LogLevel.Info, exception, () => message);
+            this.Log(LogLevel.Info, exception, () => message);
         }
 
         public virtual void Info(Exception exception, string format, params object[] args)
         {
-            Log(LogLevel.Info, exception, () => string.Format(format, args));
+            this.Log(LogLevel.Info, exception, () => string.Format(format, args));
         }
         #endregion
 
@@ -153,22 +153,22 @@ namespace Plethora.Logging
 
         public virtual void Warn(string message)
         {
-            Log(LogLevel.Warn, null, () => message);
+            this.Log(LogLevel.Warn, null, () => message);
         }
 
         public virtual void Warn(string format, params object[] args)
         {
-            Log(LogLevel.Warn, null, () => string.Format(format, args));
+            this.Log(LogLevel.Warn, null, () => string.Format(format, args));
         }
 
         public virtual void Warn(Exception exception, string message)
         {
-            Log(LogLevel.Warn, exception, () => message);
+            this.Log(LogLevel.Warn, exception, () => message);
         }
 
         public virtual void Warn(Exception exception, string format, params object[] args)
         {
-            Log(LogLevel.Warn, exception, () => string.Format(format, args));
+            this.Log(LogLevel.Warn, exception, () => string.Format(format, args));
         }
         #endregion
 
@@ -176,22 +176,22 @@ namespace Plethora.Logging
 
         public virtual void Error(string message)
         {
-            Log(LogLevel.Error, null, () => message);
+            this.Log(LogLevel.Error, null, () => message);
         }
 
         public virtual void Error(string format, params object[] args)
         {
-            Log(LogLevel.Error, null, () => string.Format(format, args));
+            this.Log(LogLevel.Error, null, () => string.Format(format, args));
         }
 
         public virtual void Error(Exception exception, string message)
         {
-            Log(LogLevel.Error, exception, () => message);
+            this.Log(LogLevel.Error, exception, () => message);
         }
 
         public virtual void Error(Exception exception, string format, params object[] args)
         {
-            Log(LogLevel.Error, exception, () => string.Format(format, args));
+            this.Log(LogLevel.Error, exception, () => string.Format(format, args));
         }
         #endregion
 
@@ -199,22 +199,22 @@ namespace Plethora.Logging
 
         public virtual void Fatal(string message)
         {
-            Log(LogLevel.Fatal, null, () => message);
+            this.Log(LogLevel.Fatal, null, () => message);
         }
 
         public virtual void Fatal(string format, params object[] args)
         {
-            Log(LogLevel.Fatal, null, () => string.Format(format, args));
+            this.Log(LogLevel.Fatal, null, () => string.Format(format, args));
         }
 
         public virtual void Fatal(Exception exception, string message)
         {
-            Log(LogLevel.Fatal, exception, () => message);
+            this.Log(LogLevel.Fatal, exception, () => message);
         }
 
         public virtual void Fatal(Exception exception, string format, params object[] args)
         {
-            Log(LogLevel.Fatal, exception, () => string.Format(format, args));
+            this.Log(LogLevel.Fatal, exception, () => string.Format(format, args));
         }
         #endregion
 
@@ -235,12 +235,12 @@ namespace Plethora.Logging
                 return;
 
             //Test if logging is enabled
-            if (!IsEnabledFor(logLevel))
+            if (!this.IsEnabledFor(logLevel))
                 return;
 
             //Log the message
             string message = messageProvider();
-            ForceLog(logLevel, exception, message);
+            this.ForceLog(logLevel, exception, message);
 
             //Mark the exception as logged (if required)
             MarkAsLogged(exception);

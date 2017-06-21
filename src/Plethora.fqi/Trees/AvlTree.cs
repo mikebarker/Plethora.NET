@@ -46,8 +46,8 @@ namespace Plethora.fqi.Trees
             {
                 get
                 {
-                    int leftHeight = (Left == null) ? -1 : Left.Height;
-                    int rightHeight = (Right == null) ? -1 : Right.Height;
+                    int leftHeight = (this.Left == null) ? -1 : this.Left.Height;
+                    int rightHeight = (this.Right == null) ? -1 : this.Right.Height;
 
                     return rightHeight - leftHeight;
                 }
@@ -89,7 +89,7 @@ namespace Plethora.fqi.Trees
         {
             AvlNode node = (AvlNode)base.AddNode(key, value, parent, edge);
 
-            BalanceNode(node, true);
+            this.BalanceNode(node, true);
 
             return node;
         }
@@ -160,12 +160,12 @@ namespace Plethora.fqi.Trees
             {
                 if (node.Right.BalanceFactor == 1)
                 {
-                    Rotate(node, RotationDirection.Left);
+                    this.Rotate(node, RotationDirection.Left);
                 }
                 else
                 {
-                    Rotate(node.Right, RotationDirection.Right);
-                    Rotate(node, RotationDirection.Left);
+                    this.Rotate(node.Right, RotationDirection.Right);
+                    this.Rotate(node, RotationDirection.Left);
                 }
 
                 //Insertion requires at most one single or double rotation
@@ -176,12 +176,12 @@ namespace Plethora.fqi.Trees
             {
                 if (node.Left.BalanceFactor == -1)
                 {
-                    Rotate(node, RotationDirection.Right);
+                    this.Rotate(node, RotationDirection.Right);
                 }
                 else
                 {
-                    Rotate(node.Left, RotationDirection.Left);
-                    Rotate(node, RotationDirection.Right);
+                    this.Rotate(node.Left, RotationDirection.Left);
+                    this.Rotate(node, RotationDirection.Right);
                 }
 
                 //Insertion requires at most one single or double rotation
@@ -199,7 +199,7 @@ namespace Plethora.fqi.Trees
 
             //Test if the parent must be rebalanced
             if ((balanceParent) && (node.Parent != null))
-                BalanceNode(node.Parent, isInsertion);
+                this.BalanceNode(node.Parent, isInsertion);
         }
         #endregion
     }

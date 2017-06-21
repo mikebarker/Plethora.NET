@@ -232,7 +232,16 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Generic argument must implement IComparable or IComparable&lt;T&gt;; or be an instance of Nullable&lt;T&gt; where T is IComparable or IComparable&lt;T&gt;.
+        ///   Looks up a localized string similar to Generic argument must must be a subclass of Delegate..
+        /// </summary>
+        internal static string GenericArgMustBeDelegate {
+            get {
+                return ResourceManager.GetString("GenericArgMustBeDelegate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generic argument must implement IComparable or IComparable&lt;T&gt;; or be an instance of Nullable&lt;T&gt; where T is IComparable or IComparable&lt;T&gt;..
         /// </summary>
         internal static string GenericArgMustBeIComparable {
             get {

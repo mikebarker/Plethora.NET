@@ -6,7 +6,7 @@ namespace Plethora.Globalization
     /// Interface which provides a custom extension for a culture.
     /// </summary>
     /// <seealso cref="CultureExtensionBase"/>
-    /// <seealso cref="CultureExtensionHandler{T}"/>
+    /// <seealso cref="CultureExtensionProvider"/>
     public interface ICultureExtension
     {
         /// <summary>

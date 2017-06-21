@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Plethora.Collections
 {
-    public class ListIndexItterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<T>
+    public class ListIndexIterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<T>
     {
         #region Fields
 
@@ -18,29 +18,29 @@ namespace Plethora.Collections
 
         #region Constructors
 
-        public ListIndexItterator(IList<T> list, int startIndex, int count)
+        public ListIndexIterator(IList<T> list, int startIndex, int count)
         {
             if (list == null)
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
 
             if (startIndex < 0)
-                throw new ArgumentOutOfRangeException("startIndex", startIndex,
-                    ResourceProvider.ArgMustBeGreaterThanEqualToZero("startIndex"));
+                throw new ArgumentOutOfRangeException(nameof(startIndex), startIndex,
+                    ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(startIndex)));
 
             if (startIndex >= list.Count)
-                throw new ArgumentOutOfRangeException("startIndex",
-                    ResourceProvider.ArgMustBeBetween("startIndex", "0", "list.Count"));
+                throw new ArgumentOutOfRangeException(nameof(startIndex),
+                    ResourceProvider.ArgMustBeBetween(nameof(startIndex), "0", "list.Count"));
 
             if ((count < 0) || ((startIndex + count) > list.Count))
-                throw new ArgumentOutOfRangeException("count",
-                    ResourceProvider.ArgMustBeBetween("count", "0", "list.Count - startIndex"));
+                throw new ArgumentOutOfRangeException(nameof(count),
+                    ResourceProvider.ArgMustBeBetween(nameof(count), "0", "list.Count - startIndex"));
 
 
             this.list = list;
             this.startIndex = startIndex;
             this.endIndex = startIndex + count - 1;
 
-            Reset();
+            this.Reset();
         }
         #endregion
 
@@ -48,7 +48,7 @@ namespace Plethora.Collections
 
         public void Dispose()
         {
-            Reset();
+            this.Reset();
         }
 
         #endregion
@@ -57,7 +57,7 @@ namespace Plethora.Collections
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -75,25 +75,25 @@ namespace Plethora.Collections
 
         public bool MoveNext()
         {
-            if (currentIndex == -1)
-                currentIndex = startIndex;
+            if (this.currentIndex == -1)
+                this.currentIndex = this.startIndex;
             else
-                currentIndex++;
+                this.currentIndex++;
 
-            if ((currentIndex > endIndex) || (currentIndex > list.Count))
+            if ((this.currentIndex > this.endIndex) || (this.currentIndex > this.list.Count))
             {
-                current = default(T);
+                this.current = default(T);
                 return false;
             }
 
-            current = list[currentIndex];
+            this.current = this.list[this.currentIndex];
             return true;
         }
 
         public void Reset()
         {
-            currentIndex = -1;
-            current = default(T);
+            this.currentIndex = -1;
+            this.current = default(T);
         }
 
         object IEnumerator.Current
@@ -149,7 +149,7 @@ namespace Plethora.Collections
             {
                 for (int i = this.startIndex; i <= this.endIndex; i++)
                 {
-                    array[arrayIndex++] = list[i];
+                    array[arrayIndex++] = this.list[i];
                 }
             }
         }

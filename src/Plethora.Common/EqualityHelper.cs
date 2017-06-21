@@ -107,7 +107,7 @@ namespace Plethora
         private static string GetPropertyOrFieldName(LambdaExpression expression)
         {
             if (expression == null)
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException(nameof(expression));
 
             var body = expression.Body as MemberExpression;
             if (body == null)
@@ -269,7 +269,7 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
 
                 this.func1 = exp1.Compile();
@@ -291,22 +291,20 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t));
+                return HashCodeHelper.GetHashCode(this.func1(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t));
+                return this.ToStringFormat(
+                    t, this.func1(t));
             }
 
             #endregion
@@ -330,10 +328,10 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
 
                 this.func1 = exp1.Compile();
@@ -356,25 +354,21 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t));
             }
 
             #endregion
@@ -400,13 +394,13 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
                 if (exp3 == null)
-                    throw new ArgumentNullException("exp3");
+                    throw new ArgumentNullException(nameof(exp3));
 
 
                 this.func1 = exp1.Compile();
@@ -430,28 +424,22 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
-                result = result && EqualityComparer<T3>.Default.Equals(func3(x), func3(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
+                result = result && EqualityComparer<T3>.Default.Equals(this.func3(x), this.func3(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t),
-                    func3(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t), this.func3(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t),
-                    func3(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t), this.func3(t));
             }
 
             #endregion
@@ -479,16 +467,16 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
                 if (exp3 == null)
-                    throw new ArgumentNullException("exp3");
+                    throw new ArgumentNullException(nameof(exp3));
 
                 if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
+                    throw new ArgumentNullException(nameof(exp4));
 
 
                 this.func1 = exp1.Compile();
@@ -513,31 +501,23 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
-                result = result && EqualityComparer<T3>.Default.Equals(func3(x), func3(y));
-                result = result && EqualityComparer<T4>.Default.Equals(func4(x), func4(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
+                result = result && EqualityComparer<T3>.Default.Equals(this.func3(x), this.func3(y));
+                result = result && EqualityComparer<T4>.Default.Equals(this.func4(x), this.func4(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t), this.func3(t), this.func4(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t));
             }
             
             #endregion
@@ -567,19 +547,19 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
                 if (exp3 == null)
-                    throw new ArgumentNullException("exp3");
+                    throw new ArgumentNullException(nameof(exp3));
 
                 if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
+                    throw new ArgumentNullException(nameof(exp4));
 
                 if (exp5 == null)
-                    throw new ArgumentNullException("exp5");
+                    throw new ArgumentNullException(nameof(exp5));
 
 
                 this.func1 = exp1.Compile();
@@ -605,34 +585,24 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
-                result = result && EqualityComparer<T3>.Default.Equals(func3(x), func3(y));
-                result = result && EqualityComparer<T4>.Default.Equals(func4(x), func4(y));
-                result = result && EqualityComparer<T5>.Default.Equals(func5(x), func5(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
+                result = result && EqualityComparer<T3>.Default.Equals(this.func3(x), this.func3(y));
+                result = result && EqualityComparer<T4>.Default.Equals(this.func4(x), this.func4(y));
+                result = result && EqualityComparer<T5>.Default.Equals(this.func5(x), this.func5(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t));
             }
 
             #endregion
@@ -664,22 +634,22 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
                 if (exp3 == null)
-                    throw new ArgumentNullException("exp3");
+                    throw new ArgumentNullException(nameof(exp3));
 
                 if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
+                    throw new ArgumentNullException(nameof(exp4));
 
                 if (exp5 == null)
-                    throw new ArgumentNullException("exp5");
+                    throw new ArgumentNullException(nameof(exp5));
 
                 if (exp6 == null)
-                    throw new ArgumentNullException("exp6");
+                    throw new ArgumentNullException(nameof(exp6));
 
 
                 this.func1 = exp1.Compile();
@@ -706,37 +676,25 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
-                result = result && EqualityComparer<T3>.Default.Equals(func3(x), func3(y));
-                result = result && EqualityComparer<T4>.Default.Equals(func4(x), func4(y));
-                result = result && EqualityComparer<T5>.Default.Equals(func5(x), func5(y));
-                result = result && EqualityComparer<T6>.Default.Equals(func6(x), func6(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
+                result = result && EqualityComparer<T3>.Default.Equals(this.func3(x), this.func3(y));
+                result = result && EqualityComparer<T4>.Default.Equals(this.func4(x), this.func4(y));
+                result = result && EqualityComparer<T5>.Default.Equals(this.func5(x), this.func5(y));
+                result = result && EqualityComparer<T6>.Default.Equals(this.func6(x), this.func6(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t),
-                    func6(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t),
-                    func6(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t));
             }
 
             #endregion
@@ -770,25 +728,25 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
                 if (exp3 == null)
-                    throw new ArgumentNullException("exp3");
+                    throw new ArgumentNullException(nameof(exp3));
 
                 if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
+                    throw new ArgumentNullException(nameof(exp4));
 
                 if (exp5 == null)
-                    throw new ArgumentNullException("exp5");
+                    throw new ArgumentNullException(nameof(exp5));
 
                 if (exp6 == null)
-                    throw new ArgumentNullException("exp6");
+                    throw new ArgumentNullException(nameof(exp6));
 
                 if (exp7 == null)
-                    throw new ArgumentNullException("exp7");
+                    throw new ArgumentNullException(nameof(exp7));
 
 
                 this.func1 = exp1.Compile();
@@ -816,40 +774,26 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
-                result = result && EqualityComparer<T3>.Default.Equals(func3(x), func3(y));
-                result = result && EqualityComparer<T4>.Default.Equals(func4(x), func4(y));
-                result = result && EqualityComparer<T5>.Default.Equals(func5(x), func5(y));
-                result = result && EqualityComparer<T6>.Default.Equals(func6(x), func6(y));
-                result = result && EqualityComparer<T7>.Default.Equals(func7(x), func7(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
+                result = result && EqualityComparer<T3>.Default.Equals(this.func3(x), this.func3(y));
+                result = result && EqualityComparer<T4>.Default.Equals(this.func4(x), this.func4(y));
+                result = result && EqualityComparer<T5>.Default.Equals(this.func5(x), this.func5(y));
+                result = result && EqualityComparer<T6>.Default.Equals(this.func6(x), this.func6(y));
+                result = result && EqualityComparer<T7>.Default.Equals(this.func7(x), this.func7(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t),
-                    func6(t),
-                    func7(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t),
-                    func6(t),
-                    func7(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t));
             }
 
             #endregion
@@ -885,28 +829,28 @@ namespace Plethora
             {
                 //Validation
                 if (exp1 == null)
-                    throw new ArgumentNullException("exp1");
+                    throw new ArgumentNullException(nameof(exp1));
 
                 if (exp2 == null)
-                    throw new ArgumentNullException("exp2");
+                    throw new ArgumentNullException(nameof(exp2));
 
                 if (exp3 == null)
-                    throw new ArgumentNullException("exp3");
+                    throw new ArgumentNullException(nameof(exp3));
 
                 if (exp4 == null)
-                    throw new ArgumentNullException("exp4");
+                    throw new ArgumentNullException(nameof(exp4));
 
                 if (exp5 == null)
-                    throw new ArgumentNullException("exp5");
+                    throw new ArgumentNullException(nameof(exp5));
 
                 if (exp6 == null)
-                    throw new ArgumentNullException("exp6");
+                    throw new ArgumentNullException(nameof(exp6));
 
                 if (exp7 == null)
-                    throw new ArgumentNullException("exp7");
+                    throw new ArgumentNullException(nameof(exp7));
 
                 if (exp8 == null)
-                    throw new ArgumentNullException("exp8");
+                    throw new ArgumentNullException(nameof(exp8));
 
 
                 this.func1 = exp1.Compile();
@@ -935,43 +879,27 @@ namespace Plethora
                     return false;
 
                 bool result = true;
-                result = result && EqualityComparer<T1>.Default.Equals(func1(x), func1(y));
-                result = result && EqualityComparer<T2>.Default.Equals(func2(x), func2(y));
-                result = result && EqualityComparer<T3>.Default.Equals(func3(x), func3(y));
-                result = result && EqualityComparer<T4>.Default.Equals(func4(x), func4(y));
-                result = result && EqualityComparer<T5>.Default.Equals(func5(x), func5(y));
-                result = result && EqualityComparer<T6>.Default.Equals(func6(x), func6(y));
-                result = result && EqualityComparer<T7>.Default.Equals(func7(x), func7(y));
-                result = result && EqualityComparer<T8>.Default.Equals(func8(x), func8(y));
+                result = result && EqualityComparer<T1>.Default.Equals(this.func1(x), this.func1(y));
+                result = result && EqualityComparer<T2>.Default.Equals(this.func2(x), this.func2(y));
+                result = result && EqualityComparer<T3>.Default.Equals(this.func3(x), this.func3(y));
+                result = result && EqualityComparer<T4>.Default.Equals(this.func4(x), this.func4(y));
+                result = result && EqualityComparer<T5>.Default.Equals(this.func5(x), this.func5(y));
+                result = result && EqualityComparer<T6>.Default.Equals(this.func6(x), this.func6(y));
+                result = result && EqualityComparer<T7>.Default.Equals(this.func7(x), this.func7(y));
+                result = result && EqualityComparer<T8>.Default.Equals(this.func8(x), this.func8(y));
 
                 return result;
             }
 
             public override int GetHashCode(T t)
             {
-                return HashCodeHelper.GetHashCode(
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t),
-                    func6(t),
-                    func7(t),
-                    func8(t));
+                return HashCodeHelper.GetHashCode(this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t), this.func8(t));
             }
 
             public override string GetToString(T t)
             {
-                return ToStringFormat(
-                    t,
-                    func1(t),
-                    func2(t),
-                    func3(t),
-                    func4(t),
-                    func5(t),
-                    func6(t),
-                    func7(t),
-                    func8(t));
+                return this.ToStringFormat(
+                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t), this.func8(t));
             }
 
             #endregion

@@ -26,7 +26,7 @@ namespace Plethora
         {
             //Validation
             if (ReferenceEquals(item, null))
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             this.innerWeakReference = new WeakReference(item, trackResurrection);
             this.hashCode = item.GetHashCode();
@@ -42,7 +42,7 @@ namespace Plethora
             {
                 //Validation
                 if (ReferenceEquals(value, null))
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 this.innerWeakReference.Target = value;
             }

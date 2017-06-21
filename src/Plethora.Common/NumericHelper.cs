@@ -62,13 +62,13 @@ namespace Plethora
         {
             //Validation
             if (oldMax <= oldMin)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("oldMax", "oldMin"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(oldMax), "oldMin"));
 
             if ((value < oldMin) || (value > oldMax))
-                throw new ArgumentException(ResourceProvider.ArgMustBeBetween("value", "oldMin", "oldMax"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeBetween(nameof(value), "oldMin", "oldMax"));
 
             if (newMax <= newMin)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("newMax", "newMin"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(newMax), "newMin"));
 
 
             double _value = (value - oldMin) / (oldMax - oldMin);
@@ -95,11 +95,11 @@ namespace Plethora
         {
             //Validation
             if ((value < 0.0) || (value > 1.0))
-                throw new ArgumentOutOfRangeException("value", value,
-                  ResourceProvider.ArgMustBeBetween("value", 0.0, 1.0));
+                throw new ArgumentOutOfRangeException(nameof(value), value,
+                  ResourceProvider.ArgMustBeBetween(nameof(value), 0.0, 1.0));
 
             if (max <= min)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             double range = max - min;
             return (value * range) + min;
@@ -126,12 +126,12 @@ namespace Plethora
         {
             //Validation
             if ((value < 0.0) || (value > 1.0))
-                throw new ArgumentOutOfRangeException("value", value,
-                  ResourceProvider.ArgMustBeBetween("value", 0.0, 1.0));
+                throw new ArgumentOutOfRangeException(nameof(value), value,
+                  ResourceProvider.ArgMustBeBetween(nameof(value), 0.0, 1.0));
 
             if (max < 0.0)
-                throw new ArgumentOutOfRangeException("max", max,
-                  ResourceProvider.ArgMustBeGreaterThanZero("max"));
+                throw new ArgumentOutOfRangeException(nameof(max), max,
+                  ResourceProvider.ArgMustBeGreaterThanZero(nameof(max)));
 
 
             return Translate(value, max, 0.0);
@@ -166,7 +166,7 @@ namespace Plethora
             //Validation
             var range = max - min;
             if (range <= 0)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             var valueRange = value - min;
             valueRange = (valueRange % range);
@@ -202,7 +202,7 @@ namespace Plethora
         {
             var range = max - min;
             if (range <= 0m)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             var valueRange = value - min;
             valueRange = (valueRange % range);
@@ -238,7 +238,7 @@ namespace Plethora
         {
             var range = max - min;
             if (range <= 0.0f)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             var valueRange = value - min;
             valueRange = (valueRange % range);
@@ -274,7 +274,7 @@ namespace Plethora
         {
             var range = max - min;
             if (range <= 0.0)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             var valueRange = value - min;
             valueRange = (valueRange % range);
@@ -304,7 +304,7 @@ namespace Plethora
         {
             //Validation
             if (max < min)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             return Math.Min(max, Math.Max(min, value));
         }
@@ -325,7 +325,7 @@ namespace Plethora
         {
             //Validation
             if (max < min)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             return Math.Min(max, Math.Max(min, value));
         }
@@ -346,7 +346,7 @@ namespace Plethora
         {
             //Validation
             if (max < min)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             return Math.Min(max, Math.Max(min, value));
         }
@@ -367,7 +367,7 @@ namespace Plethora
         {
             //Validation
             if (max < min)
-                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan("max", "min"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeGreaterThan(nameof(max), "min"));
 
             return Math.Min(max, Math.Max(min, value));
         }
@@ -499,17 +499,17 @@ namespace Plethora
         {
             //Validation
             if (romanNumerals == null)
-                throw new ArgumentNullException("romanNumerals");
+                throw new ArgumentNullException(nameof(romanNumerals));
 
             if (romanNumerals.Length == 0)
-                throw new ArgumentException(ResourceProvider.ArgStringEmpty("romanNumerals"), "romanNumerals");
+                throw new ArgumentException(ResourceProvider.ArgStringEmpty(nameof(romanNumerals)), nameof(romanNumerals));
 
             Regex romanNumeralRegex =
               new Regex("^M{0,3}(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$");
 
             if (!romanNumeralRegex.IsMatch(romanNumerals))
-                throw new ArgumentException(ResourceProvider.ArgInvalid("romanNumerals"),
-                  "romanNumerals");
+                throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(romanNumerals)),
+                  nameof(romanNumerals));
 
 
             string temp = romanNumerals;
@@ -555,8 +555,8 @@ namespace Plethora
         {
             //Validation
             if ((number < 1) || (number > 3999))
-                throw new ArgumentOutOfRangeException("number",
-                  ResourceProvider.ArgMustBeBetween("number", 1, 3999));
+                throw new ArgumentOutOfRangeException(nameof(number),
+                  ResourceProvider.ArgMustBeBetween(nameof(number), 1, 3999));
 
 
             StringBuilder sb = new StringBuilder();

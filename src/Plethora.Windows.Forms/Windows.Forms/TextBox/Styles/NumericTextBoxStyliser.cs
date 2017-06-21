@@ -287,10 +287,10 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (textBox == null)
-                throw new ArgumentNullException("textBox");
+                throw new ArgumentNullException(nameof(textBox));
 
             if (!(textBox is IValueProvider))
-                throw new InvalidCastException(ResourceProvider.ArgMustBeOfType("textBox", typeof(IValueProvider)));
+                throw new InvalidCastException(ResourceProvider.ArgMustBeOfType(nameof(textBox), typeof(IValueProvider)));
 
 
             base.RegisterTextBox(textBox);
@@ -306,10 +306,10 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (textBox == null)
-                throw new ArgumentNullException("textBox");
+                throw new ArgumentNullException(nameof(textBox));
 
             if (!(textBox is IValueProvider))
-                throw new InvalidCastException(ResourceProvider.ArgMustBeOfType("textBox", typeof (IValueProvider)));
+                throw new InvalidCastException(ResourceProvider.ArgMustBeOfType(nameof(textBox), typeof (IValueProvider)));
 
 
             base.DeregisterTextBox(textBox);

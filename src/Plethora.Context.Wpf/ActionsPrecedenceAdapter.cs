@@ -16,7 +16,7 @@ namespace Plethora.Context.Wpf
         #region PrecedenceLists Dependency Property
 
         private static readonly DependencyPropertyKey PrecedenceListsPropertyKey = DependencyProperty.RegisterReadOnly(
-            "PrecedenceLists",
+            nameof(PrecedenceLists),
             typeof(ObservableCollection<IList<string>>),
             typeof(ActionsPrecedenceAdapter),
             new PropertyMetadata(null));
@@ -26,7 +26,7 @@ namespace Plethora.Context.Wpf
 
         public ObservableCollection<IList<string>> PrecedenceLists
         {
-            get { return (ObservableCollection<IList<string>>)GetValue(PrecedenceListsProperty); }
+            get { return (ObservableCollection<IList<string>>)this.GetValue(PrecedenceListsProperty); }
         }
 
         #endregion
@@ -38,7 +38,7 @@ namespace Plethora.Context.Wpf
 
             foreach (var precedenceList in this.PrecedenceLists)
             {
-                actions = ApplyPrecedence(actions, precedenceList);
+                actions = this.ApplyPrecedence(actions, precedenceList);
             }
 
             return actions;

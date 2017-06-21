@@ -59,6 +59,9 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="..\JetBrains.Annotations.cs">
+      <Link>Properties\JetBrains.Annotations.cs</Link>
+    </Compile>
     <Compile Include="Action\ActionHelper.cs" />
     <Compile Include="Action\ActionManager.cs" />
     <Compile Include="Action\ActionTemplate.cs" />

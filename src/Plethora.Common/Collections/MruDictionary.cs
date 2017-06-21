@@ -45,12 +45,12 @@ namespace Plethora.Collections
             IEqualityComparer<TKey> comparer = null)
         {
             if (maxEntries < 2)
-                throw new ArgumentOutOfRangeException("maxEntries", maxEntries, ResourceProvider.ArgMustBeGreaterThan("maxEntries", 2));
+                throw new ArgumentOutOfRangeException(nameof(maxEntries), maxEntries, ResourceProvider.ArgMustBeGreaterThan(nameof(maxEntries), 2));
 
             if (watermark != null)
             {
                 if ((watermark < 1) || (watermark >= maxEntries))
-                    throw new ArgumentOutOfRangeException("watermark");
+                    throw new ArgumentOutOfRangeException(nameof(watermark));
             }
 
             this.maxEntries = maxEntries;
@@ -98,13 +98,13 @@ namespace Plethora.Collections
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             if (array == null)
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
 
             if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException("arrayIndex", arrayIndex, ResourceProvider.ArgMustBeGreaterThanZero("arrayIndex"));
+                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, ResourceProvider.ArgMustBeGreaterThanZero(nameof(arrayIndex)));
 
             if ((array.Length - arrayIndex) < this.Count)
-                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength("arrayIndex", "count"));
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(arrayIndex), "count"));
 
             int i = 0;
             foreach (var pair in this.innerDictionary)
@@ -143,7 +143,7 @@ namespace Plethora.Collections
         public bool ContainsKey([NotNull] TKey key)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             return this.innerDictionary.ContainsKey(key);
         }
@@ -151,7 +151,7 @@ namespace Plethora.Collections
         public void Add([NotNull] TKey key, TValue value)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             this.ReclaimLeastUsedEnties(1);
             this.innerDictionary.Add(key, new MruEntry<TValue>(value));
@@ -160,7 +160,7 @@ namespace Plethora.Collections
         public bool Remove([NotNull] TKey key)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             return this.innerDictionary.Remove(key);
         }
@@ -168,7 +168,7 @@ namespace Plethora.Collections
         public bool TryGetValue([NotNull] TKey key, out TValue value)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             MruEntry<TValue> entry;
             if (!this.innerDictionary.TryGetValue(key, out entry))
@@ -186,7 +186,7 @@ namespace Plethora.Collections
             get
             {
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
                 MruEntry<TValue> entry = this.innerDictionary[key];
                 return this.GetValue(entry);
@@ -194,7 +194,7 @@ namespace Plethora.Collections
             set
             {
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
                 MruEntry<TValue> entry;
                 if (this.innerDictionary.TryGetValue(key, out entry))
@@ -239,12 +239,12 @@ namespace Plethora.Collections
         public void SetMaxEntriesAndWatermark(int maxEntries, int? watermark)
         {
             if (maxEntries < 2)
-                throw new ArgumentOutOfRangeException("maxEntries", maxEntries, ResourceProvider.ArgMustBeGreaterThan("maxEntries", 2));
+                throw new ArgumentOutOfRangeException(nameof(maxEntries), maxEntries, ResourceProvider.ArgMustBeGreaterThan(nameof(maxEntries), 2));
 
             if (watermark != null)
             {
                 if ((watermark < 1) || (watermark >= maxEntries))
-                    throw new ArgumentOutOfRangeException("watermark");
+                    throw new ArgumentOutOfRangeException(nameof(watermark));
             }
 
             this.maxEntries = maxEntries;
@@ -280,7 +280,7 @@ namespace Plethora.Collections
             if ((this.Count + additionalEntries) <= this.maxEntries)
                 return;
 
-            int watermarkCount = this.Watermark ?? Math.Max(1, (int)Math.Floor(maxEntries * MruDictionary.DefaultWatermarkPercent));
+            int watermarkCount = this.Watermark ?? Math.Max(1, (int)Math.Floor(this.maxEntries * MruDictionary.DefaultWatermarkPercent));
 
             int reclaimCount = ((this.Count + additionalEntries) - watermarkCount);
             if (reclaimCount <= 0)
@@ -336,7 +336,7 @@ namespace Plethora.Collections
                 {
                     this.accessCount++;
                 }
-                return value;
+                return this.value;
             }
             set
             {
@@ -346,8 +346,8 @@ namespace Plethora.Collections
 
         public uint AccessCount
         {
-            get { return accessCount; }
-            internal set { accessCount = value; }
+            get { return this.accessCount; }
+            internal set { this.accessCount = value; }
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Plethora.Context.Wpf
     {
         public WpfContextSourceTemplateCollection()
         {
-            ((INotifyCollectionChanged)this).CollectionChanged += CollectionChanged;
+            ((INotifyCollectionChanged)this).CollectionChanged += this.CollectionChanged;
         }
 
         void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

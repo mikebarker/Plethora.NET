@@ -60,9 +60,9 @@ namespace Plethora.Test.Mvvm.Model
             get { return this.name; }
             set
             {
-                this.OnPropertyChanging("Name");
+                this.OnPropertyChanging(nameof(this.Name));
                 this.name = value;
-                this.OnPropertyChanged("Name");
+                this.OnPropertyChanged(nameof(this.Name));
             }
         }
 

@@ -1,10 +1,10 @@
-﻿using System;
+﻿using JetBrains.Annotations;
 
 namespace Plethora.Context.Action
 {
     public abstract class MultiUiActionTemplate : MultiActionTemplate, IUiMultiActionTemplate
     {
-        protected MultiUiActionTemplate(string contextName)
+        protected MultiUiActionTemplate([NotNull] string contextName)
             : base(contextName)
         {
         }
@@ -26,14 +26,14 @@ namespace Plethora.Context.Action
                 return null;
 
 
-            string actionName = GetActionName(contexts);
-            string text = GetActionText(contexts);
-            string description = GetActionDescription(contexts);
-            object imageKey = GetImageKey(contexts);
-            string group = GetGroup(contexts);
-            int rank = GetRank(contexts);
-            bool canExecute = CanExecute(contexts);
-            System.Action execute = () => Execute(contexts);
+            string actionName = this.GetActionName(contexts);
+            string text = this.GetActionText(contexts);
+            string description = this.GetActionDescription(contexts);
+            object imageKey = this.GetImageKey(contexts);
+            string group = this.GetGroup(contexts);
+            int rank = this.GetRank(contexts);
+            bool canExecute = this.CanExecute(contexts);
+            System.Action execute = () => this.Execute(contexts);
 
             IAction action = new UiContextAction(actionName, text, description, imageKey, group, rank, canExecute, execute);
             return action;

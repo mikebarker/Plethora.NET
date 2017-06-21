@@ -43,7 +43,7 @@ namespace Plethora.Synchronized.Change
         {
             //Validation
             if (change == null)
-                throw new ArgumentNullException("change");
+                throw new ArgumentNullException(nameof(change));
 
 
             this.change = change;

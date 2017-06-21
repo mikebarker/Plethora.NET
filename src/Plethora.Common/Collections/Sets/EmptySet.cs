@@ -34,7 +34,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             return other;
@@ -44,7 +44,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             return this;
@@ -54,7 +54,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             return this;

@@ -21,10 +21,10 @@ namespace Plethora.Drawing
 
         #region Fields
 
-        private int alfa;
-        private float hue;
-        private float saturation;
-        private float value;
+        private readonly int alfa;
+        private readonly float hue;
+        private readonly float saturation;
+        private readonly float value;
         #endregion
 
         #region Constructors
@@ -61,7 +61,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int A
         {
-            get { return alfa; }
+            get { return this.alfa; }
         }
 
         /// <summary>
@@ -69,7 +69,7 @@ namespace Plethora.Drawing
         /// </summary>
         public float H
         {
-            get { return hue; }
+            get { return this.hue; }
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Plethora.Drawing
         /// </summary>
         public float S
         {
-            get { return saturation; }
+            get { return this.saturation; }
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace Plethora.Drawing
         /// </summary>
         public float V
         {
-            get { return value; }
+            get { return this.value; }
         }
         #endregion
 
@@ -137,20 +137,20 @@ namespace Plethora.Drawing
         {
             //Validation
             if ((alfa < 0) || (alfa > ColorBase.FullAlfa))
-                throw new ArgumentOutOfRangeException("alfa", alfa,
-                  ResourceProvider.ArgMustBeBetween("alfa", 0, ColorBase.FullAlfa));
+                throw new ArgumentOutOfRangeException(nameof(alfa), alfa,
+                  ResourceProvider.ArgMustBeBetween(nameof(alfa), 0, ColorBase.FullAlfa));
 
             if ((hue < 0.0f) || (hue >= MAX_HUE))
-                throw new ArgumentOutOfRangeException("hue", hue,
-                  ResourceProvider.ArgMustBeBetween("hue", 0.0f, MAX_HUE));
+                throw new ArgumentOutOfRangeException(nameof(hue), hue,
+                  ResourceProvider.ArgMustBeBetween(nameof(hue), 0.0f, MAX_HUE));
 
             if ((saturation < 0.0f) || (saturation > MAX_SATURATION))
-                throw new ArgumentOutOfRangeException("saturation", saturation,
-                  ResourceProvider.ArgMustBeBetween("saturation", 0.0f, MAX_SATURATION));
+                throw new ArgumentOutOfRangeException(nameof(saturation), saturation,
+                  ResourceProvider.ArgMustBeBetween(nameof(saturation), 0.0f, MAX_SATURATION));
 
             if ((value < 0.0f) || (value > MAX_VALUE))
-                throw new ArgumentOutOfRangeException("value", value,
-                  ResourceProvider.ArgMustBeBetween("value", 0.0f, MAX_VALUE));
+                throw new ArgumentOutOfRangeException(nameof(value), value,
+                  ResourceProvider.ArgMustBeBetween(nameof(value), 0.0f, MAX_VALUE));
 
 
             return new ColorHsv(alfa, hue, saturation, value);
@@ -239,14 +239,14 @@ namespace Plethora.Drawing
         /// </returns>
         public Color ToColor()
         {
-            float H_ = (H / 60f);
+            float H_ = (this.H / 60f);
             int Hi = ((int)H_) % 6;
 
             float f = H_ - Hi;
 
-            float p = value * (1 - saturation);
-            float q = value * (1 - f * saturation);
-            float t = value * (1 - (1 - f) * saturation);
+            float p = this.value * (1 - this.saturation);
+            float q = this.value * (1 - f * this.saturation);
+            float t = this.value * (1 - (1 - f) * this.saturation);
 
             float _red = 0f;
             float _green = 0f;
@@ -255,22 +255,22 @@ namespace Plethora.Drawing
             switch (Hi)
             {
                 case 0:
-                    _red = value; _green = t; _blue = p;
+                    _red = this.value; _green = t; _blue = p;
                     break;
                 case 1:
-                    _red = q; _green = value; _blue = p;
+                    _red = q; _green = this.value; _blue = p;
                     break;
                 case 2:
-                    _red = p; _green = value; _blue = t;
+                    _red = p; _green = this.value; _blue = t;
                     break;
                 case 3:
-                    _red = p; _green = q; _blue = value;
+                    _red = p; _green = q; _blue = this.value;
                     break;
                 case 4:
-                    _red = t; _green = p; _blue = value;
+                    _red = t; _green = p; _blue = this.value;
                     break;
                 case 5:
-                    _red = value; _green = p; _blue = q;
+                    _red = this.value; _green = p; _blue = q;
                     break;
             }
 
@@ -278,7 +278,7 @@ namespace Plethora.Drawing
             int green = Translate(_green);
             int blue = Translate(_blue);
 
-            return Color.FromArgb(alfa, red, green, blue);
+            return Color.FromArgb(this.alfa, red, green, blue);
         }
         #endregion
 
@@ -330,7 +330,7 @@ namespace Plethora.Drawing
                 return false;
 
             ColorHsv other = (ColorHsv)obj;
-            return Equals(other);
+            return this.Equals(other);
         }
 
         /// <summary>
@@ -342,7 +342,7 @@ namespace Plethora.Drawing
         /// </returns>
         public override int GetHashCode()
         {
-            return HashCodeHelper.GetHashCode(alfa, hue, saturation, value);
+            return HashCodeHelper.GetHashCode(this.alfa, this.hue, this.saturation, this.value);
         }
 
         /// <summary>

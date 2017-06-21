@@ -69,9 +69,9 @@ namespace Plethora
         public void Add(TEventHandler handler)
         {
             HandlerInfo info = new HandlerInfo(handler, this);
-            lock (@lock)
+            lock (this.@lock)
             {
-                innerDelegates.Add(info);
+                this.innerDelegates.Add(info);
             }
         }
 
@@ -85,15 +85,15 @@ namespace Plethora
             var target = @delegate.Target;
             var method = @delegate.Method;
 
-            lock (@lock)
+            lock (this.@lock)
             {
-                for (int i = 0; i < innerDelegates.Count; i++)
+                for (int i = 0; i < this.innerDelegates.Count; i++)
                 {
-                    var info = innerDelegates[i];
+                    var info = this.innerDelegates[i];
 
                     if ((info.WeakTarget.Target == target) && (info.Method == method))
                     {
-                        innerDelegates.RemoveAt(i);
+                        this.innerDelegates.RemoveAt(i);
                         return;
                     }
                 }
@@ -102,9 +102,9 @@ namespace Plethora
 
         private void Remove(HandlerInfo info)
         {
-            lock (@lock)
+            lock (this.@lock)
             {
-                innerDelegates.Remove(info);
+                this.innerDelegates.Remove(info);
             }
         }
 
@@ -113,9 +113,9 @@ namespace Plethora
         /// </summary>
         public TEventHandler[] GetInvocationList()
         {
-            lock (@lock)
+            lock (this.@lock)
             {
-                return innerDelegates
+                return this.innerDelegates
                     .Select(info => info.Handler)
                     .ToArray();
             }

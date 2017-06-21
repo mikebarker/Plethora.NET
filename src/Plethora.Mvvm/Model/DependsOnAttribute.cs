@@ -10,7 +10,7 @@ namespace Plethora.Mvvm.Model
     /// </summary>
     /// <see cref="DependentNotifyPropertyChanged"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
-    public class DependsOnAttribute : Attribute
+    public sealed class DependsOnAttribute : Attribute
     {
         private readonly string dependsOnPropertyName;
         private readonly bool skipValidation;
@@ -28,7 +28,7 @@ namespace Plethora.Mvvm.Model
             bool skipValidation = false)
         {
             if (dependsOnPropertyName == null)
-                throw new ArgumentNullException("dependsOnPropertyName");
+                throw new ArgumentNullException(nameof(dependsOnPropertyName));
 
             this.dependsOnPropertyName = dependsOnPropertyName;
             this.skipValidation = skipValidation;

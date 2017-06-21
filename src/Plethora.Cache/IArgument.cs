@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Cache
 {
     /// <summary>
@@ -31,20 +33,20 @@ namespace Plethora.Cache
         /// <summary>
         /// Gets a value indicating whether two arguments overlap in the key-space which they represent.
         /// </summary>
-        /// <param name="B">
+        /// <param name="other">
         /// An instance of <see cref="IArgument{TData,TArgument}"/> which is to be tested against this instance.
         /// </param>
-        /// <param name="notInB">
+        /// <param name="notInOther">
         ///  <para>
         ///   The enumeration of <see cref="IArgument{TData,TArgument}"/> which represents the portion of
-        ///   this which is not overlapped by <paramref name="B"/>.
+        ///   this which is not overlapped by <paramref name="other"/>.
         ///  </para>
         ///  <para>
-        ///   In the case where this is entirely covered by <paramref name="B"/> the <paramref name="notInB"/>
-        ///   argument can be returned as null or as an empty enumeration.
+        ///   In the case where this is entirely covered by <paramref name="other"/> the <paramref name="notInOther"/>
+        ///   argument can be returned as 'null' or as an empty enumeration.
         ///  </para>
         ///  <para>
-        ///   The output value of <paramref name="notInB"/> is ignored in the case where false is returned,
+        ///   The output value of <paramref name="notInOther"/> is ignored in the case where false is returned,
         ///   as there is no overlap.
         ///  </para>
         /// </param>
@@ -55,7 +57,7 @@ namespace Plethora.Cache
         ///  If one considers the arguments which represent the following sets over the key space:
         ///  <code>
         ///  <![CDATA[
-        ///            (B)
+        ///          (other)
         ///   +----------------------+
         ///   |                      |      this
         ///   |              +-------|-------------+
@@ -69,12 +71,12 @@ namespace Plethora.Cache
         ///                  +---------------------+
         ///  ]]>
         ///  </code>
-        ///  In the above case <see cref="IsOverlapped"/> should return true (since this and B share
-        ///  some of the key-space, and <paramref name="notInB"/> should represent the hashed area.
+        ///  In the above case <see cref="IsOverlapped"/> should return true (since this and <paramref name="other"/> share
+        ///  some of the key-space, and <paramref name="notInOther"/> should represent the hashed area.
         /// </remarks>
         bool IsOverlapped(
-            TArgument B,
-            out IEnumerable<TArgument> notInB);
+            [NotNull] TArgument other,
+            [CanBeNull, ItemNotNull] out IEnumerable<TArgument> notInOther);
 
 
         /// <summary>
@@ -83,6 +85,6 @@ namespace Plethora.Cache
         /// </summary>
         /// <param name="data">The data to be tested.</param>
         /// <returns>true if the <paramref name="data"/> parameter is represented by this instance.</returns>
-        bool IsDataIncluded(TData data);
+        bool IsDataIncluded([NotNull] TData data);
     }
 }

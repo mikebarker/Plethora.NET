@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context.Action
 {
     internal class TemplateActionFactory : IActionFactory
@@ -8,69 +10,70 @@ namespace Plethora.Context.Action
         private readonly Dictionary<string, List<IActionTemplate>> templates = new Dictionary<string, List<IActionTemplate>>();
         private readonly Dictionary<string, List<IMultiActionTemplate>> multiTemplates = new Dictionary<string, List<IMultiActionTemplate>>();
 
-        public void RegisterActionTemplate(IMultiActionTemplate template)
+        public void RegisterActionTemplate([NotNull] IMultiActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
 
             string contextName = template.ContextName;
 
             List<IMultiActionTemplate> list;
-            if (!multiTemplates.TryGetValue(contextName, out list))
+            if (!this.multiTemplates.TryGetValue(contextName, out list))
             {
                 list = new List<IMultiActionTemplate>();
-                multiTemplates.Add(contextName, list);
+                this.multiTemplates.Add(contextName, list);
             }
 
             list.Add(template);
         }
 
-        public void RegisterActionTemplate(IActionTemplate template)
+        public void RegisterActionTemplate([NotNull] IActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
 
             string contextName = template.ContextName;
 
             List<IActionTemplate> list;
-            if (!templates.TryGetValue(contextName, out list))
+            if (!this.templates.TryGetValue(contextName, out list))
             {
                 list = new List<IActionTemplate>();
-                templates.Add(contextName, list);
+                this.templates.Add(contextName, list);
             }
 
             list.Add(template);
         }
 
-        public void DeregisterActionTemplate(IActionTemplate template)
+        public void DeregisterActionTemplate([NotNull] IActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
 
             List<IActionTemplate> list;
-            if (templates.TryGetValue(template.ContextName, out list))
+            if (this.templates.TryGetValue(template.ContextName, out list))
                 list.Remove(template);
         }
 
-        public void DeregisterActionTemplate(IMultiActionTemplate template)
+        public void DeregisterActionTemplate([NotNull] IMultiActionTemplate template)
         {
             //Validation
             if (template == null)
-                throw new ArgumentNullException("template");
+                throw new ArgumentNullException(nameof(template));
 
 
             List<IMultiActionTemplate> list;
-            if (multiTemplates.TryGetValue(template.ContextName, out list))
+            if (this.multiTemplates.TryGetValue(template.ContextName, out list))
                 list.Remove(template);
         }
 
-        public IEnumerable<IAction> GetActions(IDictionary<string, ContextInfo[]> contextsByName)
+        [NotNull]
+        public IEnumerable<IAction> GetActions([NotNull] IDictionary<string, ContextInfo[]> contextsByName)
         {
             List<IAction> actions = new List<IAction>();
 
@@ -86,7 +89,7 @@ namespace Plethora.Context.Action
                 else if (contexts.Length == 1)
                 {
                     List<IActionTemplate> list;
-                    if (templates.TryGetValue(contextName, out list))
+                    if (this.templates.TryGetValue(contextName, out list))
                     {
                         foreach (var template in list)
                         {
@@ -102,7 +105,7 @@ namespace Plethora.Context.Action
                 else
                 {
                     List<IMultiActionTemplate> list;
-                    if (multiTemplates.TryGetValue(contextName, out list))
+                    if (this.multiTemplates.TryGetValue(contextName, out list))
                     {
                         foreach (var template in list)
                         {
@@ -133,7 +136,7 @@ namespace Plethora.Context.Action
 
             #region Constructor
 
-            public ContextAction(IActionTemplate template, ContextInfo context)
+            public ContextAction([NotNull] IActionTemplate template, [NotNull] ContextInfo context)
             {
                 this.context = context;
                 this.template = template;
@@ -141,14 +144,16 @@ namespace Plethora.Context.Action
 
             #endregion
 
+            [NotNull]
             protected ContextInfo Context
             {
-                get { return context; }
+                get { return this.context; }
             }
 
+            [NotNull]
             protected IActionTemplate Template
             {
-                get { return template; }
+                get { return this.template; }
             }
 
 
@@ -176,13 +181,14 @@ namespace Plethora.Context.Action
         {
             #region Constructor
 
-            public UiContextAction(IUiActionTemplate template, ContextInfo context)
+            public UiContextAction([NotNull] IUiActionTemplate template, [NotNull] ContextInfo context)
                 : base(template, context)
             {
             }
 
             #endregion
 
+            [NotNull]
             protected new IUiActionTemplate Template
             {
                 get { return (IUiActionTemplate)base.Template; }
@@ -229,7 +235,7 @@ namespace Plethora.Context.Action
 
             #region Constructors
 
-            public MultiContextAction(IMultiActionTemplate template, ContextInfo[] contexts)
+            public MultiContextAction([NotNull] IMultiActionTemplate template, [NotNull, ItemNotNull] ContextInfo[] contexts)
             {
                 this.template = template;
                 this.contexts = contexts;
@@ -237,11 +243,13 @@ namespace Plethora.Context.Action
 
             #endregion
 
+            [NotNull, ItemNotNull]
             protected ContextInfo[] Contexts
             {
-                get { return contexts; }
+                get { return this.contexts; }
             }
 
+            [NotNull]
             protected IMultiActionTemplate Template
             {
                 get { return this.template; }
@@ -271,13 +279,14 @@ namespace Plethora.Context.Action
         {
             #region Constructors
 
-            public UiMultiContextAction(IUiMultiActionTemplate template, ContextInfo[] contexts)
+            public UiMultiContextAction([NotNull] IUiMultiActionTemplate template, [NotNull, ItemNotNull] ContextInfo[] contexts)
                 : base(template, contexts)
             {
             }
 
             #endregion
 
+            [NotNull]
             protected new IUiMultiActionTemplate Template
             {
                 get { return (IUiMultiActionTemplate)base.Template; }

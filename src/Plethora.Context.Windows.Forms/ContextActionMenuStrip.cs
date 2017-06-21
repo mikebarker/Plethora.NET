@@ -25,8 +25,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of ContextManager has changed")]
         public event EventHandler ContextManagerChanged
         {
-            add { base.Events.AddHandler(ContextManagerChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(ContextManagerChanged_EventKey, value); }
+            add { this.Events.AddHandler(ContextManagerChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(ContextManagerChanged_EventKey, value); }
         }
 
         private ContextManager contextManager = ContextManager_DefaultValue;
@@ -40,7 +40,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("Description")]
         public virtual ContextManager ContextManager
         {
-            get { return contextManager; }
+            get { return this.contextManager; }
             set
             {
                 if (this.contextManager == value)
@@ -56,7 +56,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnContextManagerChanged(EventArgs e)
         {
-            var handler = base.Events[ContextManagerChanged_EventKey] as EventHandler;
+            var handler = this.Events[ContextManagerChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -76,8 +76,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of ActionManager has changed")]
         public event EventHandler ActionManagerChanged
         {
-            add { base.Events.AddHandler(ActionManagerChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(ActionManagerChanged_EventKey, value); }
+            add { this.Events.AddHandler(ActionManagerChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(ActionManagerChanged_EventKey, value); }
         }
 
         private ActionManager actionManager = ActionManager_DefaultValue;
@@ -91,7 +91,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("Description")]
         public virtual ActionManager ActionManager
         {
-            get { return actionManager; }
+            get { return this.actionManager; }
             set
             {
                 if (this.actionManager == value)
@@ -107,7 +107,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnActionManagerChanged(EventArgs e)
         {
-            var handler = base.Events[ActionManagerChanged_EventKey] as EventHandler;
+            var handler = this.Events[ActionManagerChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -127,8 +127,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of MaxGroupItems has changed")]
         public event EventHandler MaxGroupItemsChanged
         {
-            add { base.Events.AddHandler(MaxGroupItemsChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(MaxGroupItemsChanged_EventKey, value); }
+            add { this.Events.AddHandler(MaxGroupItemsChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(MaxGroupItemsChanged_EventKey, value); }
         }
 
         private int maxGroupItems = MaxGroupItems_DefaultValue;
@@ -145,7 +145,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("The maximum number of items to be displayed in each group.")]
         public virtual int MaxGroupItems
         {
-            get { return maxGroupItems; }
+            get { return this.maxGroupItems; }
             set
             {
                 if (this.maxGroupItems == value)
@@ -161,7 +161,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnMaxGroupItemsChanged(EventArgs e)
         {
-            var handler = base.Events[MaxGroupItemsChanged_EventKey] as EventHandler;
+            var handler = this.Events[MaxGroupItemsChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -181,8 +181,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of ShowUnavailableActions has changed")]
         public event EventHandler ShowUnavailableActionsChanged
         {
-            add { base.Events.AddHandler(ShowUnavailableActionsChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(ShowUnavailableActionsChanged_EventKey, value); }
+            add { this.Events.AddHandler(ShowUnavailableActionsChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(ShowUnavailableActionsChanged_EventKey, value); }
         }
 
         private bool showUnavailableActions = ShowUnavailableActions_DefaultValue;
@@ -196,7 +196,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("A flag which determines whether unavailable items should be shown in the menu.")]
         public virtual bool ShowUnavailableActions
         {
-            get { return showUnavailableActions; }
+            get { return this.showUnavailableActions; }
             set
             {
                 if (this.showUnavailableActions == value)
@@ -212,7 +212,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnShowUnavailableActionsChanged(EventArgs e)
         {
-            var handler = base.Events[ShowUnavailableActionsChanged_EventKey] as EventHandler;
+            var handler = this.Events[ShowUnavailableActionsChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -232,8 +232,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of DisableGrouping has changed")]
         public event EventHandler DisableGroupingChanged
         {
-            add { base.Events.AddHandler(DisableGroupingChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(DisableGroupingChanged_EventKey, value); }
+            add { this.Events.AddHandler(DisableGroupingChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(DisableGroupingChanged_EventKey, value); }
         }
 
         private bool disableGrouping = DisableGrouping_DefaultValue;
@@ -247,7 +247,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("A flag which determines whether unavailable items should be shown in the menu.")]
         public virtual bool DisableGrouping
         {
-            get { return disableGrouping; }
+            get { return this.disableGrouping; }
             set
             {
                 if (this.disableGrouping == value)
@@ -263,7 +263,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnDisableGroupingChanged(EventArgs e)
         {
-            var handler = base.Events[DisableGroupingChanged_EventKey] as EventHandler;
+            var handler = this.Events[DisableGroupingChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -283,8 +283,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of SuppressedContextPatterns has changed")]
         public event EventHandler SuppressedContextPatternsChanged
         {
-            add { base.Events.AddHandler(SuppressedContextPatternsChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(SuppressedContextPatternsChanged_EventKey, value); }
+            add { this.Events.AddHandler(SuppressedContextPatternsChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(SuppressedContextPatternsChanged_EventKey, value); }
         }
 
         private ICollection<string> suppressedContextPatterns = SuppressedContextPatterns_DefaultValue;
@@ -298,10 +298,10 @@ namespace Plethora.Context.Windows.Forms
         [Description("A list of string patterns for which context with names matching the pattern will be suppressed.")]
         public virtual ICollection<string> SuppressedContextPatterns
         {
-            get { return suppressedContextPatterns; }
+            get { return this.suppressedContextPatterns; }
             set
             {
-                if (this.suppressedContextPatterns == value)
+                if (ReferenceEquals(this.suppressedContextPatterns, value))
                     return;
 
                 this.suppressedContextPatterns = value;
@@ -314,7 +314,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnSuppressedContextPatternsChanged(EventArgs e)
         {
-            var handler = base.Events[SuppressedContextPatternsChanged_EventKey] as EventHandler;
+            var handler = this.Events[SuppressedContextPatternsChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -334,8 +334,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of SuppressedActionPatterns has changed")]
         public event EventHandler SuppressedActionPatternsChanged
         {
-            add { base.Events.AddHandler(SuppressedActionPatternsChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(SuppressedActionPatternsChanged_EventKey, value); }
+            add { this.Events.AddHandler(SuppressedActionPatternsChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(SuppressedActionPatternsChanged_EventKey, value); }
         }
 
         private ICollection<string> suppressedActionPatterns = SuppressedActionPatterns_DefaultValue;
@@ -349,10 +349,10 @@ namespace Plethora.Context.Windows.Forms
         [Description("A list of string patterns for which actions with names matching the pattern will be suppressed.")]
         public virtual ICollection<string> SuppressedActionPatterns
         {
-            get { return suppressedActionPatterns; }
+            get { return this.suppressedActionPatterns; }
             set
             {
-                if (this.suppressedActionPatterns == value)
+                if (ReferenceEquals(this.suppressedActionPatterns, value))
                     return;
 
                 this.suppressedActionPatterns = value;
@@ -365,7 +365,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnSuppressedActionPatternsChanged(EventArgs e)
         {
-            var handler = base.Events[SuppressedActionPatternsChanged_EventKey] as EventHandler;
+            var handler = this.Events[SuppressedActionPatternsChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -385,8 +385,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of SuppressedGroupPatterns has changed")]
         public event EventHandler SuppressedGroupPatternsChanged
         {
-            add { base.Events.AddHandler(SuppressedGroupPatternsChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(SuppressedGroupPatternsChanged_EventKey, value); }
+            add { this.Events.AddHandler(SuppressedGroupPatternsChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(SuppressedGroupPatternsChanged_EventKey, value); }
         }
 
         private ICollection<string> suppressedGroupPatterns = SuppressedGroupPatterns_DefaultValue;
@@ -400,10 +400,10 @@ namespace Plethora.Context.Windows.Forms
         [Description("A list of string patterns for which groups with names matching the pattern will be suppressed.")]
         public virtual ICollection<string> SuppressedGroupPatterns
         {
-            get { return suppressedGroupPatterns; }
+            get { return this.suppressedGroupPatterns; }
             set
             {
-                if (this.suppressedGroupPatterns == value)
+                if (ReferenceEquals(this.suppressedGroupPatterns, value))
                     return;
 
                 this.suppressedGroupPatterns = value;
@@ -416,7 +416,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnSuppressedGroupPatternsChanged(EventArgs e)
         {
-            var handler = base.Events[SuppressedGroupPatternsChanged_EventKey] as EventHandler;
+            var handler = this.Events[SuppressedGroupPatternsChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -436,8 +436,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of ActionsAdapter has changed")]
         public event EventHandler ActionsAdapterChanged
         {
-            add { base.Events.AddHandler(ActionsAdapterChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(ActionsAdapterChanged_EventKey, value); }
+            add { this.Events.AddHandler(ActionsAdapterChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(ActionsAdapterChanged_EventKey, value); }
         }
 
         private IActionsAdapter actionsAdapter = ActionsAdapter_DefaultValue;
@@ -451,7 +451,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("An adapter for manipulating the set of available actions.")]
         public virtual IActionsAdapter ActionsAdapter
         {
-            get { return actionsAdapter; }
+            get { return this.actionsAdapter; }
             set
             {
                 if (this.actionsAdapter == value)
@@ -467,7 +467,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnActionsAdapterChanged(EventArgs e)
         {
-            var handler = base.Events[ActionsAdapterChanged_EventKey] as EventHandler;
+            var handler = this.Events[ActionsAdapterChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -487,8 +487,8 @@ namespace Plethora.Context.Windows.Forms
         [Description("Raised when the value of ImageKeyConverter has changed")]
         public event EventHandler ImageKeyConverterChanged
         {
-            add { base.Events.AddHandler(ImageKeyConverterChanged_EventKey, value); }
-            remove { base.Events.RemoveHandler(ImageKeyConverterChanged_EventKey, value); }
+            add { this.Events.AddHandler(ImageKeyConverterChanged_EventKey, value); }
+            remove { this.Events.RemoveHandler(ImageKeyConverterChanged_EventKey, value); }
         }
 
         private IImageKeyConverter imageKeyConverter = ImageKeyConverter_DefaultValue;
@@ -502,7 +502,7 @@ namespace Plethora.Context.Windows.Forms
         [Description("A converter for obtaining images from their keys.")]
         public virtual IImageKeyConverter ImageKeyConverter
         {
-            get { return imageKeyConverter; }
+            get { return this.imageKeyConverter; }
             set
             {
                 if (this.imageKeyConverter == value)
@@ -518,7 +518,7 @@ namespace Plethora.Context.Windows.Forms
         /// </summary>
         protected virtual void OnImageKeyConverterChanged(EventArgs e)
         {
-            var handler = base.Events[ImageKeyConverterChanged_EventKey] as EventHandler;
+            var handler = this.Events[ImageKeyConverterChanged_EventKey] as EventHandler;
             if (handler != null)
                 handler(this, e);
         }
@@ -645,7 +645,7 @@ namespace Plethora.Context.Windows.Forms
 
                         if (imageKey != null)
                         {
-                            Image image = (Image)imageKeyConverter.Convert(
+                            Image image = imageKeyConverter.Convert(
                                 imageKey,
                                 CultureInfo.CurrentCulture);
 

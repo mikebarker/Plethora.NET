@@ -14,10 +14,10 @@ namespace Plethora.Collections
         public static IEnumerable<T> GetByRange<TKey, T>(this SortedByKeyList<TKey, T> list, Range<TKey> range)
         {
             if (list == null)
-                throw new ArgumentNullException("list");
+                throw new ArgumentNullException(nameof(list));
 
             if (list.Comparer.Compare(range.Min, range.Max) > 0) // min > max
-                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan("range.Min", "range.Max"), "range");
+                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan("range.Min", "range.Max"), nameof(range));
 
 
             int startIndex;
@@ -69,7 +69,7 @@ namespace Plethora.Collections
             if (count == 0)
                 return Enumerable.Empty<T>();
 
-            return new ListIndexItterator<T>(list, startIndex, count);
+            return new ListIndexIterator<T>(list, startIndex, count);
         }
     }
 }

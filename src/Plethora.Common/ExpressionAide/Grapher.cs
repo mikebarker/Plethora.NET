@@ -32,7 +32,8 @@ namespace Plethora.ExpressionAide
             sb.AppendLine(string.Format("{0} {1}: {2} - {3} [{4}]", strNode, relationDescription, expression.NodeType, expression.GetType().Name, expression.GetHashCode()));
 
 
-            sb.AppendLine(strBranch + "Type = " + expression.Type);
+            sb.Append(strBranch);
+            sb.AppendLine("Type = " + expression.Type);
             if (expression is BinaryExpression)
             {
                 var exp = (BinaryExpression)expression;
@@ -56,7 +57,8 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (ConstantExpression)expression;
 
-                sb.AppendLine(strBranch + "Value = " + exp.Value);
+                sb.Append(strBranch);
+                sb.AppendLine("Value = " + exp.Value);
             }
             else if (expression is InvocationExpression)
             {
@@ -74,7 +76,8 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (LambdaExpression)expression;
 
-                sb.AppendLine(strBranch + exp.ToString());
+                sb.Append(strBranch);
+                sb.AppendLine(exp.ToString());
 
                 int i = 0;
                 foreach (var parameter in exp.Parameters)
@@ -88,7 +91,8 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (MemberExpression)expression;
 
-                sb.AppendLine(strBranch + "Member = " + ((exp.Member == null) ? "<null>" : exp.Member.Name));
+                sb.Append(strBranch);
+                sb.AppendLine("Member = " + exp.Member.Name);
                 AddGraphNode(sb, depth + 1, "Expression", exp.Expression);
             }
             else if (expression is MethodCallExpression)
@@ -97,7 +101,8 @@ namespace Plethora.ExpressionAide
 
                 var method = exp.Method;
 
-                sb.AppendLine(strBranch + "Method = " + ((exp.Method == null) ? "<null>" : method.DeclaringType + "." + method.Name));
+                sb.Append(strBranch);
+                sb.AppendLine("Method = " + (method.DeclaringType + "." + method.Name));
                 AddGraphNode(sb, depth + 1, "Object", exp.Object);
 
                 int i = 0;
@@ -111,7 +116,8 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (NewExpression)expression;
 
-                sb.AppendLine(strBranch + "Constructor = " + ((exp.Constructor == null) ? "<null>" : exp.Constructor.Name));
+                sb.Append(strBranch);
+                sb.AppendLine("Constructor = " + exp.Constructor.Name);
 
                 int i = 0;
                 foreach (var argument in exp.Arguments)
@@ -123,7 +129,8 @@ namespace Plethora.ExpressionAide
                 i = 0;
                 foreach (var member in exp.Members)
                 {
-                    sb.AppendLine(strBranch + "Member " + i + " = " + member.Name);
+                    sb.Append(strBranch);
+                    sb.AppendLine("Member " + i + " = " + member.Name);
                     i++;
                 }
             }
@@ -145,8 +152,10 @@ namespace Plethora.ExpressionAide
                 int i = 0;
                 foreach (var binding in exp.Bindings)
                 {
-                    sb.AppendLine(strBranch + "Binding " + i + ".BindingType = " + binding.BindingType);
-                    sb.AppendLine(strBranch + "Binding " + i + ".Member = " + ((binding.Member == null) ? "<null>" : binding.Member.Name));
+                    sb.Append(strBranch);
+                    sb.AppendLine("Binding " + i + ".BindingType = " + binding.BindingType);
+                    sb.Append(strBranch);
+                    sb.AppendLine("Binding " + i + ".Member = " + binding.Member.Name);
 
 
                     if (binding is MemberAssignment)
@@ -180,7 +189,8 @@ namespace Plethora.ExpressionAide
                 int i = 0;
                 foreach (var elementInit in exp.Initializers)
                 {
-                    sb.AppendLine(strBranch + "Initializer " + i + ".AddMethod = " + ((elementInit.AddMethod == null) ? "<null>" : elementInit.AddMethod.Name));
+                    sb.Append(strBranch);
+                    sb.AppendLine("Initializer " + i + ".AddMethod = " + elementInit.AddMethod.Name);
                     int j = 0;
                     foreach (var argument in elementInit.Arguments)
                     {
@@ -196,13 +206,15 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (ParameterExpression)expression;
 
-                sb.AppendLine(strBranch + "Name = " + exp.Name);
+                sb.Append(strBranch);
+                sb.AppendLine("Name = " + exp.Name);
             }
             else if (expression is TypeBinaryExpression)
             {
                 var exp = (TypeBinaryExpression)expression;
 
-                sb.AppendLine(strBranch + "TypeOperand = " + exp.TypeOperand.Name);
+                sb.Append(strBranch);
+                sb.AppendLine("TypeOperand = " + exp.TypeOperand.Name);
                 AddGraphNode(sb, depth + 1, "Expression", exp.Expression);
             }
             else if (expression is UnaryExpression)

@@ -22,7 +22,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (innerTree == null)
-                throw new ArgumentNullException("innerTree");
+                throw new ArgumentNullException(nameof(innerTree));
 
 
             this.innerTree = innerTree;
@@ -50,7 +50,7 @@ namespace Plethora.fqi.Trees
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
         #endregion
 
@@ -83,7 +83,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (array == null)
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
 
             if (array.Rank != 1)
                 throw new ArgumentException("Only single dimensional arrays are supported for the requested action.");
@@ -110,14 +110,14 @@ namespace Plethora.fqi.Trees
 
             result = list.Remove(item.Value);
             if (result)
-                count--;
+                this.count--;
 
             return result;
         }
 
         public int Count
         {
-            get { return count; }
+            get { return this.count; }
         }
 
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
@@ -139,7 +139,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             List<TValue> list;
@@ -159,7 +159,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             List<TValue> list;
@@ -175,7 +175,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             List<TValue> list;
@@ -196,7 +196,7 @@ namespace Plethora.fqi.Trees
             {
                 //Validation
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
 
                 TValue value;
@@ -210,7 +210,7 @@ namespace Plethora.fqi.Trees
             {
                 //Validation
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
 
                 List<TValue> list;
@@ -253,16 +253,16 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             List<TValue> list;
             object info;
-            bool result = InnerTree.TryGetValueEx(key, out list, out info);
+            bool result = this.InnerTree.TryGetValueEx(key, out list, out info);
             if (!result)
             {
                 list = new List<TValue>(1);
-                InnerTree.AddEx(key, list, info);
+                this.InnerTree.AddEx(key, list, info);
             }
 
             if (list.Count > 0)
@@ -318,10 +318,10 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             if (!(info is AddExInfo))
                 throw new ArgumentException("info not as supplied by TryGetValueEx method.");

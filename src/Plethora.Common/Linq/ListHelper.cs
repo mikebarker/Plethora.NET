@@ -53,7 +53,7 @@ namespace Plethora.Linq
         {
             //Validation
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
 
             var count = source.Count - index;
@@ -62,7 +62,7 @@ namespace Plethora.Linq
 
         public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index, int count)
         {
-            return new ListIndexItterator<TSource>(source, index, count);
+            return new ListIndexIterator<TSource>(source, index, count);
         }
 
 
@@ -70,7 +70,7 @@ namespace Plethora.Linq
         {
             //Validation
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             
             var count = source.Count - index;
@@ -81,10 +81,10 @@ namespace Plethora.Linq
         {
             //Validation
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             if (index < 0)
-                throw new ArgumentOutOfRangeException("index", ResourceProvider.ArgMustBeGreaterThanEqualToZero("index"));
+                throw new ArgumentOutOfRangeException(nameof(index), ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(index)));
 
 
             if (index > source.Count - 1)
@@ -93,7 +93,7 @@ namespace Plethora.Linq
             var maxCount = source.Count - index;
             count = Math.Min(count, maxCount);
 
-            return new ListIndexItterator<TSource>(source, index, count);
+            return new ListIndexIterator<TSource>(source, index, count);
         }
         #endregion
     }

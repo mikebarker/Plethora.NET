@@ -21,10 +21,10 @@ namespace Plethora
         {
             //Validation
             if (observer == null)
-                throw new ArgumentNullException("observer");
+                throw new ArgumentNullException(nameof(observer));
 
             if (onObserverCollected == null)
-                throw new ArgumentNullException("onObserverCollected");
+                throw new ArgumentNullException(nameof(onObserverCollected));
 
             this.innerObserver = new WeakReference<IObserver<T>>(observer);
             this.onObserverCollected = onObserverCollected;
@@ -37,7 +37,7 @@ namespace Plethora
         /// <param name="value">The current notification information.</param>
         public void OnNext(T value)
         {
-            IObserver<T> observer = GetObserver();
+            IObserver<T> observer = this.GetObserver();
             if (observer == null)
                 return;
 
@@ -50,7 +50,7 @@ namespace Plethora
         /// <param name="error">An object that provides additional information about the error.</param>
         public void OnError(Exception error)
         {
-            IObserver<T> observer = GetObserver();
+            IObserver<T> observer = this.GetObserver();
             if (observer == null)
                 return;
 
@@ -62,7 +62,7 @@ namespace Plethora
         /// </summary>
         public void OnCompleted()
         {
-            IObserver<T> observer = GetObserver();
+            IObserver<T> observer = this.GetObserver();
             if (observer == null)
                 return;
 
@@ -79,17 +79,17 @@ namespace Plethora
         /// </returns>
         private IObserver<T> GetObserver()
         {
-            if (innerObserver == null)
+            if (this.innerObserver == null)
                 return null;
 
-            IObserver<T> target = innerObserver.Target;
+            IObserver<T> target = this.innerObserver.Target;
             if (target == null)
             {
-                if (onObserverCollected != null)
-                    onObserverCollected();
+                if (this.onObserverCollected != null)
+                    this.onObserverCollected();
 
-                innerObserver = null;
-                onObserverCollected = null;
+                this.innerObserver = null;
+                this.onObserverCollected = null;
                 return null;
             }
 
@@ -148,18 +148,18 @@ namespace Plethora
 
             ~DisposableContainer()
             {
-                Dispose(false);
+                this.Dispose(false);
             }
 
             public void Dispose()
             {
-                Dispose(true);
+                this.Dispose(true);
                 GC.SuppressFinalize(this);
             }
 
             private void Dispose(bool disposing)
             {
-                if (disposed)
+                if (this.disposed)
                     return;
 
                 if (disposing)
@@ -173,7 +173,7 @@ namespace Plethora
                 }
 
                 // Free any unmanaged objects here. 
-                disposed = true;
+                this.disposed = true;
             }
 
             #endregion

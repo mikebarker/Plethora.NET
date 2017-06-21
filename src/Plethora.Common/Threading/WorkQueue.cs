@@ -31,7 +31,7 @@ namespace Plethora.Threading
             {
                 //Validation
                 if (method == null)
-                    throw new ArgumentNullException("method");
+                    throw new ArgumentNullException(nameof(method));
 
                 this.method = method;
                 this.args = args;
@@ -44,12 +44,12 @@ namespace Plethora.Threading
             {
                 try
                 {
-                    object invokeResult = method.DynamicInvoke(args);
-                    Success(invokeResult);
+                    object invokeResult = this.method.DynamicInvoke(this.args);
+                    this.Success(invokeResult);
                 }
                 catch (Exception ex)
                 {
-                    Fail(ex);
+                    this.Fail(ex);
                 }
             }
 
@@ -72,17 +72,17 @@ namespace Plethora.Threading
             private void Success(object invokeResult)
             {
                 this.result = invokeResult;
-                waitHandle.Set();
+                this.waitHandle.Set();
             }
 
             private void Fail(Exception ex)
             {
                 if (ex == null)
-                    throw new ArgumentNullException("ex");
+                    throw new ArgumentNullException(nameof(ex));
 
 
                 this.exception = ex;
-                waitHandle.Set();
+                this.waitHandle.Set();
             }
             #endregion
 
@@ -96,7 +96,7 @@ namespace Plethora.Threading
             /// </returns>
             public bool IsCompleted
             {
-                get { return waitHandle.WaitOne(0); }
+                get { return this.waitHandle.WaitOne(0); }
             }
 
             /// <summary>
@@ -107,7 +107,7 @@ namespace Plethora.Threading
             /// </returns>
             public WaitHandle AsyncWaitHandle
             {
-                get { return waitHandle; }
+                get { return this.waitHandle; }
             }
 
             /// <summary>
@@ -153,15 +153,15 @@ namespace Plethora.Threading
         {
             //Validation
             if (threadCount <= 0)
-                throw new ArgumentOutOfRangeException("threadCount", threadCount,
-                    ResourceProvider.ArgMustBeGreaterThanZero("threadCount"));
+                throw new ArgumentOutOfRangeException(nameof(threadCount), threadCount,
+                    ResourceProvider.ArgMustBeGreaterThanZero(nameof(threadCount)));
 
 
             this.threads = new List<Thread>(threadCount);
 
             for (int i = 0; i < threadCount; i++)
             {
-                Thread thread = new Thread(DoLoop);
+                Thread thread = new Thread(this.DoLoop);
                 thread.IsBackground = true;
                 thread.Name = "WorkQueue_" + i.ToString(CultureInfo.InvariantCulture);
                 thread.Start();
@@ -177,7 +177,7 @@ namespace Plethora.Threading
 
         ~WorkQueue()
         {
-            Dispose(false);
+            this.Dispose(false);
         }
 
         /// <summary>
@@ -185,7 +185,7 @@ namespace Plethora.Threading
         /// </summary>
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -211,7 +211,7 @@ namespace Plethora.Threading
 
 
                 // Note disposing has been done.
-                disposed = true;
+                this.disposed = true;
             }
         }
         #endregion
@@ -235,14 +235,14 @@ namespace Plethora.Threading
         /// </param>
         public IAsyncResult BeginInvoke(Delegate method, object[] args)
         {
-            if (disposed)
+            if (this.disposed)
                 throw new InvalidOperationException(ResourceProvider.AlreadyDisposed());
 
             var workItem = new WorkItem(method, args);
-            lock(workQueue)
+            lock(this.workQueue)
             {
-                workQueue.Enqueue(workItem);
-                workWaitHandle.Set();
+                this.workQueue.Enqueue(workItem);
+                this.workWaitHandle.Set();
             }
             return workItem;
         }
@@ -262,10 +262,10 @@ namespace Plethora.Threading
         public object EndInvoke(IAsyncResult result)
         {
             if (result == null)
-                throw new ArgumentNullException("result");
+                throw new ArgumentNullException(nameof(result));
 
             if (!(result is WorkItem))
-                throw new ArgumentException(ResourceProvider.ArgInvalid("result"), "result");
+                throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(result)), nameof(result));
 
             var workItem = (WorkItem)result;
             return workItem.GetResult();
@@ -289,8 +289,8 @@ namespace Plethora.Threading
         /// </param>
         public object Invoke(Delegate method, object[] args)
         {
-            var asyncResult = BeginInvoke(method, args);
-            return EndInvoke(asyncResult);
+            var asyncResult = this.BeginInvoke(method, args);
+            return this.EndInvoke(asyncResult);
         }
 
         public void Abort()
@@ -299,7 +299,7 @@ namespace Plethora.Threading
             lock (this.workQueue)
             {
                 this.workQueue.Clear();
-                workWaitHandle.Set();
+                this.workWaitHandle.Set();
             }
         }
         #endregion
@@ -319,25 +319,25 @@ namespace Plethora.Threading
         private void DoLoop()
         {
             //Semi-inifinite loop
-            while (!exitDoLoop)
+            while (!this.exitDoLoop)
             {
                 WorkItem workItem = null;
                 bool workComplete;
-                lock (workQueue)
+                lock (this.workQueue)
                 {
-                    if (workQueue.Count == 0)
+                    if (this.workQueue.Count == 0)
                     {
                         workComplete = true;
                     }
                     else
                     {
-                        workItem = workQueue.Dequeue();
-                        workComplete = (workQueue.Count == 0);
+                        workItem = this.workQueue.Dequeue();
+                        workComplete = (this.workQueue.Count == 0);
                     }
 
                     if (workComplete)
                     {
-                        workWaitHandle.Reset();
+                        this.workWaitHandle.Reset();
                     }
                 }
 
@@ -351,7 +351,7 @@ namespace Plethora.Threading
                 if (workComplete)
                 {
                     //Wait for work to arrive.
-                    workWaitHandle.WaitOne();
+                    this.workWaitHandle.WaitOne();
                 }
             }
         }

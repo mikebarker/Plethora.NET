@@ -39,7 +39,7 @@ namespace Plethora.Globalization
         {
             //Validation
             if (culture == null)
-                throw new ArgumentNullException("culture");
+                throw new ArgumentNullException(nameof(culture));
 
             this.culture = culture;
         }
@@ -52,7 +52,7 @@ namespace Plethora.Globalization
         /// </summary>
         public CultureInfo Culture
         {
-            get { return culture; }
+            get { return this.culture; }
         }
 
         /// <summary>

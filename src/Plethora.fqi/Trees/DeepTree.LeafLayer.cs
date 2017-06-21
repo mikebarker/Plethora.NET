@@ -64,7 +64,7 @@ namespace Plethora.fqi.Trees
             /// </returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
 
             #endregion
@@ -78,7 +78,7 @@ namespace Plethora.fqi.Trees
             /// <exception cref="NotSupportedException">The <see cref="ICollection{T}" /> is read-only.</exception>
             public void Add(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
                 this.innerTree.Add(key, item);
             }
 
@@ -100,7 +100,7 @@ namespace Plethora.fqi.Trees
             /// <param name="item">The object to locate in the <see cref="ICollection{T}" />.</param>
             public bool Contains(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
                 return this.innerTree.ContainsKey(key);
             }
 
@@ -135,7 +135,7 @@ namespace Plethora.fqi.Trees
             /// <exception cref="NotSupportedException">The <see cref="ICollection{T}" /> is read-only.</exception>
             public bool Remove(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
                 return this.innerTree.Remove(key);
             }
 
@@ -170,7 +170,7 @@ namespace Plethora.fqi.Trees
             /// </summary>
             public IEnumerable<string> IndexedMembers
             {
-                get { return Enumerable.Repeat(indexedMember, 1); }
+                get { return Enumerable.Repeat(this.indexedMember, 1); }
             }
 
             /// <summary>
@@ -181,7 +181,7 @@ namespace Plethora.fqi.Trees
             {
                 var memberRanges = ExpressionAnalyser.GetMemberRestrictions(expr);
 
-                return FilterBy(expr, memberRanges);
+                return this.FilterBy(expr, memberRanges);
             }
 
             /// <summary>
@@ -237,7 +237,7 @@ namespace Plethora.fqi.Trees
             /// </returns>
             public bool AddOrUpdate(T item)
             {
-                var key = indexFunc(item);
+                var key = this.indexFunc(item);
                 return this.innerTree.AddOrUpdate(key, item);
             }
             #endregion
@@ -283,7 +283,7 @@ namespace Plethora.fqi.Trees
                 {
                     //Validation
                     if (tree == null)
-                        throw new ArgumentNullException("tree");
+                        throw new ArgumentNullException(nameof(tree));
 
 
                     this.innerEnumerator = tree.GetPairEnumerator();
@@ -305,7 +305,7 @@ namespace Plethora.fqi.Trees
                 public bool MoveNext()
                 {
                     if (!this.initialised)
-                        Reset();
+                        this.Reset();
 
                     return this.innerEnumerator.MoveNext();
                 }
@@ -314,11 +314,11 @@ namespace Plethora.fqi.Trees
                 {
                     if (this.range != null)
                     {
-                        if (range.HasMin)
-                            this.Min = (TKey)range.MinFunc();
+                        if (this.range.HasMin)
+                            this.Min = (TKey)this.range.MinFunc();
 
-                        if (range.HasMax)
-                            this.Max = (TKey)range.MaxFunc();
+                        if (this.range.HasMax)
+                            this.Max = (TKey)this.range.MaxFunc();
                     }
 
                     this.innerEnumerator.Reset();
@@ -333,7 +333,7 @@ namespace Plethora.fqi.Trees
 
                 object IEnumerator.Current
                 {
-                    get { return Current; }
+                    get { return this.Current; }
                 }
                 #endregion
 

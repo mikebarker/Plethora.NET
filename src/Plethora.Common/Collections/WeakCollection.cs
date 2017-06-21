@@ -29,7 +29,7 @@ namespace Plethora.Collections
             public Enumerator(WeakCollection<T> weakCollection)
             {
                 if (weakCollection == null)
-                    throw new ArgumentNullException("weakCollection");
+                    throw new ArgumentNullException(nameof(weakCollection));
 
 
                 this.weakCollection = weakCollection;
@@ -61,7 +61,7 @@ namespace Plethora.Collections
             {
                 get
                 {
-                    if (current == null)
+                    if (this.current == null)
                         throw new InvalidOperationException(
                             "Current item is before the start or after the end of the enumeration.");
 
@@ -89,21 +89,21 @@ namespace Plethora.Collections
 
                 while (true)
                 {
-                    if (index >= this.weakCollection.innerList.Count)
+                    if (this.index >= this.weakCollection.innerList.Count)
                     {
                         this.current = null;
                         this.index = -1;
                         return false;
                     }
 
-                    this.current = this.weakCollection.innerList[index].Target;
+                    this.current = this.weakCollection.innerList[this.index].Target;
                     if (this.current != null)
                     {
                         return true;
                     }
                     else
                     {
-                        this.weakCollection.innerList.RemoveAt(index);
+                        this.weakCollection.innerList.RemoveAt(this.index);
                     }
                 }
             }
@@ -154,7 +154,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (collection == null)
-                throw new ArgumentNullException("collection");
+                throw new ArgumentNullException(nameof(collection));
 
             foreach (T item in collection)
             {
@@ -178,7 +178,7 @@ namespace Plethora.Collections
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
         #endregion
 
@@ -224,18 +224,18 @@ namespace Plethora.Collections
         public void Add(T item, bool minimiseMemoryUsage)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             var weakReference = new WeakReference<T>(item);
 
             if (minimiseMemoryUsage)
             {
                 //Try to reuse memory if it is availble
-                for (int i = 0; i < innerList.Count; i++)
+                for (int i = 0; i < this.innerList.Count; i++)
                 {
-                    if (!innerList[i].IsAlive)
+                    if (!this.innerList[i].IsAlive)
                     {
-                        innerList[i] = weakReference;
+                        this.innerList[i] = weakReference;
                         return;
                     }
                 }
@@ -268,10 +268,10 @@ namespace Plethora.Collections
         public bool Contains(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
 
-            foreach (var weakReference in innerList)
+            foreach (var weakReference in this.innerList)
             {
                 if (item.Equals(weakReference.Target))
                     return true;
@@ -326,14 +326,14 @@ namespace Plethora.Collections
         public bool Remove(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
 
-            for (int i = 0; i < innerList.Count; i++)
+            for (int i = 0; i < this.innerList.Count; i++)
             {
-                if (item.Equals(innerList[i].Target))
+                if (item.Equals(this.innerList[i].Target))
                 {
-                    innerList.RemoveAt(i);
+                    this.innerList.RemoveAt(i);
                     return true;
                 }
             }
@@ -352,7 +352,7 @@ namespace Plethora.Collections
             get
             {
                 int count = 0;
-                foreach (var weakReference in innerList)
+                foreach (var weakReference in this.innerList)
                 {
                     if (weakReference.IsAlive)
                         count++;
@@ -398,7 +398,7 @@ namespace Plethora.Collections
         public ICollection<T> ToCollection()
         {
             var list = new List<T>(this.EstimateCount);
-            foreach (var weakReference in innerList)
+            foreach (var weakReference in this.innerList)
             {
                 T target = weakReference.Target;
                 if (target != null)
@@ -415,9 +415,9 @@ namespace Plethora.Collections
         {
             for (int i = this.innerList.Count - 1; i >= 0; i--)
             {
-                if (!innerList[i].IsAlive)
+                if (!this.innerList[i].IsAlive)
                 {
-                    innerList.RemoveAt(i);
+                    this.innerList.RemoveAt(i);
                 }
             }
 

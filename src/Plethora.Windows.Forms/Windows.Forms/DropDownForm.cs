@@ -76,7 +76,7 @@ namespace Plethora.Windows.Forms
         {
             //Validation
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
 
             this.control = control;

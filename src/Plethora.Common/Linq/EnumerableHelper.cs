@@ -42,14 +42,14 @@ namespace Plethora.Linq
         {
             //Validity
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             if (count < 0)
-                throw new ArgumentOutOfRangeException("count", count,
-                    ResourceProvider.ArgMustBeGreaterThanEqualToZero("count"));
+                throw new ArgumentOutOfRangeException(nameof(count), count,
+                    ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(count)));
 
             if (comparison == null)
-                throw new ArgumentNullException("comparison");
+                throw new ArgumentNullException(nameof(comparison));
 
 
             //short-cut ICollection
@@ -120,10 +120,10 @@ namespace Plethora.Linq
         {
             //Validation
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
             
             foreach (T t in source)
@@ -139,10 +139,10 @@ namespace Plethora.Linq
         {
             //Validation
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             if (action == null)
-                throw new ArgumentNullException("action");
+                throw new ArgumentNullException(nameof(action));
 
 
             int num = 0;

@@ -9,6 +9,8 @@ namespace Plethora.fqi
 {
     public static class EnumerableExtensions
     {
+        private static readonly IEnumerable<string> emptyIndices = new string[0];
+
         #region Public Methods
 
         public static IIndexedEnumerable<T> AsIndexedEnumerable<T>(this IEnumerable<T> enumerable)
@@ -24,7 +26,6 @@ namespace Plethora.fqi
         {
             #region Fields
 
-            private static readonly IEnumerable<string> emptyIndices = new string[0];
             private readonly IEnumerable<T> enumerable;
             #endregion
 
@@ -49,7 +50,7 @@ namespace Plethora.fqi
             /// </returns>
             public IEnumerator<T> GetEnumerator()
             {
-                return enumerable.GetEnumerator();
+                return this.enumerable.GetEnumerator();
             }
 
             /// <summary>
@@ -60,7 +61,7 @@ namespace Plethora.fqi
             /// </returns>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
 
             #endregion
@@ -72,7 +73,7 @@ namespace Plethora.fqi
             /// </summary>
             public IEnumerable<string> IndexedMembers
             {
-                get { return emptyIndices; }
+                get { return EnumerableExtensions.emptyIndices; }
             }
 
             /// <summary>

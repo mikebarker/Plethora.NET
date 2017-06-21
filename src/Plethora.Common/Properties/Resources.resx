@@ -178,7 +178,7 @@
     <value>'{0}' must be of type {1}.</value>
   </data>
   <data name="GenericArgMustBeIComparable" xml:space="preserve">
-    <value>Generic argument must implement IComparable or IComparable&lt;T&gt;; or be an instance of Nullable&lt;T&gt; where T is IComparable or IComparable&lt;T&gt;</value>
+    <value>Generic argument must implement IComparable or IComparable&lt;T&gt;; or be an instance of Nullable&lt;T&gt; where T is IComparable or IComparable&lt;T&gt;.</value>
   </data>
   <data name="ArgAddingDuplicate" xml:space="preserve">
     <value>The item already exists in the collection.</value>
@@ -200,5 +200,8 @@
   </data>
   <data name="ArgArrayInvalidType" xml:space="preserve">
     <value>Target array type is not compatible with the type of items in the collection</value>
+  </data>
+  <data name="GenericArgMustBeDelegate" xml:space="preserve">
+    <value>Generic argument must must be a subclass of Delegate.</value>
   </data>
 </root>

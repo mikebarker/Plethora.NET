@@ -87,12 +87,12 @@ namespace Plethora.Context.Wpf
 
         public string Name
         {
-            get { return (string)GetValue(NameProperty); }
-            set { SetValue(NameProperty, value); }
+            get { return (string)this.GetValue(NameProperty); }
+            set { this.SetValue(NameProperty, value); }
         }
 
         public static readonly DependencyProperty NameProperty = DependencyProperty.Register(
-            "Name",
+            nameof(Name),
             typeof(string),
             typeof(WpfContextSourceTemplate),
             new PropertyMetadata(default(string)));
@@ -103,12 +103,12 @@ namespace Plethora.Context.Wpf
 
         public int Rank
         {
-            get { return (int)GetValue(RankProperty); }
-            set { SetValue(RankProperty, value); }
+            get { return (int)this.GetValue(RankProperty); }
+            set { this.SetValue(RankProperty, value); }
         }
 
         public static readonly DependencyProperty RankProperty = DependencyProperty.Register(
-            "Rank",
+            nameof(Rank),
             typeof(int),
             typeof(WpfContextSourceTemplate),
             new PropertyMetadata(default(int)));
@@ -119,12 +119,12 @@ namespace Plethora.Context.Wpf
 
         public object Data
         {
-            get { return GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
+            get { return this.GetValue(DataProperty); }
+            set { this.SetValue(DataProperty, value); }
         }
 
         public static readonly DependencyProperty DataProperty = DependencyProperty.Register(
-            "Data",
+            nameof(Data),
             typeof(object),
             typeof(WpfContextSourceTemplate),
             new PropertyMetadata(default(object)));

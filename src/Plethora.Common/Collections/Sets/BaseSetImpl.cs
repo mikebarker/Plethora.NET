@@ -3,7 +3,7 @@
 namespace Plethora.Collections.Sets
 {
     /// <summary>
-    /// A base implementation of the <see cref="ISetCoreCore{T}"/> interface.
+    /// A base implementation of the <see cref="ISetCore{T}"/> interface.
     /// </summary>
     /// <typeparam name="T">The type of the elements in the set.</typeparam>
     /// <remarks>
@@ -40,7 +40,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             //Union is commutative
@@ -59,7 +59,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             //Intersect is commutative
@@ -78,7 +78,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
             if (other is EmptySet<T>)
                 return this;

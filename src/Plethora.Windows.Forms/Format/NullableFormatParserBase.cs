@@ -35,7 +35,7 @@ namespace Plethora.Format
         {
             //Validation
             if (formatParser == null)
-                throw new ArgumentNullException("formatParser");
+                throw new ArgumentNullException(nameof(formatParser));
 
 
             this.innerFormatParser = formatParser;
@@ -168,7 +168,7 @@ namespace Plethora.Format
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 if (value == nullString)
                     return;

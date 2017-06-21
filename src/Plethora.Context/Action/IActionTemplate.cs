@@ -1,4 +1,6 @@
-﻿namespace Plethora.Context.Action
+﻿using JetBrains.Annotations;
+
+namespace Plethora.Context.Action
 {
     /// <summary>
     /// A template used to create <see cref="IAction"/> instances to operate on
@@ -16,13 +18,15 @@
     /// <seealso cref="IMultiActionTemplate"/>
     public interface IActionTemplate
     {
+        [NotNull]
         string ContextName { get; }
 
-        string GetActionName(ContextInfo context);
+        [NotNull]
+        string GetActionName([NotNull] ContextInfo context);
 
-        bool CanExecute(ContextInfo context);
+        bool CanExecute([NotNull] ContextInfo context);
 
-        void Execute(ContextInfo context);
+        void Execute([NotNull] ContextInfo context);
     }
 
     /// <summary>
@@ -42,12 +46,14 @@
     /// <seealso cref="IActionTemplate"/>
     public interface IMultiActionTemplate
     {
+        [NotNull]
         string ContextName { get; }
 
-        string GetActionName(ContextInfo[] contexts);
+        [NotNull]
+        string GetActionName([NotNull, ItemNotNull] ContextInfo[] contexts);
 
-        bool CanExecute(ContextInfo[] contexts);
+        bool CanExecute([NotNull, ItemNotNull] ContextInfo[] contexts);
 
-        void Execute(ContextInfo[] contexts);
+        void Execute([NotNull, ItemNotNull] ContextInfo[] contexts);
     }
 }

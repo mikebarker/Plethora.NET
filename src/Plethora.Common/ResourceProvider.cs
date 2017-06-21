@@ -458,6 +458,15 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'GenericArgMustBeDelegate' with substitutions made.
+        /// </summary>
+        [NotNull]
+        public static string GenericArgMustBeDelegate()
+        {
+            return Resources.GenericArgMustBeDelegate;
+        }
+
+        /// <summary>
         /// Returns the resource string 'GenericArgMustBeIComparable' with substitutions made.
         /// </summary>
         [NotNull]

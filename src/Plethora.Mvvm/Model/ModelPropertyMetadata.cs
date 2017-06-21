@@ -5,31 +5,31 @@ using JetBrains.Annotations;
 namespace Plethora.Mvvm.Model
 {
     /// <summary>
-    /// Non-generic interface used for storing <see cref="ModelPropertyMetaData{T}"/>.
+    /// Non-generic interface used for storing <see cref="ModelPropertyMetadata{T}"/>.
     /// </summary>
-    internal interface IModelPropertyMetaData
+    internal interface IModelPropertyMetadata
     {
         [NotNull]
         string Name { get; }
     }
 
     /// <summary>
-    /// Generic implementation of <see cref="IModelPropertyMetaData"/>
+    /// Generic implementation of <see cref="IModelPropertyMetadata"/>
     /// </summary>
     /// <typeparam name="T">
     /// The data type of the property of this meta-data.
     /// </typeparam>
-    internal sealed class ModelPropertyMetaData<T> : IModelPropertyMetaData
+    internal sealed class ModelPropertyMetadata<T> : IModelPropertyMetadata
     {
         private readonly string name;
         private readonly T defaultValue;
 
-        public ModelPropertyMetaData(
+        public ModelPropertyMetadata(
             [NotNull] string name,
             T defaultValue)
         {
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             this.name = name;
             this.defaultValue = defaultValue;
@@ -43,19 +43,19 @@ namespace Plethora.Mvvm.Model
         [CanBeNull]
         public T DefaultValue
         {
-            get { return defaultValue; }
+            get { return this.defaultValue; }
         }
     }
 
-    internal static class ModelPropertyMetaDataHelper
+    internal static class ModelPropertyMetadataHelper
     {
         [CanBeNull]
-        public static T GetDefaultValueSafe<T>([CanBeNull] this ModelPropertyMetaData<T> propertyMetaData)
+        public static T GetDefaultValueSafe<T>([CanBeNull] this ModelPropertyMetadata<T> propertyMetadata)
         {
-            if (propertyMetaData == null)
+            if (propertyMetadata == null)
                 return default(T);
 
-            return propertyMetaData.DefaultValue;
+            return propertyMetadata.DefaultValue;
         }
     }
 }

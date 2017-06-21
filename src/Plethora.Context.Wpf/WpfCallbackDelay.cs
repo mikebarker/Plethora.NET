@@ -26,13 +26,13 @@ namespace Plethora.Context.Wpf
         private TEventArgs originalArgs;
 
         private readonly EventHandler<TEventArgs> callback;
-        private readonly DispatcherTimer timer = new DispatcherTimer();
+        private readonly DispatcherTimer timer;
 
         public WpfCallbackDelay(EventHandler<TEventArgs> callback, int delayMilliSeconds)
         {
             this.callback = callback;
             this.timer = new DispatcherTimer();
-            this.timer.Tick += timer_Tick;
+            this.timer.Tick += this.timer_Tick;
             this.timer.Interval = new TimeSpan(0, 0, 0, 0, delayMilliSeconds);
         }
 
@@ -43,10 +43,10 @@ namespace Plethora.Context.Wpf
         {
             if (this.timer.Dispatcher.CheckAccess())
             {
-                lock(lockObj)
+                lock(this.lockObj)
                 {
-                    originalSender = sender;
-                    originalArgs = e;
+                    this.originalSender = sender;
+                    this.originalArgs = e;
                     this.timer.Start();
                 }
             }
@@ -54,10 +54,10 @@ namespace Plethora.Context.Wpf
             {
                 System.Action startTimer = delegate
                     {
-                        lock (lockObj)
+                        lock (this.lockObj)
                         {
-                            originalSender = sender;
-                            originalArgs = e;
+                            this.originalSender = sender;
+                            this.originalArgs = e;
                             this.timer.Start();
                         }
                     };
@@ -72,14 +72,14 @@ namespace Plethora.Context.Wpf
             object _sender;
             TEventArgs _args;
 
-            lock (lockObj)
+            lock (this.lockObj)
             {
                 this.timer.Stop();
-                _sender = originalSender;
-                _args = originalArgs;
+                _sender = this.originalSender;
+                _args = this.originalArgs;
             }
 
-            callback(_sender, _args);
+            this.callback(_sender, _args);
         }
     }
 }

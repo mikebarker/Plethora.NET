@@ -68,16 +68,16 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keySelector == null)
-                throw new ArgumentNullException("keySelector");
+                throw new ArgumentNullException(nameof(keySelector));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
 
             //Order the sets by key
@@ -113,13 +113,13 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
 
             //Order the sets by key
@@ -227,22 +227,22 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keySelector == null)
-                throw new ArgumentNullException("keySelector");
+                throw new ArgumentNullException(nameof(keySelector));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
             if (valueSelector == null)
-                throw new ArgumentNullException("valueSelector");
+                throw new ArgumentNullException(nameof(valueSelector));
 
             if (valueEqualityComparer == null)
-                throw new ArgumentNullException("valueEqualityComparer");
+                throw new ArgumentNullException(nameof(valueEqualityComparer));
 
 
             //Select the key-value pairs
@@ -396,16 +396,16 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keySelector == null)
-                throw new ArgumentNullException("keySelector");
+                throw new ArgumentNullException(nameof(keySelector));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
 
             //Order the sets by key
@@ -453,13 +453,13 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
 
             //Order the sets by key
@@ -594,22 +594,22 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keySelector == null)
-                throw new ArgumentNullException("keySelector");
+                throw new ArgumentNullException(nameof(keySelector));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
             if (valueSelector == null)
-                throw new ArgumentNullException("valueSelector");
+                throw new ArgumentNullException(nameof(valueSelector));
 
             if (valueEqualityComparer == null)
-                throw new ArgumentNullException("valueEqualityComparer");
+                throw new ArgumentNullException(nameof(valueEqualityComparer));
 
 
             //Select the key-value pairs
@@ -711,16 +711,16 @@ namespace Plethora.Collections
         {
             //Validation
             if (leftSet == null)
-                throw new ArgumentNullException("leftSet");
+                throw new ArgumentNullException(nameof(leftSet));
 
             if (rightSet == null)
-                throw new ArgumentNullException("rightSet");
+                throw new ArgumentNullException(nameof(rightSet));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
             if (valueEqualityComparer == null)
-                throw new ArgumentNullException("valueEqualityComparer");
+                throw new ArgumentNullException(nameof(valueEqualityComparer));
 
 
             //Get the enumerators

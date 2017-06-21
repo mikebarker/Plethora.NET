@@ -22,10 +22,10 @@ namespace Plethora.fqi
         {
             //Validation
             if (propertyExpressions == null)
-                throw new ArgumentNullException("propertyExpressions");
+                throw new ArgumentNullException(nameof(propertyExpressions));
 
             if (propertyExpressions.Length == 0)
-                throw new ArgumentException("propertyExpressions may not be empty.", "propertyExpressions");
+                throw new ArgumentException("propertyExpressions may not be empty.", nameof(propertyExpressions));
 
 
             this.innerIndexedCollection = DeepTree.CreateDeepTree<T>(unique, propertyExpressions);
@@ -53,7 +53,7 @@ namespace Plethora.fqi
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -167,7 +167,7 @@ namespace Plethora.fqi
         {
             var memberRanges = ExpressionAnalyser.GetMemberRestrictions(expr);
 
-            return FilterBy(expr, memberRanges);
+            return this.FilterBy(expr, memberRanges);
         }
 
         /// <summary>

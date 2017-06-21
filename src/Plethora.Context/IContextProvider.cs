@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -33,6 +35,7 @@ namespace Plethora.Context
         /// <summary>
         /// Gets the list of contexts currently in scope.
         /// </summary>
+        [CanBeNull, ItemCanBeNull]
         IEnumerable<ContextInfo> Contexts { get; }
     }
 }

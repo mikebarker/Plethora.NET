@@ -15,8 +15,8 @@ namespace Plethora.Drawing
     {
         #region Fields
 
-        private int alfa;
-        private int effectiveLuminance;
+        private readonly int alfa;
+        private readonly int effectiveLuminance;
         #endregion
 
         #region Constructors
@@ -45,7 +45,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int A
         {
-            get { return alfa; }
+            get { return this.alfa; }
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace Plethora.Drawing
         /// </summary>
         public int EffectiveLuminance
         {
-            get { return effectiveLuminance; }
+            get { return this.effectiveLuminance; }
         }
         #endregion
 
@@ -93,12 +93,12 @@ namespace Plethora.Drawing
         {
             //Validation
             if ((alfa < 0) || (alfa > ColorBase.FullAlfa))
-                throw new ArgumentOutOfRangeException("alfa", alfa,
-                  ResourceProvider.ArgMustBeBetween("alfa", 0, ColorBase.FullAlfa));
+                throw new ArgumentOutOfRangeException(nameof(alfa), alfa,
+                  ResourceProvider.ArgMustBeBetween(nameof(alfa), 0, ColorBase.FullAlfa));
 
             if ((effectiveLuminance < 0) || (effectiveLuminance > ColorBase.ComponentMaximum))
-                throw new ArgumentOutOfRangeException("effectiveLuminance", effectiveLuminance,
-                  ResourceProvider.ArgMustBeBetween("effectiveLuminance", 0, ColorBase.ComponentMaximum));
+                throw new ArgumentOutOfRangeException(nameof(effectiveLuminance), effectiveLuminance,
+                  ResourceProvider.ArgMustBeBetween(nameof(effectiveLuminance), 0, ColorBase.ComponentMaximum));
 
 
             return new ColorGrayscale(alfa, effectiveLuminance);
@@ -178,7 +178,7 @@ namespace Plethora.Drawing
         /// </returns>
         public Color ToColor()
         {
-            return Color.FromArgb(alfa, effectiveLuminance, effectiveLuminance, effectiveLuminance);
+            return Color.FromArgb(this.alfa, this.effectiveLuminance, this.effectiveLuminance, this.effectiveLuminance);
         }
         #endregion
 
@@ -218,7 +218,7 @@ namespace Plethora.Drawing
                 return false;
 
             ColorGrayscale other = (ColorGrayscale)obj;
-            return Equals(other);
+            return this.Equals(other);
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace Plethora.Drawing
         /// </returns>
         public override int GetHashCode()
         {
-            return HashCodeHelper.GetHashCode(alfa, effectiveLuminance);
+            return HashCodeHelper.GetHashCode(this.alfa, this.effectiveLuminance);
         }
 
         /// <summary>

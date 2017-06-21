@@ -64,7 +64,7 @@
     </Compile>
     <Compile Include="Collections\AutoSortedList.cs" />
     <Compile Include="Collections\FuncComparer.cs" />
-    <Compile Include="Collections\ListIndexItterator.cs" />
+    <Compile Include="Collections\ListIndexIterator.cs" />
     <Compile Include="Collections\MruDictionary.cs" />
     <Compile Include="Collections\ReadOnlyCollectionWrapper.cs" />
     <Compile Include="Collections\ReferenceEqualityComparer.cs" />

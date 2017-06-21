@@ -31,13 +31,13 @@ namespace Plethora.Synchronized
         {
             //Validation
             if (syncCollection == null)
-                throw new ArgumentNullException("syncCollection");
+                throw new ArgumentNullException(nameof(syncCollection));
 
             if (cloneFunc == null)
-                throw new ArgumentNullException("cloneFunc");
+                throw new ArgumentNullException(nameof(cloneFunc));
 
             if (changeSource == null)
-                throw new ArgumentNullException("changeSource");
+                throw new ArgumentNullException(nameof(changeSource));
 
 
             this.cloneFunc = cloneFunc;
@@ -51,10 +51,10 @@ namespace Plethora.Synchronized
 
 
             this.syncCollection = syncCollection;
-            this.syncCollection.ChangePublished += SyncCollection_ChangePublished;
+            this.syncCollection.ChangePublished += this.SyncCollection_ChangePublished;
 
             bool didErrorOccur;
-            BuildLocalList(out localItemList, out localStateList, out didErrorOccur);
+            this.BuildLocalList(out this.localItemList, out this.localStateList, out didErrorOccur);
         }
 
         #endregion
@@ -64,16 +64,16 @@ namespace Plethora.Synchronized
             ChangeDescriptor change = e.Change;
 
             //Validate the change
-            ChangeHandler handler = GetChangeHandler(change);
+            ChangeHandler handler = this.GetChangeHandler(change);
             handler.Validate(change);
 
 
             //Remove the change for the local change set if it originated from this source
-            if (changeFactory.SourceIdProvider.ChangeSourceId == change.SourceId)
+            if (this.changeFactory.SourceIdProvider.ChangeSourceId == change.SourceId)
             {
-                lock (localChanges)
+                lock (this.localChanges)
                 {
-                    localChanges.Remove(change);
+                    this.localChanges.Remove(change);
                 }
             }
 
@@ -84,12 +84,12 @@ namespace Plethora.Synchronized
             SortedList<TKey, T> newItemList;
             Dictionary<TKey, ItemState> newStateList;
             bool didErrorOccur;
-            BuildLocalList(out newItemList, out newStateList, out didErrorOccur);
+            this.BuildLocalList(out newItemList, out newStateList, out didErrorOccur);
 
-            lock (listLock)
+            lock (this.listLock)
             {
-                localStateList = newStateList;
-                localItemList = newItemList;
+                this.localStateList = newStateList;
+                this.localItemList = newItemList;
             }
 
             
@@ -122,26 +122,26 @@ namespace Plethora.Synchronized
             using (this.syncCollection.EnterLock())
             {
                 itemList = new SortedList<TKey, T>(this.syncCollection.Count, this.syncCollection.KeyComparer);
-                foreach (T item in syncCollection)
+                foreach (T item in this.syncCollection)
                 {
-                    itemList.Add(GetKey(item), item);
+                    itemList.Add(this.GetKey(item), item);
                 }
             }
 
             //Apply local changes
-            lock (localChanges)
+            lock (this.localChanges)
             {
                 didErrorOccur = false;
                 List<ChangeDescriptor> errorChanges = new List<ChangeDescriptor>();
-                foreach (ChangeDescriptor change in localChanges)
+                foreach (ChangeDescriptor change in this.localChanges)
                 {
                     try
                     {
-                        ApplyChange(change, itemList, stateList, false, true);
+                        this.ApplyChange(change, itemList, stateList, false, true);
                     }
                     catch (Exception ex)
                     {
-                        OnConflictingChange(new ConflictingChangeEventArgs(change, ex));
+                        this.OnConflictingChange(new ConflictingChangeEventArgs(change, ex));
                         errorChanges.Add(change);
                         didErrorOccur = true;
                     }
@@ -150,7 +150,7 @@ namespace Plethora.Synchronized
                 //Remove conflicting changes
                 foreach (var errorChange in errorChanges)
                 {
-                    localChanges.Remove(errorChange);
+                    this.localChanges.Remove(errorChange);
                 }
             }
         }
@@ -167,7 +167,7 @@ namespace Plethora.Synchronized
 
         private void ApplyChange(ChangeDescriptor change, SortedList<TKey, T> itemList, Dictionary<TKey, ItemState> stateList, bool raiseEvents, bool setItemState)
         {
-            ChangeHandler changeHandler = GetChangeHandler(change);
+            ChangeHandler changeHandler = this.GetChangeHandler(change);
 
             changeHandler.ApplyChange(change, itemList, stateList, raiseEvents, setItemState);
         }
@@ -186,7 +186,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnChangePublished(ChangePublishedEventArgs e)
         {
-            var handler = ChangePublished;
+            var handler = this.ChangePublished;
             if (handler != null)
                 handler(this, e);
         }
@@ -198,14 +198,14 @@ namespace Plethora.Synchronized
         private readonly ISynchronizeInvoke publishChangeSynchInvoke = new SynchronizeInvoke();
         private void PublishChange(ChangeDescriptor change, Action<Exception> onException)
         {
-            if (publishChangeSynchInvoke.InvokeRequired)
+            if (this.publishChangeSynchInvoke.InvokeRequired)
             {
-                Action<ChangeDescriptor, Action<Exception>> internal_PublishChangeAction = Internal_PublishChange;
-                publishChangeSynchInvoke.BeginInvoke(internal_PublishChangeAction, new object[] { change, onException });
+                Action<ChangeDescriptor, Action<Exception>> internal_PublishChangeAction = this.Internal_PublishChange;
+                this.publishChangeSynchInvoke.BeginInvoke(internal_PublishChangeAction, new object[] { change, onException });
             }
             else
             {
-                Internal_PublishChange(change, onException);
+                this.Internal_PublishChange(change, onException);
             }
         }
 
@@ -213,7 +213,7 @@ namespace Plethora.Synchronized
         {
             try
             {
-                OnChangePublished(new ChangePublishedEventArgs(change));
+                this.OnChangePublished(new ChangePublishedEventArgs(change));
             }
             catch (Exception ex)
             {
@@ -224,39 +224,39 @@ namespace Plethora.Synchronized
         private void DropChange(ChangeDescriptor change)
         {
             //Drop the change which caused the error, and rebuild the local lists.
-            lock (listLock)
+            lock (this.listLock)
             {
-                lock (localChanges)
+                lock (this.localChanges)
                 {
-                    localChanges.Remove(change);
+                    this.localChanges.Remove(change);
                 }
 
                 bool didErrorOccur;
-                BuildLocalList(out localItemList, out localStateList, out didErrorOccur);
+                this.BuildLocalList(out this.localItemList, out this.localStateList, out didErrorOccur);
             }
 
             //Raise the reset events
-            OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+            this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            this.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
         }
 
         private void ApplyLocalChange(ChangeDescriptor change)
         {
-            Action<Exception> onException = exception => DropChange(change);
+            Action<Exception> onException = exception => this.DropChange(change);
 
             //Apply the change
-            lock (listLock)
+            lock (this.listLock)
             {
-                lock (localChanges)
+                lock (this.localChanges)
                 {
-                    localChanges.Add(change);
+                    this.localChanges.Add(change);
                 }
 
                 try
                 {
-                    ApplyChange(change, localItemList, localStateList, true, true);
+                    this.ApplyChange(change, this.localItemList, this.localStateList, true, true);
                 }
                 catch (Exception ex)
                 {
@@ -266,7 +266,7 @@ namespace Plethora.Synchronized
             }
 
             //Publish the change
-            PublishChange(change, onException);
+            this.PublishChange(change, onException);
         }
 
         #endregion
@@ -283,7 +283,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnConflictingChange(ConflictingChangeEventArgs e)
         {
-            var handler = ConflictingChange;
+            var handler = this.ConflictingChange;
             if (handler != null)
                 handler(this, e);
         }
@@ -302,7 +302,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            var handler = CollectionChanged;
+            var handler = this.CollectionChanged;
             if (handler != null)
                 handler(this, e);
         }
@@ -321,7 +321,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            var handler = PropertyChanged;
+            var handler = this.PropertyChanged;
             if (handler != null)
                 handler(this, e);
         }
@@ -332,7 +332,7 @@ namespace Plethora.Synchronized
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -349,7 +349,7 @@ namespace Plethora.Synchronized
             var change = this.changeFactory.CallMethod(-1, "Add", new object[] {item});
 
             //Apply the change
-            ApplyLocalChange(change);
+            this.ApplyLocalChange(change);
         }
 
         public void Clear()
@@ -357,13 +357,13 @@ namespace Plethora.Synchronized
             var change = this.changeFactory.CallMethod(-1, "Clear", new object[0]);
 
             //Apply the change
-            ApplyLocalChange(change);
+            this.ApplyLocalChange(change);
         }
 
         public bool Contains(T item)
         {
-            TKey key = GetKey(item);
-            lock (listLock)
+            TKey key = this.GetKey(item);
+            lock (this.listLock)
             {
                 bool result = this.localItemList.ContainsKey(key);
                 return result;
@@ -379,21 +379,21 @@ namespace Plethora.Synchronized
         {
             var change = this.changeFactory.CallMethod(-1, "Remove", new object[] { key });
 
-            lock (listLock)
+            lock (this.listLock)
             {
-                if (!localItemList.ContainsKey(key))
+                if (!this.localItemList.ContainsKey(key))
                     return false;
             }
 
             //Apply the change
-            ApplyLocalChange(change);
+            this.ApplyLocalChange(change);
             return true;
         }
 
         public bool Remove(T item)
         {
-            TKey key = GetKey(item);
-            return Remove(key);
+            TKey key = this.GetKey(item);
+            return this.Remove(key);
         }
 
         public int Count
@@ -412,7 +412,7 @@ namespace Plethora.Synchronized
 
         void ICollection.CopyTo(Array array, int index)
         {
-            lock (listLock)
+            lock (this.listLock)
             {
                 ((ICollection)this.localItemList).CopyTo(array, index);
             }
@@ -434,10 +434,10 @@ namespace Plethora.Synchronized
 
         public int IndexOf(T item)
         {
-            TKey key = GetKey(item);
-            lock(listLock)
+            TKey key = this.GetKey(item);
+            lock(this.listLock)
             {
-                return localItemList.IndexOfKey(key);
+                return this.localItemList.IndexOfKey(key);
             }
         }
 
@@ -449,18 +449,18 @@ namespace Plethora.Synchronized
         public void RemoveAt(int index)
         {
             TKey key;
-            lock(listLock)
+            lock(this.listLock)
             {
-                key = localItemList.Keys[index];
+                key = this.localItemList.Keys[index];
             }
-            Remove(key);
+            this.Remove(key);
         }
 
         public T this[int index]
         {
             get
             { 
-                lock(listLock)
+                lock(this.listLock)
                 {
                     return this.localItemList.Values[index];
                 }
@@ -483,7 +483,7 @@ namespace Plethora.Synchronized
             lock (this.listLock)
             {
                 this.Add(item);
-                var index = this.localItemList.IndexOfKey(GetKey(item));
+                var index = this.localItemList.IndexOfKey(this.GetKey(item));
                 return index;
             }
         }
@@ -617,7 +617,7 @@ namespace Plethora.Synchronized
         /// </summary>
         protected virtual void OnListChanged(ListChangedEventArgs e)
         {
-            var handler = ListChanged;
+            var handler = this.ListChanged;
             if (handler != null)
                 handler(this, e);
         }
@@ -670,44 +670,44 @@ namespace Plethora.Synchronized
             public void Validate(ChangeDescriptor change)
             {
                 if (change == null)
-                    throw new ArgumentNullException("change");
+                    throw new ArgumentNullException(nameof(change));
 
                 
-                if (change.MemberName != MemberNameHandled)
-                    throw new ArgumentException(string.Format("Expected MemberName to be {0}.", MemberNameHandled));
+                if (change.MemberName != this.MemberNameHandled)
+                    throw new ArgumentException(string.Format("Expected MemberName to be {0}.", this.MemberNameHandled));
 
 
                 //Validate the value
-                if (valueType == null)
+                if (this.valueType == null)
                 {
                     if (change.Value != null)
-                        throw new ArgumentException(string.Format("The {0} change expects Value to be null.", MemberNameHandled));
+                        throw new ArgumentException(string.Format("The {0} change expects Value to be null.", this.MemberNameHandled));
                 }
                 else
                 {
-                    if (!valueType.IsInstanceOfType(change.Value))
-                        throw new ArgumentException(string.Format("The {0} change expects Value to be of type {1}", MemberNameHandled, valueType.Name));
+                    if (!this.valueType.IsInstanceOfType(change.Value))
+                        throw new ArgumentException(string.Format("The {0} change expects Value to be of type {1}", this.MemberNameHandled, this.valueType.Name));
                 }
 
 
                 //Validate the arguments
-                if (argumentTypes == null)
+                if (this.argumentTypes == null)
                 {
                     if (change.Arguments != null)
-                        throw new ArgumentException(string.Format("The {0} change expects Arguments to be null.", MemberNameHandled));
+                        throw new ArgumentException(string.Format("The {0} change expects Arguments to be null.", this.MemberNameHandled));
                 }
                 else
                 {
-                    if (change.Arguments.Length != argumentTypes.Length)
-                        throw new ArgumentException(string.Format("The {0} change expects Arguments to be of type {1}.", MemberNameHandled, TypesString(argumentTypes)));
+                    if (change.Arguments.Length != this.argumentTypes.Length)
+                        throw new ArgumentException(string.Format("The {0} change expects Arguments to be of type {1}.", this.MemberNameHandled, this.TypesString(this.argumentTypes)));
 
 
-                    for (int i = 0; i < argumentTypes.Length; i++)
+                    for (int i = 0; i < this.argumentTypes.Length; i++)
                     {
                         object changeArgument = change.Arguments[i];
-                        Type argumentType = argumentTypes[i];
+                        Type argumentType = this.argumentTypes[i];
                         if (!argumentType.IsInstanceOfType(changeArgument))
-                            throw new ArgumentException(string.Format("The {0} change expects Arguments to be of type {1}.", MemberNameHandled, TypesString(argumentTypes)));
+                            throw new ArgumentException(string.Format("The {0} change expects Arguments to be of type {1}.", this.MemberNameHandled, this.TypesString(this.argumentTypes)));
                     }
                 }
             }
@@ -720,14 +720,14 @@ namespace Plethora.Synchronized
             {
                 if (didChangeCauseError)
                 {
-                    Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                    Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                    Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-                    Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+                    this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                    this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                    this.Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                    this.Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
                 }
                 else
                 {
-                    RaiseEvents(change, oldList, newList);
+                    this.RaiseEvents(change, oldList, newList);
                 }
             }
 
@@ -788,13 +788,13 @@ namespace Plethora.Synchronized
             {
                 T item = (T)change.Arguments[0];
 
-                TKey key = Parent.GetKey(item);
+                TKey key = this.Parent.GetKey(item);
                 itemList.Add(key, item);
 
                 if (raiseEvents)
                 {
                     int index = itemList.IndexOfKey(key);
-                    RaiseEvents(item, index);
+                    this.RaiseEvents(item, index);
                 }
 
                 if (setItemState)
@@ -806,21 +806,21 @@ namespace Plethora.Synchronized
             protected override void RaiseEvents(ChangeDescriptor change, SortedList<TKey, T> oldItemList, SortedList<TKey, T> newItemList)
             {
                 T newItem = (T)change.Arguments[0];
-                TKey key = Parent.GetKey(newItem);
+                TKey key = this.Parent.GetKey(newItem);
                 int newIndex = newItemList.IndexOfKey(key);
 
                 if (newIndex < 0) //local change has prevented Add
                     return;
 
-                RaiseEvents(newItem, newIndex);
+                this.RaiseEvents(newItem, newIndex);
             }
 
             private void RaiseEvents(T newItem, int newIndex)
             {
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, newIndex));
-                Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, newIndex));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                this.Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, newItem, newIndex));
+                this.Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemAdded, newIndex));
             }
 
             #endregion
@@ -858,7 +858,7 @@ namespace Plethora.Synchronized
 
                 if (raiseEvents)
                 {
-                    RaiseEvents(item, index);
+                    this.RaiseEvents(item, index);
                 }
 
                 if (setItemState)
@@ -876,15 +876,15 @@ namespace Plethora.Synchronized
                 if (oldIndex < 0) //local change has prevented Remove
                     return;
 
-                RaiseEvents(oldItem, oldIndex);
+                this.RaiseEvents(oldItem, oldIndex);
             }
 
             private void RaiseEvents(T oldItem, int oldIndex)
             {
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, oldIndex));
-                Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, oldIndex));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                this.Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, oldItem, oldIndex));
+                this.Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemDeleted, oldIndex));
             }
 
             #endregion
@@ -913,7 +913,7 @@ namespace Plethora.Synchronized
                 TKey key = (TKey)change.Arguments[0];
                 T item = itemList[key];
 
-                T clone = Parent.cloneFunc(item);
+                T clone = this.Parent.cloneFunc(item);
 
                 var changeDescriptorApplier = new ChangeDescriptorApplier(clone);
                 changeDescriptorApplier.Apply((ChangeDescriptor)change.Value);
@@ -921,7 +921,7 @@ namespace Plethora.Synchronized
                 if (raiseEvents)
                 {
                     int index = itemList.IndexOfKey(key);
-                    RaiseEvents(clone, item, index);
+                    this.RaiseEvents(clone, item, index);
                 }
 
                 if (setItemState)
@@ -944,14 +944,14 @@ namespace Plethora.Synchronized
                     return;
                 T newItem = newList.Values[newIndex];
 
-                RaiseEvents(newItem, oldItem, newIndex);
+                this.RaiseEvents(newItem, oldItem, newIndex);
             }
 
             private void RaiseEvents(T newItem, T oldItem, int index)
             {
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, index));
-                Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                this.Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, newItem, oldItem, index));
+                this.Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.ItemChanged, index));
             }
 
             #endregion
@@ -983,7 +983,7 @@ namespace Plethora.Synchronized
 
                 if (raiseEvents)
                 {
-                    RaiseEvents();
+                    this.RaiseEvents();
                 }
 
                 if (setItemState)
@@ -997,15 +997,15 @@ namespace Plethora.Synchronized
 
             protected override void RaiseEvents(ChangeDescriptor change, SortedList<TKey, T> oldList, SortedList<TKey, T> newList)
             {
-                RaiseEvents();
+                this.RaiseEvents();
             }
 
             private void RaiseEvents()
             {
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-                Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
-                Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-                Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
+                this.Parent.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+                this.Parent.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+                this.Parent.OnListChanged(new ListChangedEventArgs(ListChangedType.Reset, -1));
             }
 
             #endregion

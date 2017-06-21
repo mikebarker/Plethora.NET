@@ -21,17 +21,16 @@ namespace Plethora.Context.Windows.Forms
         /// Initialises a new instance of the <see cref="TextBoxContextProvider"/> class.
         /// </summary>
         protected ControlContextProvider(T control, params Func<T, IEnumerable<ContextInfo>>[] getContextCallbacks)
-            : base()
         {
             if (control == null)
-                throw new ArgumentNullException("control");
+                throw new ArgumentNullException(nameof(control));
 
 
             this.reference = new WeakReference(control);
             this.getContextCallbacks = getContextCallbacks;
 
-            control.Enter += control_Enter;
-            control.Leave += control_Leave;
+            control.Enter += this.control_Enter;
+            control.Leave += this.control_Leave;
         }
         #endregion
 
@@ -39,7 +38,7 @@ namespace Plethora.Context.Windows.Forms
 
         protected T Control
         {
-            get { return (T)reference.Target; }
+            get { return (T)this.reference.Target; }
         }
 
         #endregion
@@ -53,8 +52,8 @@ namespace Plethora.Context.Windows.Forms
                 var control = this.Control;
                 if (control != null)
                 {
-                    control.Enter -= control_Enter;
-                    control.Leave -= control_Leave;
+                    control.Enter -= this.control_Enter;
+                    control.Leave -= this.control_Leave;
                 }
             }
 
@@ -63,7 +62,7 @@ namespace Plethora.Context.Windows.Forms
 
         protected override IEnumerable<ContextInfo> GetContexts()
         {
-            if (getContextCallbacks == null)
+            if (this.getContextCallbacks == null)
                 return null;
 
             var control = this.Control;
@@ -71,7 +70,7 @@ namespace Plethora.Context.Windows.Forms
                 return null;
 
             IEnumerable<ContextInfo> contexts = null;
-            foreach (var getContextCallback in getContextCallbacks)
+            foreach (var getContextCallback in this.getContextCallbacks)
             {
                 if (contexts == null)
                     contexts = getContextCallback(control);
@@ -95,15 +94,15 @@ namespace Plethora.Context.Windows.Forms
         {
             Control source = (Control)sender;
             if (!ReferenceEquals(source, this.Control))
-                source.Leave -= control_Leave;
+                source.Leave -= this.control_Leave;
 
             Form parentForm = source.FindForm();
             Control activeControl = parentForm.ActiveControl;
 
-            if (IsActivityControl(activeControl))
+            if (this.IsActivityControl(activeControl))
             {
                 if (!ReferenceEquals(activeControl, this.Control))
-                    activeControl.Leave += control_Leave;
+                    activeControl.Leave += this.control_Leave;
             }
             else
             {

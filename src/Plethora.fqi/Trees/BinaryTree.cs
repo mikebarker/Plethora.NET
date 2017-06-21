@@ -68,18 +68,18 @@ namespace Plethora.fqi.Trees
             /// </remarks>
             public Node Left
             {
-                get { return left; }
+                get { return this.left; }
                 set
                 {
-                    if (left != null)
-                        left.Parent = null;
+                    if (this.left != null)
+                        this.left.Parent = null;
 
-                    left = value;
+                    this.left = value;
 
-                    if (left != null)
-                        left.Parent = this;
+                    if (this.left != null)
+                        this.left.Parent = this;
 
-                    SetHeight();
+                    this.SetHeight();
                 }
             }
 
@@ -92,18 +92,18 @@ namespace Plethora.fqi.Trees
             /// </remarks>
             public Node Right
             {
-                get { return right; }
+                get { return this.right; }
                 set
                 {
-                    if (right != null)
-                        right.Parent = null;
+                    if (this.right != null)
+                        this.right.Parent = null;
 
-                    right = value;
+                    this.right = value;
 
-                    if (right != null)
-                        right.Parent = this;
+                    if (this.right != null)
+                        this.right.Parent = this;
 
-                    SetHeight();
+                    this.SetHeight();
                 }
             }
 
@@ -112,22 +112,22 @@ namespace Plethora.fqi.Trees
             /// </summary>
             public Node Parent
             {
-                get { return parent; }
+                get { return this.parent; }
                 private set
                 {
                     //Ensure the previous parent no longer points to
                     // this node.
-                    if (parent != null)
+                    if (this.parent != null)
                     {
-                        if (parent.left == this)
-                            parent.left = null;
-                        if (parent.right == this)
-                            parent.right = null;
+                        if (this.parent.left == this)
+                            this.parent.left = null;
+                        if (this.parent.right == this)
+                            this.parent.right = null;
 
-                        parent.SetHeight();
+                        this.parent.SetHeight();
                     }
 
-                    parent = value;
+                    this.parent = value;
                 }
             }
 
@@ -148,9 +148,9 @@ namespace Plethora.fqi.Trees
             {
                 get
                 {
-                    if (Parent == null)
+                    if (this.Parent == null)
                         return null;
-                    else if (Parent.Left == this)
+                    else if (this.Parent.Left == this)
                         return Edge.Left;
                     else
                         return Edge.Right;
@@ -184,22 +184,22 @@ namespace Plethora.fqi.Trees
 
             private void SetHeight()
             {
-                if (ignorSetHeight)
+                if (this.ignorSetHeight)
                     return;
 
                 //Prevent infinite recursion (incase of circular references)
-                ignorSetHeight = true;
+                this.ignorSetHeight = true;
 
-                int leftHeight = (left == null) ? -1 : left.Height;
-                int rightHeight = (right == null) ? -1 : right.Height;
+                int leftHeight = (this.left == null) ? -1 : this.left.Height;
+                int rightHeight = (this.right == null) ? -1 : this.right.Height;
 
                 int prevHeight = this.Height;
                 this.Height = Math.Max(leftHeight, rightHeight) + 1;
 
-                if ((Parent != null) && (prevHeight != this.Height))
-                    Parent.SetHeight();
+                if ((this.Parent != null) && (prevHeight != this.Height))
+                    this.Parent.SetHeight();
 
-                ignorSetHeight = false;
+                this.ignorSetHeight = false;
             }
             #endregion
 
@@ -281,7 +281,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
 
 
             this.comparer = comparer;
@@ -297,7 +297,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (tree == null)
-                throw new ArgumentNullException("tree");
+                throw new ArgumentNullException(nameof(tree));
 
 
             this.comparer = tree.comparer;
@@ -314,7 +314,7 @@ namespace Plethora.fqi.Trees
         /// <param name="value">The object to use as the value of the element to add.</param>
         public void Add(TKey key, TValue value)
         {
-            AddNodeInternal(key, value);
+            this.AddNodeInternal(key, value);
         }
 
 
@@ -332,7 +332,7 @@ namespace Plethora.fqi.Trees
         {
             Node node;
             Edge? edge;
-            return Find(key, out node, out edge);
+            return this.Find(key, out node, out edge);
         }
 
         /// <summary>
@@ -349,17 +349,17 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             Node node;
             Edge? edge;
-            bool result = Find(key, out node, out edge);
+            bool result = this.Find(key, out node, out edge);
 
             if (!result)
                 return false;
 
-            RemoveNode(node);
+            this.RemoveNode(node);
 
             return true;
         }
@@ -382,12 +382,12 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             Node node;
             Edge? edge;
-            bool result = Find(key, out node, out edge);
+            bool result = this.Find(key, out node, out edge);
 
             value = result
                 ? node.Value
@@ -410,12 +410,12 @@ namespace Plethora.fqi.Trees
             {
                 //Validation
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
 
                 Node node;
                 Edge? edge;
-                bool result = Find(key, out node, out edge);
+                bool result = this.Find(key, out node, out edge);
                 if (!result)
                     throw new KeyNotFoundException();
                 else
@@ -425,12 +425,12 @@ namespace Plethora.fqi.Trees
             {
                 //Validation
                 if (key == null)
-                    throw new ArgumentNullException("key");
+                    throw new ArgumentNullException(nameof(key));
 
 
                 Node node;
                 Edge? edge;
-                bool result = Find(key, out node, out edge);
+                bool result = this.Find(key, out node, out edge);
                 if (!result)
                     throw new KeyNotFoundException();
                 else
@@ -538,7 +538,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (array == null)
-                throw new ArgumentNullException("array");
+                throw new ArgumentNullException(nameof(array));
 
             if (array.Rank != 1)
                 throw new ArgumentException("Only single dimensional arrays are supported for the requested action.");
@@ -579,7 +579,7 @@ namespace Plethora.fqi.Trees
                 if (this.Root == null)
                     return 0;
                 else
-                    return Root.SubTreeCount + 1;
+                    return this.Root.SubTreeCount + 1;
             }
         }
 
@@ -610,7 +610,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             Node node;
             Edge? edge;
@@ -658,7 +658,7 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             Node node;
@@ -709,10 +709,10 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             if (!(info is LocationInfo))
                 throw new ArgumentException("info not as supplied by TryGetValueEx method.");
@@ -749,20 +749,20 @@ namespace Plethora.fqi.Trees
 
         protected internal Node Root
         {
-            get { return root; }
+            get { return this.root; }
             set
             {
-                root = value;
+                this.root = value;
 
-                if (root != null)
-                    root.RemoveFromParent();
+                if (this.root != null)
+                    this.root.RemoveFromParent();
             }
         }
 
         protected virtual Node AddNode(TKey key, TValue value, Node parent, Edge? edge)
         {
             //Insert node
-            Node node = CreateNode(key, value);
+            Node node = this.CreateNode(key, value);
             if (parent == null)
             {
                 //Tree is empty
@@ -785,7 +785,7 @@ namespace Plethora.fqi.Trees
 
         protected virtual void RemoveNode(Node node)
         {
-            RemoveNodeInternal(node);
+            this.RemoveNodeInternal(node);
         }
 
         protected virtual Node CreateNode(TKey key, TValue value)
@@ -800,26 +800,26 @@ namespace Plethora.fqi.Trees
         {
             //Validation
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             Node parentNode;
             Edge? edge;
-            bool result = Find(key, out parentNode, out edge);
+            bool result = this.Find(key, out parentNode, out edge);
 
             //Duplicate key found.
             if (result)
                 throw new ArgumentException(string.Format("Item already exists with key {0}", key));
 
 
-            return AddNode(key, value, parentNode, edge);
+            return this.AddNode(key, value, parentNode, edge);
         }
 
         private void RemoveNodeInternal(Node node)
         {
             //Validation
             if (node == null)
-                throw new ArgumentNullException("node");
+                throw new ArgumentNullException(nameof(node));
 
 
             if ((node.Left == null) && (node.Right == null))
@@ -848,7 +848,7 @@ namespace Plethora.fqi.Trees
                     current = current.Right;
                 }
                 Node.SwapNodes(node, current);
-                RemoveNode(current);
+                this.RemoveNode(current);
             }
         }
 
@@ -891,7 +891,7 @@ namespace Plethora.fqi.Trees
             Node current = this.Root;
             while(current != null)
             {
-                int result = comparer.Compare(current.Key, key);
+                int result = this.comparer.Compare(current.Key, key);
                 if (result == 0)        // current.Key == key
                 {
                     break;

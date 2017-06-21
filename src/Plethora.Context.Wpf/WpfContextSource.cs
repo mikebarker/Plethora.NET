@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Windows;
 
 namespace Plethora.Context.Wpf
@@ -22,12 +21,12 @@ namespace Plethora.Context.Wpf
 
         public string ContextName
         {
-            get { return (string)GetValue(ContextNameProperty); }
-            set { SetValue(ContextNameProperty, value); }
+            get { return (string)this.GetValue(ContextNameProperty); }
+            set { this.SetValue(ContextNameProperty, value); }
         }
 
         public static readonly DependencyProperty ContextNameProperty = DependencyProperty.Register(
-            "ContextName",
+            nameof(ContextName),
             typeof(string),
             typeof(WpfContextSource),
             new PropertyMetadata(default(string), PropertyChangedCallback));
@@ -38,12 +37,12 @@ namespace Plethora.Context.Wpf
 
         public int Rank
         {
-            get { return (int)GetValue(RankProperty); }
-            set { SetValue(RankProperty, value); }
+            get { return (int)this.GetValue(RankProperty); }
+            set { this.SetValue(RankProperty, value); }
         }
 
         public static readonly DependencyProperty RankProperty = DependencyProperty.Register(
-            "Rank",
+            nameof(Rank),
             typeof(int),
             typeof(WpfContextSource),
             new PropertyMetadata(default(int), PropertyChangedCallback));
@@ -54,12 +53,12 @@ namespace Plethora.Context.Wpf
 
         public object Data
         {
-            get { return GetValue(DataProperty); }
-            set { SetValue(DataProperty, value); }
+            get { return this.GetValue(DataProperty); }
+            set { this.SetValue(DataProperty, value); }
         }
 
         public static readonly DependencyProperty DataProperty = DependencyProperty.Register(
-            "Data",
+            nameof(Data),
             typeof(object),
             typeof(WpfContextSource),
             new PropertyMetadata(default(object), PropertyChangedCallback));
@@ -84,7 +83,7 @@ namespace Plethora.Context.Wpf
             bool result =
                 !string.Equals(this.prevContextName, this.ContextName) ||
                 !(this.prevRank == this.Rank) ||
-                !object.Equals(this.prevData, this.Data);
+                !Equals(this.prevData, this.Data);
 
             this.prevContextName = this.ContextName;
             this.prevRank = this.Rank;

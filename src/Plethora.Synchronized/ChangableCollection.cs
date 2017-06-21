@@ -31,26 +31,26 @@ namespace Plethora.Synchronized
         public ChangableCollection(IChangeSource inBoundChannel, IChangeSink outBoundChannel, Func<T, TKey> getKeyFunc, Func<T, T> cloneFunc, Comparer<TKey> keyComparer, ISynchronizeInvoke syncInvoke)
         {
             if (inBoundChannel == null)
-                throw new ArgumentNullException("inBoundChannel");
+                throw new ArgumentNullException(nameof(inBoundChannel));
 
             if (outBoundChannel == null)
-                throw new ArgumentNullException("outBoundChannel");
+                throw new ArgumentNullException(nameof(outBoundChannel));
 
             if (getKeyFunc == null)
-                throw new ArgumentNullException("getKeyFunc");
+                throw new ArgumentNullException(nameof(getKeyFunc));
 
             if (cloneFunc == null)
-                throw new ArgumentNullException("cloneFunc");
+                throw new ArgumentNullException(nameof(cloneFunc));
 
             if (keyComparer == null)
-                throw new ArgumentNullException("keyComparer");
+                throw new ArgumentNullException(nameof(keyComparer));
 
             if (syncInvoke == null)
-                throw new ArgumentNullException("syncInvoke");
+                throw new ArgumentNullException(nameof(syncInvoke));
 
 
             this.syncCollection = new SyncCollection<TKey, T>(getKeyFunc, keyComparer, syncInvoke);
-            this.facadeCollection = new FacadeCollection<TKey, T>(syncCollection, cloneFunc, new ChangeSourceIdProvider());
+            this.facadeCollection = new FacadeCollection<TKey, T>(this.syncCollection, cloneFunc, new ChangeSourceIdProvider());
 
 
             //Bind the sources and sinks
@@ -89,7 +89,7 @@ namespace Plethora.Synchronized
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -182,7 +182,7 @@ namespace Plethora.Synchronized
         T IList<T>.this[int index]
         {
             get { return this[index]; }
-            set { ((IList<T>)facadeCollection)[index] = value; }
+            set { ((IList<T>)this.facadeCollection)[index] = value; }
         }
 
         #endregion

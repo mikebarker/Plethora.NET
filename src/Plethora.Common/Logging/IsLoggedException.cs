@@ -75,18 +75,18 @@ namespace Plethora.Logging
             get
             {
                 // Return the value if set
-                if (isLogged.HasValue)
-                    return isLogged.Value;
+                if (this.isLogged.HasValue)
+                    return this.isLogged.Value;
 
                 // Allow the property to cascade
-                var innerEx = InnerException as IsLoggedException;
+                var innerEx = this.InnerException as IsLoggedException;
                 if (innerEx != null)
                     return innerEx.IsLogged;
 
                 // Default to false
                 return false;
             }
-            set { isLogged = value; }
+            set { this.isLogged = value; }
         }
 
         #endregion

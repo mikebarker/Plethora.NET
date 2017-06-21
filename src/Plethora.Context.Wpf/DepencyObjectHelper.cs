@@ -23,16 +23,16 @@ namespace Plethora.Context.Wpf
         {
             //Validation
             if (source == null)
-                throw new ArgumentNullException("source");
+                throw new ArgumentNullException(nameof(source));
 
             if (sourceProperty == null)
-                throw new ArgumentNullException("sourceProperty");
+                throw new ArgumentNullException(nameof(sourceProperty));
 
             if (target == null)
-                throw new ArgumentNullException("target");
+                throw new ArgumentNullException(nameof(target));
 
             if (targetProperty == null)
-                throw new ArgumentNullException("targetProperty");
+                throw new ArgumentNullException(nameof(targetProperty));
 
             if (!targetProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
                 throw new ArgumentException("Target property is not assignable from source property.");

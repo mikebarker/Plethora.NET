@@ -1,8 +1,12 @@
-﻿namespace Plethora.Context.Action
+﻿using System;
+
+using JetBrains.Annotations;
+
+namespace Plethora.Context.Action
 {
     public abstract class UiActionTemplate : ActionTemplate, IUiActionTemplate
     {
-        protected UiActionTemplate(string contextName)
+        protected UiActionTemplate([NotNull] string contextName)
             : base(contextName)
         {
         }
@@ -17,7 +21,6 @@
 
         public abstract int GetRank(ContextInfo context);
 
-
         public override IAction CreateAction(ContextInfo[] contexts)
         {
             if (contexts.Length != 1)
@@ -26,14 +29,14 @@
 
             ContextInfo context = contexts[0];
 
-            string actionName = GetActionName(context);
-            string text = GetActionText(context);
-            string description = GetActionDescription(context);
-            object imageKey = GetImageKey(context);
-            string group = GetGroup(context);
-            int rank = GetRank(context);
-            bool canExecute = CanExecute(context);
-            System.Action execute = () => Execute(context);
+            string actionName = this.GetActionName(context);
+            string text = this.GetActionText(context);
+            string description = this.GetActionDescription(context);
+            object imageKey = this.GetImageKey(context);
+            string group = this.GetGroup(context);
+            int rank = this.GetRank(context);
+            bool canExecute = this.CanExecute(context);
+            System.Action execute = () => this.Execute(context);
 
             IAction action = new UiContextAction(actionName, text, description, imageKey, group, rank, canExecute, execute);
             return action;
@@ -49,16 +52,19 @@
         private readonly int rank;
 
         public UiContextAction(
-            string actionName,
-            string text,
+            [NotNull] string actionName,
+            [NotNull] string text,
             string description,
             object imageKey,
             string group,
             int rank,
             bool canExecute,
-            System.Action execute)
+            [NotNull] System.Action execute)
             : base(actionName, canExecute, execute)
         {
+            if (this.text == null)
+                throw new ArgumentNullException(nameof(text));
+
             this.text = text;
             this.description = description;
             this.imageKey = imageKey;

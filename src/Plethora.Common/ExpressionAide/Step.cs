@@ -45,12 +45,12 @@ namespace Plethora.ExpressionAide
 
         internal Direction Direction
         {
-            get { return direction; }
+            get { return this.direction; }
         }
 
         internal int Index
         {
-            get { return index; }
+            get { return this.index; }
         }
         #endregion
     }

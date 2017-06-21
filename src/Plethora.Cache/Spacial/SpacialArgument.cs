@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using JetBrains.Annotations;
+
 using Plethora.Linq;
 
 namespace Plethora.Cache.Spacial
@@ -12,7 +15,7 @@ namespace Plethora.Cache.Spacial
         private SpaceRegion<T1> region;
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1>> getPointFromData,
+            [NotNull] Func<TData, Tuple<T1>> getPointFromData,
             SpaceRegion<T1> region)
             : this(getPointFromData)
         {
@@ -20,8 +23,11 @@ namespace Plethora.Cache.Spacial
         }
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1>> getPointFromData)
+            [NotNull] Func<TData, Tuple<T1>> getPointFromData)
         {
+            if (getPointFromData == null)
+                throw new ArgumentNullException(nameof(getPointFromData));
+
             this.getPointFromData = getPointFromData;
         }
 
@@ -42,8 +48,8 @@ namespace Plethora.Cache.Spacial
             }
 
             notInB = A_minus_B
-                .Where(region => !region.IsEmpty)
-                .Select(region => this.CreateArgWithRegion(region))
+                .Where(r => !r.IsEmpty)
+                .Select(r => this.CreateArgWithRegion(r))
                 .ToList();
 
             return true;
@@ -51,11 +57,15 @@ namespace Plethora.Cache.Spacial
 
         public bool IsDataIncluded(TData data)
         {
+            if (data == null)
+                throw new ArgumentNullException(nameof(data));
+
             Tuple<T1> point = this.getPointFromData(data);
 
-            return SpacialOperations.IsPointInRegion(point, region);
+            return SpacialOperations.IsPointInRegion(point, this.region);
         }
 
+        [NotNull]
         private TArg CreateArgWithRegion(SpaceRegion<T1> newRegion)
         {
             var newArg = new TArg();
@@ -77,7 +87,7 @@ namespace Plethora.Cache.Spacial
         private SpaceRegion<T1, T2> region;
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1, T2>> getPointFromData,
+            [NotNull] Func<TData, Tuple<T1, T2>> getPointFromData,
             SpaceRegion<T1, T2> region)
             : this(getPointFromData)
         {
@@ -85,8 +95,11 @@ namespace Plethora.Cache.Spacial
         }
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1, T2>> getPointFromData)
+            [NotNull] Func<TData, Tuple<T1, T2>> getPointFromData)
         {
+            if (getPointFromData == null)
+                throw new ArgumentNullException(nameof(getPointFromData));
+
             this.getPointFromData = getPointFromData;
         }
 
@@ -107,8 +120,8 @@ namespace Plethora.Cache.Spacial
             }
 
             notInB = A_minus_B
-                .Where(region => !region.IsEmpty)
-                .Select(region => this.CreateArgWithRegion(region))
+                .Where(r => !r.IsEmpty)
+                .Select(r => this.CreateArgWithRegion(r))
                 .ToList();
 
             return true;
@@ -118,9 +131,10 @@ namespace Plethora.Cache.Spacial
         {
             Tuple<T1, T2> point = this.getPointFromData(data);
 
-            return SpacialOperations.IsPointInRegion(point, region);
+            return SpacialOperations.IsPointInRegion(point, this.region);
         }
 
+        [NotNull]
         private TArg CreateArgWithRegion(SpaceRegion<T1, T2> newRegion)
         {
             var newArg = new TArg();
@@ -142,7 +156,7 @@ namespace Plethora.Cache.Spacial
         private SpaceRegion<T1, T2, T3> region;
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1, T2, T3>> getPointFromData,
+            [NotNull] Func<TData, Tuple<T1, T2, T3>> getPointFromData,
             SpaceRegion<T1, T2, T3> region)
             : this(getPointFromData)
         {
@@ -150,8 +164,11 @@ namespace Plethora.Cache.Spacial
         }
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1, T2, T3>> getPointFromData)
+            [NotNull] Func<TData, Tuple<T1, T2, T3>> getPointFromData)
         {
+            if (getPointFromData == null)
+                throw new ArgumentNullException(nameof(getPointFromData));
+
             this.getPointFromData = getPointFromData;
         }
 
@@ -173,8 +190,8 @@ namespace Plethora.Cache.Spacial
             }
 
             notInB = A_minus_B
-                .Where(region => !region.IsEmpty)
-                .Select(region => this.CreateArgWithRegion(region))
+                .Where(r => !r.IsEmpty)
+                .Select(r => this.CreateArgWithRegion(r))
                 .ToList();
 
             return true;
@@ -184,9 +201,10 @@ namespace Plethora.Cache.Spacial
         {
             Tuple<T1, T2, T3> point = this.getPointFromData(data);
 
-            return SpacialOperations.IsPointInRegion(point, region);
+            return SpacialOperations.IsPointInRegion(point, this.region);
         }
 
+        [NotNull]
         private TArg CreateArgWithRegion(SpaceRegion<T1, T2, T3> newRegion)
         {
             var newArg = new TArg();
@@ -208,7 +226,7 @@ namespace Plethora.Cache.Spacial
         private SpaceRegion<T1, T2, T3, T4> region;
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1,T2,T3,T4>> getPointFromData,
+            [NotNull] Func<TData, Tuple<T1,T2,T3,T4>> getPointFromData,
             SpaceRegion<T1, T2, T3, T4> region)
             : this(getPointFromData)
         {
@@ -216,8 +234,11 @@ namespace Plethora.Cache.Spacial
         }
 
         protected SpacialArgument(
-            Func<TData, Tuple<T1, T2, T3, T4>> getPointFromData)
+            [NotNull] Func<TData, Tuple<T1, T2, T3, T4>> getPointFromData)
         {
+            if (getPointFromData == null)
+                throw new ArgumentNullException(nameof(getPointFromData));
+
             this.getPointFromData = getPointFromData;
         }
 
@@ -239,8 +260,8 @@ namespace Plethora.Cache.Spacial
             }
 
             notInB = A_minus_B
-                .Where(region => !region.IsEmpty)
-                .Select(region => this.CreateArgWithRegion(region))
+                .Where(r => !r.IsEmpty)
+                .Select(r => this.CreateArgWithRegion(r))
                 .ToList();
 
             return true;
@@ -250,9 +271,10 @@ namespace Plethora.Cache.Spacial
         {
             Tuple<T1, T2, T3, T4> point = this.getPointFromData(data);
 
-            return SpacialOperations.IsPointInRegion(point, region);
+            return SpacialOperations.IsPointInRegion(point, this.region);
         }
 
+        [NotNull]
         private TArg CreateArgWithRegion(SpaceRegion<T1, T2, T3, T4> newRegion)
         {
             var newArg = new TArg();

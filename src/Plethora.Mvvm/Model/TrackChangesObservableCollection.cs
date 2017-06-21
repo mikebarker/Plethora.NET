@@ -42,7 +42,7 @@ namespace Plethora.Mvvm.Model
         {
             foreach (T item in this)
             {
-                item.PropertyChanged += ItemPropertyChanged;
+                item.PropertyChanged += this.ItemPropertyChanged;
             }
         }
 
@@ -225,7 +225,7 @@ namespace Plethora.Mvvm.Model
 
         protected override void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (!inBulkUpdate)
+            if (!this.inBulkUpdate)
             {
                 base.OnPropertyChanged(e);
             }

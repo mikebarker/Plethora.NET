@@ -62,7 +62,7 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (textBox == null)
-                throw new ArgumentNullException("textBox");
+                throw new ArgumentNullException(nameof(textBox));
 
             lock (textBoxStyles)
             {
@@ -85,7 +85,7 @@ namespace Plethora.Windows.Forms.Styles
         {
             //Validation
             if (textBox == null)
-                throw new ArgumentNullException("textBox");
+                throw new ArgumentNullException(nameof(textBox));
 
 
             TextBoxStyle defaultStyle;

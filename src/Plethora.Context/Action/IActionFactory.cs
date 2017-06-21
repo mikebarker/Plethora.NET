@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context.Action
 {
     /// <summary>
@@ -17,6 +19,7 @@ namespace Plethora.Context.Action
         /// <returns>
         /// The list of actions relevant to the given contexts.
         /// </returns>
+        [CanBeNull, ItemCanBeNull]
         IEnumerable<IAction> GetActions(IDictionary<string, ContextInfo[]> contextsByName);
     }
 }

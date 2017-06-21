@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -14,6 +16,7 @@ namespace Plethora.Context
         /// <summary>
         /// The name of the base context.
         /// </summary>
+        [NotNull]
         string ContextName { get; }
 
         /// <summary>
@@ -29,6 +32,7 @@ namespace Plethora.Context
         ///   May be null if no additional context is available.
         ///  </remarks>
         /// </returns>
-        IEnumerable<ContextInfo> Augment(ContextInfo context);
+        [CanBeNull, ItemCanBeNull]
+        IEnumerable<ContextInfo> Augment([NotNull] ContextInfo context);
     }
 }

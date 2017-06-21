@@ -1,3 +1,5 @@
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -31,7 +33,10 @@ namespace Plethora.Context
         /// <param name="data">
         /// The data associated with this context. <example>TradeId=45</example>
         /// </param>
-        public ContextInfo(string name, int rank, object data)
+        public ContextInfo(
+            [NotNull] string name,
+            int rank,
+            [CanBeNull] object data)
         {
             this.name = name;
             this.rank = rank;
@@ -56,6 +61,7 @@ namespace Plethora.Context
         /// <example>
         /// The name should describe the entity selected. e.g. "Trade", "Stock", or "Grid"
         /// </example>
+        [NotNull]
         public string Name
         {
             get { return this.name; }
@@ -84,6 +90,7 @@ namespace Plethora.Context
         /// In the context of a "Trade" this may be trade identifier as an integer, or in the context
         /// of "Stock" this may be the "StockMnemonic" as a string.
         /// </example>
+        [CanBeNull]
         public object Data
         {
             get { return this.data; }
@@ -115,7 +122,7 @@ namespace Plethora.Context
                 return false;
             }
 
-            return Equals((ContextInfo)obj);
+            return this.Equals((ContextInfo)obj);
         }
 
         /// <summary>
@@ -141,7 +148,7 @@ namespace Plethora.Context
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        protected bool Equals(ContextInfo other)
+        protected bool Equals([NotNull] ContextInfo other)
         {
             return this.rank == other.rank && string.Equals(this.name, other.name);
         }

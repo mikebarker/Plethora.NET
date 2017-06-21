@@ -27,7 +27,7 @@ namespace Plethora.fqi.Trees
             protected BaseEnumerator(BinaryTree<TKey, TValue> tree)
             {
                 this.tree = tree;
-                Reset();
+                this.Reset();
             }
             #endregion
 
@@ -39,7 +39,7 @@ namespace Plethora.fqi.Trees
             /// </summary>
             public void Dispose()
             {
-                Reset();
+                this.Reset();
             }
             #endregion
 
@@ -61,37 +61,37 @@ namespace Plethora.fqi.Trees
                 {
                     //Begin enumeration at left most node.
 
-                    currentNode = FindFirstNode();
+                    this.currentNode = this.FindFirstNode();
                 }
                 else
                 {
-                    if (currentNode.Right != null)
+                    if (this.currentNode.Right != null)
                     {
-                        currentNode = LeftMostSubNode(currentNode.Right);
+                        this.currentNode = LeftMostSubNode(this.currentNode.Right);
                     }
                     else
                     {
-                        switch (currentNode.RelationToParent)
+                        switch (this.currentNode.RelationToParent)
                         {
                             case null:
-                                currentNode = null;
+                                this.currentNode = null;
                                 return false;
 
                             case Edge.Left:
-                                currentNode = currentNode.Parent;
+                                this.currentNode = this.currentNode.Parent;
                                 break;
 
                             case Edge.Right:
-                                currentNode = FirstRightParent(currentNode);
+                                this.currentNode = FirstRightParent(this.currentNode);
                                 break;
                         }
                     }
                 }
 
                 // null indicates the end of the enumeration
-                bool result = (currentNode != null);
-                if (result && hasStop)
-                    result &= (this.tree.comparer.Compare(currentNode.Key, this.stop) <= 0);
+                bool result = (this.currentNode != null);
+                if (result && this.hasStop)
+                    result &= (this.tree.comparer.Compare(this.currentNode.Key, this.stop) <= 0);
 
                 return result;
             }
@@ -131,7 +131,7 @@ namespace Plethora.fqi.Trees
             /// </exception>
             object IEnumerator.Current
             {
-                get { return Current; }
+                get { return this.Current; }
             }
             #endregion
 
@@ -202,7 +202,7 @@ namespace Plethora.fqi.Trees
 
                     while (n != null)
                     {
-                        int result = tree.comparer.Compare(n.Key, this.start);
+                        int result = this.tree.comparer.Compare(n.Key, this.start);
                         if (result == 0) // n.Key == this.start
                         {
                             return n;

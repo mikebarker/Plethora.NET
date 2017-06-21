@@ -19,7 +19,7 @@ namespace Plethora.Synchronized.Change
         {
             //Validation
             if (topLevelObject == null)
-                throw new ArgumentNullException("topLevelObject");
+                throw new ArgumentNullException(nameof(topLevelObject));
 
 
             this.topLevelObject = topLevelObject;
@@ -33,7 +33,7 @@ namespace Plethora.Synchronized.Change
         {
             //Validation
             if (change == null)
-                throw new ArgumentNullException("change");
+                throw new ArgumentNullException(nameof(change));
 
 
             Type objType = this.topLevelObject.GetType();

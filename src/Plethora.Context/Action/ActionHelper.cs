@@ -1,5 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+
+using JetBrains.Annotations;
 
 namespace Plethora.Context.Action
 {
@@ -18,7 +19,8 @@ namespace Plethora.Context.Action
         /// an instance of <see cref="IUiAction"/>, otherwise <see cref="IAction.ActionName"/>.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the text is required.</param>
-        public static string GetActionText(IAction action)
+        [NotNull]
+        public static string GetActionText([NotNull] IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
@@ -32,7 +34,8 @@ namespace Plethora.Context.Action
         /// an instance of <see cref="IUiAction"/>, otherwise null.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the group is required.</param>
-        public static string GetGroup(IAction action)
+        [CanBeNull]
+        public static string GetGroup([CanBeNull] IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
@@ -51,7 +54,8 @@ namespace Plethora.Context.Action
         /// null value are coerced to string.Empty.
         /// </returns>
         /// <seealso cref="GetGroup"/>
-        public static string GetGroupSafe(IAction action)
+        [NotNull]
+        public static string GetGroupSafe([CanBeNull] IAction action)
         {
             return GetGroup(action) ?? string.Empty;
         }
@@ -63,7 +67,7 @@ namespace Plethora.Context.Action
         /// an instance of <see cref="IUiAction"/>, otherwise <see cref="ActionHelper.DefaultRank"/>.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the rank is required.</param>
-        public static int GetRank(IAction action)
+        public static int GetRank([CanBeNull] IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
@@ -77,7 +81,8 @@ namespace Plethora.Context.Action
         /// an instance of <see cref="IUiAction"/>, otherwise null.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the image is required.</param>
-        public static object GetImageKey(IAction action)
+        [CanBeNull]
+        public static object GetImageKey([CanBeNull] IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
@@ -91,7 +96,8 @@ namespace Plethora.Context.Action
         /// an instance of <see cref="IUiAction"/>, otherwise null.
         /// </summary>
         /// <param name="action">The <see cref="IAction"/> for which the description is required.</param>
-        public static string GetActionDescription(IAction action)
+        [CanBeNull]
+        public static string GetActionDescription([CanBeNull] IAction action)
         {
             var uiAction = (action as IUiAction);
             if (uiAction == null)
@@ -111,6 +117,20 @@ namespace Plethora.Context.Action
 
             public int Compare(IAction x, IAction y)
             {
+                if (object.ReferenceEquals(x, null) && object.ReferenceEquals(y, null))
+                {
+                    return 0;
+                }
+                else if (object.ReferenceEquals(x, null))
+                {
+                    return 1;
+                }
+                else if (object.ReferenceEquals(y, null))
+                {
+                    return -1;
+                }
+
+
                 int result;
                 result = Comparer<int>.Default.Compare(ActionHelper.GetRank(x), ActionHelper.GetRank(y));
                 if (result != 0)

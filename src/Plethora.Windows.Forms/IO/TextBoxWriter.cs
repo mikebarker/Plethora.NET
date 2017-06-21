@@ -47,7 +47,7 @@ namespace Plethora.IO
         {
             //Validation
             if (txt == null)
-                throw new ArgumentNullException("txt");
+                throw new ArgumentNullException(nameof(txt));
 
 
             this.sb = new StringBuilder();
@@ -127,16 +127,16 @@ namespace Plethora.IO
         {
             //Validation
             if (index < 0)
-                throw new ArgumentOutOfRangeException("index", ResourceProvider.ArgMustBeGreaterThanZero("index"));
+                throw new ArgumentOutOfRangeException(nameof(index), ResourceProvider.ArgMustBeGreaterThanZero(nameof(index)));
 
             if (count < 0)
-                throw new ArgumentOutOfRangeException("count", ResourceProvider.ArgMustBeGreaterThanZero("count"));
+                throw new ArgumentOutOfRangeException(nameof(count), ResourceProvider.ArgMustBeGreaterThanZero(nameof(count)));
 
             if (buffer == null)
                 return;
 
             if ((buffer.Length - index) < count)
-                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan("count", "buffer.Length - index"));
+                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan(nameof(count), "buffer.Length - index"));
 
             
             Append(new string(buffer, index, count));

@@ -14,7 +14,7 @@ namespace Plethora.Context.Windows.Forms
         public TextBoxContextProvider(TextBox textBox, params Func<TextBox, IEnumerable<ContextInfo>>[] getContext)
             : base(textBox, getContext)
         {
-            textBox.TextChanged += textBox_TextChanged;
+            textBox.TextChanged += this.textBox_TextChanged;
         }
         #endregion
 
@@ -24,7 +24,7 @@ namespace Plethora.Context.Windows.Forms
             {
                 var control = this.Control;
                 if (control != null)
-                    control.TextChanged -= textBox_TextChanged;
+                    control.TextChanged -= this.textBox_TextChanged;
             }
             base.Dispose(disposing);
         }

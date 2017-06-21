@@ -1,4 +1,6 @@
-﻿namespace Plethora.Context.Action
+﻿using JetBrains.Annotations;
+
+namespace Plethora.Context.Action
 {
     /// <summary>
     /// An interface which provides action information.
@@ -11,6 +13,7 @@
         /// <summary>
         /// Gets the name of the action.
         /// </summary>
+        [NotNull]
         string ActionName { get; }
 
         /// <summary>

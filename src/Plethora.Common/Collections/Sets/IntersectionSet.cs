@@ -23,10 +23,10 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (a == null)
-                throw new ArgumentNullException("a");
+                throw new ArgumentNullException(nameof(a));
 
             if (b == null)
-                throw new ArgumentNullException("b");
+                throw new ArgumentNullException(nameof(b));
 
 
             this.a = a;
@@ -39,17 +39,15 @@ namespace Plethora.Collections.Sets
 
         public override bool Contains(T element)
         {
-            return
-                a.Contains(element) &&
-                b.Contains(element);
+            return this.a.Contains(element) && this.b.Contains(element);
         }
 
         public override bool? IsEmpty
         {
             get
             {
-                if ((a.IsEmpty == true) ||
-                    (b.IsEmpty == true))
+                if ((this.a.IsEmpty == true) ||
+                    (this.b.IsEmpty == true))
                 {
                     return true;
                 }

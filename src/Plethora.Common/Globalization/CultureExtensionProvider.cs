@@ -48,10 +48,10 @@ namespace Plethora.Globalization
             set
             {
                 if (value == null)
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
 
                 this.defaultExtension = value;
-                RegisterCulturalExtension(value);
+                this.RegisterCulturalExtension(value);
             }
         }
         #endregion
@@ -72,17 +72,17 @@ namespace Plethora.Globalization
         {
             //Validation
             if (cultureExtension == null)
-                throw new ArgumentNullException("cultureExtension");
+                throw new ArgumentNullException(nameof(cultureExtension));
 
             CultureInfo culture = cultureExtension.Culture;
             if (culture == null)
                 throw new ArgumentException(
-                  ResourceProvider.ArgPropertyInvalid("cultureExtension", "Culture"), "cultureExtension");
+                  ResourceProvider.ArgPropertyInvalid(nameof(cultureExtension), "Culture"), nameof(cultureExtension));
 
 
             //Add or update the culture extension
             int lcid = culture.LCID;
-            cultureExtensions[lcid] = cultureExtension;
+            this.cultureExtensions[lcid] = cultureExtension;
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace Plethora.Globalization
         {
             //Validation
             if (culture == null)
-                throw new ArgumentNullException("culture");
+                throw new ArgumentNullException(nameof(culture));
 
 
             CultureInfo matchCulture = culture;
@@ -112,14 +112,14 @@ namespace Plethora.Globalization
             while (matchCulture.LCID != invariantLCID)
             {
                 int lcid = matchCulture.LCID;
-                if (cultureExtensions.ContainsKey(lcid))
-                    return cultureExtensions[lcid];
+                if (this.cultureExtensions.ContainsKey(lcid))
+                    return this.cultureExtensions[lcid];
 
                 matchCulture = matchCulture.Parent;
             }
 
             // return the default extension if no other match is found.
-            return defaultExtension;
+            return this.defaultExtension;
         }
         #endregion
     }

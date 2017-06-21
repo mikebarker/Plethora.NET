@@ -30,12 +30,12 @@ namespace Plethora.Context
 
         ~ContextProviderBase()
         {
-            Dispose(false);
+            this.Dispose(false);
         }
 
         public void Dispose()
         {
-            Dispose(true);
+            this.Dispose(true);
 
             GC.SuppressFinalize(this);
         }
@@ -53,7 +53,7 @@ namespace Plethora.Context
                 // Clean up unmanaged resources here.
 
 
-                disposed = true;
+                this.disposed = true;
             }
         }
         #endregion
@@ -62,7 +62,7 @@ namespace Plethora.Context
 
         protected void OnEnterContext()
         {
-            OnEnterContext(this, EventArgs.Empty);
+            this.OnEnterContext(this, EventArgs.Empty);
         }
 
         protected virtual void OnEnterContext(object sender, EventArgs e)
@@ -74,7 +74,7 @@ namespace Plethora.Context
 
         protected void OnLeaveContext()
         {
-            OnLeaveContext(this, EventArgs.Empty);
+            this.OnLeaveContext(this, EventArgs.Empty);
         }
 
         protected virtual void OnLeaveContext(object sender, EventArgs e)
@@ -86,7 +86,7 @@ namespace Plethora.Context
 
         protected void OnContextChanged()
         {
-            OnContextChanged(this, EventArgs.Empty);
+            this.OnContextChanged(this, EventArgs.Empty);
         }
 
         protected virtual void OnContextChanged(object sender, EventArgs e)

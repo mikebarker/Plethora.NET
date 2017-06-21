@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     // TODO: Memory leaks: Should the ContextManager use weak delegates to subscribe to the providers' events?
@@ -22,6 +24,7 @@ namespace Plethora.Context
         /// <remarks>
         /// Implementations can utilise the global instance or choose to define a local instance if preferred.
         /// </remarks>
+        [NotNull]
         public static ContextManager GlobalInstance
         {
             get { return globalInstance; }
@@ -55,8 +58,8 @@ namespace Plethora.Context
         /// </remarks>
         public event EventHandler ContextChanged
         {
-            add { contextChanged.Add(value); }
-            remove { contextChanged.Remove(value); }
+            add { this.contextChanged.Add(value); }
+            remove { this.contextChanged.Remove(value); }
         }
 
         /// <summary>
@@ -64,7 +67,7 @@ namespace Plethora.Context
         /// </summary>
         protected virtual void OnContextChanged(object sender, EventArgs e)
         {
-            foreach (var handler in contextChanged.GetInvocationList())
+            foreach (var handler in this.contextChanged.GetInvocationList())
             {
                 if (handler != null)
                     handler(sender, e);
@@ -82,36 +85,36 @@ namespace Plethora.Context
         /// <remarks>
         /// The provider is used to supply contexts as the user navigates the user interface.
         /// </remarks>
-        public void RegisterProvider(IContextProvider provider)
+        public void RegisterProvider([NotNull] IContextProvider provider)
         {
             //Validation
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
-            provider.EnterContext += provider_EnterContext;
-            provider.LeaveContext += provider_LeaveContext;
+            provider.EnterContext += this.provider_EnterContext;
+            provider.LeaveContext += this.provider_LeaveContext;
         }
 
         /// <summary>
         /// Deregisters an context provider.
         /// </summary>
-        public void DeregisterProvider(IContextProvider provider)
+        public void DeregisterProvider([NotNull] IContextProvider provider)
         {
             //Validation
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                activeProviders.Remove(provider);
+                this.activeProviders.Remove(provider);
 
-                provider.EnterContext -= provider_EnterContext;
-                provider.LeaveContext -= provider_LeaveContext;
+                provider.EnterContext -= this.provider_EnterContext;
+                provider.LeaveContext -= this.provider_LeaveContext;
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
@@ -124,49 +127,49 @@ namespace Plethora.Context
         /// The augmentor is used to provide addition contexts, based on a current
         /// in-scope context.
         /// </remarks>
-        public void RegisterAugmentor(IContextAugmentor augmentor)
+        public void RegisterAugmentor([NotNull] IContextAugmentor augmentor)
         {
             //Validation
             if (augmentor == null)
-                throw new ArgumentNullException("augmentor");
+                throw new ArgumentNullException(nameof(augmentor));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
                 ICollection<IContextAugmentor> list;
-                if (!augmentors.TryGetValue(augmentor.ContextName, out list))
+                if (!this.augmentors.TryGetValue(augmentor.ContextName, out list))
                 {
                     list = new List<IContextAugmentor>();
-                    augmentors.Add(augmentor.ContextName, list);
+                    this.augmentors.Add(augmentor.ContextName, list);
                 }
 
                 list.Add(augmentor);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
         /// <summary>
         /// Deregisters an augmentor.
         /// </summary>
-        public void DeregisterAugmentor(IContextAugmentor augmentor)
+        public void DeregisterAugmentor([NotNull] IContextAugmentor augmentor)
         {
             //Validation
             if (augmentor == null)
-                throw new ArgumentNullException("augmentor");
+                throw new ArgumentNullException(nameof(augmentor));
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
                 ICollection<IContextAugmentor> list;
-                if (augmentors.TryGetValue(augmentor.ContextName, out list))
+                if (this.augmentors.TryGetValue(augmentor.ContextName, out list))
                     list.Remove(augmentor);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
         }
 
@@ -177,23 +180,24 @@ namespace Plethora.Context
         /// <returns>
         /// The list of available contexts.
         /// </returns>
+        [NotNull]
         public IEnumerable<ContextInfo> GetContexts()
         {
             // TODO: This could be more efficient by keeping a cache of the contexts, and only updating those per provider when the context changes
 
-            rwLock.EnterReadLock();
+            this.rwLock.EnterReadLock();
             try
             {
                 var contextSet = new Dictionary<ContextInfo, ContextInfo>(new ContextInfoComparer());
 
-                var localContextsEnumerable = activeProviders
+                var localContextsEnumerable = this.activeProviders
                     .Where(provider => provider != null)
                     .Select(provider => provider.Contexts)
                     .Where(contexts => contexts != null)
                     .SelectMany(contexts => contexts)
                     .Where(context => context != null);
 
-                var contextsEnumerable = localContextsEnumerable;
+                IEnumerable<ContextInfo> contextsEnumerable = localContextsEnumerable;
 
                 //Use the augmentors to augment the in-scope contexts
                 bool newContexts = true;
@@ -204,6 +208,9 @@ namespace Plethora.Context
                     newContexts = false;
                     foreach (var contextInfo in contextsEnumerable)
                     {
+                        if (contextInfo == null)
+                            continue;
+
                         ContextInfo setInfo;
 
                         //Add the context to the contextSet
@@ -229,7 +236,7 @@ namespace Plethora.Context
                             newContexts = true;
 
                             //Find augmented contexts (if any)
-                            var augContexts = AugmentContext(contextInfo);
+                            var augContexts = this.AugmentContext(contextInfo);
                             if (augContexts != null)
                                 nextContextsEnumerable = nextContextsEnumerable.Concat(augContexts);
                         }
@@ -242,7 +249,7 @@ namespace Plethora.Context
             }
             finally
             {
-                rwLock.ExitReadLock();
+                this.rwLock.ExitReadLock();
             }
         }
 
@@ -253,9 +260,10 @@ namespace Plethora.Context
         /// <remarks>
         /// Must be called inside a lock.
         /// </remarks>
+        [CanBeNull, ItemCanBeNull]
         private IEnumerable<ContextInfo> AugmentContext(ContextInfo context)
         {
-            IEnumerable<ContextInfo> augmentedContexts = Enumerable.Empty<ContextInfo>();
+            IEnumerable<ContextInfo> augmentedContexts = null;
 
             ICollection<IContextAugmentor> augmentorList;
             if (this.augmentors.TryGetValue(context.Name, out augmentorList))
@@ -264,7 +272,12 @@ namespace Plethora.Context
                 {
                     IEnumerable<ContextInfo> additionalContexts = augmentor.Augment(context);
                     if (additionalContexts != null)
-                        augmentedContexts = augmentedContexts.Concat(additionalContexts);
+                    {
+                        if (augmentedContexts == null)
+                            augmentedContexts = additionalContexts;
+                        else
+                            augmentedContexts = augmentedContexts.Concat(additionalContexts);
+                    }
                 }
             }
 
@@ -274,48 +287,48 @@ namespace Plethora.Context
         private void provider_EnterContext(object sender, EventArgs e)
         {
             var provider = (IContextProvider)sender;
-            provider.ContextChanged += provider_ContextChanged;
+            provider.ContextChanged += this.provider_ContextChanged;
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                if (!activeProviders.Contains(provider))
-                    activeProviders.Add(provider);
+                if (!this.activeProviders.Contains(provider))
+                    this.activeProviders.Add(provider);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
 
-            OnContextChanged();
+            this.OnContextChanged();
         }
 
         private void provider_LeaveContext(object sender, EventArgs e)
         {
             var provider = (IContextProvider)sender;
-            provider.ContextChanged -= provider_ContextChanged;
+            provider.ContextChanged -= this.provider_ContextChanged;
 
-            rwLock.EnterWriteLock();
+            this.rwLock.EnterWriteLock();
             try
             {
-                activeProviders.Remove(provider);
+                this.activeProviders.Remove(provider);
             }
             finally
             {
-                rwLock.ExitWriteLock();
+                this.rwLock.ExitWriteLock();
             }
 
-            OnContextChanged();
+            this.OnContextChanged();
         }
 
         private void provider_ContextChanged(object sender, EventArgs e)
         {
-            OnContextChanged();
+            this.OnContextChanged();
         }
 
         protected void OnContextChanged()
         {
-            OnContextChanged(this, EventArgs.Empty);
+            this.OnContextChanged(this, EventArgs.Empty);
         }
 
         #endregion

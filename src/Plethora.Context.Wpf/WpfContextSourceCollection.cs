@@ -17,12 +17,12 @@ namespace Plethora.Context.Wpf
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         public IEnumerator<WpfContextSourceBase> GetEnumerator()
         {
-            return innerList.GetEnumerator();
+            return this.innerList.GetEnumerator();
         }
 
         #endregion
@@ -31,43 +31,43 @@ namespace Plethora.Context.Wpf
 
         public void Add(WpfContextSourceBase item)
         {
-            innerList.Add(item);
-            item.ContextChanged += item_ContextChanged;
+            this.innerList.Add(item);
+            item.ContextChanged += this.item_ContextChanged;
         }
 
         public void Clear()
         {
-            foreach (WpfContextSourceBase item in innerList)
+            foreach (WpfContextSourceBase item in this.innerList)
             {
-                item.ContextChanged -= item_ContextChanged;
+                item.ContextChanged -= this.item_ContextChanged;
             }
-            innerList.Clear();
+            this.innerList.Clear();
         }
 
         public bool Contains(WpfContextSourceBase item)
         {
-            return innerList.Contains(item);
+            return this.innerList.Contains(item);
         }
 
         public void CopyTo(WpfContextSourceBase[] array, int arrayIndex)
         {
-            innerList.CopyTo(array, arrayIndex);
+            this.innerList.CopyTo(array, arrayIndex);
         }
 
         public bool Remove(WpfContextSourceBase item)
         {
-            item.ContextChanged -= item_ContextChanged;
-            return innerList.Remove(item);
+            item.ContextChanged -= this.item_ContextChanged;
+            return this.innerList.Remove(item);
         }
 
         public int Count
         {
-            get { return innerList.Count; }
+            get { return this.innerList.Count; }
         }
 
         bool ICollection<WpfContextSourceBase>.IsReadOnly
         {
-            get { return ((ICollection<WpfContextSourceBase>)innerList).IsReadOnly; }
+            get { return ((ICollection<WpfContextSourceBase>)this.innerList).IsReadOnly; }
         }
 
         #endregion
@@ -76,36 +76,36 @@ namespace Plethora.Context.Wpf
 
         public int IndexOf(WpfContextSourceBase item)
         {
-            return innerList.IndexOf(item);
+            return this.innerList.IndexOf(item);
         }
 
         public void Insert(int index, WpfContextSourceBase item)
         {
-            innerList.Insert(index, item);
-            item.ContextChanged += item_ContextChanged;
+            this.innerList.Insert(index, item);
+            item.ContextChanged += this.item_ContextChanged;
         }
 
         public void RemoveAt(int index)
         {
-            var item = innerList[index];
-            item.ContextChanged -= item_ContextChanged;
-            innerList.RemoveAt(index);
+            var item = this.innerList[index];
+            item.ContextChanged -= this.item_ContextChanged;
+            this.innerList.RemoveAt(index);
         }
 
         public WpfContextSourceBase this[int index]
         {
-            get { return innerList[index]; }
+            get { return this.innerList[index]; }
             set
             {
-                var oldValue = innerList[index];
-                if (oldValue == value)
+                var oldValue = this.innerList[index];
+                if (ReferenceEquals(oldValue, value))
                     return;
 
-                oldValue.ContextChanged -= item_ContextChanged;
+                oldValue.ContextChanged -= this.item_ContextChanged;
 
-                innerList[index] = value;
+                this.innerList[index] = value;
 
-                value.ContextChanged += item_ContextChanged;
+                value.ContextChanged += this.item_ContextChanged;
             }
         }
 
@@ -115,17 +115,17 @@ namespace Plethora.Context.Wpf
 
         void ICollection.CopyTo(Array array, int index)
         {
-            ((ICollection)innerList).CopyTo(array, index);
+            ((ICollection)this.innerList).CopyTo(array, index);
         }
 
         object ICollection.SyncRoot
         {
-            get { return ((ICollection)innerList).SyncRoot; }
+            get { return ((ICollection)this.innerList).SyncRoot; }
         }
 
         bool ICollection.IsSynchronized
         {
-            get { return ((ICollection)innerList).IsSynchronized; }
+            get { return ((ICollection)this.innerList).IsSynchronized; }
         }
 
         #endregion
@@ -136,7 +136,7 @@ namespace Plethora.Context.Wpf
         {
             var item = (WpfContextSourceBase)value;
             this.Add(item);
-            return innerList.Count - 1;
+            return this.innerList.Count - 1;
         }
 
         bool IList.Contains(object value)
@@ -175,12 +175,12 @@ namespace Plethora.Context.Wpf
 
         bool IList.IsReadOnly
         {
-            get { return ((IList)innerList).IsReadOnly; }
+            get { return ((IList)this.innerList).IsReadOnly; }
         }
 
         bool IList.IsFixedSize
         {
-            get { return ((IList)innerList).IsFixedSize; }
+            get { return ((IList)this.innerList).IsFixedSize; }
         }
 
         #endregion

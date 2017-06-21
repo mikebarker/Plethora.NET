@@ -32,11 +32,11 @@ namespace Plethora.Drawing
 
                     float[][] matrixArray = 
                         {
-                            new float[] { contribR, contribR, contribR, 0f, 0f },
-                            new float[] { contribG, contribG, contribG, 0f, 0f },
-                            new float[] { contribB, contribB, contribB, 0f, 0f },
-                            new float[] {       0f,       0f,       0f, 1f, 0f },
-                            new float[] {       0f,       0f,       0f, 0f, 1f }
+                            new[] { contribR, contribR, contribR, 0f, 0f },
+                            new[] { contribG, contribG, contribG, 0f, 0f },
+                            new[] { contribB, contribB, contribB, 0f, 0f },
+                            new[] {       0f,       0f,       0f, 1f, 0f },
+                            new[] {       0f,       0f,       0f, 0f, 1f }
                         };
 
                     grayScaleColorMatrix = new ColorMatrix(matrixArray);
@@ -62,7 +62,7 @@ namespace Plethora.Drawing
         {
             //Validation
             if (image == null)
-                throw new ArgumentNullException("image");
+                throw new ArgumentNullException(nameof(image));
 
 
             Bitmap bmp = new Bitmap(image.Width, image.Height);

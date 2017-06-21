@@ -125,10 +125,10 @@ namespace Plethora.Format
         {
             //Validation
             if (format == null)
-                throw new ArgumentNullException("format");
+                throw new ArgumentNullException(nameof(format));
 
             if (provider == null)
-                throw new ArgumentNullException("provider");
+                throw new ArgumentNullException(nameof(provider));
 
 
             this.FormatString = format;

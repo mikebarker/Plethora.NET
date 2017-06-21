@@ -101,7 +101,7 @@ namespace Plethora.fqi
 
             IEnumerable<LambdaExpression> IIndexSpecification.IndexExpressions
             {
-                get { return indexExpressions.AsReadOnly(); }
+                get { return this.indexExpressions.AsReadOnly(); }
             }
             #endregion
         }

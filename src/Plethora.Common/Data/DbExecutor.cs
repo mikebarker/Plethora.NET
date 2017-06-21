@@ -141,7 +141,7 @@ namespace Plethora.Data
         private static T ExecuteWithRetry<T>(IDbCommand command, Func<IDbCommand, T> executeAction)
         {
             if (command == null)
-                throw new ArgumentNullException("command");
+                throw new ArgumentNullException(nameof(command));
 
             if (command.CommandText == null)
                 throw new InvalidOperationException("The command object does not have its command text property set.");

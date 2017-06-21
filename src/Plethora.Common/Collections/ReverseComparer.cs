@@ -13,7 +13,7 @@ namespace Plethora.Collections
         public ReverseComparer(IComparer<T> comparer)
         {
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
 
             this.comparer = comparer;
         }
@@ -21,7 +21,7 @@ namespace Plethora.Collections
         public int Compare(T x, T y)
         {
             //Change the comparison order
-            int result = comparer.Compare(y, x);
+            int result = this.comparer.Compare(y, x);
 
             return result;
         }

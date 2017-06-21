@@ -79,7 +79,7 @@ namespace Plethora.fqi
         {
             var memberRanges = ExpressionAnalyser.GetMemberRestrictions(expression);
 
-            return FilterBy(expression, memberRanges);
+            return this.FilterBy(expression, memberRanges);
         }
 
         /// <summary>

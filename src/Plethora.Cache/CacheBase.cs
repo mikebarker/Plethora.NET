@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+
+using JetBrains.Annotations;
+
 using Plethora.Linq;
 using Plethora.Threading;
 using Plethora.Timing;
@@ -23,10 +26,10 @@ namespace Plethora.Cache
             
             #region Constructors
 
-            public Request(TArgument argument)
+            public Request([NotNull] TArgument argument)
             {
                 if (argument == null)
-                    throw new ArgumentNullException("argument");
+                    throw new ArgumentNullException(nameof(argument));
 
                 this.completeWaitHandle = new ManualResetEvent(false);
                 this.argument = argument;
@@ -35,14 +38,16 @@ namespace Plethora.Cache
 
             #region Properties
 
+            [NotNull]
             public TArgument Argument
             {
-                get { return argument; }
+                get { return this.argument; }
             }
 
+            [NotNull]
             public WaitHandle CompleteWaitHandle
             {
-                get { return completeWaitHandle; }
+                get { return this.completeWaitHandle; }
             }
 
             public bool IsComplete
@@ -50,6 +55,7 @@ namespace Plethora.Cache
                 get { return this.completeWaitHandle.WaitOne(0); }
             }
 
+            [CanBeNull]
             public Exception Exception
             {
                 get { return this.exception; }
@@ -63,7 +69,7 @@ namespace Plethora.Cache
                 this.completeWaitHandle.Set();
             }
 
-            internal void Fail(Exception ex)
+            internal void Fail([NotNull] Exception ex)
             {
                 this.exception = ex;
                 this.completeWaitHandle.Set();
@@ -99,17 +105,17 @@ namespace Plethora.Cache
 
             public CacheBase<TData, TArgument> Parent
             {
-                get { return parent; }
+                get { return this.parent; }
             }
 
             public IEnumerable<Request> Requests
             {
-                get { return requests; }
+                get { return this.requests; }
             }
 
             public IEnumerable<TArgument> OriginatingArguments
             {
-                get { return originatingArguments; }
+                get { return this.originatingArguments; }
             }
             #endregion
 
@@ -136,20 +142,20 @@ namespace Plethora.Cache
             {
                 get
                 {
-                    if (aggregateHandle == null)
+                    if (this.aggregateHandle == null)
                     {
-                        lock (aggregateHandleLock)
+                        lock (this.aggregateHandleLock)
                         {
-                            if (aggregateHandle == null)
+                            if (this.aggregateHandle == null)
                             {
-                                aggregateHandle = new AggregateWaitHandle(requests
+                                this.aggregateHandle = new AggregateWaitHandle(this.requests
                                     .Select(r => r.CompleteWaitHandle)
                                     .ToArray());
                             }
                         }
                     }
 
-                    return aggregateHandle;
+                    return this.aggregateHandle;
                 }
             }
 
@@ -199,12 +205,12 @@ namespace Plethora.Cache
 
             public IEnumerable<Request> Requests
             {
-                get { return requests; }
+                get { return this.requests; }
             }
 
             public OperationTimeout Timeout
             {
-                get { return timeout; }
+                get { return this.timeout; }
             }
             #endregion
         }
@@ -236,8 +242,8 @@ namespace Plethora.Cache
         /// </returns>
         protected IEnumerable<TData> GetData(IEnumerable<TArgument> arguments, int millisecondsTimeout)
         {
-            var asyncResult = BeginGetData(arguments, millisecondsTimeout);
-            return EndGetData(asyncResult);
+            var asyncResult = this.BeginGetData(arguments, millisecondsTimeout);
+            return this.EndGetData(asyncResult);
         }
 
         /// <summary>
@@ -260,33 +266,33 @@ namespace Plethora.Cache
             List<Request> submitted;
             List<Request> required;
 
-            requestsLock.EnterUpgradeableReadLock();
+            this.requestsLock.EnterUpgradeableReadLock();
             try
             {
-                GetRequests(arguments, out submitted, out required);
+                this.GetRequests(arguments, out submitted, out required);
 
                 if (required.Count != 0)
                 {
-                    requestsLock.EnterWriteLock();
+                    this.requestsLock.EnterWriteLock();
                     try
                     {
-                        submittedRequests.AddRange(required);
+                        this.submittedRequests.AddRange(required);
                     }
                     finally
                     {
-                        requestsLock.ExitWriteLock();
+                        this.requestsLock.ExitWriteLock();
                     }
                 }
             }
             finally
             {
-                requestsLock.ExitUpgradeableReadLock();
+                this.requestsLock.ExitUpgradeableReadLock();
             }
 
             //Load the data in another thread.
             if (required.Count != 0)
             {
-                ThreadPool.QueueUserWorkItem(CacheDataForRequests, new CacheDataParameters(required, timeout));
+                ThreadPool.QueueUserWorkItem(this.CacheDataForRequests, new CacheDataParameters(required, timeout));
             }
 
             IEnumerable<Request> requests;
@@ -317,7 +323,7 @@ namespace Plethora.Cache
         protected IEnumerable<TData> EndGetData(IAsyncResult asyncResult)
         {
             if (asyncResult == null)
-                throw new ArgumentNullException("asyncResult");
+                throw new ArgumentNullException(nameof(asyncResult));
 
             var dataAsyncResult = asyncResult as GetDataAsyncResult;
             if (dataAsyncResult == null)
@@ -367,7 +373,7 @@ namespace Plethora.Cache
 
             //The data should now have been cached filter the cache to find the requested data.
             IEnumerable<TData> requiredData;
-            dataLock.EnterReadLock();
+            this.dataLock.EnterReadLock();
             try
             {
                 requiredData = FilterDataSetByArgument(
@@ -376,7 +382,7 @@ namespace Plethora.Cache
             }
             finally
             {
-                dataLock.ExitReadLock();
+                this.dataLock.ExitReadLock();
             }
 
             //Use the .CacheResult() linq method to ensure complex filtering is only evaluated once.
@@ -385,11 +391,11 @@ namespace Plethora.Cache
 
         protected void DropData(IEnumerable<TArgument> arguments)
         {
-            requestsLock.EnterWriteLock();
+            this.requestsLock.EnterWriteLock();
             try
             {
                 List<Request> remainingRequests;
-                List<Request> nextRemainingRequests = submittedRequests;
+                List<Request> nextRemainingRequests = this.submittedRequests;
 
                 //Remove the requests first then the data.
                 foreach (TArgument dropArgument in arguments)
@@ -427,7 +433,7 @@ namespace Plethora.Cache
 
                                     //Test if the original request had been successful, or failed
                                     Exception ex = originalRequest.Exception;
-                                    if (originalRequest.Exception == null)
+                                    if (ex == null)
                                         remainingRequest.Success();
                                     else
                                         remainingRequest.Fail(ex);
@@ -450,23 +456,23 @@ namespace Plethora.Cache
                 // write-lock on data, and is waiting for the request to complete... and another
                 // thread is waiting for the write lock on data before marking the request as
                 // complete).
-                dataLock.EnterWriteLock();
+                this.dataLock.EnterWriteLock();
                 try
                 {
                     foreach (TArgument dropArgument in arguments)
                     {
                         //Drop the data
-                        data.RemoveAll(dropArgument.IsDataIncluded);
+                        this.data.RemoveAll(dropArgument.IsDataIncluded);
                     }
                 }
                 finally
                 {
-                    dataLock.ExitWriteLock();
+                    this.dataLock.ExitWriteLock();
                 }
             }
             finally
             {
-                requestsLock.ExitWriteLock();
+                this.requestsLock.ExitWriteLock();
             }
         }
         #endregion
@@ -523,14 +529,14 @@ namespace Plethora.Cache
         private void CacheDataForRequests(object obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+                throw new ArgumentNullException(nameof(obj));
 
             var parameters = obj as CacheDataParameters;
             if (parameters == null)
                 throw new ArgumentException(
-                    ResourceProvider.ArgMustBeOfType("obj", typeof(CacheDataParameters)), "obj");
+                    ResourceProvider.ArgMustBeOfType(nameof(obj), typeof(CacheDataParameters)), nameof(obj));
 
-            CacheDataForRequests(parameters.Requests, parameters.Timeout);
+            this.CacheDataForRequests(parameters.Requests, parameters.Timeout);
         }
 
         private void CacheDataForRequests(IEnumerable<Request> requests, OperationTimeout timeout)
@@ -539,7 +545,7 @@ namespace Plethora.Cache
             List<TData> loadedData;
             try
             {
-                loadedData = GetDataForRequests(requests, timeout).ToList();
+                loadedData = this.GetDataForRequests(requests, timeout).ToList();
 
                 //Final test on the timeout. Once this try block is exited, all
                 // data should committed, and the requests marked successful.
@@ -553,19 +559,19 @@ namespace Plethora.Cache
                 //If the exception is recoverable, then remove the requests from
                 // the submitted requests to allow future calls to attempt to
                 // reload the data.
-                if (IsExceptionRecoverable(ex))
+                if (this.IsExceptionRecoverable(ex))
                 {
-                    requestsLock.EnterWriteLock();
+                    this.requestsLock.EnterWriteLock();
                     try
                     {
                         foreach (var request in requests)
                         {
-                            submittedRequests.Remove(request);
+                            this.submittedRequests.Remove(request);
                         }
                     }
                     finally
                     {
-                        requestsLock.ExitWriteLock();
+                        this.requestsLock.ExitWriteLock();
                     }
                 }
 
@@ -573,7 +579,7 @@ namespace Plethora.Cache
             }
 
             //Add the loaded data to the cache
-            dataLock.EnterWriteLock();
+            this.dataLock.EnterWriteLock();
             try
             {
                 int size = this.data.Count + loadedData.Count;
@@ -583,7 +589,7 @@ namespace Plethora.Cache
             }
             finally
             {
-                dataLock.ExitWriteLock();
+                this.dataLock.ExitWriteLock();
             }
 
             //Mark the requests as successful
@@ -597,7 +603,7 @@ namespace Plethora.Cache
             IEnumerable<Request> requests,
             OperationTimeout timeout)
         {
-            IEnumerable<TData> returnedData = GetDataFromSource(
+            IEnumerable<TData> returnedData = this.GetDataFromSource(
                 requests.Select(request => request.Argument),
                 timeout.RemainingThrowIfElapsed);
             timeout.ThrowIfElapsed();

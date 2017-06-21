@@ -7,7 +7,7 @@ using Plethora.Collections;
 namespace Plethora.Test.Collections
 {
     [TestFixture]
-    public class ListIndexItterator_Test
+    public class ListIndexIterator_Test
     {
         private List<int> list;
 
@@ -24,7 +24,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //Exec
-                ListIndexItterator<int> itterator = new ListIndexItterator<int>(null, 3, 4);
+                ListIndexIterator<int> itterator = new ListIndexIterator<int>(null, 3, 4);
             }
             catch (ArgumentNullException ex)
             {
@@ -40,7 +40,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //Exec
-                ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, -2, 4);
+                ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, -2, 4);
             }
             catch (ArgumentOutOfRangeException  ex)
             {
@@ -56,7 +56,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //Exec
-                ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, -2);
+                ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, -2);
             }
             catch (ArgumentOutOfRangeException ex)
             {
@@ -72,7 +72,7 @@ namespace Plethora.Test.Collections
             try
             {
                 //Exec
-                ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 20);
+                ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 20);
             }
             catch (ArgumentException ex)
             {
@@ -85,7 +85,7 @@ namespace Plethora.Test.Collections
         public void Empty()
         {
             //Exec
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 0);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 0);
 
             //Test
             Assert.AreEqual(0, itterator.Count());
@@ -95,7 +95,7 @@ namespace Plethora.Test.Collections
         public void SingleElement()
         {
             //Exec
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 1);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 1);
 
             //Test
             Assert.AreEqual(1, itterator.Count());
@@ -108,7 +108,7 @@ namespace Plethora.Test.Collections
         public void MultipleElements()
         {
             //Exec
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Test
             Assert.AreEqual(4, itterator.Count());
@@ -121,7 +121,7 @@ namespace Plethora.Test.Collections
         public void Contains_True()
         {
             //Setup
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             bool result = itterator.Contains(5);
@@ -134,7 +134,7 @@ namespace Plethora.Test.Collections
         public void Contains_False()
         {
             //Setup
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             bool result = itterator.Contains(1);
@@ -147,7 +147,7 @@ namespace Plethora.Test.Collections
         public void Contains_EdgeCases()
         {
             //Setup
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             bool beforeStart = itterator.Contains(2);
@@ -167,7 +167,7 @@ namespace Plethora.Test.Collections
         public void CopyTo_ZeroIndex()
         {
             //Setup
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             int[] array = new int[10];
@@ -184,7 +184,7 @@ namespace Plethora.Test.Collections
         public void CopyTo_NonZeroIndex()
         {
             //Setup
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             int[] array = new int[10];
@@ -201,7 +201,7 @@ namespace Plethora.Test.Collections
         public void Count()
         {
             //Setup
-            ListIndexItterator<int> itterator = new ListIndexItterator<int>(list, 3, 4);
+            ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             var count = itterator.Count;

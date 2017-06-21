@@ -45,7 +45,7 @@ namespace Plethora.Collections
         [Pure]
         public bool Equals([CanBeNull] T x, [CanBeNull] T y)
         {
-            return object.ReferenceEquals(x, y);
+            return ReferenceEquals(x, y);
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace Plethora.Collections
         int IEqualityComparer.GetHashCode([NotNull] object obj)
         {
             if (obj == null)
-                throw new ArgumentNullException("obj");
+                throw new ArgumentNullException(nameof(obj));
 
             if (!(obj is T))
                 throw new ArgumentException(ResourceProvider.InvalidCast());

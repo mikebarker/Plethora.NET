@@ -18,7 +18,7 @@ namespace Plethora.Test.fqi
             spec
                 .AddIndex(false, r => r.Year).Then(r => r.Month);
 
-            collection = new MultiIndexedCollection<DateTime>(spec)
+            this.collection = new MultiIndexedCollection<DateTime>(spec)
                                  {
                                      new DateTime(2009, 01, 02),
                                      new DateTime(2009, 01, 02),
@@ -42,8 +42,8 @@ namespace Plethora.Test.fqi
             Func<DateTime, bool> func = expression.Compile();
 
             //Execute
-            var fqiLimited = collection.Where(expression).Single();
-            var linqLimited = collection.AsEnumerable().Where(func).Single();
+            var fqiLimited = this.collection.Where(expression).Single();
+            var linqLimited = this.collection.AsEnumerable().Where(func).Single();
 
             //Test
             Assert.AreEqual(fqiLimited, linqLimited);
@@ -57,8 +57,8 @@ namespace Plethora.Test.fqi
             Func<DateTime, bool> func = expression.Compile();
 
             //Execute
-            var fqiLimited = collection.Where(expression).ToArray();
-            var linqLimited = collection.AsEnumerable().Where(func).ToArray();
+            var fqiLimited = this.collection.Where(expression).ToArray();
+            var linqLimited = this.collection.AsEnumerable().Where(func).ToArray();
 
             //Test
             Assert.AreEqual(fqiLimited.Count(), linqLimited.Count());
@@ -76,8 +76,8 @@ namespace Plethora.Test.fqi
             Func<DateTime, bool> func = expression.Compile();
 
             //Execute
-            var fqiLimited = collection.Where(expression).ToArray();
-            var linqLimited = collection.AsEnumerable().Where(func).ToArray();
+            var fqiLimited = this.collection.Where(expression).ToArray();
+            var linqLimited = this.collection.AsEnumerable().Where(func).ToArray();
 
             //Test
             Assert.AreEqual(fqiLimited.Count(), linqLimited.Count());

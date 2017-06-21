@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Context
 {
     /// <summary>
@@ -21,7 +23,7 @@ namespace Plethora.Context
 
         #region Implementation of IEqualityComparer<ContextInfo>
 
-        public bool Equals(ContextInfo x, ContextInfo y)
+        public bool Equals([CanBeNull] ContextInfo x, [CanBeNull] ContextInfo y)
         {
             if (ReferenceEquals(x, y))
                 return true;
@@ -41,7 +43,7 @@ namespace Plethora.Context
         {
             //Validation
             if (context == null)
-                throw new ArgumentNullException("context");
+                throw new ArgumentNullException(nameof(context));
 
 
             unchecked

@@ -14,17 +14,17 @@ namespace Plethora.Timing
         public OperationTimeout(int millisecondsTimeout)
         {
             if ((millisecondsTimeout < 0) && (millisecondsTimeout != Timeout.Infinite))
-                throw new ArgumentOutOfRangeException("millisecondsTimeout", millisecondsTimeout,
-                    ResourceProvider.ArgTimeout("millisecondsTimeout"));
+                throw new ArgumentOutOfRangeException(nameof(millisecondsTimeout), millisecondsTimeout,
+                    ResourceProvider.ArgTimeout(nameof(millisecondsTimeout)));
 
             if (millisecondsTimeout == Timeout.Infinite)
             {
-                endTicks = INFINITE_TICKS;
+                this.endTicks = INFINITE_TICKS;
             }
             else
             {
                 long timeoutTicks = TimeSpan.TicksPerMillisecond * millisecondsTimeout;
-                endTicks = DateTime.Now.Ticks + timeoutTicks;
+                this.endTicks = DateTime.Now.Ticks + timeoutTicks;
             }
         }
 
@@ -36,10 +36,10 @@ namespace Plethora.Timing
         {
             get
             {
-                if (endTicks == INFINITE_TICKS)
+                if (this.endTicks == INFINITE_TICKS)
                     return false;
 
-                return (endTicks <= DateTime.Now.Ticks);
+                return (this.endTicks <= DateTime.Now.Ticks);
             }
         }
 
@@ -58,10 +58,10 @@ namespace Plethora.Timing
         {
             get
             {
-                if (endTicks == INFINITE_TICKS)
+                if (this.endTicks == INFINITE_TICKS)
                     return Timeout.Infinite;
 
-                long remainingTicks = endTicks - DateTime.Now.Ticks;
+                long remainingTicks = this.endTicks - DateTime.Now.Ticks;
                 if (remainingTicks <= 0)
                     return 0;
 

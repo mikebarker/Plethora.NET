@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using NUnit.Framework;
 
-namespace Plethora.fqi.Trees.Test
+using Plethora.fqi.Trees;
+
+namespace Plethora.Test.fqi.Trees
 {
     [TestFixture]
     public class BinaryTreeEnumerator_Test
@@ -18,7 +20,7 @@ namespace Plethora.fqi.Trees.Test
                            {"Jeff", 14}
                        };
 
-            enumerator = tree.GetPairEnumerator();
+            this.enumerator = tree.GetPairEnumerator();
         }
 
         [Test]
@@ -28,9 +30,9 @@ namespace Plethora.fqi.Trees.Test
 
             //Execute and Test
             int count = 0;
-            while(enumerator.MoveNext())
+            while(this.enumerator.MoveNext())
             {
-                int currentValue = enumerator.Current.Value;
+                int currentValue = this.enumerator.Current.Value;
 
                 if (count == 0)
                     Assert.AreEqual(currentValue, 7);  //Harry
@@ -49,13 +51,13 @@ namespace Plethora.fqi.Trees.Test
         public void LimitMin()
         {
             //Setup
-            enumerator.Min = "I"; // excludes "Harry"
+            this.enumerator.Min = "I"; // excludes "Harry"
 
             //Execute and Test
             int count = 0;
-            while(enumerator.MoveNext())
+            while(this.enumerator.MoveNext())
             {
-                int currentValue = enumerator.Current.Value;
+                int currentValue = this.enumerator.Current.Value;
 
                 if (count == 0)
                     Assert.AreEqual(currentValue, 14); //Jeff
@@ -72,13 +74,13 @@ namespace Plethora.fqi.Trees.Test
         public void LimitMax()
         {
             //Setup
-            enumerator.Max = "L"; // excludes "Mark"
+            this.enumerator.Max = "L"; // excludes "Mark"
 
             //Execute and Test
             int count = 0;
-            while (enumerator.MoveNext())
+            while (this.enumerator.MoveNext())
             {
-                int currentValue = enumerator.Current.Value;
+                int currentValue = this.enumerator.Current.Value;
 
                 if (count == 0)
                     Assert.AreEqual(currentValue, 7);  //Harry
@@ -95,14 +97,14 @@ namespace Plethora.fqi.Trees.Test
         public void LimitMinAndMax()
         {
             //Setup
-            enumerator.Min = "I"; // excludes "Harry"
-            enumerator.Max = "L"; // excludes "Mark"
+            this.enumerator.Min = "I"; // excludes "Harry"
+            this.enumerator.Max = "L"; // excludes "Mark"
 
             //Execute and Test
             int count = 0;
-            while (enumerator.MoveNext())
+            while (this.enumerator.MoveNext())
             {
-                int currentValue = enumerator.Current.Value;
+                int currentValue = this.enumerator.Current.Value;
 
                 if (count == 0)
                     Assert.AreEqual(currentValue, 14); //Jeff

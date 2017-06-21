@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+
+using JetBrains.Annotations;
+
 using Plethora.Collections.Sets;
 
 namespace Plethora.Cache.Spacial
@@ -90,20 +93,20 @@ namespace Plethora.Cache.Spacial
 
         #region IsPointInRegion
 
-        public static bool IsPointInRegion<T1>(Tuple<T1> point, SpaceRegion<T1> region)
+        public static bool IsPointInRegion<T1>([NotNull] Tuple<T1> point, SpaceRegion<T1> region)
         {
             return
                 region.Dimension1.Contains(point.Item1);
         }
 
-        public static bool IsPointInRegion<T1, T2>(Tuple<T1, T2> point, SpaceRegion<T1, T2> region)
+        public static bool IsPointInRegion<T1, T2>([NotNull] Tuple<T1, T2> point, SpaceRegion<T1, T2> region)
         {
             return
                 region.Dimension1.Contains(point.Item1) &&
                 region.Dimension2.Contains(point.Item2);
         }
 
-        public static bool IsPointInRegion<T1, T2, T3>(Tuple<T1, T2, T3> point, SpaceRegion<T1, T2, T3> region)
+        public static bool IsPointInRegion<T1, T2, T3>([NotNull] Tuple<T1, T2, T3> point, SpaceRegion<T1, T2, T3> region)
         {
             return
                 region.Dimension1.Contains(point.Item1) &&
@@ -111,7 +114,7 @@ namespace Plethora.Cache.Spacial
                 region.Dimension3.Contains(point.Item3);
         }
 
-        public static bool IsPointInRegion<T1, T2, T3, T4>(Tuple<T1, T2, T3, T4> point, SpaceRegion<T1, T2, T3, T4> region)
+        public static bool IsPointInRegion<T1, T2, T3, T4>([NotNull] Tuple<T1, T2, T3, T4> point, SpaceRegion<T1, T2, T3, T4> region)
         {
             return
                 region.Dimension1.Contains(point.Item1) &&

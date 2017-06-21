@@ -23,7 +23,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (excludedElements == null)
-                throw new ArgumentNullException("excludedElements");
+                throw new ArgumentNullException(nameof(excludedElements));
 
 
             this.excludedElements = new HashSet<T>(excludedElements);
@@ -51,7 +51,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             var newElements = this.excludedElements
@@ -64,7 +64,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             //Short-cut method to intersect two exclusive sets.
@@ -89,7 +89,7 @@ namespace Plethora.Collections.Sets
         {
             //Validation
             if (other == null)
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
 
 
             //Short-cut method to subtract an exclusive set.

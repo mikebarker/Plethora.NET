@@ -21,9 +21,9 @@ namespace Plethora.Mvvm.Model
     {
         #region Static Members
 
-        private static readonly ReaderWriterLockSlim propertyMetaDataLock = new ReaderWriterLockSlim();
-        private static readonly MruDictionary<Type, IReadOnlyDictionary<string, IModelPropertyMetaData>> propertyMetaDataByType =
-            new MruDictionary<Type, IReadOnlyDictionary<string, IModelPropertyMetaData>>(maxEntries: 1024);
+        private static readonly ReaderWriterLockSlim propertyMetadataLock = new ReaderWriterLockSlim();
+        private static readonly MruDictionary<Type, IReadOnlyDictionary<string, IModelPropertyMetadata>> propertyMetadataByType =
+            new MruDictionary<Type, IReadOnlyDictionary<string, IModelPropertyMetadata>>(maxEntries: 1024);
 
         /// <summary>
         /// Gets and sets a tuning parameter which determines the maximum number of types for which the property meta-data map
@@ -33,52 +33,52 @@ namespace Plethora.Mvvm.Model
         /// If there is a high volatility of the types access via this class, and the cache often drops elements, consider increasing
         /// the maximum entries limit (at the cost of additional memory).
         /// </remarks>
-        public static int PropertyMetaDataTypeMapMaxEntries
+        public static int PropertyMetadataTypeMapMaxEntries
         {
-            get { return propertyMetaDataByType.MaxEntries; }
-            set { propertyMetaDataByType.SetMaxEntriesAndWatermark(value, null); }
+            get { return propertyMetadataByType.MaxEntries; }
+            set { propertyMetadataByType.SetMaxEntriesAndWatermark(value, null); }
         }
 
         [CanBeNull]
-        private static IReadOnlyDictionary<string, IModelPropertyMetaData> GetPropertyMetaDataForType([NotNull] Type type)
+        private static IReadOnlyDictionary<string, IModelPropertyMetadata> GetPropertyMetadataForType([NotNull] Type type)
         {
-            IReadOnlyDictionary<string, IModelPropertyMetaData> metaData;
+            IReadOnlyDictionary<string, IModelPropertyMetadata> Metadata;
             bool result;
 
-            propertyMetaDataLock.EnterReadLock();
+            propertyMetadataLock.EnterReadLock();
             try
             {
-                result = propertyMetaDataByType.TryGetValue(type, out metaData);
+                result = propertyMetadataByType.TryGetValue(type, out Metadata);
             }
             finally
             {
-                propertyMetaDataLock.ExitReadLock();
+                propertyMetadataLock.ExitReadLock();
             }
 
             if (!result)
             {
-                metaData = CreatePropertyMetaDataForType(type);
+                Metadata = CreatePropertyMetadataForType(type);
 
-                propertyMetaDataLock.EnterWriteLock();
+                propertyMetadataLock.EnterWriteLock();
                 try
                 {
-                    propertyMetaDataByType[type] = metaData;
+                    propertyMetadataByType[type] = Metadata;
                 }
                 finally
                 {
-                    propertyMetaDataLock.ExitWriteLock();
+                    propertyMetadataLock.ExitWriteLock();
                 }
             }
 
-            return metaData;
+            return Metadata;
         }
 
         [NotNull]
-        private static IReadOnlyDictionary<string, IModelPropertyMetaData> CreatePropertyMetaDataForType([NotNull] Type type)
+        private static IReadOnlyDictionary<string, IModelPropertyMetadata> CreatePropertyMetadataForType([NotNull] Type type)
         {
             PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
-            Dictionary<string, IModelPropertyMetaData> metaData = new Dictionary<string, IModelPropertyMetaData>();
+            Dictionary<string, IModelPropertyMetadata> Metadata = new Dictionary<string, IModelPropertyMetadata>();
 
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
@@ -130,16 +130,16 @@ namespace Plethora.Mvvm.Model
                         defaultValue = null;
                     }
 
-                    Type modelPropertyMetaDataType = typeof(ModelPropertyMetaData<>).MakeGenericType(propertyInfo.PropertyType);
-                    IModelPropertyMetaData modelPropertyMetaData = (IModelPropertyMetaData)Activator.CreateInstance(modelPropertyMetaDataType,
+                    Type modelPropertyMetadataType = typeof(ModelPropertyMetadata<>).MakeGenericType(propertyInfo.PropertyType);
+                    IModelPropertyMetadata modelPropertyMetadata = (IModelPropertyMetadata)Activator.CreateInstance(modelPropertyMetadataType,
                         propertyName,
                         defaultValue);
 
-                    metaData.Add(propertyName, modelPropertyMetaData);
+                    Metadata.Add(propertyName, modelPropertyMetadata);
                 }
             }
 
-            return metaData;
+            return Metadata;
         }
 
         [Conditional("DEBUG")]
@@ -519,32 +519,32 @@ namespace Plethora.Mvvm.Model
 
         private bool IsDefault([NotNull] string propertyName, [NotNull] IModelProperty modelProperty)
         {
-            IModelPropertyMetaData metaData = this.GetMetaData(propertyName);
+            IModelPropertyMetadata Metadata = this.GetMetadata(propertyName);
 
-            return modelProperty.IsUnchangedDefaultValue(metaData);
+            return modelProperty.IsUnchangedDefaultValue(Metadata);
         }
 
         [CanBeNull]
         private T GetDefaultValue<T>([NotNull] string propertyName)
         {
-            IModelPropertyMetaData metaData = this.GetMetaData(propertyName);
+            IModelPropertyMetadata Metadata = this.GetMetadata(propertyName);
 
-            T defaultValue = ((ModelPropertyMetaData<T>)metaData).GetDefaultValueSafe();
+            T defaultValue = ((ModelPropertyMetadata<T>)Metadata).GetDefaultValueSafe();
             return defaultValue;
         }
 
         [CanBeNull]
-        private IModelPropertyMetaData GetMetaData([NotNull] string propertyName)
+        private IModelPropertyMetadata GetMetadata([NotNull] string propertyName)
         {
-            IReadOnlyDictionary<string, IModelPropertyMetaData> typeMetaData = ModelBase.GetPropertyMetaDataForType(this.GetType());
+            IReadOnlyDictionary<string, IModelPropertyMetadata> typeMetadata = ModelBase.GetPropertyMetadataForType(this.GetType());
 
-            IModelPropertyMetaData metaData = null;
-            if (typeMetaData != null)
+            IModelPropertyMetadata Metadata = null;
+            if (typeMetadata != null)
             {
-                typeMetaData.TryGetValue(propertyName, out metaData);
+                typeMetadata.TryGetValue(propertyName, out Metadata);
             }
 
-            return metaData;
+            return Metadata;
         }
 
         [ContractAnnotation("=> true, modelProperty:notnull; => false, modelProperty:null")]
@@ -565,30 +565,30 @@ namespace Plethora.Mvvm.Model
         private void ValidatePropertyExpression<T>([NotNull] Expression<Func<T>> propertyExpression)
         {
             if (propertyExpression == null)
-                throw new ArgumentNullException("propertyExpression");
+                throw new ArgumentNullException(nameof(propertyExpression));
 
             Expression bodyExpression = propertyExpression.Body;
             if (!(bodyExpression is MemberExpression))
             {
-                throw new ArgumentException("propertyExpression must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
             }
 
             MemberExpression memberExpression = (MemberExpression)bodyExpression;
             if (!(memberExpression.Expression is ConstantExpression))
             {
-                throw new ArgumentException("propertyExpression must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
             }
 
             ConstantExpression constantExpression = (ConstantExpression)memberExpression.Expression;
             if (!ReferenceEquals(constantExpression.Value, this))
             {
-                throw new ArgumentException("propertyExpression must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
             }
 
             MemberInfo memberInfo = memberExpression.Member;
             if (!(memberInfo is PropertyInfo))
             {
-                throw new ArgumentException("propertyExpression must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
             }
         }
     }

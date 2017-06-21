@@ -17,9 +17,9 @@ namespace Plethora.Context.Wpf
     {
         public WpfContextMenuItem()
         {
-            base.SetValue(SuppressedContextPatternsPropertyKey, new StringObservableCollection());
-            base.SetValue(SuppressedActionPatternsPropertyKey, new StringObservableCollection());
-            base.SetValue(SuppressedGroupPatternsPropertyKey, new StringObservableCollection());
+            this.SetValue(SuppressedContextPatternsPropertyKey, new StringObservableCollection());
+            this.SetValue(SuppressedActionPatternsPropertyKey, new StringObservableCollection());
+            this.SetValue(SuppressedGroupPatternsPropertyKey, new StringObservableCollection());
 
             //Do not show this item in the menu to the user
             // Sub items will be added as appropriate
@@ -29,15 +29,15 @@ namespace Plethora.Context.Wpf
         #region MaxGroupItems Dependency Property
 
         public static readonly DependencyProperty MaxGroupItemsProperty = DependencyProperty.Register(
-            "MaxGroupItems", 
+            nameof(MaxGroupItems),
             typeof (int),
             typeof (WpfContextMenuItem),
             new PropertyMetadata(-1));
 
         public int MaxGroupItems
         {
-            get { return (int)GetValue(MaxGroupItemsProperty); }
-            set { SetValue(MaxGroupItemsProperty, value); }
+            get { return (int)this.GetValue(MaxGroupItemsProperty); }
+            set { this.SetValue(MaxGroupItemsProperty, value); }
         }
 
         #endregion
@@ -45,15 +45,15 @@ namespace Plethora.Context.Wpf
         #region ShowUnavailableActions Dependency Property
 
         public static readonly DependencyProperty ShowUnavailableActionsProperty = DependencyProperty.Register(
-            "ShowUnavailableActions",
+            nameof(ShowUnavailableActions),
             typeof(bool),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(true));
 
         public bool ShowUnavailableActions
         {
-            get { return (bool)GetValue(ShowUnavailableActionsProperty); }
-            set { SetValue(ShowUnavailableActionsProperty, value); }
+            get { return (bool)this.GetValue(ShowUnavailableActionsProperty); }
+            set { this.SetValue(ShowUnavailableActionsProperty, value); }
         }
 
         #endregion
@@ -61,15 +61,15 @@ namespace Plethora.Context.Wpf
         #region DisableGrouping Dependency Property
 
         public static readonly DependencyProperty DisableGroupingProperty = DependencyProperty.Register(
-            "DisableGrouping",
+            nameof(DisableGrouping),
             typeof(bool),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(false));
 
         public bool DisableGrouping
         {
-            get { return (bool)GetValue(DisableGroupingProperty); }
-            set { SetValue(DisableGroupingProperty, value); }
+            get { return (bool)this.GetValue(DisableGroupingProperty); }
+            set { this.SetValue(DisableGroupingProperty, value); }
         }
 
         #endregion
@@ -77,7 +77,7 @@ namespace Plethora.Context.Wpf
         #region SuppressedContextPatterns Dependency Property
 
         public static readonly DependencyPropertyKey SuppressedContextPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
-            "SuppressedContextPatterns",
+            nameof(SuppressedContextPatterns),
             typeof(StringObservableCollection),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
@@ -87,7 +87,7 @@ namespace Plethora.Context.Wpf
 
         public StringObservableCollection SuppressedContextPatterns
         {
-            get { return (StringObservableCollection)GetValue(SuppressedContextPatternsProperty); }
+            get { return (StringObservableCollection)this.GetValue(SuppressedContextPatternsProperty); }
         }
 
         #endregion
@@ -95,7 +95,7 @@ namespace Plethora.Context.Wpf
         #region SuppressedActionPatterns Dependency Property
 
         private static readonly DependencyPropertyKey SuppressedActionPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
-            "SuppressedActionPatterns",
+            nameof(SuppressedActionPatterns),
             typeof(StringObservableCollection),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
@@ -105,7 +105,7 @@ namespace Plethora.Context.Wpf
 
         public StringObservableCollection SuppressedActionPatterns
         {
-            get { return (StringObservableCollection)GetValue(SuppressedActionPatternsProperty); }
+            get { return (StringObservableCollection)this.GetValue(SuppressedActionPatternsProperty); }
         }
 
         #endregion
@@ -113,7 +113,7 @@ namespace Plethora.Context.Wpf
         #region SuppressedGroupPatterns Dependency Property
 
         private static readonly DependencyPropertyKey SuppressedGroupPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
-            "SuppressedGroupPatterns",
+            nameof(SuppressedGroupPatterns),
             typeof(StringObservableCollection),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
@@ -123,7 +123,7 @@ namespace Plethora.Context.Wpf
 
         public StringObservableCollection SuppressedGroupPatterns
         {
-            get { return (StringObservableCollection)GetValue(SuppressedGroupPatternsProperty); }
+            get { return (StringObservableCollection)this.GetValue(SuppressedGroupPatternsProperty); }
         }
 
         #endregion
@@ -131,15 +131,15 @@ namespace Plethora.Context.Wpf
         #region ActionsAdapter Dependency Property
 
         public static readonly DependencyProperty ActionsAdapterProperty = DependencyProperty.Register(
-            "ActionsAdapter",
+            nameof(ActionsAdapter),
             typeof(IActionsAdapter),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
 
         public IActionsAdapter ActionsAdapter
         {
-            get { return (IActionsAdapter)GetValue(ActionsAdapterProperty); }
-            set { SetValue(ActionsAdapterProperty, value); }
+            get { return (IActionsAdapter)this.GetValue(ActionsAdapterProperty); }
+            set { this.SetValue(ActionsAdapterProperty, value); }
         }
 
         #endregion
@@ -147,15 +147,15 @@ namespace Plethora.Context.Wpf
         #region ImageKeyConverter Dependency Property
 
         public static readonly DependencyProperty ImageKeyConverterProperty = DependencyProperty.Register(
-            "ImageKeyConverter",
+            nameof(ImageKeyConverter),
             typeof(IValueConverter),
             typeof(WpfContextMenuItem),
             new PropertyMetadata(null));
 
         public IValueConverter ImageKeyConverter
         {
-            get { return (IValueConverter)GetValue(ImageKeyConverterProperty); }
-            set { SetValue(ImageKeyConverterProperty, value); }
+            get { return (IValueConverter)this.GetValue(ImageKeyConverterProperty); }
+            set { this.SetValue(ImageKeyConverterProperty, value); }
         }
 
         #endregion
@@ -167,8 +167,8 @@ namespace Plethora.Context.Wpf
             ContextMenu newContextMenu = this.Parent as ContextMenu;
             if (newContextMenu != null)
             {
-                newContextMenu.Opened += ContextMenu_Opened;
-                newContextMenu.Closed += ContextMenu_Closed;
+                newContextMenu.Opened += this.ContextMenu_Opened;
+                newContextMenu.Closed += this.ContextMenu_Closed;
 
                 WpfContext.SetIsActivityItem(newContextMenu, true);
             }

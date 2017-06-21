@@ -43,14 +43,14 @@ namespace Plethora.StringFormat
         public static string ReplaceNamedFormat(this string format, string name, int index)
         {
             if (format == null)
-                throw new ArgumentNullException("format");
+                throw new ArgumentNullException(nameof(format));
 
             if (name == null)
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             if (index < 0)
-                throw new ArgumentOutOfRangeException("index", index,
-                    ResourceProvider.ArgMustBeGreaterThanEqualToZero("index"));
+                throw new ArgumentOutOfRangeException(nameof(index), index,
+                    ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(index)));
 
 
             string namePrefix = "{" + name;

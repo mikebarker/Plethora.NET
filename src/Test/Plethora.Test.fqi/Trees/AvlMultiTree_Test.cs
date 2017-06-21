@@ -12,7 +12,7 @@ namespace Plethora.Test.fqi.Trees
         [SetUp]
         public void SetUp()
         {
-            tree = new AvlMultiTree<string, int>();
+            this.tree = new AvlMultiTree<string, int>();
         }
 
         [Test]
@@ -23,11 +23,11 @@ namespace Plethora.Test.fqi.Trees
             const int value = 7;
 
             //Execute
-            tree.Add(key, value);
+            this.tree.Add(key, value);
 
             //Test
-            Assert.AreEqual(tree.Count, 1);
-            Assert.AreEqual(tree[key], value);
+            Assert.AreEqual(this.tree.Count, 1);
+            Assert.AreEqual(this.tree[key], value);
         }
 
         [Test]
@@ -38,8 +38,8 @@ namespace Plethora.Test.fqi.Trees
             const int value = 7;
 
             //Execute
-            tree.Add(key, value);
-            tree.Add(key, value + 1);
+            this.tree.Add(key, value);
+            this.tree.Add(key, value + 1);
         }
 
         [Test]
@@ -49,13 +49,13 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Test
-            Assert.AreEqual(tree.Count, 3);
-            foreach (KeyValuePair<string, int> pair in tree)
+            Assert.AreEqual(this.tree.Count, 3);
+            foreach (KeyValuePair<string, int> pair in this.tree)
             {
                 Assert.IsTrue(keys.Contains(pair.Key));
                 Assert.IsTrue(values.Contains(pair.Value));
@@ -69,17 +69,17 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
-            Assert.AreEqual(tree.Count, 3);
+            Assert.AreEqual(this.tree.Count, 3);
 
             //Execute
-            tree.Clear();
+            this.tree.Clear();
 
             //Test
-            Assert.AreEqual(tree.Count, 0);
+            Assert.AreEqual(this.tree.Count, 0);
         }
 
         [Test]
@@ -89,12 +89,12 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Test
-            Assert.IsTrue(tree.ContainsKey("Mark"));
+            Assert.IsTrue(this.tree.ContainsKey("Mark"));
         }
 
         [Test]
@@ -104,18 +104,18 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Test
-            bool result = tree.Remove("Mark");
+            bool result = this.tree.Remove("Mark");
             Assert.IsTrue(result);
-            Assert.AreEqual(tree.Count, 2);
+            Assert.AreEqual(this.tree.Count, 2);
 
-            result = tree.Remove("Mark");
+            result = this.tree.Remove("Mark");
             Assert.IsFalse(result);
-            Assert.AreEqual(tree.Count, 2);
+            Assert.AreEqual(this.tree.Count, 2);
         }
 
         [Test]
@@ -125,13 +125,13 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Execute
             int value;
-            bool result = tree.TryGetValue("Mark", out value);
+            bool result = this.tree.TryGetValue("Mark", out value);
 
             //Test
             Assert.IsTrue(result);
@@ -145,13 +145,13 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Execute
             int value;
-            bool result = tree.TryGetValue("Xylophone", out value);
+            bool result = this.tree.TryGetValue("Xylophone", out value);
 
             //Test
             Assert.IsFalse(result);
@@ -165,14 +165,14 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Execute
             int value;
             object locationInfo;
-            bool result = tree.TryGetValueEx("Mark", out value, out locationInfo);
+            bool result = this.tree.TryGetValueEx("Mark", out value, out locationInfo);
 
             //Test
             Assert.IsTrue(result);
@@ -187,14 +187,14 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Execute
             int value;
             object locationInfo;
-            bool result = tree.TryGetValueEx("Xylophone", out value, out locationInfo);
+            bool result = this.tree.TryGetValueEx("Xylophone", out value, out locationInfo);
 
             //Test
             Assert.IsFalse(result);
@@ -209,23 +209,23 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Execute
             const string key = "Xylophone";
             int value;
             object locationInfo;
-            bool result = tree.TryGetValueEx(key, out value, out locationInfo);
+            bool result = this.tree.TryGetValueEx(key, out value, out locationInfo);
 
             Assert.IsFalse(result);
             Assert.IsNotNull(locationInfo);
 
-            tree.AddEx(key, 42, locationInfo);
+            this.tree.AddEx(key, 42, locationInfo);
 
             //Test
-            Assert.AreEqual(tree[key], 42);
+            Assert.AreEqual(this.tree[key], 42);
         }
 
         [Test]
@@ -235,12 +235,12 @@ namespace Plethora.Test.fqi.Trees
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
             IList<int> values = new List<int> { 7, 12, 14 };
 
-            tree.Add(keys[0], values[0]);
-            tree.Add(keys[1], values[1]);
-            tree.Add(keys[2], values[2]);
+            this.tree.Add(keys[0], values[0]);
+            this.tree.Add(keys[1], values[1]);
+            this.tree.Add(keys[2], values[2]);
 
             //Execute
-            IKeyLimitedEnumerator<string, KeyValuePair<string, int>> enumerator = tree.GetPairEnumerator();
+            IKeyLimitedEnumerator<string, KeyValuePair<string, int>> enumerator = this.tree.GetPairEnumerator();
 
             //Test
             Assert.IsNotNull(enumerator);
@@ -249,7 +249,7 @@ namespace Plethora.Test.fqi.Trees
         [Test]
         public void AreDuplicatesAllowed()
         {
-            Assert.IsTrue(tree.AreDuplicatesAllowed);
+            Assert.IsTrue(this.tree.AreDuplicatesAllowed);
         }
     }
 }

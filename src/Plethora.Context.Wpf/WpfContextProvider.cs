@@ -12,19 +12,19 @@ namespace Plethora.Context.Wpf
         {
             //Validation
             if (element == null)
-                throw new ArgumentNullException("element");
+                throw new ArgumentNullException(nameof(element));
 
 
             this.uiElement = element;
-            RegisterUIElement(uiElement);
+            this.RegisterUIElement(this.uiElement);
         }
 
         #region Implementation of IContextProvider
 
         protected override IEnumerable<ContextInfo> GetContexts()
         {
-            return (ContextSource != null) 
-                ? ContextSource.Contexts
+            return (this.ContextSource != null) 
+                ? this.ContextSource.Contexts
                 : null;
         }
 
@@ -36,25 +36,25 @@ namespace Plethora.Context.Wpf
 
         public IWpfContextSource ContextSource
         {
-            get { return contextSource; }
+            get { return this.contextSource; }
             set 
             {
-                if (ReferenceEquals(contextSource, value))
+                if (ReferenceEquals(this.contextSource, value))
                     return;
 
 
-                if (contextSource != null)
+                if (this.contextSource != null)
                 {
-                    contextSource.UIElement = null;
-                    contextSource.ContextChanged -= contextSource_ContextChanged;
+                    this.contextSource.UIElement = null;
+                    this.contextSource.ContextChanged -= this.contextSource_ContextChanged;
                 }
 
-                contextSource = value;
+                this.contextSource = value;
 
-                if (contextSource != null)
+                if (this.contextSource != null)
                 {
-                    contextSource.UIElement = this.uiElement;
-                    contextSource.ContextChanged += contextSource_ContextChanged;
+                    this.contextSource.UIElement = this.uiElement;
+                    this.contextSource.ContextChanged += this.contextSource_ContextChanged;
                 }
             }
         }
@@ -70,7 +70,7 @@ namespace Plethora.Context.Wpf
 
         public UIElement UIElement
         {
-            get { return uiElement; }
+            get { return this.uiElement; }
         }
 
         private void RegisterUIElement(UIElement element)
@@ -79,26 +79,26 @@ namespace Plethora.Context.Wpf
             if (DesignerProperties.GetIsInDesignMode(element))
                 return;
 
-            element.GotKeyboardFocus += element_GotKeyboardFocus;
-            element.LostKeyboardFocus += element_LostKeyboardFocus;
+            element.GotKeyboardFocus += this.element_GotKeyboardFocus;
+            element.LostKeyboardFocus += this.element_LostKeyboardFocus;
 
             var contextManager = WpfContext.GetContextManagerForElement(element);
             contextManager.RegisterProvider(this);
 
-            if (ContextSource != null)
-                contextSource.UIElement = element;
+            if (this.ContextSource != null)
+                this.contextSource.UIElement = element;
         }
 
         private void element_GotKeyboardFocus(object sender, RoutedEventArgs e)
         {
-            OnEnterContext();
+            this.OnEnterContext();
         }
 
         private void element_LostKeyboardFocus(object sender, RoutedEventArgs e)
         {
             UIElement source = (UIElement)sender;
             if (!ReferenceEquals(source, this.UIElement))
-                source.LostKeyboardFocus -= element_LostKeyboardFocus;
+                source.LostKeyboardFocus -= this.element_LostKeyboardFocus;
 
             UIElement activeControl = Keyboard.FocusedElement as UIElement;
             if (activeControl == null)
@@ -107,10 +107,10 @@ namespace Plethora.Context.Wpf
                 return;
             }
 
-            if (IsActivityElement(activeControl))
+            if (this.IsActivityElement(activeControl))
             {
                 if (!ReferenceEquals(activeControl, this.UIElement))
-                    activeControl.LostKeyboardFocus += element_LostKeyboardFocus;
+                    activeControl.LostKeyboardFocus += this.element_LostKeyboardFocus;
             }
             else
             {

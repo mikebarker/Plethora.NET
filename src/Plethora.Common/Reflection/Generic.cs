@@ -14,22 +14,22 @@ namespace Plethora.Reflection
         // ReSharper disable ConvertToStaticClass
 
         /// <summary>
-        /// Used by <see cref="GetGenericMethod"/> to specify the first generic argument.
+        /// Used by <see cref="GetGenericMethod(Type, string, BindingFlags, Binder, Type[], ParameterModifier[])"/> to specify the first generic argument.
         /// </summary>
         public sealed class Arg1 { private Arg1() { } }
 
         /// <summary>
-        /// Used by <see cref="GetGenericMethod"/> to specify the second generic argument.
+        /// Used by <see cref="GetGenericMethod(Type, string, BindingFlags, Binder, Type[], ParameterModifier[])"/> to specify the second generic argument.
         /// </summary>
         public sealed class Arg2 { private Arg2() { } }
 
         /// <summary>
-        /// Used by <see cref="GetGenericMethod"/> to specify the third generic argument.
+        /// Used by <see cref="GetGenericMethod(Type, string, BindingFlags, Binder, Type[], ParameterModifier[])"/> to specify the third generic argument.
         /// </summary>
         public sealed class Arg3 { private Arg3() { } }
 
         /// <summary>
-        /// Used by <see cref="GetGenericMethod"/> to specify the forth generic argument.
+        /// Used by <see cref="GetGenericMethod(Type, string, BindingFlags, Binder, Type[], ParameterModifier[])"/> to specify the forth generic argument.
         /// </summary>
         public sealed class Arg4 { private Arg4() { } }
 

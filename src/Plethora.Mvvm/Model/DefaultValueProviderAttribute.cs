@@ -28,7 +28,7 @@ namespace Plethora.Mvvm.Model
     /// </remarks>
     /// <see cref="ModelBase"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
-    public class DefaultValueProviderAttribute : Attribute
+    public sealed class DefaultValueProviderAttribute : Attribute
     {
         private readonly Type type;
         private readonly string staticMemberName;

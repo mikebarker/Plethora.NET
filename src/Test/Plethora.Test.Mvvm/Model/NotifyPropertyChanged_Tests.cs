@@ -94,7 +94,7 @@ namespace Plethora.Test.Mvvm.Model
         }
 
 
-        #region
+        #region Extension Classes
 
         private class NotifyPropertyChangedImpl : NotifyPropertyChanged
         {
@@ -106,9 +106,9 @@ namespace Plethora.Test.Mvvm.Model
                 get { return this.propertyNotifyByExpression; }
                 set
                 {
-                    this.OnPropertyChanging(() => this.PropertyNotifyByExpression);
+                    this.OnPropertyChanging(nameof(this.PropertyNotifyByExpression));
                     this.propertyNotifyByExpression = value;
-                    this.OnPropertyChanged(() => this.PropertyNotifyByExpression);
+                    this.OnPropertyChanged(nameof(this.PropertyNotifyByExpression));
                 }
             }
 
@@ -117,9 +117,9 @@ namespace Plethora.Test.Mvvm.Model
                 get { return this.propertyNotifyByName; }
                 set
                 {
-                    this.OnPropertyChanging("PropertyNotifyByName");
+                    this.OnPropertyChanging(nameof(this.PropertyNotifyByName));
                     this.propertyNotifyByName = value;
-                    this.OnPropertyChanged("PropertyNotifyByName");
+                    this.OnPropertyChanged(nameof(this.PropertyNotifyByName));
                 }
             }
         }

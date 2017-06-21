@@ -12,7 +12,7 @@ namespace Plethora.Collections
     /// <typeparam name="T">
     /// The data type of the elements in the list.
     /// </typeparam>
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [Serializable]
     public class AutoSortedList<T> : IList<T>
     {
@@ -26,7 +26,7 @@ namespace Plethora.Collections
         #region Constructors
 
         /// <summary>
-        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>, with a duplicate policy 
+        /// Initializes a new instance of <see cref="AutoSortedList{T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/> and using the
         /// default comparer for <typeparamref name="T"/>.
         /// </summary>
@@ -37,7 +37,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>, with a duplicate policy 
+        /// Initializes a new instance of <see cref="AutoSortedList{T}"/>, with a duplicate policy 
         /// of <see cref="Plethora.Collections.DuplicatesPolicy.Error"/>.
         /// </summary>
         /// <param name="comparer">The comparer used to sort the list.</param>
@@ -47,7 +47,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>.
+        /// Initializes a new instance of <see cref="AutoSortedList{T}"/>.
         /// </summary>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
         /// <param name="comparer">The comparer used to sort the list.</param>
@@ -59,12 +59,12 @@ namespace Plethora.Collections
                 (duplicatesPolicy != DuplicatesPolicy.Replace) &&
                 (duplicatesPolicy != DuplicatesPolicy.Error))
             {
-                throw new ArgumentOutOfRangeException("duplicatesPolicy", duplicatesPolicy,
-                    ResourceProvider.ArgMustBeOneOf("duplicatesPolicy", "Allow", "Ignor", "Replace", "Error"));
+                throw new ArgumentOutOfRangeException(nameof(duplicatesPolicy), duplicatesPolicy,
+                    ResourceProvider.ArgMustBeOneOf(nameof(duplicatesPolicy), "Allow", "Ignor", "Replace", "Error"));
             }
 
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
 
 
             this.duplicatesPolicy = duplicatesPolicy;
@@ -73,7 +73,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// Initializes a new instance of <see cref="AutoAutoSortedList{T}"/>.
+        /// Initializes a new instance of <see cref="AutoSortedList{T}"/>.
         /// </summary>
         /// <param name="enumerable">The collection whose elements are to be copied to the sorted list.</param>
         /// <param name="duplicatesPolicy">The policy to be followed when adding duplicate elements to the list.</param>
@@ -95,7 +95,7 @@ namespace Plethora.Collections
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -128,22 +128,22 @@ namespace Plethora.Collections
         {
             //Validation
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
 
             int index = this.BinarySearch(item);
 
             if (index >= 0)
             {
-                if (duplicatesPolicy == DuplicatesPolicy.Error)
+                if (this.duplicatesPolicy == DuplicatesPolicy.Error)
                 {
                     throw new InvalidOperationException(ResourceProvider.ArgAddingDuplicate());
                 }
-                else if (duplicatesPolicy == DuplicatesPolicy.Ignor)
+                else if (this.duplicatesPolicy == DuplicatesPolicy.Ignor)
                 {
                     return -1;
                 }
-                else if (duplicatesPolicy == DuplicatesPolicy.Replace)
+                else if (this.duplicatesPolicy == DuplicatesPolicy.Replace)
                 {
                     this.innerList[index] = item;
                     return index;
@@ -181,7 +181,7 @@ namespace Plethora.Collections
         public bool Contains(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             int index = this.BinarySearch(item);
             return (index >= 0);
@@ -313,7 +313,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (enumerable == null)
-                throw new ArgumentNullException("enumerable");
+                throw new ArgumentNullException(nameof(enumerable));
 
             foreach (T item in enumerable)
             {
@@ -341,10 +341,10 @@ namespace Plethora.Collections
         {
             //Validation
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
 
-            int result = this.innerList.BinarySearch(index, count, item, comparer);
+            int result = this.innerList.BinarySearch(index, count, item, this.comparer);
             return result;
         }
 
@@ -446,7 +446,7 @@ namespace Plethora.Collections
 
             //List not necessarily unique. Find first matching item using linear search
             int nextIndexOf = indexOf - 1;
-            while ((nextIndexOf >= index) && (comparer.Compare(item, this[nextIndexOf]) == 0))
+            while ((nextIndexOf >= index) && (this.comparer.Compare(item, this[nextIndexOf]) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf--;
@@ -478,7 +478,7 @@ namespace Plethora.Collections
             //List not necessarily unique. Find last matching item using linear search
             int nextIndexOf = indexOf + 1;
             int maxIndex = index + count;
-            while ((nextIndexOf <= maxIndex) && (comparer.Compare(item, this[nextIndexOf]) == 0))
+            while ((nextIndexOf <= maxIndex) && (this.comparer.Compare(item, this[nextIndexOf]) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf++;

@@ -15,7 +15,7 @@ namespace Plethora.ExpressionAide
         {
             ParamDictionary parameters = new ParamDictionary();
             List<Step> path = new List<Step>();
-            return (T)Duplicate(expr, new Step(Direction.This), parameters, path);
+            return (T)this.Duplicate(expr, new Step(Direction.This), parameters, path);
         }
         #endregion
 
@@ -32,159 +32,159 @@ namespace Plethora.ExpressionAide
             switch (expression.NodeType)
             {
                 case ExpressionType.Add:
-                    rtn = DuplicateAdd((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateAdd((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.AddChecked:
-                    rtn = DuplicateAddChecked((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateAddChecked((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.And:
-                    rtn = DuplicateAnd((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateAnd((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.AndAlso:
-                    rtn = DuplicateAndAlso((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateAndAlso((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.ArrayIndex:
                     if (expression is BinaryExpression)
                     {
-                        rtn = DuplicateArrayIndex((BinaryExpression)expression, parameters, path);
+                        rtn = this.DuplicateArrayIndex((BinaryExpression)expression, parameters, path);
                     }
                     else if (expression is MethodCallExpression)
                     {
-                        rtn = DuplicateArrayIndex((MethodCallExpression)expression, parameters, path);
+                        rtn = this.DuplicateArrayIndex((MethodCallExpression)expression, parameters, path);
                     }
                     else
                     {
-                        throw new ArgumentException(string.Format("Unknown ArrayIndex expression type {0}", expression.GetType()), "expression");
+                        throw new ArgumentException(string.Format("Unknown ArrayIndex expression type {0}", expression.GetType()), nameof(expression));
                     }
                     break;
                 case ExpressionType.ArrayLength:
-                    rtn = DuplicateArrayLength((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateArrayLength((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Call:
-                    rtn = DuplicateCall((MethodCallExpression)expression, parameters, path);
+                    rtn = this.DuplicateCall((MethodCallExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Coalesce:
-                    rtn = DuplicateCoalesce((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateCoalesce((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Conditional:
-                    rtn = DuplicateConditional((ConditionalExpression)expression, parameters, path);
+                    rtn = this.DuplicateConditional((ConditionalExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Constant:
-                    rtn = DuplicateConstant((ConstantExpression)expression, parameters, path);
+                    rtn = this.DuplicateConstant((ConstantExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Convert:
-                    rtn = DuplicateConvert((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateConvert((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.ConvertChecked:
-                    rtn = DuplicateConvertChecked((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateConvertChecked((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Divide:
-                    rtn = DuplicateDivide((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateDivide((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Equal:
-                    rtn = DuplicateEqual((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateEqual((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.ExclusiveOr:
-                    rtn = DuplicateExclusiveOr((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateExclusiveOr((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.GreaterThan:
-                    rtn = DuplicateGreaterThan((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateGreaterThan((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.GreaterThanOrEqual:
-                    rtn = DuplicateGreaterThanOrEqual((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateGreaterThanOrEqual((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Invoke:
-                    rtn = DuplicateInvoke((InvocationExpression)expression, parameters, path);
+                    rtn = this.DuplicateInvoke((InvocationExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Lambda:
-                    rtn = DuplicateLambda((LambdaExpression)expression, parameters, path);
+                    rtn = this.DuplicateLambda((LambdaExpression)expression, parameters, path);
                     break;
                 case ExpressionType.LeftShift:
-                    rtn = DuplicateLeftShift((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateLeftShift((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.LessThan:
-                    rtn = DuplicateLessThan((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateLessThan((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.LessThanOrEqual:
-                    rtn = DuplicateLessThanOrEqual((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateLessThanOrEqual((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.ListInit:
-                    rtn = DuplicateListInit((ListInitExpression)expression, parameters, path);
+                    rtn = this.DuplicateListInit((ListInitExpression)expression, parameters, path);
                     break;
                 case ExpressionType.MemberAccess:
-                    rtn = DuplicateMemberAccess((MemberExpression)expression, parameters, path);
+                    rtn = this.DuplicateMemberAccess((MemberExpression)expression, parameters, path);
                     break;
                 case ExpressionType.MemberInit:
-                    rtn = DuplicateMemberInit((MemberInitExpression)expression, parameters, path);
+                    rtn = this.DuplicateMemberInit((MemberInitExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Modulo:
-                    rtn = DuplicateModulo((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateModulo((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Multiply:
-                    rtn = DuplicateMultiply((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateMultiply((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.MultiplyChecked:
-                    rtn = DuplicateMultiplyChecked((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateMultiplyChecked((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Negate:
-                    rtn = DuplicateNegate((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateNegate((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.NegateChecked:
-                    rtn = DuplicateNegateChecked((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateNegateChecked((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.New:
-                    rtn = DuplicateNew((NewExpression)expression, parameters, path);
+                    rtn = this.DuplicateNew((NewExpression)expression, parameters, path);
                     break;
                 case ExpressionType.NewArrayBounds:
-                    rtn = DuplicateNewArrayBounds((NewArrayExpression)expression, parameters, path);
+                    rtn = this.DuplicateNewArrayBounds((NewArrayExpression)expression, parameters, path);
                     break;
                 case ExpressionType.NewArrayInit:
-                    rtn = DuplicateNewArrayInit((NewArrayExpression)expression, parameters, path);
+                    rtn = this.DuplicateNewArrayInit((NewArrayExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Not:
-                    rtn = DuplicateNot((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateNot((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.NotEqual:
-                    rtn = DuplicateNotEqual((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateNotEqual((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Or:
-                    rtn = DuplicateOr((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateOr((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.OrElse:
-                    rtn = DuplicateOrElse((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateOrElse((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Parameter:
-                    rtn = DuplicateParameter((ParameterExpression)expression, parameters, path);
+                    rtn = this.DuplicateParameter((ParameterExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Power:
-                    rtn = DuplicatePower((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicatePower((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Quote:
-                    rtn = DuplicateQuote((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateQuote((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.RightShift:
-                    rtn = DuplicateRightShift((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateRightShift((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.Subtract:
-                    rtn = DuplicateSubtract((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateSubtract((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.SubtractChecked:
-                    rtn = DuplicateSubtractChecked((BinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateSubtractChecked((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.TypeAs:
-                    rtn = DuplicateTypeAs((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateTypeAs((UnaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.TypeIs:
-                    rtn = DuplicateTypeIs((TypeBinaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateTypeIs((TypeBinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.UnaryPlus:
-                    rtn = DuplicateUnaryPlus((UnaryExpression)expression, parameters, path);
+                    rtn = this.DuplicateUnaryPlus((UnaryExpression)expression, parameters, path);
                     break;
 
                 default:
                     throw new ArgumentException(
                         string.Format("Expression NodeType {0} not known. ", expression.NodeType),
-                        "expression");
+                        nameof(expression));
             }
 
             return rtn;
@@ -265,7 +265,7 @@ namespace Plethora.ExpressionAide
             }
             if (assigned)
             {
-                Expression dupe = Duplicate(expr, new Step(direction), parameters, path);
+                Expression dupe = this.Duplicate(expr, new Step(direction), parameters, path);
                 return Enumerable.Repeat(dupe, 1);
             }
 
@@ -306,7 +306,7 @@ namespace Plethora.ExpressionAide
                 {
                     expr = exprs[i];
 
-                    var dupe = Duplicate(expr, new Step(direction, i), parameters, path);
+                    var dupe = this.Duplicate(expr, new Step(direction, i), parameters, path);
 
                     dupes.Add(dupe);
                 }
@@ -320,8 +320,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateAdd(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Add(expLeft, expRight, expression.Method);
 
             return rtn;
@@ -329,8 +329,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateAddChecked(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.AddChecked(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -338,8 +338,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateAnd(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.And(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -347,8 +347,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateAndAlso(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.AndAlso(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -356,8 +356,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateArrayIndex(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.ArrayIndex(expLeft, expRight);
             
             return rtn;
@@ -365,8 +365,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateArrayIndex(MethodCallExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Object, parameters, path).Single();
-            var expArguments = DuplicateChild(expression, Direction.Arguments, parameters, path);
+            var expLeft = this.DuplicateChild(expression, Direction.Object, parameters, path).Single();
+            var expArguments = this.DuplicateChild(expression, Direction.Arguments, parameters, path);
             var rtn = Expression.ArrayIndex(expLeft, expArguments);
             
             return rtn;
@@ -374,7 +374,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateArrayLength(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.ArrayLength(expOperand);
             
             return rtn;
@@ -382,8 +382,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateCall(MethodCallExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expObject = DuplicateChild(expression, Direction.Object, parameters, path).Single();
-            var expArguments = DuplicateChild(expression, Direction.Arguments, parameters, path);
+            var expObject = this.DuplicateChild(expression, Direction.Object, parameters, path).Single();
+            var expArguments = this.DuplicateChild(expression, Direction.Arguments, parameters, path);
             var rtn = Expression.Call(expObject, expression.Method, expArguments);
             
             return rtn;
@@ -391,8 +391,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateCoalesce(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Coalesce(expLeft, expRight, expression.Conversion);
 
             return rtn;
@@ -400,9 +400,9 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateConditional(ConditionalExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expTest = DuplicateChild(expression, Direction.Test, parameters, path).Single();
-            var expIfTrue = DuplicateChild(expression, Direction.IfTrue, parameters, path).Single();
-            var expIfFalse = DuplicateChild(expression, Direction.IfFalse, parameters, path).Single();
+            var expTest = this.DuplicateChild(expression, Direction.Test, parameters, path).Single();
+            var expIfTrue = this.DuplicateChild(expression, Direction.IfTrue, parameters, path).Single();
+            var expIfFalse = this.DuplicateChild(expression, Direction.IfFalse, parameters, path).Single();
             var rtn = Expression.Condition(expTest, expIfTrue, expIfFalse);
 
             return rtn;
@@ -417,7 +417,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateConvert(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.Convert(expOperand, expression.Type, expression.Method);
 
             return rtn;
@@ -425,7 +425,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateConvertChecked(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.ConvertChecked(expOperand, expression.Type, expression.Method);
 
             return rtn;
@@ -433,8 +433,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateDivide(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Divide(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -442,8 +442,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateEqual(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Equal(expLeft, expRight, expression.IsLiftedToNull, expression.Method);
             
             return rtn;
@@ -451,8 +451,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateExclusiveOr(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.ExclusiveOr(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -460,8 +460,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateGreaterThan(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.GreaterThan(expLeft, expRight, expression.IsLiftedToNull, expression.Method);
             
             return rtn;
@@ -469,8 +469,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateGreaterThanOrEqual(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.GreaterThanOrEqual(expLeft, expRight, expression.IsLiftedToNull, expression.Method);
             
             return rtn;
@@ -478,8 +478,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateInvoke(InvocationExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expExpression = DuplicateChild(expression, Direction.Expression, parameters, path).Single();
-            var expArguments = DuplicateChild(expression, Direction.Arguments, parameters, path);
+            var expExpression = this.DuplicateChild(expression, Direction.Expression, parameters, path).Single();
+            var expArguments = this.DuplicateChild(expression, Direction.Arguments, parameters, path);
             var rtn = Expression.Invoke(expExpression, expArguments);
             
             return rtn;
@@ -487,7 +487,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual Expression DuplicateLambda(LambdaExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expBody = DuplicateChild(expression, Direction.Body, parameters, path).Single();
+            var expBody = this.DuplicateChild(expression, Direction.Body, parameters, path).Single();
 
             IEnumerable<Step> pathToThis = Enumerable.Repeat(new Step(Direction.This), 1);
             foreach (var parameter in expression.Parameters)
@@ -503,8 +503,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateLeftShift(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.LeftShift(expLeft, expRight, expression.Method);
 
             return rtn;
@@ -512,8 +512,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateLessThan(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.LessThan(expLeft, expRight, expression.IsLiftedToNull, expression.Method);
 
             return rtn;
@@ -521,8 +521,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateLessThanOrEqual(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.LessThanOrEqual(expLeft, expRight, expression.IsLiftedToNull, expression.Method);
             
             return rtn;
@@ -530,7 +530,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual ListInitExpression DuplicateListInit(ListInitExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expNewExpression = (NewExpression)DuplicateChild(expression, Direction.NewExpression, parameters, path).Single();
+            var expNewExpression = (NewExpression)this.DuplicateChild(expression, Direction.NewExpression, parameters, path).Single();
             var rtn = Expression.ListInit(expNewExpression, expression.Initializers);
             
             return rtn;
@@ -538,7 +538,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual MemberExpression DuplicateMemberAccess(MemberExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expExpression = DuplicateChild(expression, Direction.Expression, parameters, path).Single();
+            var expExpression = this.DuplicateChild(expression, Direction.Expression, parameters, path).Single();
             var rtn = Expression.MakeMemberAccess(expExpression, expression.Member);
             
             return rtn;
@@ -546,7 +546,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual MemberInitExpression DuplicateMemberInit(MemberInitExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expNewExpression = (NewExpression)DuplicateChild(expression, Direction.NewExpression, parameters, path).Single();
+            var expNewExpression = (NewExpression)this.DuplicateChild(expression, Direction.NewExpression, parameters, path).Single();
             var rtn = Expression.MemberInit(expNewExpression, expression.Bindings);
             
             return rtn;
@@ -554,8 +554,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateModulo(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Modulo(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -563,8 +563,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateMultiply(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Multiply(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -572,8 +572,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateMultiplyChecked(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.MultiplyChecked(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -581,7 +581,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual UnaryExpression DuplicateNegate(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.Negate(expOperand, expression.Method);
             
             return rtn;
@@ -589,7 +589,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual UnaryExpression DuplicateNegateChecked(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.NegateChecked(expOperand, expression.Method);
             
             return rtn;
@@ -597,7 +597,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual NewExpression DuplicateNew(NewExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expArguments = DuplicateChild(expression, Direction.Arguments, parameters, path);
+            var expArguments = this.DuplicateChild(expression, Direction.Arguments, parameters, path);
             var rtn = Expression.New(expression.Constructor, expArguments, expression.Members);
             
             return rtn;
@@ -605,7 +605,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual NewArrayExpression DuplicateNewArrayBounds(NewArrayExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expExpressions = DuplicateChild(expression, Direction.Expressions, parameters, path);
+            var expExpressions = this.DuplicateChild(expression, Direction.Expressions, parameters, path);
             var rtn = Expression.NewArrayBounds(expression.Type.GetElementType(), expExpressions);
             
             return rtn;
@@ -613,7 +613,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual NewArrayExpression DuplicateNewArrayInit(NewArrayExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expExpressions = DuplicateChild(expression, Direction.Expressions, parameters, path);
+            var expExpressions = this.DuplicateChild(expression, Direction.Expressions, parameters, path);
             var rtn = Expression.NewArrayInit(expression.Type.GetElementType(), expExpressions);
             
             return rtn;
@@ -621,7 +621,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual UnaryExpression DuplicateNot(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.Not(expOperand, expression.Method);
             
             return rtn;
@@ -629,8 +629,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateNotEqual(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.NotEqual(expLeft, expRight, expression.IsLiftedToNull, expression.Method);
             
             return rtn;
@@ -638,8 +638,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateOr(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Or(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -647,8 +647,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateOrElse(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.OrElse(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -681,8 +681,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicatePower(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Power(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -690,7 +690,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual UnaryExpression DuplicateQuote(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.Quote(expOperand);
             
             return rtn;
@@ -698,8 +698,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateRightShift(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.RightShift(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -707,8 +707,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateSubtract(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.Subtract(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -716,8 +716,8 @@ namespace Plethora.ExpressionAide
 
         protected virtual BinaryExpression DuplicateSubtractChecked(BinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expLeft = DuplicateChild(expression, Direction.Left, parameters, path).Single();
-            var expRight = DuplicateChild(expression, Direction.Right, parameters, path).Single();
+            var expLeft = this.DuplicateChild(expression, Direction.Left, parameters, path).Single();
+            var expRight = this.DuplicateChild(expression, Direction.Right, parameters, path).Single();
             var rtn = Expression.SubtractChecked(expLeft, expRight, expression.Method);
             
             return rtn;
@@ -725,7 +725,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual UnaryExpression DuplicateTypeAs(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.TypeAs(expOperand, expression.Type);
             
             return rtn;
@@ -733,7 +733,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual TypeBinaryExpression DuplicateTypeIs(TypeBinaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expExpression = DuplicateChild(expression, Direction.Expression, parameters, path).Single();
+            var expExpression = this.DuplicateChild(expression, Direction.Expression, parameters, path).Single();
             var rtn = Expression.TypeIs(expExpression, expression.TypeOperand);
             
             return rtn;
@@ -741,7 +741,7 @@ namespace Plethora.ExpressionAide
 
         protected virtual UnaryExpression DuplicateUnaryPlus(UnaryExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            var expOperand = DuplicateChild(expression, Direction.Operand, parameters, path).Single();
+            var expOperand = this.DuplicateChild(expression, Direction.Operand, parameters, path).Single();
             var rtn = Expression.UnaryPlus(expOperand, expression.Method);
             
             return rtn;
@@ -760,12 +760,12 @@ namespace Plethora.ExpressionAide
 
             public IEnumerator<KeyValuePair<ParameterExpression, Step[]>> GetEnumerator()
             {
-                return innerDictionary.Values.GetEnumerator();
+                return this.innerDictionary.Values.GetEnumerator();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
             #endregion
 
@@ -773,12 +773,12 @@ namespace Plethora.ExpressionAide
 
             void ICollection<KeyValuePair<ParameterExpression, Step[]>>.Add(KeyValuePair<ParameterExpression, Step[]> item)
             {
-                innerDictionary.Add(item.Key.Name, item);
+                this.innerDictionary.Add(item.Key.Name, item);
             }
 
             void ICollection<KeyValuePair<ParameterExpression, Step[]>>.Clear()
             {
-                innerDictionary.Clear();
+                this.innerDictionary.Clear();
             }
 
             bool ICollection<KeyValuePair<ParameterExpression, Step[]>>.Contains(KeyValuePair<ParameterExpression, Step[]> item)
@@ -788,7 +788,7 @@ namespace Plethora.ExpressionAide
 
             void ICollection<KeyValuePair<ParameterExpression, Step[]>>.CopyTo(KeyValuePair<ParameterExpression, Step[]>[] array, int arrayIndex)
             {
-                innerDictionary.Values.CopyTo(array, arrayIndex);
+                this.innerDictionary.Values.CopyTo(array, arrayIndex);
             }
 
             bool ICollection<KeyValuePair<ParameterExpression, Step[]>>.Remove(KeyValuePair<ParameterExpression, Step[]> item)
@@ -798,14 +798,14 @@ namespace Plethora.ExpressionAide
 
             public int Count
             {
-                get { return innerDictionary.Count; }
+                get { return this.innerDictionary.Count; }
             }
 
             bool ICollection<KeyValuePair<ParameterExpression, Step[]>>.IsReadOnly
             {
                 get
                 {
-                    return ((ICollection<KeyValuePair<string, KeyValuePair<ParameterExpression, Step[]>>>)innerDictionary).IsReadOnly;
+                    return ((ICollection<KeyValuePair<string, KeyValuePair<ParameterExpression, Step[]>>>)this.innerDictionary).IsReadOnly;
                 }
             }
             #endregion
@@ -814,57 +814,57 @@ namespace Plethora.ExpressionAide
 
             public bool ContainsKey(ParameterExpression key)
             {
-                return innerDictionary.ContainsKey(key.Name);
+                return this.innerDictionary.ContainsKey(key.Name);
             }
 
             public void Add(ParameterExpression key, Step[] value)
             {
                 KeyValuePair<ParameterExpression, Step[]> pair = new KeyValuePair<ParameterExpression, Step[]>(key, value);
-                innerDictionary.Add(key.Name, pair);
+                this.innerDictionary.Add(key.Name, pair);
             }
 
             public bool TryAdd(ParameterExpression key, Step[] value)
             {
-                if (innerDictionary.ContainsKey(key.Name))
+                if (this.innerDictionary.ContainsKey(key.Name))
                     return false;
 
                 KeyValuePair<ParameterExpression, Step[]> pair = new KeyValuePair<ParameterExpression, Step[]>(key, value);
-                innerDictionary.Add(key.Name, pair);
+                this.innerDictionary.Add(key.Name, pair);
 
                 return true;
             }
 
             public bool Remove(ParameterExpression key)
             {
-                return innerDictionary.Remove(key.Name);
+                return this.innerDictionary.Remove(key.Name);
             }
 
             public bool TryGetValue(ParameterExpression key, out Step[] value)
             {
                 KeyValuePair<ParameterExpression, Step[]> pair;
-                bool result = innerDictionary.TryGetValue(key.Name, out pair);
+                bool result = this.innerDictionary.TryGetValue(key.Name, out pair);
                 value = result ? pair.Value : null;
                 return result;
             }
 
             public Step[] this[ParameterExpression key]
             {
-                get { return innerDictionary[key.Name].Value; }
+                get { return this.innerDictionary[key.Name].Value; }
                 set
                 {
                     KeyValuePair<ParameterExpression, Step[]> pair = new KeyValuePair<ParameterExpression, Step[]>(key, value);
-                    innerDictionary[key.Name] = pair;
+                    this.innerDictionary[key.Name] = pair;
                 }
             }
 
             public ICollection<ParameterExpression> Keys
             {
-                get { return innerDictionary.Values.Select(r => r.Key).ToList(); }
+                get { return this.innerDictionary.Values.Select(r => r.Key).ToList(); }
             }
 
             public ICollection<Step[]> Values
             {
-                get { return innerDictionary.Values.Select(r => r.Value).ToList(); }
+                get { return this.innerDictionary.Values.Select(r => r.Value).ToList(); }
             }
             #endregion
 
@@ -872,7 +872,7 @@ namespace Plethora.ExpressionAide
 
             public KeyValuePair<ParameterExpression, Step[]> GetPair(ParameterExpression expression)
             {
-                return innerDictionary[expression.Name];
+                return this.innerDictionary[expression.Name];
             }
 
             public void Combine(ParamDictionary dictionary)

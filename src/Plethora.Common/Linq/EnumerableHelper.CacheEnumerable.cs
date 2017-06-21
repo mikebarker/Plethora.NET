@@ -59,9 +59,9 @@ namespace Plethora.Linq
                 /// </returns>
                 public bool MoveNext()
                 {
-                    if (index < (this.owner.cachedElements.Count - 1))
+                    if (this.index < (this.owner.cachedElements.Count - 1))
                     {
-                        this.current = this.owner.cachedElements[++index];
+                        this.current = this.owner.cachedElements[++this.index];
                         this.hasCurrent = true;
                         return true;
                     }
@@ -85,7 +85,7 @@ namespace Plethora.Linq
                         return false;
                     }
 
-                    ++index;
+                    ++this.index;
                     this.current = this.owner.sourceEnumerator.Current;
                     this.owner.cachedElements.Add(this.current);
                     this.hasCurrent = true;
@@ -111,7 +111,7 @@ namespace Plethora.Linq
                 /// </returns>
                 object IEnumerator.Current
                 {
-                    get { return Current; }
+                    get { return this.Current; }
                 }
                 #endregion
 
@@ -127,7 +127,7 @@ namespace Plethora.Linq
                 {
                     get
                     {
-                        if (!hasCurrent)
+                        if (!this.hasCurrent)
                             throw new InvalidOperationException("Enumeration has not started or already completed.");
 
                         return this.current;
@@ -153,7 +153,7 @@ namespace Plethora.Linq
             {
                 //Validation
                 if (source == null)
-                    throw new ArgumentNullException("source");
+                    throw new ArgumentNullException(nameof(source));
 
                 this.source = source;
             }
@@ -166,7 +166,7 @@ namespace Plethora.Linq
             /// </summary>
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return GetEnumerator();
+                return this.GetEnumerator();
             }
 
             #endregion
@@ -191,7 +191,7 @@ namespace Plethora.Linq
                     return this.source.GetEnumerator();
 
 
-                if (cachedElements == null)
+                if (this.cachedElements == null)
                 {
                     this.sourceEnumerator = this.source.GetEnumerator();
                     this.cachedElements = new List<T>();
@@ -207,7 +207,7 @@ namespace Plethora.Linq
 
             ~CacheEnumerable()
             {
-                Dispose(false);
+                this.Dispose(false);
             }
 
             /// <summary>
@@ -215,7 +215,7 @@ namespace Plethora.Linq
             /// </summary>
             public void Dispose()
             {
-                Dispose(true);
+                this.Dispose(true);
                 GC.SuppressFinalize(this);
             }
 
@@ -242,7 +242,7 @@ namespace Plethora.Linq
 
 
                     // Disposing has been done.
-                    disposed = true;
+                    this.disposed = true;
                 }
             }
             #endregion

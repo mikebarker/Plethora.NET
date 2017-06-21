@@ -23,7 +23,7 @@ namespace Plethora.IO
         /// </summary>
         public MulticastWriter()
         {
-            writers = new HashSet<TextWriter>();
+            this.writers = new HashSet<TextWriter>();
         }
 
         /// <summary>
@@ -41,10 +41,10 @@ namespace Plethora.IO
         {
             //Validation
             if (textWriters == null)
-                throw new ArgumentNullException("textWriters");
+                throw new ArgumentNullException(nameof(textWriters));
 
 
-            writers = new HashSet<TextWriter>(textWriters);
+            this.writers = new HashSet<TextWriter>(textWriters);
         }
         #endregion
 
@@ -57,8 +57,8 @@ namespace Plethora.IO
         {
             get
             {
-                if (writers.Count > 0)
-                    return writers.First().Encoding;
+                if (this.writers.Count > 0)
+                    return this.writers.First().Encoding;
 
                 return Encoding.Unicode;
             }
@@ -72,7 +72,7 @@ namespace Plethora.IO
         /// </param>
         public override void Write(char value)
         {
-            foreach (TextWriter writer in writers)
+            foreach (TextWriter writer in this.writers)
             {
                 writer.Write(value);
             }
@@ -89,7 +89,7 @@ namespace Plethora.IO
             if (buffer == null)
                 return;
 
-            foreach (TextWriter writer in writers)
+            foreach (TextWriter writer in this.writers)
             {
                 writer.Write(buffer);
             }
@@ -112,7 +112,7 @@ namespace Plethora.IO
             if (buffer == null)
                 return;
 
-            foreach (TextWriter writer in writers)
+            foreach (TextWriter writer in this.writers)
             {
                 writer.Write(buffer, index, count);
             }
@@ -129,7 +129,7 @@ namespace Plethora.IO
             if (value == null)
                 return;
 
-            foreach (TextWriter writer in writers)
+            foreach (TextWriter writer in this.writers)
             {
                 writer.Write(value);
             }
@@ -150,8 +150,8 @@ namespace Plethora.IO
         /// </remarks>
         public void RegisterWriter(TextWriter writer)
         {
-            if (!writers.Contains(writer))
-                writers.Add(writer);
+            if (!this.writers.Contains(writer))
+                this.writers.Add(writer);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Plethora.IO
         /// </remarks>
         public void DeregisterWriter(TextWriter writer)
         {
-            writers.Remove(writer);
+            this.writers.Remove(writer);
         }
         #endregion
     }

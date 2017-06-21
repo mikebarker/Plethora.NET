@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Plethora.Collections
 {
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [Serializable]
     public class SortedByKeyList<TKey, T> : IList<T>
     {
@@ -63,19 +63,19 @@ namespace Plethora.Collections
         {
             //Validation
             if (getKeyFunc == null)
-                throw new ArgumentNullException("getKeyFunc");
+                throw new ArgumentNullException(nameof(getKeyFunc));
 
             if ((duplicatesPolicy != DuplicatesPolicy.Allow) &&
                 (duplicatesPolicy != DuplicatesPolicy.Ignor) &&
                 (duplicatesPolicy != DuplicatesPolicy.Replace) &&
                 (duplicatesPolicy != DuplicatesPolicy.Error))
             {
-                throw new ArgumentOutOfRangeException("duplicatesPolicy", duplicatesPolicy,
-                    ResourceProvider.ArgMustBeOneOf("duplicatesPolicy", "Allow", "Ignor", "Replace", "Error"));
+                throw new ArgumentOutOfRangeException(nameof(duplicatesPolicy), duplicatesPolicy,
+                    ResourceProvider.ArgMustBeOneOf(nameof(duplicatesPolicy), "Allow", "Ignor", "Replace", "Error"));
             }
 
             if (comparer == null)
-                throw new ArgumentNullException("comparer");
+                throw new ArgumentNullException(nameof(comparer));
 
 
             this.getKeyFunc = getKeyFunc;
@@ -108,7 +108,7 @@ namespace Plethora.Collections
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -141,7 +141,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
 
             TKey key = this.getKeyFunc(item);
@@ -149,15 +149,15 @@ namespace Plethora.Collections
 
             if (index >= 0)
             {
-                if (duplicatesPolicy == DuplicatesPolicy.Error)
+                if (this.duplicatesPolicy == DuplicatesPolicy.Error)
                 {
                     throw new InvalidOperationException(ResourceProvider.ArgAddingDuplicate());
                 }
-                else if (duplicatesPolicy == DuplicatesPolicy.Ignor)
+                else if (this.duplicatesPolicy == DuplicatesPolicy.Ignor)
                 {
                     return -1;
                 }
-                else if (duplicatesPolicy == DuplicatesPolicy.Replace)
+                else if (this.duplicatesPolicy == DuplicatesPolicy.Replace)
                 {
                     this.innerList[index] = item;
                     return index;
@@ -195,7 +195,7 @@ namespace Plethora.Collections
         bool ICollection<T>.Contains(T item)
         {
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
             TKey key = this.getKeyFunc(item);
             return this.Contains(key);
@@ -211,7 +211,7 @@ namespace Plethora.Collections
         public bool Contains(TKey key)
         {
             if (key == null)
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
 
 
             int index = this.BinarySearch(key);
@@ -258,7 +258,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (item == null)
-                throw new ArgumentNullException("item");
+                throw new ArgumentNullException(nameof(item));
 
 
             TKey key = this.getKeyFunc(item);
@@ -267,7 +267,7 @@ namespace Plethora.Collections
             if (firstIndexOfKey < 0)
                 return false;
 
-            int lastIndexOfKey = (IsUnique)
+            int lastIndexOfKey = (this.IsUnique)
                 ? firstIndexOfKey
                 : this.LastIndexOf(key);  //Can not return -1, since IndexOf found the key
 
@@ -384,7 +384,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (enumerable == null)
-                throw new ArgumentNullException("enumerable");
+                throw new ArgumentNullException(nameof(enumerable));
 
             foreach (T item in enumerable)
             {
@@ -412,16 +412,16 @@ namespace Plethora.Collections
         {
             //Validation
             if (index < 0)
-                throw new ArgumentOutOfRangeException("index", index, ResourceProvider.ArgMustBeGreaterThanZero("index"));
+                throw new ArgumentOutOfRangeException(nameof(index), index, ResourceProvider.ArgMustBeGreaterThanZero(nameof(index)));
 
             if (count < 0)
-                throw new ArgumentOutOfRangeException("count", count, ResourceProvider.ArgMustBeGreaterThanZero("count"));
+                throw new ArgumentOutOfRangeException(nameof(count), count, ResourceProvider.ArgMustBeGreaterThanZero(nameof(count)));
 
             if ((this.innerList.Count - index) < count)
-                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength("index", "count"));
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(index), nameof(count)));
             
             if (searchKey == null)
-                throw new ArgumentNullException("searchKey");
+                throw new ArgumentNullException(nameof(searchKey));
 
 
             int low = index;
@@ -557,7 +557,7 @@ namespace Plethora.Collections
 
             //List not necessarily unique. Find first matching item using linear search
             int nextIndexOf = indexOf - 1;
-            while ((nextIndexOf >= index) && (comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
+            while ((nextIndexOf >= index) && (this.comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf--;
@@ -589,7 +589,7 @@ namespace Plethora.Collections
             //List not necessarily unique. Find last matching item using linear search
             int nextIndexOf = indexOf + 1;
             int maxIndex = index + count - 1;
-            while ((nextIndexOf <= maxIndex) && (comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
+            while ((nextIndexOf <= maxIndex) && (this.comparer.Compare(key, this.getKeyFunc(this[nextIndexOf])) == 0))
             {
                 indexOf = nextIndexOf;
                 nextIndexOf++;
@@ -628,7 +628,7 @@ namespace Plethora.Collections
 
         public TKey GetKey(T item)
         {
-            return getKeyFunc(item);
+            return this.getKeyFunc(item);
         }
 
         public bool IsUnique

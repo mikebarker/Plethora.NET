@@ -34,12 +34,16 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\JetBrains.Annotations.cs">
+      <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
     <Compile Include="ChangableCollection.cs" />
     <Compile Include="Change\ChangeDescriptor.cs" />

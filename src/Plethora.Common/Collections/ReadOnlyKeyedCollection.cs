@@ -12,7 +12,7 @@ namespace Plethora.Collections
     /// <typeparam name="T">The type of the collection.</typeparam>
     /// <seealso cref="KeyedCollection{TKey, T}"/>
     [Serializable]
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     public class ReadOnlyKeyedCollection<TKey, T> : IKeyedCollection<TKey, T>
     {
         #region Fields
@@ -29,7 +29,7 @@ namespace Plethora.Collections
         {
             //Validation
             if (keyedCollection == null)
-                throw new ArgumentNullException("keyedCollection");
+                throw new ArgumentNullException(nameof(keyedCollection));
 
 
             this.innerKeyedCollection = keyedCollection;
@@ -46,7 +46,7 @@ namespace Plethora.Collections
         /// </returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
         #endregion
 
