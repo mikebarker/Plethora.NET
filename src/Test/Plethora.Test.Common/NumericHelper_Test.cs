@@ -59,7 +59,6 @@ namespace Plethora.Test
 
 
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void Translate_Fail_Max_MaxLessThanZero()
         {
             //init
@@ -67,11 +66,10 @@ namespace Plethora.Test
             double max = -1;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max);
+            Assert.Throws<ArgumentOutOfRangeException>(() => NumericHelper.Translate(value, max));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void Translate_Fail_Max_ValueNotInRange()
         {
             //init
@@ -79,11 +77,10 @@ namespace Plethora.Test
             double max = 10;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max);
+            Assert.Throws<ArgumentOutOfRangeException>(() => NumericHelper.Translate(value, max));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Translate_Fail_MaxMin_MaxLessThanMin()
         {
             //init
@@ -92,11 +89,10 @@ namespace Plethora.Test
             double min = 2;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max, min);
+            Assert.Throws<ArgumentException>(() => NumericHelper.Translate(value, max, min));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void Translate_Fail_MaxMin_ValueNotInRange()
         {
             //init
@@ -105,12 +101,11 @@ namespace Plethora.Test
             double min = 0;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max, min);
+            Assert.Throws<ArgumentOutOfRangeException>(() => NumericHelper.Translate(value, max, min));
         }
 
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Translate_Fail_OldRange_OldMaxLessThanOldMax()
         {
             //init
@@ -121,11 +116,10 @@ namespace Plethora.Test
             double minOld = 11;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max, min, maxOld, minOld);
+            Assert.Throws<ArgumentException>(() => NumericHelper.Translate(value, max, min, maxOld, minOld));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Translate_Fail_OldRange_NewMaxLessThanNewMax()
         {
             //init
@@ -136,11 +130,10 @@ namespace Plethora.Test
             double minOld = 1;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max, min, maxOld, minOld);
+            Assert.Throws<ArgumentException>(() => NumericHelper.Translate(value, max, min, maxOld, minOld));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Translate_Fail_OldRange_ValueOutOfRange()
         {
             //init
@@ -151,7 +144,7 @@ namespace Plethora.Test
             double minOld = 1;
 
             //exec
-            double valueOut = NumericHelper.Translate(value, max, min, maxOld, minOld);
+            Assert.Throws<ArgumentException>(() => NumericHelper.Translate(value, max, min, maxOld, minOld));
         }
         #endregion
 
@@ -247,7 +240,6 @@ namespace Plethora.Test
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Wrap_Fail_MaxLessThanMin()
         {
             //init
@@ -256,7 +248,7 @@ namespace Plethora.Test
             double max = 0;
 
             //exec
-            double valueOut = NumericHelper.Wrap(value, min, max);
+            Assert.Throws<ArgumentException>(() => NumericHelper.Wrap(value, min, max));
         }
         #endregion
 
@@ -353,7 +345,6 @@ namespace Plethora.Test
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void Constrain_Fail_MaxLessThanMin()
         {
             //init
@@ -362,7 +353,7 @@ namespace Plethora.Test
             double max = 0;
 
             //exec
-            double valueOut = NumericHelper.Constrain(value, min, max);
+            Assert.Throws<ArgumentException>(() => NumericHelper.Constrain(value, min, max));
         }
         #endregion
 
@@ -463,27 +454,24 @@ namespace Plethora.Test
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void ToRomanNumerals_Fail_Zero()
         {
             //exec
-            NumericHelper.ToRomanNumerals(0);
+            Assert.Throws<ArgumentOutOfRangeException>(() => NumericHelper.ToRomanNumerals(0));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void ToRomanNumerals_Fail_TooSmall()
         {
             //exec
-            NumericHelper.ToRomanNumerals(-1);
+            Assert.Throws<ArgumentOutOfRangeException>(() => NumericHelper.ToRomanNumerals(-1));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void ToRomanNumerals_Fail_TooBig()
         {
             //exec
-            NumericHelper.ToRomanNumerals(4000);
+            Assert.Throws<ArgumentOutOfRangeException>(() => NumericHelper.ToRomanNumerals(4000));
         }
 
         [Test]
@@ -500,35 +488,31 @@ namespace Plethora.Test
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentNullException))]
         public void FromRomanNumerals_Fail_Null()
         {
             //exec
-            NumericHelper.FromRomanNumerals(null);
+            Assert.Throws<ArgumentNullException>(() => NumericHelper.FromRomanNumerals(null));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void FromRomanNumerals_Fail_Empty()
         {
             //exec
-            NumericHelper.FromRomanNumerals("");
+            Assert.Throws<ArgumentException>(() => NumericHelper.FromRomanNumerals(""));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void FromRomanNumerals_Fail_InvalidNumeral()
         {
             //exec
-            NumericHelper.FromRomanNumerals("XVK");
+            Assert.Throws<ArgumentException>(() => NumericHelper.FromRomanNumerals("XVK"));
         }
 
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
         public void FromRomanNumerals_Fail_InvalidSequence()
         {
             //exec
-            NumericHelper.FromRomanNumerals("IVII");
+            Assert.Throws<ArgumentException>(() => NumericHelper.FromRomanNumerals("IVII"));
         }
         #endregion
     }
