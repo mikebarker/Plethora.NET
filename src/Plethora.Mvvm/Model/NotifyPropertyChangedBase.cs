@@ -16,7 +16,7 @@ namespace Plethora.Mvvm.Model
     /// Also provides the implementation logic for the <see cref="INotifyPropertyChanging"/> interface.
     /// Inheriting classes which need to implement the <see cref="INotifyPropertyChanging"/> interface should do so as:
     /// <code><![CDATA[
-    ///     class MyClass : NotifyPropertyChanged, INotifyPropertyChanging
+    ///     class MyClass : NotifyPropertyChangedBase, INotifyPropertyChanging
     ///     {
     ///         /// <summary>
     ///         /// Raised when a property value is changing.
@@ -32,7 +32,7 @@ namespace Plethora.Mvvm.Model
     /// <para>
     /// The <see cref="INotifyPropertyChanging"/>  interface is not implemented directly because this might cause unwanted effects for tests such as:
     /// <code><![CDATA[
-    ///     class SomeClass : NotifyPropertyChanged
+    ///     class SomeClass : NotifyPropertyChangedBase
     ///     {
     ///         // ...
     ///     }
@@ -42,7 +42,7 @@ namespace Plethora.Mvvm.Model
     /// ]]></code>
     /// </para>
     /// </remarks>
-    public abstract class NotifyPropertyChanged : INotifyPropertyChanged
+    public abstract class NotifyPropertyChangedBase : INotifyPropertyChanged
     {
         private bool isNotifying = true;
 
@@ -132,7 +132,7 @@ namespace Plethora.Mvvm.Model
 
         /// <summary>
         /// Gets and sets a flag indicating whether the <see cref="INotifyPropertyChanged.PropertyChanged"/>
-        /// and <see cref="NotifyPropertyChanged.InternalPropertyChanging"/> events are raised.
+        /// and <see cref="NotifyPropertyChangedImpl.InternalPropertyChanging"/> events are raised.
         /// </summary>
         /// <returns>
         /// true if the instance is raising events; otherwise false.
