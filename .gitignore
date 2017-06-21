@@ -2,3 +2,4 @@
 obj
 bin
 /src/.vs
+*.csproj.user
