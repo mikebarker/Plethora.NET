@@ -20,7 +20,7 @@ namespace Plethora.Mvvm.Model
     /// <remarks>
     /// The dependent property is defined as follows:
     /// <example><code><![CDATA[
-    ///     public sealed class Person : DependentNotifyPropertyChangeImpl
+    ///     public sealed class Person : DependentNotifyPropertyChanged
     ///     {
     ///         private DateTime dateOfBirth;
     /// 
@@ -60,7 +60,7 @@ namespace Plethora.Mvvm.Model
     /// 
     /// In this example, when the DateOfBirth property changes the <see cref="INotifyPropertyChanged.PropertyChanged"/> event is raised for DateOfBirth, Age and YearsToCentenary.
     /// </remarks>
-    public abstract class DependentNotifyPropertyChanged : NotifyPropertyChangedBase
+    public abstract class DependentNotifyPropertyChanged : NotifyPropertyChanged
     {
         #region Static Members
 
@@ -209,11 +209,11 @@ namespace Plethora.Mvvm.Model
         }
 
         /// <summary>
-        /// Raises the <see cref="NotifyPropertyChangedBase.InternalPropertyChanging"/> event.
+        /// Raises the <see cref="NotifyPropertyChanged.InternalPropertyChanging"/> event.
         /// </summary>
         /// <remarks>
         /// If other properties have the <see cref="DependsOnAttribute"/> defined, specifying <paramref name="e.PropertyName"/>
-        /// as their dependent property name then the <see cref="NotifyPropertyChangedBase.InternalPropertyChanging"/> event is
+        /// as their dependent property name then the <see cref="NotifyPropertyChanged.InternalPropertyChanging"/> event is
         /// also raised for these properties.
         /// </remarks>
         protected override void OnPropertyChanging(PropertyChangingEventArgs e)

@@ -8,7 +8,7 @@ using Plethora.Mvvm.Model;
 namespace Plethora.Test.Mvvm.Model
 {
     [TestFixture]
-    public class NotifyPropertyChangedBase_Tests
+    public class NotifyPropertyChanged_Tests
     {
         [Test]
         public void IsNotINotifyPropertyChanging()
@@ -96,7 +96,7 @@ namespace Plethora.Test.Mvvm.Model
 
         #region
 
-        private class NotifyPropertyChangedImpl : NotifyPropertyChangedBase
+        private class NotifyPropertyChangedImpl : NotifyPropertyChanged
         {
             private string propertyNotifyByExpression;
             private string propertyNotifyByName;
