@@ -16,6 +16,7 @@ namespace Plethora.Windows.Forms
     ///   </example>
     ///  </para>
     /// </remarks>
+    [CLSCompliant(false)]
     public class NullableIntegerTextBox : NullableIntegerTextBoxBase
     {
     }
@@ -26,6 +27,7 @@ namespace Plethora.Windows.Forms.Base
     /// <summary>
     /// Intermediate class required to "fool" the designers to construct the <see cref="NullableIntegerTextBox"/>.
     /// </summary>
+    [CLSCompliant(false)]
     [Browsable(false)]
     [ToolboxItem(false)]
     public class NullableIntegerTextBoxBase : NullableNumericTextBox<Int64>

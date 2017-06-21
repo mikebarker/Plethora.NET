@@ -1,57 +1,62 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{42E2A847-0945-4351-A57E-591539FBBD57}"
 	ProjectSection(SolutionItems) = preProject
 		AssemblyInfo.Common.cs = AssemblyInfo.Common.cs
+		JetBrains.Annotations.cs = JetBrains.Annotations.cs
 		..\license.txt = ..\license.txt
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common", "Plethora.Common\Plethora.Common.csproj", "{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Test", "Plethora.Common.Test\Plethora.Common.Test.csproj", "{285904D4-549B-4E66-B50D-4BE919B7FF3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Test.Common", "Test\Plethora.Test.Common\Plethora.Test.Common.csproj", "{285904D4-549B-4E66-B50D-4BE919B7FF3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Example", "Plethora.Common.Example\Plethora.Common.Example.csproj", "{52069679-A947-4C6A-A89D-83294FFD6015}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Common.Sample", "Sample\Plethora.Common.Sample\Plethora.Common.Sample.csproj", "{52069679-A947-4C6A-A89D-83294FFD6015}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing", "Plethora.Drawing\Plethora.Drawing.csproj", "{94C3CA39-7B10-408A-B342-8D15BC46F157}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing.Examples", "Plethora.Drawing.Examples\Plethora.Drawing.Examples.csproj", "{B1D27435-5EE9-4257-8956-C3A2792CAFEA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Drawing.Sample", "Sample\Plethora.Drawing.Sample\Plethora.Drawing.Sample.csproj", "{B1D27435-5EE9-4257-8956-C3A2792CAFEA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Logging.log4net", "Plethora.Logging.log4net\Plethora.Logging.log4net.csproj", "{A003AE53-E0AD-4F9A-A784-3F0B6D433085}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms", "Plethora.Windows.Forms\Plethora.Windows.Forms.csproj", "{95839C43-2A34-4716-AEE5-59D68274FAC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Examples", "Plethora.Windows.Forms.Examples\Plethora.Windows.Forms.Examples.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Windows.Forms.Sample", "Sample\Plethora.Windows.Forms.Sample\Plethora.Windows.Forms.Sample.csproj", "{212B1317-18FB-49D3-98DB-CE445FC7DE22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi", "Plethora.fqi\Plethora.fqi.csproj", "{96CC92ED-DDC2-439E-8888-06E2506970E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi.Example", "Plethora.fqi.Example\Plethora.fqi.Example.csproj", "{6BD76D8C-0DA6-43D4-B55C-BA607D78720A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi.Sample", "Sample\Plethora.fqi.Sample\Plethora.fqi.Sample.csproj", "{6BD76D8C-0DA6-43D4-B55C-BA607D78720A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi.Test", "Plethora.fqi.Tests\Plethora.fqi.Test.csproj", "{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Test.fqi", "Test\Plethora.Test.fqi\Plethora.Test.fqi.csproj", "{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache", "Plethora.Cache\Plethora.Cache.csproj", "{C80DB42E-C7EA-4CF4-9F23-564F86983D01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache.Example", "Plethora.Cache.Example\Plethora.Cache.Example.csproj", "{F8B5E73A-8AD4-430C-951D-26C77E0603FC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Cache.Sample", "Sample\Plethora.Cache.Sample\Plethora.Cache.Sample.csproj", "{F8B5E73A-8AD4-430C-951D-26C77E0603FC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Synchronized", "Plethora.Synchronized\Plethora.Synchronized.csproj", "{1577E94B-E43A-4C2B-A51A-52C8602108B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Synchronized.Example", "Plethora.Synchronized.Example\Plethora.Synchronized.Example.csproj", "{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Synchronized.Sample", "Sample\Plethora.Synchronized.Sample\Plethora.Synchronized.Sample.csproj", "{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context", "Plethora.Context\Plethora.Context.csproj", "{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Forms", "Plethora.Context.Windows.Forms\Plethora.Context.Windows.Forms.csproj", "{F4C30696-043E-4433-93E1-8FC05F106927}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Forms.Example", "Plethora.Context.Windows.Forms.Example\Plethora.Context.Windows.Forms.Example.csproj", "{1BEA4DF2-270C-4B8D-939F-86F3D48BD068}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Forms.Sample", "Sample\Plethora.Context.Windows.Forms.Sample\Plethora.Context.Windows.Forms.Sample.csproj", "{1BEA4DF2-270C-4B8D-939F-86F3D48BD068}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Wpf", "Plethora.Context.Wpf\Plethora.Context.Wpf.csproj", "{5E454E70-289F-4BFD-BEAA-F003B14B869E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Wpf.Example", "Plethora.Context.Wpf.Example\Plethora.Context.Wpf.Example.csproj", "{7B4E9E45-FCE4-4570-B53B-957388F5D548}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Wpf.Sample", "Sample\Plethora.Context.Wpf.Sample\Plethora.Context.Wpf.Sample.csproj", "{7B4E9E45-FCE4-4570-B53B-957388F5D548}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Mvvm", "Plethora.Mvvm\Plethora.Mvvm.csproj", "{1E27AB8D-6865-403F-80AE-A4C19E95A0FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Mvvm.Tests", "Plethora.Mvvm.Tests\Plethora.Mvvm.Tests.csproj", "{A71928A6-A7EA-479C-8EE9-D3B299C188C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Test.Mvvm", "Test\Plethora.Test.Mvvm\Plethora.Test.Mvvm.csproj", "{A71928A6-A7EA-479C-8EE9-D3B299C188C5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{8168997C-EF7C-4B90-8408-F79A33EF63AC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{270D176B-32CF-4794-A215-CF1D77615257}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -203,16 +208,18 @@ Global
 		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{1577E94B-E43A-4C2B-A51A-52C8602108B0}.Release|x86.ActiveCfg = Release|Any CPU
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|x86.ActiveCfg = Debug|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|x86.Build.0 = Debug|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Any CPU.ActiveCfg = Release|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Mixed Platforms.Build.0 = Release|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|x86.ActiveCfg = Release|x86
-		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|x86.Build.0 = Release|x86
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Debug|x86.Build.0 = Debug|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|x86.ActiveCfg = Release|Any CPU
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8}.Release|x86.Build.0 = Release|Any CPU
 		{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -286,5 +293,18 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{285904D4-549B-4E66-B50D-4BE919B7FF3D} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
+		{52069679-A947-4C6A-A89D-83294FFD6015} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{B1D27435-5EE9-4257-8956-C3A2792CAFEA} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{212B1317-18FB-49D3-98DB-CE445FC7DE22} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{6BD76D8C-0DA6-43D4-B55C-BA607D78720A} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{5845AEF3-A0EB-404D-BFC1-F07AB7E983AD} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
+		{F8B5E73A-8AD4-430C-951D-26C77E0603FC} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{8FD9298A-E6A2-4F69-B39F-D7064CF0B7D8} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{1BEA4DF2-270C-4B8D-939F-86F3D48BD068} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{7B4E9E45-FCE4-4570-B53B-957388F5D548} = {270D176B-32CF-4794-A215-CF1D77615257}
+		{A71928A6-A7EA-479C-8EE9-D3B299C188C5} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
 	EndGlobalSection
 EndGlobal

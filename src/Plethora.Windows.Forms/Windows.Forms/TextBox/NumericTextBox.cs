@@ -10,6 +10,7 @@ namespace Plethora.Windows.Forms.Base
     /// <summary>
     /// TextBox which restricts user input to numeric values.
     /// </summary>
+    [CLSCompliant(false)]
     [ToolboxItem(false)]
     public abstract class NumericTextBox<T> : ComparableTextBox<T>
         where T : struct, IFormattable, IComparable, IConvertible, IEquatable<T>, IComparable<T>
