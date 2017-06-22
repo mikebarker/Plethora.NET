@@ -108,20 +108,33 @@ namespace Plethora.Synchronized.Sample
             if (person == null)
                 return;
 
-            Color textColor = this.clientCollection.IsLocalChange(person.Id)
-                                    ? Color.Red
-                                    : Color.Black;
+            bool isSelected = ((e.State & DrawItemState.Selected) == DrawItemState.Selected);
 
-            using(Brush textBrush = new SolidBrush(textColor))
+            Brush textBrush;
+            if (this.clientCollection.IsLocalChange(person.Id))
             {
-                e.Graphics.DrawString( // Draw the appropriate text in the ListBox
-                    person.ToString(),
-                    this.lstClientList.Font,
-                    textBrush,
-                    0,
-                    e.Index*this.lstClientList.ItemHeight
-                    );
+                textBrush = isSelected
+                    ? Brushes.Gold
+                    : Brushes.DarkOrange;
             }
+            else
+            {
+                textBrush = isSelected
+                    ? SystemBrushes.HighlightText
+                    : SystemBrushes.ControlText;
+            }
+
+
+            e.DrawBackground();
+
+            e.Graphics.DrawString( // Draw the appropriate text in the ListBox
+                person.ToString(),
+                this.lstClientList.Font,
+                textBrush,
+                0,
+                e.Index * this.lstClientList.ItemHeight);
+
+            e.DrawFocusRectangle();
         }
     }
 }
