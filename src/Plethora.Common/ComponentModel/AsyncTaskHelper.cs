@@ -48,7 +48,6 @@ namespace Plethora.ComponentModel
         /// Extention method used to marshall the execution of an action to 
         /// the thread required by an <see cref="ISynchronizeInvoke"/>.
         /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="task">The <see cref="Action{TSync}"/> to be executed.</param>
         /// <example>
@@ -56,8 +55,7 @@ namespace Plethora.ComponentModel
         ///    textBox1.Exec(() => textBox1.Text = "hello");
         ///  </code>
         /// </example>
-        public static void Exec<TSync>(this TSync syncInvoke, Action task)
-            where TSync : ISynchronizeInvoke
+        public static void Exec(this ISynchronizeInvoke syncInvoke, Action task)
         {
             //Validation
             if (syncInvoke == null)
@@ -81,7 +79,6 @@ namespace Plethora.ComponentModel
         /// Extention method used to marshall the execution of an action to 
         /// the thread required by an <see cref="ISynchronizeInvoke"/>.
         /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="task">The <see cref="Action{TSync}"/> to be executed.</param>
         /// <param name="millisecondsTimeout">
@@ -100,8 +97,7 @@ namespace Plethora.ComponentModel
         ///    textBox1.Exec(() => textBox1.Text = "hello", 10);
         ///  </code>
         /// </example>
-        public static bool Exec<TSync>(this TSync syncInvoke, Action task, int millisecondsTimeout)
-            where TSync : ISynchronizeInvoke
+        public static bool Exec(this ISynchronizeInvoke syncInvoke, Action task, int millisecondsTimeout)
         {
             //Validation
             if (syncInvoke == null)
@@ -135,7 +131,6 @@ namespace Plethora.ComponentModel
         /// <summary>
         /// Executes a task asyncronously.
         /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
         /// <returns>
@@ -145,10 +140,9 @@ namespace Plethora.ComponentModel
         /// Method returns immediately without waiting for the task to complete.
         /// The task <paramref name="action"/> will be executed on a thread-pool thread.
         /// </remarks>
-        public static IAsyncResult AsyncTask<TSync>(
-            this TSync syncInvoke,
+        public static IAsyncResult AsyncTask(
+            this ISynchronizeInvoke syncInvoke,
             Action action)
-            where TSync : ISynchronizeInvoke
         {
             Action onComplete = () => { };
             Action<Exception> onException = ex => { };
@@ -159,7 +153,6 @@ namespace Plethora.ComponentModel
         /// <summary>
         /// Executes a task asyncronously.
         /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
         /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
@@ -172,11 +165,10 @@ namespace Plethora.ComponentModel
         /// <paramref name="onComplete"/> will be marshalled be to
         /// the thread of the <see cref="syncInvoke"/>
         /// </remarks>
-        public static IAsyncResult AsyncTask<TSync>(
-            this TSync syncInvoke,
+        public static IAsyncResult AsyncTask(
+            this ISynchronizeInvoke syncInvoke,
             Action action,
             Action onComplete)
-            where TSync : ISynchronizeInvoke
         {
             Action<Exception> onException = ex => { };
 
@@ -186,7 +178,6 @@ namespace Plethora.ComponentModel
         /// <summary>
         /// Executes a task asyncronously.
         /// </summary>
-        /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
         /// <param name="onComplete">The <see cref="Action"/> executed when <paramref name="action"/> completes successfully.</param>
@@ -200,12 +191,11 @@ namespace Plethora.ComponentModel
         /// <paramref name="onComplete"/> and <paramref name="onException"/> will be marshalled be to
         /// the thread of the <see cref="syncInvoke"/>
         /// </remarks>
-        public static IAsyncResult AsyncTask<TSync>(
-            this TSync syncInvoke,
+        public static IAsyncResult AsyncTask(
+            this ISynchronizeInvoke syncInvoke,
             Action action,
             Action onComplete,
             Action<Exception> onException)
-            where TSync : ISynchronizeInvoke
         {
             //Validation
             if (syncInvoke == null)

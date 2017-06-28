@@ -6,12 +6,6 @@ namespace Plethora.Collections
 {
     public static class MergeJoin
     {
-        private static T IdentityFunction<T>(this T item)
-        {
-            return item;
-        }
-
-
         #region FindMergeSet
 
         #region FindMergeSet (on IEnumerable)
@@ -23,9 +17,9 @@ namespace Plethora.Collections
             return FindMergeSet(
                 leftSet,
                 rightSet,
-                IdentityFunction,
+                item => item,
                 Comparer<T>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default);
         }
 
@@ -39,7 +33,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 Comparer<TKey>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default);
         }
 
@@ -54,7 +48,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 keyComparer,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default);
         }
 
@@ -152,9 +146,9 @@ namespace Plethora.Collections
             return FindMergeSetPreOrdered(
                 leftSet,
                 rightSet,
-                IdentityFunction,
+                item => item,
                 Comparer<T>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default);
         }
 
@@ -178,7 +172,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 Comparer<TKey>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default);
         }
 
@@ -203,7 +197,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 keyComparer,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default);
         }
 
@@ -330,9 +324,9 @@ namespace Plethora.Collections
             Merge(
                 leftSet,
                 rightSet,
-                IdentityFunction,
+                item => item,
                 Comparer<T>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default,
 
                 (key, value) => onMatch(value),
@@ -355,7 +349,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 Comparer<TKey>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
@@ -376,7 +370,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 keyComparer,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
@@ -484,7 +478,7 @@ namespace Plethora.Collections
         ///   been pre-sorted by the elements, using the default comparer.
         ///  </para>
         ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
+        ///   If this assumption is not met, the method will render inaccurate results.
         ///  </para>
         /// </remarks>
         public static void MergePreOrdered<T>(
@@ -498,9 +492,9 @@ namespace Plethora.Collections
             MergePreOrdered(
                 leftSet,
                 rightSet,
-                IdentityFunction,
+                item => item,
                 Comparer<T>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default,
 
                 (key, value) => onMatch(value),
@@ -516,7 +510,7 @@ namespace Plethora.Collections
         ///   the default <typeparam name="TKey"/> comparer.
         ///  </para>
         ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
+        ///   If this assumption is not met, the method will render inaccurate results.
         ///  </para>
         /// </remarks>
         public static void MergePreOrdered<T, TKey>(
@@ -533,7 +527,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 Comparer<TKey>.Default,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
@@ -546,7 +540,7 @@ namespace Plethora.Collections
         ///   the <paramref name="keyComparer"/> comparer.
         ///  </para>
         ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
+        ///   If this assumption is not met, the method will render inaccurate results.
         ///  </para>
         /// </remarks>
         public static void MergePreOrdered<T, TKey>(
@@ -564,7 +558,7 @@ namespace Plethora.Collections
                 rightSet,
                 keySelector,
                 keyComparer,
-                IdentityFunction,
+                item => item,
                 EqualityComparer<T>.Default,
 
                 onMatch, onDifferent, onLeftOnly, onRightOnly);
@@ -577,7 +571,7 @@ namespace Plethora.Collections
         ///   the <paramref name="keyComparer"/> comparer.
         ///  </para>
         ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
+        ///   If this assumption is not met, the method will render inaccurate results.
         ///  </para>
         /// </remarks>
         public static void MergePreOrdered<T, TKey, TValue>(
@@ -635,7 +629,7 @@ namespace Plethora.Collections
         ///   the default comparer.
         ///  </para>
         ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
+        ///   If this assumption is not met, the method will render inaccurate results.
         ///  </para>
         /// </remarks>
         public static void MergePreOrdered<TKey, TValue>(
@@ -662,7 +656,7 @@ namespace Plethora.Collections
         ///   the <paramref name="keyComparer"/> comparer.
         ///  </para>
         ///  <para>
-        ///   If this assumption is not met, the method will inaccurate results.
+        ///   If this assumption is not met, the method will render inaccurate results.
         ///  </para>
         /// </remarks>
         public static void MergePreOrdered<TKey, TValue>(

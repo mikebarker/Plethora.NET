@@ -52,6 +52,10 @@ namespace Plethora.Linq
                 throw new ArgumentNullException(nameof(comparison));
 
 
+            //short-cut IReadOnlyCollection
+            if (source is IReadOnlyCollection<T>)
+                return comparison(((IReadOnlyCollection<T>)source).Count, count);
+
             //short-cut ICollection
             if (source is ICollection<T>)
                 return comparison(((ICollection<T>)source).Count, count);

@@ -280,7 +280,9 @@ namespace Plethora.Collections
             if ((this.Count + additionalEntries) <= this.maxEntries)
                 return;
 
-            int watermarkCount = this.Watermark ?? Math.Max(1, (int)Math.Floor(this.maxEntries * MruDictionary.DefaultWatermarkPercent));
+            int watermarkCount = (this.Watermark != null)
+                ? this.Watermark.Value
+                : Math.Max(1, (int)Math.Floor(this.maxEntries * MruDictionary.DefaultWatermarkPercent));
 
             int reclaimCount = ((this.Count + additionalEntries) - watermarkCount);
             if (reclaimCount <= 0)
