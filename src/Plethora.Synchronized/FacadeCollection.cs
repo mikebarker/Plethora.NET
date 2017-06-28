@@ -4,12 +4,24 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Text;
+
 using Plethora.Collections;
 using Plethora.ComponentModel;
 using Plethora.Synchronized.Change;
 
 namespace Plethora.Synchronized
 {
+    /// <summary>
+    /// Collection which allows local changes to be facaded over a <see cref="SyncCollection{TKey, T}"/>.
+    /// </summary>
+    /// <typeparam name="TKey">The data type of the key of the data stored in the collection.</typeparam>
+    /// <typeparam name="T">The data type of the data stored in the collection.</typeparam>
+    /// <remarks>
+    ///   <para>
+    ///   The internal <see cref="SyncCollection{TKey, T}"/> is kept in synch with the 'server' list, whilst the facade
+    ///   represents the client list. Local changes are identified by the <see cref="IsLocalChange"/> method.
+    ///   </para>
+    /// </remarks>
     internal class FacadeCollection<TKey, T> : IChangeSource, INotifyCollectionChanged, INotifyPropertyChanged, IBindingList, IList<T>
     {
         private readonly SyncCollection<TKey, T> syncCollection;
@@ -870,12 +882,12 @@ namespace Plethora.Synchronized
             protected override void RaiseEvents(ChangeDescriptor change, SortedList<TKey, T> oldList, SortedList<TKey, T> newList)
             {
                 TKey key = (TKey)change.Arguments[0];
-                T oldItem = oldList[key];
                 int oldIndex = oldList.IndexOfKey(key);
 
                 if (oldIndex < 0) //local change has prevented Remove
                     return;
 
+                T oldItem = oldList[key];
                 this.RaiseEvents(oldItem, oldIndex);
             }
 

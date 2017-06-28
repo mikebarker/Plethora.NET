@@ -125,11 +125,9 @@
     <Compile Include="Linq\ListHelper_Test.cs" />
     <Compile Include="NumericHelper_Test.cs" />
     <Compile Include="Reflection\Generic_Test.cs" />
-    <Compile Include="StringFormat\StringFormatHelper_Test.cs" />
     <Compile Include="StringHelper_Test.cs" />
     <Compile Include="Timing\OperationTimeout_Test.cs" />
     <Compile Include="WeakObserver_Test.cs" />
-    <Compile Include="WeakReference_Test.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

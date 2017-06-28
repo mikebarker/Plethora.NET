@@ -12,7 +12,6 @@ namespace Plethora.Synchronized
     {
         #region Fields
 
-        private readonly SyncCollection<TKey, T> syncCollection;
         private readonly FacadeCollection<TKey, T> facadeCollection;
         #endregion
 
@@ -49,13 +48,13 @@ namespace Plethora.Synchronized
                 throw new ArgumentNullException(nameof(syncInvoke));
 
 
-            this.syncCollection = new SyncCollection<TKey, T>(getKeyFunc, keyComparer, syncInvoke);
-            this.facadeCollection = new FacadeCollection<TKey, T>(this.syncCollection, cloneFunc, new ChangeSourceIdProvider());
+            SyncCollection<TKey, T> syncCollection = new SyncCollection<TKey, T>(getKeyFunc, keyComparer, syncInvoke);
+            this.facadeCollection = new FacadeCollection<TKey, T>(syncCollection, cloneFunc, new ChangeSourceIdProvider());
 
 
             //Bind the sources and sinks
             this.facadeCollection.ChangePublished += (sender, e) => outBoundChannel.ApplyChange(e.Change);
-            inBoundChannel.ChangePublished += (sender, e) => this.syncCollection.ApplyChange(e.Change);
+            inBoundChannel.ChangePublished += (sender, e) => syncCollection.ApplyChange(e.Change);
         }
 
         #endregion

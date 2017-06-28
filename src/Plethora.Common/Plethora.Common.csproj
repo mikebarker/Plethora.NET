@@ -144,14 +144,12 @@
     <Compile Include="Range.cs" />
     <Compile Include="Reflection\Generic.cs" />
     <Compile Include="ResourceProvider.cs" />
-    <Compile Include="StringFormat\StringFormatHelper.cs" />
     <Compile Include="StringHelper.cs" />
     <Compile Include="Threading\AggregateWaitHandle.cs" />
     <Compile Include="Threading\AsyncException.cs" />
     <Compile Include="Timing\OperationTimeout.cs" />
     <Compile Include="WeakDelegate.cs" />
     <Compile Include="WeakObserver.cs" />
-    <Compile Include="WeakReference.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

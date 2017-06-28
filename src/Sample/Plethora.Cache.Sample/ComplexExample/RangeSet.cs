@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Plethora.Collections.Sets;
 
@@ -60,12 +61,13 @@ namespace Plethora.Cache.Sample.ComplexExample
                 }
                 else if (remainders.Count == 1)
                 {
-                    if (this.range.Equals(remainders[0]))
+                    Range<T> remainder = remainders.First();
+                    if (this.range.Equals(remainder))
                     {
                         return this;
                     }
 
-                    return new RangeSet<T>(remainders[0]);
+                    return new RangeSet<T>(remainder);
                 }
                 else
                 {

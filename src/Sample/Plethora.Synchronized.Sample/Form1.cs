@@ -127,12 +127,12 @@ namespace Plethora.Synchronized.Sample
 
             e.DrawBackground();
 
-            e.Graphics.DrawString( // Draw the appropriate text in the ListBox
-                person.ToString(),
-                this.lstClientList.Font,
+            e.Graphics.DrawString(
+                this.lstClientList.GetItemText(this.lstClientList.Items[e.Index]),
+                e.Font,
                 textBrush,
-                0,
-                e.Index * this.lstClientList.ItemHeight);
+                e.Bounds,
+                System.Drawing.StringFormat.GenericDefault);
 
             e.DrawFocusRectangle();
         }

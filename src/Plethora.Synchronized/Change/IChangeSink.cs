@@ -1,4 +1,6 @@
-﻿namespace Plethora.Synchronized.Change
+﻿using JetBrains.Annotations;
+
+namespace Plethora.Synchronized.Change
 {
 
     /// <summary>
@@ -7,11 +9,11 @@
     public interface IChangeSink
     {
         /// <summary>
-        /// Applie the change which has been received.
+        /// Applies the change which has been received.
         /// </summary>
         /// <param name="change">
         /// The <see cref="ChangeDescriptor"/> received
         /// </param>
-        void ApplyChange(ChangeDescriptor change);
+        void ApplyChange([NotNull] ChangeDescriptor change);
     }
 }

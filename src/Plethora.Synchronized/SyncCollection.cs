@@ -3,28 +3,81 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Linq;
+
+using JetBrains.Annotations;
+
 using Plethora.ComponentModel;
 using Plethora.Synchronized.Change;
 using Plethora.Threading;
 
 namespace Plethora.Synchronized
 {
+    /// <summary>
+    /// A collection which acts as a <see cref="IChangeSink"/> to accept change notifications.
+    /// </summary>
+    /// <typeparam name="TKey">The data type of the key of the data stored in the collection.</typeparam>
+    /// <typeparam name="T">The data type of the data stored in the collection.</typeparam>
+    /// <remarks>
+    ///   <see cref="SyncCollection{TKey,T}"/>s can be created on the client and server with a channel to pass <see cref="ChangeDescriptor"/>s between them.
+    ///   <para>
+    ///   This collection is only modified through the <see cref="IChangeSink"/> interface, and can not be modified using the <see cref="ICollection{T}"/> methods.
+    ///   </para>
+    ///   <para>
+    ///   Change notifications are marshalled onto a single thread via the <see cref="ISynchronizeInvoke"/> constructor parameter.
+    ///   </para>
+    ///   <para>
+    ///   Enumerating over this class should be conducted whilst the lock (see <see cref="EnterLock"/>) is held.
+    ///   Example:
+    ///   <example><code><![CDATA[
+    ///         SyncCollection<Guid, Person> syncCollection = new SyncCollection(p => p.Id)
+    /// 
+    ///         // ...
+    /// 
+    ///         using (syncCollection.EnterLock())
+    ///         {
+    ///             foreach (Person person in syncCollection)
+    ///             {
+    ///                 // Do something with person;
+    ///             }
+    ///         }
+    ///   ]]></code></example>
+    ///   Long iterating loops should be avoided. If required, use the enumerator to create a shadow copy of the data and use this copy for the slow loop.
+    ///   Other item accessing methods do not require the lock to be held.
+    ///   </para>
+    /// </remarks>
     public class SyncCollection<TKey, T> : IChangeSink, IChangeSource, INotifyCollectionChanged, INotifyPropertyChanged, IList<T>
     {
         private readonly Func<T, TKey> getKeyFunc;
         private readonly SortedList<TKey, T> innerList;
         private readonly ISynchronizeInvoke synchInvoke;
+        private readonly LiteLock listLock = new LiteLock();
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="SyncCollection{TKey,T}"/> class with the default key comparer, and synchronised on a new thread.
+        /// </summary>
+        /// <param name="getKeyFunc">The function which gets the key from a data-item.</param>
         public SyncCollection(Func<T, TKey> getKeyFunc)
             : this(getKeyFunc, Comparer<TKey>.Default, new SynchronizeInvoke())
         {
         }
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="SyncCollection{TKey,T}"/> class synchronised on a new thread.
+        /// </summary>
+        /// <param name="getKeyFunc">The function which gets the key from a data-item.</param>
+        /// <param name="keyComparer">The key comparer.</param>
         public SyncCollection(Func<T, TKey> getKeyFunc, IComparer<TKey> keyComparer)
             : this(getKeyFunc, keyComparer, new SynchronizeInvoke())
         {
         }
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="SyncCollection{TKey,T}"/> class.
+        /// </summary>
+        /// <param name="getKeyFunc">The function which gets the key from a data-item.</param>
+        /// <param name="keyComparer">The key comparer.</param>
+        /// <param name="synchInvoke">The <see cref="ISynchronizeInvoke"/> to be used to marshal collection updates.</param>
         public SyncCollection(Func<T, TKey> getKeyFunc, IComparer<TKey> keyComparer, ISynchronizeInvoke synchInvoke)
         {
             //Validation
@@ -50,13 +103,21 @@ namespace Plethora.Synchronized
             return key;
         }
 
-
-        private readonly LiteLock listLock = new LiteLock();
+        /// <summary>
+        /// Locks the collection returns an <see cref="IDisposable"/> object which, when disposed, will release the lock.
+        /// </summary>
+        /// <returns>
+        /// The lock on the collection.
+        /// </returns>
+        [NotNull]
         public IDisposable EnterLock()
         {
             return this.listLock.AcquireLock();
         }
 
+        /// <summary>
+        /// Determines if the lock has already been acquired.
+        /// </summary>
         public bool IsLockEntered
         {
             get { return this.listLock.IsLockAcquired; }
@@ -65,6 +126,12 @@ namespace Plethora.Synchronized
 
         #region IChangeSink
 
+        /// <summary>
+        /// Applies the change which has been received.
+        /// </summary>
+        /// <param name="change">
+        /// The <see cref="ChangeDescriptor"/> received
+        /// </param>
         public void ApplyChange(ChangeDescriptor change)
         {
             if (change == null)
@@ -126,7 +193,7 @@ namespace Plethora.Synchronized
 
 
             T item = (T)change.Arguments[0];
-            this.Add(item);
+            this.AddItem(item);
         }
 
         private void ApplyChange_Remove(ChangeDescriptor change)
@@ -145,7 +212,7 @@ namespace Plethora.Synchronized
 
 
             TKey key = (TKey)change.Arguments[0];
-            this.Remove(key);
+            this.RemoveItem(key);
         }
 
         private void ApplyChange_Clear(ChangeDescriptor change)
@@ -163,7 +230,7 @@ namespace Plethora.Synchronized
                 throw new ArgumentException();
 
 
-            this.Clear();
+            this.ClearItems();
         }
 
         private void ApplyChange_Item(ChangeDescriptor change)
@@ -182,38 +249,36 @@ namespace Plethora.Synchronized
 
 
             TKey key = (TKey)change.Arguments[0];
-            int index;
             T item;
             using (this.EnterLock())
             {
-                index = this.innerList.IndexOfKey(key);
                 item = this.innerList[key];
             }
 
             var changeDescriptorApplier = new ChangeDescriptorApplier(item);
             changeDescriptorApplier.Apply((ChangeDescriptor)change.Value);
-
-            this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, item, item, index)); //TODO: this should possibly clone the object??
         }
 
 
 
 
-        private void Add(T item)
+        private int AddItem(T item)
         {
             TKey key = this.GetKey(item);
-            using(this.EnterLock())
+            int index;
+            using (this.EnterLock())
             {
                 this.innerList.Add(key, item);
+                index = this.innerList.IndexOfKey(key);
             }
 
             this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
             this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
+            return index;
         }
 
-        private void Clear()
+        private void ClearItems()
         {
             using (this.EnterLock())
             {
@@ -225,12 +290,13 @@ namespace Plethora.Synchronized
             this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
         }
 
-        private bool Remove(TKey key)
+        private bool RemoveItem(TKey key)
         {
             T item;
+            int index;
             using (this.EnterLock())
             {
-                int index = this.innerList.IndexOfKey(key);
+                index = this.innerList.IndexOfKey(key);
                 if (index < 0)
                     return false;
 
@@ -241,7 +307,7 @@ namespace Plethora.Synchronized
 
             this.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
             this.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
-            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item));
+            this.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, item, index));
             return true;
         }
 
@@ -337,7 +403,7 @@ namespace Plethora.Synchronized
             public CheckLockEnumerator(IEnumerator<T> enumerator, Func<bool> checkLockFunc)
             {
                 //Validation
-                if (enumerator==null)
+                if (enumerator == null)
                     throw new ArgumentNullException(nameof(enumerator));
 
                 if (checkLockFunc == null)

@@ -82,8 +82,7 @@ namespace Plethora
             if (this.innerObserver == null)
                 return null;
 
-            IObserver<T> target = this.innerObserver.Target;
-            if (target == null)
+            if (!this.innerObserver.TryGetTarget(out IObserver<T> target))
             {
                 if (this.onObserverCollected != null)
                     this.onObserverCollected();

@@ -96,7 +96,8 @@ namespace Plethora.Collections
                         return false;
                     }
 
-                    this.current = this.weakCollection.innerList[this.index].Target;
+                    this.weakCollection.innerList[this.index].TryGetTarget(out T target);
+                    this.current = target;
                     if (this.current != null)
                     {
                         return true;
@@ -233,9 +234,9 @@ namespace Plethora.Collections
                 //Try to reuse memory if it is availble
                 for (int i = 0; i < this.innerList.Count; i++)
                 {
-                    if (!this.innerList[i].IsAlive)
+                    if (!this.innerList[i].TryGetTarget(out T _))
                     {
-                        this.innerList[i] = weakReference;
+                        this.innerList[i] = weakReference;  
                         return;
                     }
                 }
@@ -273,7 +274,8 @@ namespace Plethora.Collections
 
             foreach (var weakReference in this.innerList)
             {
-                if (item.Equals(weakReference.Target))
+                weakReference.TryGetTarget(out T target);
+                if (item.Equals(target))
                     return true;
             }
 
@@ -331,7 +333,8 @@ namespace Plethora.Collections
 
             for (int i = 0; i < this.innerList.Count; i++)
             {
-                if (item.Equals(this.innerList[i].Target))
+                this.innerList[i].TryGetTarget(out T target);
+                if (item.Equals(target))
                 {
                     this.innerList.RemoveAt(i);
                     return true;
@@ -354,7 +357,7 @@ namespace Plethora.Collections
                 int count = 0;
                 foreach (var weakReference in this.innerList)
                 {
-                    if (weakReference.IsAlive)
+                    if (weakReference.TryGetTarget(out T _))
                         count++;
                 }
 
@@ -400,8 +403,7 @@ namespace Plethora.Collections
             var list = new List<T>(this.EstimateCount);
             foreach (var weakReference in this.innerList)
             {
-                T target = weakReference.Target;
-                if (target != null)
+                if (weakReference.TryGetTarget(out T target))
                     list.Add(target);
             }
 
@@ -415,7 +417,7 @@ namespace Plethora.Collections
         {
             for (int i = this.innerList.Count - 1; i >= 0; i--)
             {
-                if (!this.innerList[i].IsAlive)
+                if (!this.innerList[i].TryGetTarget(out T _))
                 {
                     this.innerList.RemoveAt(i);
                 }

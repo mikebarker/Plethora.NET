@@ -14,12 +14,14 @@ namespace Plethora.Collections
     public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
         where TKey : class
     {
-        private class WeakKey : WeakReference<TKey>, IEquatable<WeakKey>
+        private class WeakKey : IEquatable<WeakKey>
         {
             #region Fields
 
+            private readonly WeakReference<TKey> weakReference;
             private readonly int hashCode;
             private readonly IEqualityComparer<TKey> comparer;
+
             #endregion
 
             #region Constructors
@@ -28,7 +30,6 @@ namespace Plethora.Collections
             /// Initialise a new instance of the <see cref="WeakKey"/> class.
             /// </summary>
             public WeakKey(TKey target, IEqualityComparer<TKey> comparer)
-                : base(target)
             {
                 //validation
                 if (target == null)
@@ -38,11 +39,14 @@ namespace Plethora.Collections
                     throw new ArgumentNullException(nameof(comparer));
 
 
+                this.weakReference = new WeakReference<TKey>(target);
+
                 //Capture the hash code to prevent it changing if the
                 // target is garbage collected.
                 this.hashCode = comparer.GetHashCode(target);
                 this.comparer = comparer;
             }
+
             #endregion
 
             #region Implementation of IEquatable<WeakKeyDictionary<TKey,TValue>.WeakKey>
@@ -58,7 +62,22 @@ namespace Plethora.Collections
                 if (this.hashCode != other.hashCode)
                     return false;
 
-                return this.comparer.Equals(this.Target, other.Target);
+                TKey thisTarget;
+                TKey otherTarget;
+
+                this.weakReference.TryGetTarget(out thisTarget);
+                other.weakReference.TryGetTarget(out otherTarget);
+
+                return this.comparer.Equals(thisTarget, otherTarget);
+            }
+
+            #endregion
+
+            #region 
+
+            public bool TryGetTarget(out TKey target)
+            {
+                return this.weakReference.TryGetTarget(out target);
             }
 
             #endregion
@@ -83,13 +102,19 @@ namespace Plethora.Collections
 
             public override string ToString()
             {
-                object target = this.Target;
-                string targetToString = (target == null)
-                    ? "<dead>"
-                    : target.ToString();
+                TKey target;
+                if (!this.weakReference.TryGetTarget(out target))
+                {
+                    return "WeakKey [<dead>]";
+                }
+                else
+                {
+                    string targetToString = target.ToString();
 
-                return string.Format("WeakKey [{0}]", targetToString);
+                    return $"WeakKey [{targetToString}]";
+                }
             }
+
             #endregion
         }
 
@@ -244,7 +269,11 @@ namespace Plethora.Collections
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
             return this.innerDictionary
-                .Select(pair => new KeyValuePair<TKey, TValue>(pair.Key.Target, pair.Value))
+                .Select(pair =>
+                {
+                    pair.Key.TryGetTarget(out TKey target);
+                    return new KeyValuePair<TKey, TValue>(target, pair.Value);
+                })
                 .Where(pair => pair.Key != null)
                 .GetEnumerator();
         }
@@ -385,7 +414,7 @@ namespace Plethora.Collections
         public bool TrimExcess()
         {
             var deadKeyList = this.innerDictionary
-                .Where(pair => !pair.Key.IsAlive)
+                .Where(pair => !pair.Key.TryGetTarget(out TKey target))
                 .Select(pair => pair.Key)
                 .ToList();
 
