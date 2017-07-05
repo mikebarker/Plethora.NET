@@ -54,6 +54,12 @@ namespace Plethora.Collections.Sets
                 throw new ArgumentNullException(nameof(other));
 
 
+            //Short-cut method to union well-known sets.
+            ISetCore<T> result;
+            if (this.TryWellKnownUnion(other, out result))
+                return result;
+
+
             var newElements = this.excludedElements
                 .Where(element => !other.Contains(element));
 
@@ -65,6 +71,12 @@ namespace Plethora.Collections.Sets
             //Validation
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
+
+
+            //Short-cut method to intersect well-known sets.
+            ISetCore<T> result;
+            if (this.TryWellKnownIntersect(other, out result))
+                return result;
 
 
             //Short-cut method to intersect two exclusive sets.
@@ -90,6 +102,12 @@ namespace Plethora.Collections.Sets
             //Validation
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
+
+
+            //Short-cut method to subtract well-known sets.
+            ISetCore<T> result;
+            if (this.TryWellKnownIntersect(other, out result))
+                return result;
 
 
             //Short-cut method to subtract an exclusive set.

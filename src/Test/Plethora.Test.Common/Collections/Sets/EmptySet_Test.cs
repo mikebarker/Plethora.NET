@@ -101,5 +101,12 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsTrue(notA.Contains(8));
             Assert.IsTrue(notA.Contains(9));
         }
+
+        [Test]
+        public void IsEmpty()
+        {
+            //test
+            Assert.IsTrue(A.IsEmpty);
+        }
     }
 }

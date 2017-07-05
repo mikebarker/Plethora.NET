@@ -37,11 +37,7 @@ namespace Plethora.Test.Timing
             //test
             int remaining = timeout.Remaining;
 
-            const double THRESHHOLD = 0.01; //Allow for one percent error, due to timing for Thread.Sleep
-            int lLimit = (int) Math.Floor((timeoutMs - sleeptimeMs)*(1 - THRESHHOLD));
-            int uLimit = (int) Math.Ceiling((timeoutMs - sleeptimeMs)*(1 + THRESHHOLD));
-
-            bool isRemainingApproxEqual = (lLimit <= remaining) && (remaining <= uLimit);
+            bool isRemainingApproxEqual = (475 <= remaining) && (remaining <= 485); //Allow for one percent error, due to timing for Thread.Sleep
             Assert.True(isRemainingApproxEqual);
         }
 

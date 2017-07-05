@@ -3,7 +3,7 @@
 namespace Plethora.Collections.Sets
 {
     /// <summary>
-    /// Represents the intersection of two underlying sets.
+    /// Represents the inverse of an underlying set.
     /// </summary>
     internal sealed class InverseSet<T> : BaseSetImpl<T>, ISetCore<T>
     {

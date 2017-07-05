@@ -1,5 +1,7 @@
 ﻿using System;
 
+using JetBrains.Annotations;
+
 namespace Plethora.Collections.Sets
 {
     /// <summary>
@@ -48,8 +50,47 @@ namespace Plethora.Collections.Sets
             if ((otherImpl != null) && (otherImpl.IsNativeUnion))
                 return otherImpl.Union(this);
 
+            //Attempt any well-known optimisations
+            ISetCore<T> result;
+            if (this.TryWellKnownUnion(other, out result))
+                return result;
 
             return new UnionSet<T>(this, other);
+        }
+
+        [ContractAnnotation("=> true, result: notnull; => false, result: null")]
+        protected bool TryWellKnownUnion([NotNull] ISetCore<T> other, [CanBeNull] out ISetCore<T> result)
+        {
+            //Validation
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+
+            bool thisIsEmpty = (this.IsEmpty == true);
+
+            var otherImpl = other as BaseSetImpl<T>;
+            bool otherIsEmpty = ((otherImpl != null) && (otherImpl.IsEmpty == true));
+
+            if (thisIsEmpty && otherIsEmpty)
+            {
+                result = EmptySet<T>.Instance;
+                return true;
+            }
+
+            if (thisIsEmpty)
+            {
+                result = other;
+                return true;
+            }
+
+            if (otherIsEmpty)
+            {
+                result = this;
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
         /// <summary>
@@ -67,8 +108,36 @@ namespace Plethora.Collections.Sets
             if ((otherImpl != null) && (otherImpl.IsNativeIntersect))
                 return otherImpl.Intersect(this);
 
+            //Attempt any well-known optimisations
+            ISetCore<T> result;
+            if (this.TryWellKnownIntersect(other, out result))
+                return result;
 
             return new IntersectionSet<T>(this, other);
+        }
+
+        [ContractAnnotation("=> true, result: notnull; => false, result: null")]
+        protected bool TryWellKnownIntersect([NotNull] ISetCore<T> other, [CanBeNull] out ISetCore<T> result)
+        {
+            //Validation
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (this.IsEmpty == true)
+            {
+                result = EmptySet<T>.Instance;
+                return true;
+            }
+
+            var otherImpl = other as BaseSetImpl<T>;
+            if ((otherImpl != null) && (otherImpl.IsEmpty == true))
+            {
+                result = EmptySet<T>.Instance;
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
         /// <summary>
@@ -80,13 +149,42 @@ namespace Plethora.Collections.Sets
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
 
-            if (other is EmptySet<T>)
-                return this;
-
-            if (other is CompleteSet<T>)
-                return EmptySet<T>.Instance;
+            //Attempt any well-known optimisations
+            ISetCore<T> result;
+            if (this.TryWellKnownSubtract(other, out result))
+                return result;
 
             return new SubtractionSet<T>(this, other);
+        }
+
+        [ContractAnnotation("=> true, result: notnull; => false, result: null")]
+        protected bool TryWellKnownSubtract([NotNull] ISetCore<T> other, [CanBeNull] out ISetCore<T> result)
+        {
+            //Validation
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (other is CompleteSet<T>)
+            {
+                result = EmptySet<T>.Instance;
+                return true;
+            }
+
+            if (this.IsEmpty == true)
+            {
+                result = EmptySet<T>.Instance;
+                return true;
+            }
+
+            var otherImpl = other as BaseSetImpl<T>;
+            if ((otherImpl != null) && (otherImpl.IsEmpty == true))
+            {
+                result = this;
+                return true;
+            }
+
+            result = null;
+            return false;
         }
 
         /// <summary>
@@ -102,6 +200,10 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Gets a flag indicating whether the implementation natively supports set union.
         /// </summary>
+        /// <remarks>
+        /// Due to the commutative nature of the <see cref="Union"/> operator, the operation (A union B)
+        /// can be optimised to (B union A) if B natively supports the union operator.
+        /// </remarks>
         protected virtual bool IsNativeUnion
         {
             get { return false; }
@@ -110,6 +212,10 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Gets a flag indicating whether the implementation natively supports set intersection.
         /// </summary>
+        /// <remarks>
+        /// Due to the commutative nature of the <see cref="Intersect"/> operator, the operation (A intersect B)
+        /// can be optimised to (B intersect A) if B natively supports the intersect operator.
+        /// </remarks>
         protected virtual bool IsNativeIntersect
         {
             get { return false; }

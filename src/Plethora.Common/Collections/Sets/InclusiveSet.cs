@@ -59,6 +59,12 @@ namespace Plethora.Collections.Sets
                 throw new ArgumentNullException(nameof(other));
 
 
+            //Short-cut method to intersect well-known sets.
+            ISetCore<T> result;
+            if (this.TryWellKnownUnion(other, out result))
+                return result;
+
+
             //Short-cut method to union two inclusive sets.
             // There is no advantage to be gain in setting IsNativeUnion to true, as
             // this method is only useful if both objects are InclusiveSets. If this
@@ -91,6 +97,12 @@ namespace Plethora.Collections.Sets
                 throw new ArgumentNullException(nameof(other));
 
 
+            //Short-cut method to intersect well-known sets.
+            ISetCore<T> result;
+            if (this.TryWellKnownIntersect(other, out result))
+                return result;
+
+
             var newElements = this.includedElements
                 .Where(element => other.Contains(element));
 
@@ -109,6 +121,13 @@ namespace Plethora.Collections.Sets
             //Validation
             if (other == null)
                 throw new ArgumentNullException(nameof(other));
+
+
+            //Short-cut method to intersect well-known sets.
+            ISetCore<T> result;
+            if (this.TryWellKnownSubtract(other, out result))
+                return result;
+
 
             var newElements = this.includedElements
                 .Where(element => !other.Contains(element));
