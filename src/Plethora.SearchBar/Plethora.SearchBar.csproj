@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.21022</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D0F0AE1D-0D51-4B8E-8765-CA45548F6E86}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Plethora.SearchBar</RootNamespace>
+    <AssemblyName>Plethora.SearchBar</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AssemblyInfo.Common.cs">
+      <Link>Properties\AssemblyInfo.Common.cs</Link>
+    </Compile>
+    <Compile Include="..\JetBrains.Annotations.cs">
+      <Link>Properties\JetBrains.Annotations.cs</Link>
+    </Compile>
+    <Compile Include="DateTimeRange.cs" />
+    <Compile Include="PreFilter.cs" />
+    <Compile Include="Definitions\SynonymDefinition.cs" />
+    <Compile Include="Definitions\Definition.cs" />
+    <Compile Include="Definitions\WellKnown\DateDataTypeDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\DecimalDataTypeDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\ComparableFieldDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\DateFieldDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\IntegerFieldDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\FloatingPointFieldDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\NotEqualComparisonDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\LessThanComparisonDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\GreaterThanComparisonDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\LessThanEqualComparisonDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\GreaterThanEqualComparisonDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\EqualComparisonDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\IntegerDataTypeDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\FloatingPointDataTypeDefinition.cs" />
+    <Compile Include="Definitions\WellKnown\DecimalFieldDefinition.cs" />
+    <Compile Include="SearchBarParser.cs" />
+    <Compile Include="Definitions\ComparisonDefinition.cs" />
+    <Compile Include="Definitions\DataTypeDefinition.cs" />
+    <Compile Include="Definitions\EntityDefinition.cs" />
+    <Compile Include="Definitions\FieldDefinition.cs" />
+    <Compile Include="ParseTree\ComparisonNode.cs" />
+    <Compile Include="ParseTree\Node.cs" />
+    <Compile Include="ParseTree\FieldNode.cs" />
+    <Compile Include="ParseTree\EntityNode.cs" />
+    <Compile Include="ParseTree\ValueNode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RegexBuilder.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  -->
+  <Target Name="AfterBuild">
+    <CallTarget Targets="CopyToSolutionOutput" Condition=" '$(Configuration)' == 'Release'" />
+  </Target>
+  <Import Project="$(ProjectDir)..\Plethora.PostBuild.Targets" />
+</Project>
