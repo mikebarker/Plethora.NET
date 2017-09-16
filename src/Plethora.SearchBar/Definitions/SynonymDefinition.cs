@@ -13,6 +13,9 @@ namespace Plethora.SearchBar.Definitions
             this.synonyms = synonyms.ToArray();
         }
 
-        public string[] Synonyms => this.synonyms;
+        public string[] Synonyms
+        {
+            get { return this.synonyms; }
+        }
     }
 }

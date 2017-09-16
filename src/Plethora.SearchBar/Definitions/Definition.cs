@@ -9,6 +9,9 @@
             this.name = name;
         }
 
-        public string Name => this.name;
+        public string Name
+        {
+            get { return this.name; }
+        }
     }
 }

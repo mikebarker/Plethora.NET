@@ -13,6 +13,9 @@ namespace Plethora.SearchBar.Definitions
             this.dataTypes = dataTypes.ToArray();
         }
 
-        public DataTypeDefinition[] DataTypes => this.dataTypes;
+        public DataTypeDefinition[] DataTypes
+        {
+            get { return this.dataTypes; }
+        }
     }
 }

@@ -13,6 +13,9 @@ namespace Plethora.SearchBar.Definitions
             this.comparisons = comparisons.ToArray();
         }
 
-        public ComparisonDefinition[] Comparisons => this.comparisons;
+        public ComparisonDefinition[] Comparisons
+        {
+            get { return this.comparisons; }
+        }
     }
 }

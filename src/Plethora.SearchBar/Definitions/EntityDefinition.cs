@@ -13,6 +13,9 @@ namespace Plethora.SearchBar.Definitions
             this.fields = fields.ToArray();
         }
 
-        public FieldDefinition[] Fields => this.fields;
+        public FieldDefinition[] Fields
+        {
+            get { return this.fields; }
+        }
     }
 }

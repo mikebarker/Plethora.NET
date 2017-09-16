@@ -15,7 +15,10 @@
             this.tryParseFunction = tryParseFunction;
         }
 
-        public string RegexPattern => this.regexPattern;
+        public string RegexPattern
+        {
+            get { return this.regexPattern; }
+        }
 
         public bool TryParse(string text, out object value)
         {
