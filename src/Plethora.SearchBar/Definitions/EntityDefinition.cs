@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using JetBrains.Annotations;
 
 namespace Plethora.SearchBar.Definitions
 {
@@ -7,12 +10,17 @@ namespace Plethora.SearchBar.Definitions
     {
         private readonly FieldDefinition[] fields;
 
-        public EntityDefinition(string name, IEnumerable<string> synonyms, IEnumerable<FieldDefinition> fields)
+        public EntityDefinition([NotNull] string name, [NotNull] IEnumerable<string> synonyms, [NotNull] IEnumerable<FieldDefinition> fields)
             : base(name, synonyms)
         {
+            if (fields == null)
+                throw new ArgumentNullException(nameof(fields));
+
+
             this.fields = fields.ToArray();
         }
 
+        [NotNull]
         public FieldDefinition[] Fields
         {
             get { return this.fields; }

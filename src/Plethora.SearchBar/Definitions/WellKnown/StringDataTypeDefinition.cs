@@ -9,7 +9,7 @@
 
         private static string ConstructRegexPattern()
         {
-            string pattern = @"((\w|_)+|""([^""]|"""")*"")";
+            string pattern = @"(""([^""]|"""")*""|\S+)";
 
             return pattern;
         }

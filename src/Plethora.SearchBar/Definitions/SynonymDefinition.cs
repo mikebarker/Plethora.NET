@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+
+using JetBrains.Annotations;
 
 namespace Plethora.SearchBar.Definitions
 {
@@ -7,12 +10,17 @@ namespace Plethora.SearchBar.Definitions
     {
         private readonly string[] synonyms;
 
-        protected SynonymDefinition(string name, IEnumerable<string> synonyms)
+        protected SynonymDefinition([NotNull] string name, [NotNull] IEnumerable<string> synonyms)
             : base(name)
         {
+            if (synonyms == null)
+                throw new ArgumentNullException(nameof(synonyms));
+
+
             this.synonyms = synonyms.ToArray();
         }
 
+        [NotNull]
         public string[] Synonyms
         {
             get { return this.synonyms; }

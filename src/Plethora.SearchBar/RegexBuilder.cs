@@ -19,7 +19,9 @@ namespace Plethora.SearchBar
         public static Regex BuildRegex(IEnumerable<EntityDefinition> entities)
         {
             StringBuilder patternBuilder = new StringBuilder();
+            patternBuilder.Append("^");
             patternBuilder.AppendEntities(entities);
+            patternBuilder.Append("$");
 
             string pattern = patternBuilder.ToString();
 
