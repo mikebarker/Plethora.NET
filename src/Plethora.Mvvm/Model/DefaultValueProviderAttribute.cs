@@ -27,7 +27,7 @@ namespace Plethora.Mvvm.Model
     /// ]]></code></example>
     /// </remarks>
     /// <see cref="ModelBase"/>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public sealed class DefaultValueProviderAttribute : Attribute
     {
         private readonly Type type;

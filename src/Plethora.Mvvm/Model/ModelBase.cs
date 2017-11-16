@@ -42,13 +42,13 @@ namespace Plethora.Mvvm.Model
         [CanBeNull]
         private static IReadOnlyDictionary<string, IModelPropertyMetadata> GetPropertyMetadataForType([NotNull] Type type)
         {
-            IReadOnlyDictionary<string, IModelPropertyMetadata> Metadata;
+            IReadOnlyDictionary<string, IModelPropertyMetadata> metadata;
             bool result;
 
             propertyMetadataLock.EnterReadLock();
             try
             {
-                result = propertyMetadataByType.TryGetValue(type, out Metadata);
+                result = propertyMetadataByType.TryGetValue(type, out metadata);
             }
             finally
             {
@@ -57,12 +57,12 @@ namespace Plethora.Mvvm.Model
 
             if (!result)
             {
-                Metadata = CreatePropertyMetadataForType(type);
+                metadata = CreatePropertyMetadataForType(type);
 
                 propertyMetadataLock.EnterWriteLock();
                 try
                 {
-                    propertyMetadataByType[type] = Metadata;
+                    propertyMetadataByType[type] = metadata;
                 }
                 finally
                 {
@@ -70,7 +70,7 @@ namespace Plethora.Mvvm.Model
                 }
             }
 
-            return Metadata;
+            return metadata;
         }
 
         [NotNull]
@@ -78,7 +78,7 @@ namespace Plethora.Mvvm.Model
         {
             PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
-            Dictionary<string, IModelPropertyMetadata> Metadata = new Dictionary<string, IModelPropertyMetadata>();
+            Dictionary<string, IModelPropertyMetadata> metadata = new Dictionary<string, IModelPropertyMetadata>();
 
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
@@ -93,6 +93,7 @@ namespace Plethora.Mvvm.Model
                     {
                         defaultValue = ((DefaultValueAttribute)attribute).Value;
                         ValidateDefaultValue(defaultValue, propertyInfo);
+                        break;
                     }
                     else if (attribute is DefaultValueProviderAttribute)
                     {
@@ -103,6 +104,8 @@ namespace Plethora.Mvvm.Model
                         if (providerFieldInfo != null)
                         {
                             defaultValue = providerFieldInfo.GetValue(null);
+                            ValidateDefaultValue(defaultValue, propertyInfo);
+                            break;
                         }
                         else
                         {
@@ -110,6 +113,8 @@ namespace Plethora.Mvvm.Model
                             if (providerPropertyInfo != null)
                             {
                                 defaultValue = providerPropertyInfo.GetValue(null);
+                                ValidateDefaultValue(defaultValue, propertyInfo);
+                                break;
                             }
                             else
                             {
@@ -121,25 +126,16 @@ namespace Plethora.Mvvm.Model
 
                 if (defaultValue != null)
                 {
-                    if (defaultValue == null)
-                    {
-                        if (type.IsValueType)
-                        {
-                            defaultValue = Activator.CreateInstance(type);
-                        }
-                        defaultValue = null;
-                    }
-
                     Type modelPropertyMetadataType = typeof(ModelPropertyMetadata<>).MakeGenericType(propertyInfo.PropertyType);
                     IModelPropertyMetadata modelPropertyMetadata = (IModelPropertyMetadata)Activator.CreateInstance(modelPropertyMetadataType,
                         propertyName,
                         defaultValue);
 
-                    Metadata.Add(propertyName, modelPropertyMetadata);
+                    metadata.Add(propertyName, modelPropertyMetadata);
                 }
             }
 
-            return Metadata;
+            return metadata;
         }
 
         [Conditional("DEBUG")]
@@ -519,17 +515,17 @@ namespace Plethora.Mvvm.Model
 
         private bool IsDefault([NotNull] string propertyName, [NotNull] IModelProperty modelProperty)
         {
-            IModelPropertyMetadata Metadata = this.GetMetadata(propertyName);
+            IModelPropertyMetadata metadata = this.GetMetadata(propertyName);
 
-            return modelProperty.IsUnchangedDefaultValue(Metadata);
+            return modelProperty.IsUnchangedDefaultValue(metadata);
         }
 
         [CanBeNull]
         private T GetDefaultValue<T>([NotNull] string propertyName)
         {
-            IModelPropertyMetadata Metadata = this.GetMetadata(propertyName);
+            IModelPropertyMetadata metadata = this.GetMetadata(propertyName);
 
-            T defaultValue = ((ModelPropertyMetadata<T>)Metadata).GetDefaultValueSafe();
+            T defaultValue = ((ModelPropertyMetadata<T>)metadata).GetDefaultValueSafe();
             return defaultValue;
         }
 
@@ -538,13 +534,13 @@ namespace Plethora.Mvvm.Model
         {
             IReadOnlyDictionary<string, IModelPropertyMetadata> typeMetadata = ModelBase.GetPropertyMetadataForType(this.GetType());
 
-            IModelPropertyMetadata Metadata = null;
+            IModelPropertyMetadata propertyMetadata = null;
             if (typeMetadata != null)
             {
-                typeMetadata.TryGetValue(propertyName, out Metadata);
+                typeMetadata.TryGetValue(propertyName, out propertyMetadata);
             }
 
-            return Metadata;
+            return propertyMetadata;
         }
 
         [ContractAnnotation("=> true, modelProperty:notnull; => false, modelProperty:null")]

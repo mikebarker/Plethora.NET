@@ -67,6 +67,7 @@
       <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
     <Compile Include="DateTimeRange.cs" />
+    <Compile Include="Definitions\WellKnown\DateRangeDataTypeDefinition.cs" />
     <Compile Include="Definitions\WellKnown\StringDataTypeDefinition.cs" />
     <Compile Include="Definitions\WellKnown\StringFieldDefinition.cs" />
     <Compile Include="PreFilter.cs" />
