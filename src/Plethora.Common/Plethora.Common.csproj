@@ -62,6 +62,13 @@
     <Compile Include="..\JetBrains.Annotations.cs">
       <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
+    <Compile Include="Calendar\CalendarGenerator.cs" />
+    <Compile Include="Calendar\DailyCalendarProperties.cs" />
+    <Compile Include="Calendar\DateRollType.cs" />
+    <Compile Include="Calendar\ICalendarProperties.cs" />
+    <Compile Include="Calendar\MonthlyCalendarProperties.cs" />
+    <Compile Include="Calendar\WeeklyCalendarProperties.cs" />
+    <Compile Include="Calendar\YearlyCalendarProperties.cs" />
     <Compile Include="Collections\AutoSortedList.cs" />
     <Compile Include="Collections\FuncComparer.cs" />
     <Compile Include="Collections\ListIndexIterator.cs" />
@@ -91,6 +98,8 @@
     <Compile Include="Data\IExceptionTester.cs" />
     <Compile Include="Data\SqlClient\SqlExceptionTester.cs" />
     <Compile Include="Linq\Expressions\ExpressionHelper.cs" />
+    <Compile Include="Rational.cs" />
+    <Compile Include="MathEx.cs" />
     <Compile Include="WildcardSearch.cs" />
     <Compile Include="WeakEvent.cs" />
     <Compile Include="Threading\LiteLock.cs" />

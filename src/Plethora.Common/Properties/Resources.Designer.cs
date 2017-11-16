@@ -187,6 +187,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must not be {1}..
+        /// </summary>
+        internal static string ArgMustNotBe {
+            get {
+                return ResourceManager.GetString("ArgMustNotBe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The property &apos;{1}&apos; of the parameter &apos;{0}&apos; is not valid..
         /// </summary>
         internal static string ArgPropertyInvalid {
@@ -210,6 +219,24 @@ namespace Plethora.Properties {
         internal static string ArgTimeout {
             get {
                 return ResourceManager.GetString("ArgTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If not specifying the last day of the month, then at least one date must be specified..
+        /// </summary>
+        internal static string AtLeastOneDateOrEom {
+            get {
+                return ResourceManager.GetString("AtLeastOneDateOrEom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one day of the week must be specified..
+        /// </summary>
+        internal static string AtLeastOneDayOfWeek {
+            get {
+                return ResourceManager.GetString("AtLeastOneDayOfWeek", resourceCulture);
             }
         }
         

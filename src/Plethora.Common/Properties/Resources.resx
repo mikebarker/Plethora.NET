@@ -204,4 +204,13 @@
   <data name="GenericArgMustBeDelegate" xml:space="preserve">
     <value>Generic argument must must be a subclass of Delegate.</value>
   </data>
+  <data name="ArgMustNotBe" xml:space="preserve">
+    <value>'{0}' must not be {1}.</value>
+  </data>
+  <data name="AtLeastOneDateOrEom" xml:space="preserve">
+    <value>If not specifying the last day of the month, then at least one date must be specified.</value>
+  </data>
+  <data name="AtLeastOneDayOfWeek" xml:space="preserve">
+    <value>At least one day of the week must be specified.</value>
+  </data>
 </root>

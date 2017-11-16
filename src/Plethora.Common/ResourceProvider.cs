@@ -132,6 +132,19 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'ArgMustNotBe' with substitutions made.
+        /// </summary>
+        /// <param name="arg">The name of the argument.</param>
+        /// <param name="value">The value which the argument must be greater than.</param>
+        [NotNull]
+        public static string ArgMustNotBe([InvokerParameterName, NotNull] string arg, [NotNull] string value)
+        {
+            return StringFormat(Resources.ArgMustNotBe,
+                                arg,
+                                value);
+        }
+
+        /// <summary>
         /// Returns the resource string 'ArgMustBeGreaterThanEqualTo' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
@@ -346,6 +359,16 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         [NotNull]
+        public static string ArgMustNotBeZero([InvokerParameterName, NotNull] string arg)
+        {
+            return ArgMustNotBe(arg, Resources.Zero);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ArgMustBeGreaterThan' with substitutions made.
+        /// </summary>
+        /// <param name="arg">The name of the argument.</param>
+        [NotNull]
         public static string ArgMustBeGreaterThanZero([InvokerParameterName, NotNull] string arg)
         {
             return ArgMustBeGreaterThan(arg, Resources.Zero);
@@ -426,6 +449,24 @@ namespace Plethora
         public static string ArgTimeout([InvokerParameterName, NotNull] string arg)
         {
             return StringFormat(Resources.ArgTimeout, arg, Resources.Zero, "Timeout.Infinite");
+        }
+
+        /// <summary>
+        /// Returns the resource string 'AtLeastOneDayOfWeek' with substitutions made.
+        /// </summary>
+        [NotNull]
+        public static string AtLeastOneDayOfWeek()
+        {
+            return Resources.AtLeastOneDayOfWeek;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'AtLeastOneDateOrEom' with substitutions made.
+        /// </summary>
+        [NotNull]
+        public static string AtLeastOneDateOrEom()
+        {
+            return Resources.AtLeastOneDateOrEom;
         }
 
         /// <summary>
