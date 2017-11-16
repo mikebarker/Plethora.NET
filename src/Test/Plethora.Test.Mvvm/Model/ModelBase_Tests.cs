@@ -165,14 +165,12 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
-
             person.GivenName = "Fred";
             person.FamilyName = "Brown";
             person.DateOfBirth = new DateTime(1900, 07, 14);
 
-            propertiesChanged.Clear();
+            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
 
             //exec
             person.Rollback();
@@ -202,14 +200,12 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
-
             person.GivenName = "Fred";
             person.FamilyName = "Brown";
             person.DateOfBirth = new DateTime(1900, 07, 14);
 
-            propertiesChanged.Clear();
+            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
 
             //exec
             person.Commit();
