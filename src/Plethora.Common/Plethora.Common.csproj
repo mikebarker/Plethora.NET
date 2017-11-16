@@ -92,11 +92,6 @@
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="Collections\ReverseComparer.cs" />
-    <Compile Include="Data\DbCommandRetryEventHandler.cs" />
-    <Compile Include="Data\DbExecutorConfig.cs" />
-    <Compile Include="Data\DbExecutor.cs" />
-    <Compile Include="Data\IExceptionTester.cs" />
-    <Compile Include="Data\SqlClient\SqlExceptionTester.cs" />
     <Compile Include="Linq\Expressions\ExpressionHelper.cs" />
     <Compile Include="Rational.cs" />
     <Compile Include="MathEx.cs" />
@@ -105,7 +100,6 @@
     <Compile Include="Threading\LiteLock.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
-    <Compile Include="Data\DataRecordHelper.cs" />
     <Compile Include="EqualityHelper.cs" />
     <Compile Include="IO\TextReaderHelper.cs" />
     <Compile Include="Linq\ListHelper.cs" />
@@ -166,9 +160,6 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">

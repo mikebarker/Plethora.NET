@@ -66,6 +66,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Finance", "Plethor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Test.Finance", "Test\Plethora.Test.Finance\Plethora.Test.Finance.csproj", "{3F9BA746-6B8A-4D54-827F-1704510414DC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Data", "Plethora.Data\Plethora.Data.csproj", "{FA1B5D44-4FB7-4B7B-8D5F-0B3039C0E504}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Test.Data", "Test\Plethora.Test.Data\Plethora.Test.Data.csproj", "{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -176,6 +180,14 @@ Global
 		{3F9BA746-6B8A-4D54-827F-1704510414DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3F9BA746-6B8A-4D54-827F-1704510414DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3F9BA746-6B8A-4D54-827F-1704510414DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA1B5D44-4FB7-4B7B-8D5F-0B3039C0E504}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA1B5D44-4FB7-4B7B-8D5F-0B3039C0E504}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA1B5D44-4FB7-4B7B-8D5F-0B3039C0E504}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA1B5D44-4FB7-4B7B-8D5F-0B3039C0E504}.Release|Any CPU.Build.0 = Release|Any CPU
+		{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -194,5 +206,6 @@ Global
 		{A71928A6-A7EA-479C-8EE9-D3B299C188C5} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
 		{780E7AFE-6B64-49C3-89C6-75B44436201F} = {270D176B-32CF-4794-A215-CF1D77615257}
 		{3F9BA746-6B8A-4D54-827F-1704510414DC} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
+		{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
 	EndGlobalSection
 EndGlobal
