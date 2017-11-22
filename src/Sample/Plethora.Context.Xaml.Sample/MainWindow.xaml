@@ -38,65 +38,78 @@
     </Window.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280*"/>
             <ColumnDefinition Width="220*"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" >
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
-                <TextBox Text="{Binding Contract}">
-                    <context:XamlContext.Source>
-                        <context:XamlContextSource ContextName="Contract" Data="{Binding Path=Contract}"/>
-                        <context:XamlContextSource ContextName="SignedContract" Data="{Binding Path=Contract}"/>
-                        <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
-                    </context:XamlContext.Source>
+        <GroupBox Grid.Column="0" Grid.Row="0" Header="Context Boxes" >
+            <context:XamlContext.Source>
+                <context:XamlContextSource ContextName="Parent" Rank="-10"  Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=GroupBox}}" />
+            </context:XamlContext.Source>
 
-                    <TextBox.ContextMenu>
-                        <ContextMenu>
-                            <context:XamlContextMenuItem DisableGrouping="True" ActionsAdapter="{StaticResource itemsPrecedenceAdapter}" />
-                        </ContextMenu>
-                    </TextBox.ContextMenu>
-                </TextBox>
-            </DockPanel>
+            <StackPanel>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
+                    <TextBox Text="{Binding Contract}">
+                        <context:XamlContext.Source>
+                            <context:XamlContextSource ContextName="Contract" Data="{Binding Path=Contract}"/>
+                            <context:XamlContextSource ContextName="SignedContract" Data="{Binding Path=Contract}"/>
+                            <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
+                        </context:XamlContext.Source>
 
-            <DockPanel>
-                <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Instrument:</TextBlock>
-                <TextBox Text="{Binding Instrument}">
-                    <context:XamlContext.Source>
-                        <context:XamlContextSource ContextName="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
-                        <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
-                    </context:XamlContext.Source>
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <context:XamlContextMenuItem DisableGrouping="True" ActionsAdapter="{StaticResource itemsPrecedenceAdapter}" />
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                </DockPanel>
 
-                    <TextBox.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Header="Alpha" />
-                            <context:XamlContextMenuItem />
-                            <MenuItem Header="Omega" />
-                        </ContextMenu>
-                    </TextBox.ContextMenu>
-                </TextBox>
-            </DockPanel>
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Instrument:</TextBlock>
+                    <TextBox Text="{Binding Instrument}">
+                        <context:XamlContext.Source>
+                            <context:XamlContextSource ContextName="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
+                            <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
+                        </context:XamlContext.Source>
 
-            <TextBox Name="ContextTextBox"
-                     context:XamlContext.IsActivityItem="True"
-                     Text="{Binding ContextText}" />
-        </StackPanel>
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="Alpha" />
+                                <context:XamlContextMenuItem />
+                                <MenuItem Header="Omega" />
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
+                </DockPanel>
+            </StackPanel>
+        </GroupBox>
 
-        <ItemsControl Grid.Column="1"
-                      context:XamlContext.IsActivityItem="True"
-                      ItemsSource="{Binding Actions, Converter={StaticResource contextCommandListConverter}}"
-                      IsTabStop="False"
-                      >
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Button Height="48"
-                            Content="{Binding Path=ActionName}"
-                            Command="{Binding}"
-                            />
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <TextBox Grid.Column="0" Grid.Row="1" 
+                 Text="{Binding ContextText}"
+                 context:XamlContext.IsActivityItem="True"
+                 />
+
+        <GroupBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Header="Actions">
+            <ItemsControl context:XamlContext.IsActivityItem="True"
+                          ItemsSource="{Binding Actions, Converter={StaticResource contextCommandListConverter}}"
+                          IsTabStop="False"
+                          >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Height="48"
+                                Content="{Binding Path=ActionName}"
+                                Command="{Binding}"
+                                />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
     </Grid>
 </Window>
