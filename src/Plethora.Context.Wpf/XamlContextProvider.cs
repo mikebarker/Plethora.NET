@@ -3,38 +3,41 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
 
-namespace Plethora.Context.Wpf
+using JetBrains.Annotations;
+
+namespace Plethora.Context
 {
-    internal class WpfContextProvider : CachedContextProvider
+    internal class XamlContextProvider : CachedContextProvider
     {
-        public WpfContextProvider(UIElement element)
+        private readonly IInputElement inputElement;
+        private XamlContextSourceCollection contextSource;
+
+        public XamlContextProvider([NotNull] IInputElement element)
         {
             //Validation
             if (element == null)
                 throw new ArgumentNullException(nameof(element));
 
+            if (!(element is DependencyObject))
+                throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(element), typeof(DependencyObject)), nameof(element));
 
-            this.uiElement = element;
-            this.RegisterUIElement(this.uiElement);
+
+            this.inputElement = element;
+            this.RegisterUIElement(this.inputElement);
         }
 
-        #region Implementation of IContextProvider
-
+        [CanBeNull]
         protected override IEnumerable<ContextInfo> GetContexts()
         {
-            return (this.ContextSource != null) 
-                ? this.ContextSource.Contexts
+            return (this.ContextSourceCollection != null)
+                ? this.ContextSourceCollection.Contexts
                 : null;
         }
 
-        #endregion
-
-
-
-        private IWpfContextSource contextSource;
-
-        public IWpfContextSource ContextSource
+        [CanBeNull]
+        public XamlContextSourceCollection ContextSourceCollection
         {
             get { return this.contextSource; }
             set 
@@ -45,7 +48,6 @@ namespace Plethora.Context.Wpf
 
                 if (this.contextSource != null)
                 {
-                    this.contextSource.UIElement = null;
                     this.contextSource.ContextChanged -= this.contextSource_ContextChanged;
                 }
 
@@ -53,7 +55,6 @@ namespace Plethora.Context.Wpf
 
                 if (this.contextSource != null)
                 {
-                    this.contextSource.UIElement = this.uiElement;
                     this.contextSource.ContextChanged += this.contextSource_ContextChanged;
                 }
             }
@@ -64,29 +65,23 @@ namespace Plethora.Context.Wpf
             this.OnContextChanged();
         }
 
-
-
-        private readonly UIElement uiElement;
-
-        public UIElement UIElement
+        [NotNull]
+        public IInputElement InputElement
         {
-            get { return this.uiElement; }
+            get { return this.inputElement; }
         }
 
-        private void RegisterUIElement(UIElement element)
+        private void RegisterUIElement([NotNull] IInputElement element)
         {
             //Do not hook up the event model in design mode
-            if (DesignerProperties.GetIsInDesignMode(element))
+            if (DesignerProperties.GetIsInDesignMode((DependencyObject)element))
                 return;
 
             element.GotKeyboardFocus += this.element_GotKeyboardFocus;
             element.LostKeyboardFocus += this.element_LostKeyboardFocus;
 
-            var contextManager = WpfContext.GetContextManagerForElement(element);
+            ContextManager contextManager = XamlContext.GetContextManagerForElement((DependencyObject)element);
             contextManager.RegisterProvider(this);
-
-            if (this.ContextSource != null)
-                this.contextSource.UIElement = element;
         }
 
         private void element_GotKeyboardFocus(object sender, RoutedEventArgs e)
@@ -96,11 +91,11 @@ namespace Plethora.Context.Wpf
 
         private void element_LostKeyboardFocus(object sender, RoutedEventArgs e)
         {
-            UIElement source = (UIElement)sender;
-            if (!ReferenceEquals(source, this.UIElement))
+            IInputElement source = (IInputElement)sender;
+            if (!ReferenceEquals(source, this.InputElement))
                 source.LostKeyboardFocus -= this.element_LostKeyboardFocus;
 
-            UIElement activeControl = Keyboard.FocusedElement as UIElement;
+            IInputElement activeControl = Keyboard.FocusedElement as UIElement;
             if (activeControl == null)
             {
                 this.OnLeaveContext();
@@ -109,7 +104,7 @@ namespace Plethora.Context.Wpf
 
             if (this.IsActivityElement(activeControl))
             {
-                if (!ReferenceEquals(activeControl, this.UIElement))
+                if (!ReferenceEquals(activeControl, this.InputElement))
                     activeControl.LostKeyboardFocus += this.element_LostKeyboardFocus;
             }
             else
@@ -118,15 +113,15 @@ namespace Plethora.Context.Wpf
             }
         }
 
-        private bool IsActivityElement(UIElement element)
+        private bool IsActivityElement([CanBeNull] IInputElement element)
         {
-            DependencyObject obj = element;
+            DependencyObject obj = element as DependencyObject;
             while (obj != null)
             {
                 if (ActivityItemRegister.Instance.IsActivityItem(obj))
                     return true;
 
-                obj = LogicalTreeHelper.GetParent(obj);
+                obj = VisualTreeHelper.GetParent(obj);
             }
 
             return false;

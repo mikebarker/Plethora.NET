@@ -4,7 +4,7 @@ using System.Linq;
 using System.Windows;
 using Plethora.Context.Action;
 
-namespace Plethora.Context.Wpf
+namespace Plethora.Context
 {
     public class ActionsPrecedenceAdapter : DependencyObject, IActionsAdapter
     {

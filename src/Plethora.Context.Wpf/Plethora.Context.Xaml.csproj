@@ -8,8 +8,8 @@
     <ProjectGuid>{5E454E70-289F-4BFD-BEAA-F003B14B869E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plethora.Context.Wpf</RootNamespace>
-    <AssemblyName>Plethora.Context.Wpf</AssemblyName>
+    <RootNamespace>Plethora.Context</RootNamespace>
+    <AssemblyName>Plethora.Context.Xaml</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
@@ -58,8 +58,6 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
@@ -67,20 +65,21 @@
     <Compile Include="..\AssemblyInfo.Common.cs">
       <Link>Properties\AssemblyInfo.Common.cs</Link>
     </Compile>
+    <Compile Include="..\JetBrains.Annotations.cs">
+      <Link>Properties\JetBrains.Annotations.cs</Link>
+    </Compile>
     <Compile Include="ActionsPrecedenceAdapter.cs" />
-    <Compile Include="WpfContextMenuItem.cs" />
-    <Compile Include="WpfContextSourceBase.cs" />
-    <Compile Include="WpfCallbackDelay.cs" />
-    <Compile Include="WpfContextSourceTemplateCollection.cs" />
-    <Compile Include="IWpfContextSourceTemplate.cs" />
-    <Compile Include="DepencyObjectHelper.cs" />
-    <Compile Include="IWpfContextSource.cs" />
-    <Compile Include="WpfContext.cs" />
+    <Compile Include="ContextCommandListConverter.cs" />
+    <Compile Include="ContextCommandConverter.cs" />
+    <Compile Include="ContextCommand.cs" />
+    <Compile Include="IXamlContext.cs" />
+    <Compile Include="XamlContextMenuItem.cs" />
+    <Compile Include="XamlCallbackDelay.cs" />
+    <Compile Include="XamlContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WpfContextProvider.cs" />
-    <Compile Include="WpfContextSource.cs" />
-    <Compile Include="WpfContextSourceCollection.cs" />
-    <Compile Include="WpfContextSourceTemplate.cs" />
+    <Compile Include="XamlContextProvider.cs" />
+    <Compile Include="XamlContextSource.cs" />
+    <Compile Include="XamlContextSourceCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">

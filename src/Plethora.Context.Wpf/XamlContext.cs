@@ -1,53 +1,44 @@
 ﻿using System.Windows;
-using System.Windows.Data;
 using Plethora.Context.Action;
 
-namespace Plethora.Context.Wpf
+namespace Plethora.Context
 {
     /// <summary>
     /// Helper class which defines the attached properties required for using context within WPF XAML mark-up.
     /// </summary>
-    public static class WpfContext
+    public static class XamlContext
     {
-        #region ContextSourceTemplate Attached Property
+        #region ContextSource Attached Property
 
-        public static readonly DependencyProperty ContextSourceTemplateProperty =
+        public static readonly DependencyProperty SourceProperty =
             DependencyProperty.RegisterAttached(
-                "ContextSourceTemplate",
-                typeof(IWpfContextSourceTemplate),
-                typeof (WpfContext),
-                new PropertyMetadata(null, ContextSourceChangedCallback));
+                "Source_", //Intentionally misnamed to force WPF to use the Get method below
+                typeof(XamlContextSourceCollection),
+                typeof(XamlContext),
+                new PropertyMetadata(null, SourceChangedCallback));
 
-        private static void ContextSourceChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
+        private static void SourceChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             if (ReferenceEquals(e.OldValue, e.NewValue))
                 return;
 
+            XamlContextSourceCollection contextSourceCollection = (XamlContextSourceCollection)e.NewValue;
+
             UIElement element = (UIElement)dependencyObject;
-            IWpfContextSourceTemplate contextTemplate = (IWpfContextSourceTemplate)e.NewValue;
-            WpfContextSourceBase contextSource = contextTemplate.CreateContent();
-            contextSource.UIElement = element;
+            XamlContextProvider provider = GetContextProvider(element);
 
-            if (element is FrameworkElement)
+            provider.ContextSourceCollection = contextSourceCollection;
+        }
+
+        public static XamlContextSourceCollection GetSource(UIElement element)
+        {
+            var collection = (XamlContextSourceCollection)element.GetValue(SourceProperty);
+            if (collection == null)
             {
-                Binding dataContextBinding = new Binding();
-                dataContextBinding.Source = element;
-                dataContextBinding.Path = new PropertyPath("DataContext");
-                BindingOperations.SetBinding(contextSource, FrameworkElement.DataContextProperty, dataContextBinding);
+                collection = new XamlContextSourceCollection();
+                element.SetValue(SourceProperty, collection);
             }
-
-            var provider = GetContextProvider(element);
-            provider.ContextSource = contextSource;
-        }
-
-        public static void SetContextSourceTemplate(UIElement element, IWpfContextSourceTemplate value)
-        {
-            element.SetValue(ContextSourceTemplateProperty, value);
-        }
-
-        public static IWpfContextSourceTemplate GetContextSourceTemplate(UIElement element)
-        {
-            return (IWpfContextSourceTemplate)element.GetValue(ContextSourceTemplateProperty);
+            return collection;
         }
 
         #endregion
@@ -55,17 +46,17 @@ namespace Plethora.Context.Wpf
         #region ContextProvider Attached Property
 
         internal static readonly DependencyProperty ContextProviderProperty = DependencyProperty.RegisterAttached(
-            "ContextProvider_", //Intentionally renamed to force WPF to use the Get method below
-            typeof(WpfContextProvider),
-            typeof(WpfContext),
-            new PropertyMetadata(default(WpfContextProvider)));
+            "ContextProvider_", //Intentionally misnamed to force WPF to use the Get method below
+            typeof(XamlContextProvider),
+            typeof(XamlContext),
+            new PropertyMetadata(default(XamlContextProvider)));
 
-        private static WpfContextProvider GetContextProvider(UIElement element)
+        private static XamlContextProvider GetContextProvider(UIElement element)
         {
-            var provider = (WpfContextProvider)element.GetValue(ContextProviderProperty);
+            var provider = (XamlContextProvider)element.GetValue(ContextProviderProperty);
             if (provider == null)
             {
-                provider = new WpfContextProvider(element);
+                provider = new XamlContextProvider(element);
                 element.SetValue(ContextProviderProperty, provider);
             }
 
@@ -80,7 +71,7 @@ namespace Plethora.Context.Wpf
             DependencyProperty.RegisterAttached(
                 "ContextManager",
                 typeof(ContextManager),
-                typeof(WpfContext),
+                typeof(XamlContext),
                 new PropertyMetadata(default(ContextManager)));
 
         public static void SetContextManager(DependencyObject dependencyObject, ContextManager value)
@@ -101,7 +92,7 @@ namespace Plethora.Context.Wpf
             DependencyProperty.RegisterAttached(
                 "ActionManager",
                 typeof(ActionManager),
-                typeof(WpfContext),
+                typeof(XamlContext),
                 new PropertyMetadata(default(ActionManager)));
 
         public static void SetActionManager(DependencyObject dependencyObject, ActionManager value)
@@ -118,11 +109,14 @@ namespace Plethora.Context.Wpf
 
         #region IsActivityItem Attached Property
 
+        /// <summary>
+        /// Identifies the IsActivityItem property.
+        /// </summary>
         public static readonly DependencyProperty IsActivityItemProperty =
             DependencyProperty.RegisterAttached(
                 "IsActivityItem",
                 typeof(bool),
-                typeof(WpfContext),
+                typeof(XamlContext),
                 new PropertyMetadata(false, IsActivityItemChangedCallback));
 
         private static void IsActivityItemChangedCallback(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
@@ -136,11 +130,29 @@ namespace Plethora.Context.Wpf
                 ActivityItemRegister.Instance.DeregisterActivityItem(dependencyObject);
         }
 
+        /// <summary>
+        /// Sets a flag indicating whether the <see cref="DependencyObject"/> should skip causing the context to
+        /// change when it receives the keyboard focus.
+        /// </summary>
+        /// <param name="dependencyObject">The <see cref="DependencyObject"/> for which the property is to be set.</param>
+        /// <param name="value">
+        /// True if the the <see cref="DependencyObject"/> should skip causing the context to
+        /// change when it receives the keyboard focus; otherwise false.
+        /// </param>
         public static void SetIsActivityItem(DependencyObject dependencyObject, bool value)
         {
             dependencyObject.SetValue(IsActivityItemProperty, value);
         }
 
+        /// <summary>
+        /// Gets a flag indicating whether the <see cref="DependencyObject"/> should skip causing the context to
+        /// change when it receives the keyboard focus.
+        /// </summary>
+        /// <param name="dependencyObject">The <see cref="DependencyObject"/> for which the property is required.</param>
+        /// <returns>
+        /// True if the the <see cref="DependencyObject"/> should skip causing the context to
+        /// change when it receives the keyboard focus; otherwise false.
+        /// </returns>
         public static bool GetIsActivityItem(DependencyObject dependencyObject)
         {
             return (bool)dependencyObject.GetValue(IsActivityItemProperty);
@@ -149,21 +161,21 @@ namespace Plethora.Context.Wpf
         #endregion
 
         /// <summary>
-        /// Get the <see cref="ContextManager"/> from the <see cref="UIElement"/> or one of its parents (from the logical tree).
+        /// Get the <see cref="ContextManager"/> from the <see cref="DependencyObject"/> or one of its parents (from the logical tree).
         /// </summary>
-        /// <param name="element">
-        /// The <see cref="UIElement"/> for which the <see cref="ContextManager"/> is required.
+        /// <param name="obj">
+        /// The <see cref="DependencyObject"/> for which the <see cref="ContextManager"/> is required.
         /// </param>
         /// <returns>
-        /// Returns the value of the <see cref="ContextManagerProperty"/> defined against the <paramref name="element"/>.
-        /// If <paramref name="element"/> does not have a value for <see cref="ContextManagerProperty"/> then its logical 
+        /// Returns the value of the <see cref="ContextManagerProperty"/> defined against the <paramref name="obj"/>.
+        /// If <paramref name="obj"/> does not have a value for <see cref="ContextManagerProperty"/> then its logical 
         /// parent is tested. This process is repeated until an value is located.
         /// If no value is assigned to <see cref="ContextManagerProperty"/> within the logical tree, then 
         /// <see cref="ContextManager.GlobalInstance"/> is returned.
         /// </returns>
-        public static ContextManager GetContextManagerForElement(UIElement element)
+        public static ContextManager GetContextManagerForElement(DependencyObject obj)
         {
-            ContextManager contextManager = GetDependencyPropertyFromLogicalTree(element, ContextManagerProperty) as ContextManager;
+            ContextManager contextManager = GetDependencyPropertyFromLogicalTree(obj, ContextManagerProperty) as ContextManager;
 
             if (contextManager == null)
                 return ContextManager.GlobalInstance;
@@ -173,21 +185,21 @@ namespace Plethora.Context.Wpf
 
 
         /// <summary>
-        /// Get the <see cref="ActionManager"/> from the <see cref="UIElement"/> or one of its parents (from the logical tree).
+        /// Get the <see cref="ActionManager"/> from the <see cref="DependencyObject"/> or one of its parents (from the logical tree).
         /// </summary>
-        /// <param name="element">
-        /// The <see cref="UIElement"/> for which the <see cref="ActionManager"/> is required.
+        /// <param name="obj">
+        /// The <see cref="DependencyObject"/> for which the <see cref="ActionManager"/> is required.
         /// </param>
         /// <returns>
-        /// Returns the value of the <see cref="ActionManagerProperty"/> defined against the <paramref name="element"/>.
-        /// If <paramref name="element"/> does not have a value for <see cref="ActionManagerProperty"/> then its logical 
+        /// Returns the value of the <see cref="ActionManagerProperty"/> defined against the <paramref name="obj"/>.
+        /// If <paramref name="obj"/> does not have a value for <see cref="ActionManagerProperty"/> then its logical 
         /// parent is tested. This process is repeated until an value is located.
         /// If no value is assigned to <see cref="ActionManagerProperty"/> within the logical tree, then 
         /// <see cref="ActionManager.GlobalInstance"/> is returned.
         /// </returns>
-        public static ActionManager GetActionManagerForElement(UIElement element)
+        public static ActionManager GetActionManagerForElement(DependencyObject obj)
         {
-            ActionManager actionManager = GetDependencyPropertyFromLogicalTree(element, ActionManagerProperty) as ActionManager;
+            ActionManager actionManager = GetDependencyPropertyFromLogicalTree(obj, ActionManagerProperty) as ActionManager;
 
             if (actionManager == null)
                 return ActionManager.GlobalInstance;

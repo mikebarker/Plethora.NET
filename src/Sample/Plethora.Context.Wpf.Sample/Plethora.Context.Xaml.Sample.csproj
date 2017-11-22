@@ -7,8 +7,8 @@
     <ProjectGuid>{7B4E9E45-FCE4-4570-B53B-957388F5D548}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plethora.Context.Wpf.Sample</RootNamespace>
-    <AssemblyName>Plethora.Context.Wpf.Sample</AssemblyName>
+    <RootNamespace>Plethora.Context.Xaml.Sample</RootNamespace>
+    <AssemblyName>Plethora.Context.Xaml.Sample</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -75,9 +75,9 @@
       <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
       <Name>Plethora.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Plethora.Context.Wpf\Plethora.Context.Wpf.csproj">
+    <ProjectReference Include="..\..\Plethora.Context.Wpf\Plethora.Context.Xaml.csproj">
       <Project>{5E454E70-289F-4BFD-BEAA-F003B14B869E}</Project>
-      <Name>Plethora.Context.Wpf</Name>
+      <Name>Plethora.Context.Xaml</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Plethora.Context\Plethora.Context.csproj">
       <Project>{7952a3cf-39d9-4cf2-9eb8-a0ff82781f6c}</Project>

@@ -46,9 +46,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Fo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Windows.Forms.Sample", "Sample\Plethora.Context.Windows.Forms.Sample\Plethora.Context.Windows.Forms.Sample.csproj", "{1BEA4DF2-270C-4B8D-939F-86F3D48BD068}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Wpf", "Plethora.Context.Wpf\Plethora.Context.Wpf.csproj", "{5E454E70-289F-4BFD-BEAA-F003B14B869E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Xaml", "Plethora.Context.Wpf\Plethora.Context.Xaml.csproj", "{5E454E70-289F-4BFD-BEAA-F003B14B869E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Wpf.Sample", "Sample\Plethora.Context.Wpf.Sample\Plethora.Context.Wpf.Sample.csproj", "{7B4E9E45-FCE4-4570-B53B-957388F5D548}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Context.Xaml.Sample", "Sample\Plethora.Context.Wpf.Sample\Plethora.Context.Xaml.Sample.csproj", "{7B4E9E45-FCE4-4570-B53B-957388F5D548}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Mvvm", "Plethora.Mvvm\Plethora.Mvvm.csproj", "{1E27AB8D-6865-403F-80AE-A4C19E95A0FA}"
 EndProject

@@ -8,14 +8,14 @@ using System.Windows.Media;
 using Plethora.Collections;
 using Plethora.Context.Action;
 
-namespace Plethora.Context.Wpf
+namespace Plethora.Context
 {
     /// <summary>
     /// A WPF <see cref="ContextMenu"/> which auto-populates from the actions currently under context.
     /// </summary>
-    public class WpfContextMenuItem : MenuItem
+    public class XamlContextMenuItem : MenuItem
     {
-        public WpfContextMenuItem()
+        public XamlContextMenuItem()
         {
             this.SetValue(SuppressedContextPatternsPropertyKey, new StringObservableCollection());
             this.SetValue(SuppressedActionPatternsPropertyKey, new StringObservableCollection());
@@ -31,7 +31,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty MaxGroupItemsProperty = DependencyProperty.Register(
             nameof(MaxGroupItems),
             typeof (int),
-            typeof (WpfContextMenuItem),
+            typeof (XamlContextMenuItem),
             new PropertyMetadata(-1));
 
         public int MaxGroupItems
@@ -47,7 +47,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty ShowUnavailableActionsProperty = DependencyProperty.Register(
             nameof(ShowUnavailableActions),
             typeof(bool),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(true));
 
         public bool ShowUnavailableActions
@@ -63,7 +63,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty DisableGroupingProperty = DependencyProperty.Register(
             nameof(DisableGrouping),
             typeof(bool),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(false));
 
         public bool DisableGrouping
@@ -79,7 +79,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyPropertyKey SuppressedContextPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(SuppressedContextPatterns),
             typeof(StringObservableCollection),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(null));
 
         public static readonly DependencyProperty SuppressedContextPatternsProperty =
@@ -97,7 +97,7 @@ namespace Plethora.Context.Wpf
         private static readonly DependencyPropertyKey SuppressedActionPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(SuppressedActionPatterns),
             typeof(StringObservableCollection),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(null));
 
         public static readonly DependencyProperty SuppressedActionPatternsProperty =
@@ -115,7 +115,7 @@ namespace Plethora.Context.Wpf
         private static readonly DependencyPropertyKey SuppressedGroupPatternsPropertyKey = DependencyProperty.RegisterReadOnly(
             nameof(SuppressedGroupPatterns),
             typeof(StringObservableCollection),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(null));
 
         public static readonly DependencyProperty SuppressedGroupPatternsProperty =
@@ -133,7 +133,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty ActionsAdapterProperty = DependencyProperty.Register(
             nameof(ActionsAdapter),
             typeof(IActionsAdapter),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(null));
 
         public IActionsAdapter ActionsAdapter
@@ -149,7 +149,7 @@ namespace Plethora.Context.Wpf
         public static readonly DependencyProperty ImageKeyConverterProperty = DependencyProperty.Register(
             nameof(ImageKeyConverter),
             typeof(IValueConverter),
-            typeof(WpfContextMenuItem),
+            typeof(XamlContextMenuItem),
             new PropertyMetadata(null));
 
         public IValueConverter ImageKeyConverter
@@ -170,7 +170,7 @@ namespace Plethora.Context.Wpf
                 newContextMenu.Opened += this.ContextMenu_Opened;
                 newContextMenu.Closed += this.ContextMenu_Closed;
 
-                WpfContext.SetIsActivityItem(newContextMenu, true);
+                XamlContext.SetIsActivityItem(newContextMenu, true);
             }
         }
 
@@ -226,8 +226,8 @@ namespace Plethora.Context.Wpf
 
             UIElement target = parent.PlacementTarget;
 
-            var contextManager = WpfContext.GetContextManagerForElement(target);
-            var actionManager = WpfContext.GetActionManagerForElement(target);
+            var contextManager = XamlContext.GetContextManagerForElement(target);
+            var actionManager = XamlContext.GetActionManagerForElement(target);
 
             this.ClearItems();
 

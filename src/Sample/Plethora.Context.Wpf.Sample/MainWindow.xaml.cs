@@ -1,24 +1,32 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 using Plethora.Context.Action;
 
-namespace Plethora.Context.Wpf.Sample
+namespace Plethora.Context.Xaml.Sample
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private WpfCallbackDelay<EventArgs> callbackDelay;
+        private XamlCallbackDelay<EventArgs> callbackDelay;
+        private int contract;
+        private string instrument;
+        private string contextText;
+        private IEnumerable<IAction> actions;
+
 
         public MainWindow()
         {
             InitializeComponent();
 
-            this.callbackDelay = new WpfCallbackDelay<EventArgs>(this.ContextManager_ContextChanged, 10);
+            this.callbackDelay = new XamlCallbackDelay<EventArgs>(this.ContextManager_ContextChanged, 10);
             ContextManager.GlobalInstance.ContextChanged += this.callbackDelay.Handler;
 
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "View Contract"));
@@ -28,31 +36,87 @@ namespace Plethora.Context.Wpf.Sample
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Cut"));
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Copy"));
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Paste"));
+
+            this.Contract = 12345;
+            this.Instrument = "VOD.L";
         }
+
+        #region PropertyChanged Event
+
+        /// <summary>
+        /// Raised when a property has changed.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event.
+        /// </summary>
+        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        {
+            var handler = this.PropertyChanged;
+            if (handler != null)
+                handler(this, e);
+        }
+
+        protected void OnPropertyChanged(string propertyName)
+        {
+            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+        }
+
+        #endregion
+
 
         void ContextManager_ContextChanged(object sender, EventArgs e)
         {
             var contexts = ContextManager.GlobalInstance.GetContexts();
 
-            var contextText = contexts
+            var contextTexts = contexts
                 .Select(context => string.Format("{0} [{1}]", context.Name, context.Data));
 
-            this.ContextTextBox.Text = string.Join("\r\n", contextText);
+            this.ContextText = string.Join("\r\n", contextTexts);
 
             var actions = ActionManager.GlobalInstance.GetActions(contexts);
 
-            this.ContextActionStack.Children.Clear();
-            foreach (var action in actions.OrderByDescending(ActionHelper.GetRank).ThenBy(a => a.ActionName))
+            this.Actions = actions.OrderByDescending(action => ActionHelper.GetRank(action)).ThenBy(a => a.ActionName);
+        }
+
+        public int Contract
+        {
+            get { return this.contract; }
+            set
             {
-                var contextAction = action;
+                this.contract = value;
+                this.OnPropertyChanged(nameof(this.Contract));
+            }
+        }
 
-                Button btn = new Button();
-                btn.Height = 48;
-                btn.Content = contextAction.ActionName;
-                btn.IsEnabled = contextAction.CanExecute;
-                btn.Click += delegate { contextAction.Execute(); };
+        public string Instrument
+        {
+            get { return this.instrument; }
+            set
+            {
+                this.instrument = value;
+                this.OnPropertyChanged(nameof(this.Instrument));
+            }
+        }
 
-                this.ContextActionStack.Children.Add(btn);
+        public string ContextText
+        {
+            get { return this.contextText; }
+            set
+            {
+                this.contextText = value;
+                this.OnPropertyChanged(nameof(this.ContextText));
+            }
+        }
+
+        public IEnumerable<IAction> Actions
+        {
+            get { return this.actions; }
+            set
+            {
+                this.actions = value;
+                this.OnPropertyChanged(nameof(this.Actions));
             }
         }
 
@@ -123,8 +187,6 @@ namespace Plethora.Context.Wpf.Sample
             }
 
             #endregion
-
-
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Windows.Threading;
 
-namespace Plethora.Context.Wpf
+using JetBrains.Annotations;
+
+namespace Plethora.Context
 {
     /// <summary>
     /// Class used to introduce delay into a wpf callback.
@@ -13,12 +15,12 @@ namespace Plethora.Context.Wpf
     /// <example>
     /// <code>
     /// <![CDATA[
-    ///     WpfCallbackDelay<EventArgs> callbackDelay = new WpfCallbackDelay<EventArgs>(ContextManager_ContextChanged, 10);
+    ///     XamlCallbackDelay<EventArgs> callbackDelay = new XamlCallbackDelay<EventArgs>(ContextManager_ContextChanged, 10);
     ///     ContextManager.DefaultInstance.ContextChanged += callbackDelay.Handler;
     /// ]]>
     /// </code>
     /// </example>
-    public class WpfCallbackDelay<TEventArgs>
+    public class XamlCallbackDelay<TEventArgs>
         where TEventArgs : EventArgs
     {
         private readonly object lockObj = new object();
@@ -28,8 +30,15 @@ namespace Plethora.Context.Wpf
         private readonly EventHandler<TEventArgs> callback;
         private readonly DispatcherTimer timer;
 
-        public WpfCallbackDelay(EventHandler<TEventArgs> callback, int delayMilliSeconds)
+        public XamlCallbackDelay([NotNull] EventHandler<TEventArgs> callback, int delayMilliSeconds)
         {
+            if (callback == null)
+                throw new ArgumentNullException(nameof(callback));
+
+            if (delayMilliSeconds < 0)
+                throw new ArgumentOutOfRangeException(ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(delayMilliSeconds)));
+
+
             this.callback = callback;
             this.timer = new DispatcherTimer();
             this.timer.Tick += this.timer_Tick;
