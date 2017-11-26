@@ -2,10 +2,33 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+
 using Plethora.Context.Action;
 
 namespace Plethora.Context
 {
+    /// <summary>
+    /// An <see cref="IActionsAdapter"/> implementation which allows one from a number of actions to proceed
+    /// through the adapter.
+    /// </summary>
+    /// <remarks>
+    /// The precedence list is matched using the <see cref="WildcardSearch.IsMatch"/> to the action name, and may therefore
+    /// contain wildcard search patterns.
+    /// </remarks>
+    /// <example>
+    /// If the following precedence lists is defined:
+    ///     { "Edit Item", "View Item" }
+    /// 
+    /// When the following actions are past into the adapter:
+    ///     { "Edit Item", "View Item", "Sign Item" }
+    /// 
+    /// The precedence list will ensure that only the highest listed action is selected between the
+    /// edit and view actions, returning the action list:
+    ///     { "Edit Item", "Sign Item" }
+    /// 
+    /// since the 'edit' was ranked higher than the 'view' action. The 'sign' action was unranked
+    /// and so passed through the adapter.
+    /// </example>
     public class ActionsPrecedenceAdapter : DependencyObject, IActionsAdapter
     {
         public ActionsPrecedenceAdapter()
@@ -55,7 +78,7 @@ namespace Plethora.Context
             int precedenceRank = int.MaxValue;
             foreach (var action in actions)
             {
-                int index = precedenceList.IndexOf(action.ActionName);
+                int index = GetIndexOf(action.ActionName, precedenceList);
                 if (index < 0)
                 {
                     unrankedActionList.Add(action);
@@ -76,6 +99,19 @@ namespace Plethora.Context
             }
 
             return rankedActionList.Concat(unrankedActionList);
+        }
+
+        private static int GetIndexOf(string actionName, IList<string> patternList)
+        {
+            for (int i = 0; i < patternList.Count; i++)
+            {
+                string pattern = patternList[i];
+
+                if (WildcardSearch.IsMatch(actionName, pattern))
+                    return i;
+            }
+
+            return -1;
         }
     }
 }

@@ -68,13 +68,13 @@
     <Compile Include="..\JetBrains.Annotations.cs">
       <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
+    <Compile Include="ActionsFilterAdapter.cs" />
     <Compile Include="ActionsPrecedenceAdapter.cs" />
     <Compile Include="ContextCommandListConverter.cs" />
     <Compile Include="ContextCommandConverter.cs" />
     <Compile Include="ContextCommand.cs" />
     <Compile Include="IXamlContext.cs" />
     <Compile Include="XamlContextMenuItem.cs" />
-    <Compile Include="XamlCallbackDelay.cs" />
     <Compile Include="XamlContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XamlContextProvider.cs" />

@@ -83,6 +83,10 @@
       <Project>{7952a3cf-39d9-4cf2-9eb8-a0ff82781f6c}</Project>
       <Name>Plethora.Context</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Plethora.Xaml\Plethora.Xaml.csproj">
+      <Project>{0586B8E9-17E6-4B73-8B3D-DA78F40978F4}</Project>
+      <Name>Plethora.Xaml</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

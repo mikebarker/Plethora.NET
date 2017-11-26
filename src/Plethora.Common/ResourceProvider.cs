@@ -1,7 +1,9 @@
 using System;
 using System.Globalization;
 using System.Text;
+
 using JetBrains.Annotations;
+
 using Plethora.Properties;
 
 namespace Plethora
@@ -577,7 +579,7 @@ namespace Plethora
         #region Private Methods
 
         /// <summary>
-        /// Returns the resource string 'ArgMustBeGreaterThan' with substitutions made, according to the current UI culture.
+        /// Returns the format string with substitutions made, according to the current culture.
         /// </summary>
         /// <param name="format">
         /// A string containing zero or more format items.

@@ -81,7 +81,7 @@
     <Compile Include="!UtilityClasses\Person.cs" />
     <Compile Include="!UtilityClasses\Style.cs" />
     <Compile Include="!UtilityClasses\Subject.cs" />
-    <Compile Include="!UtilityClasses\TreeElement.cs" />
+    <Compile Include="!UtilityClasses\Tree.cs" />
     <Compile Include="!MockClasses\MockTextWriter.cs" />
     <Compile Include="Calendar\CalendarGenerator_Test.cs" />
     <Compile Include="Calendar\DailyCalendarProperties_Test.cs" />

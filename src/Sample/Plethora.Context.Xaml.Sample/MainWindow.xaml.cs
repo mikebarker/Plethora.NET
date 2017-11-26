@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 using Plethora.Context.Action;
+using Plethora.Xaml;
 
 namespace Plethora.Context.Xaml.Sample
 {
@@ -15,7 +14,10 @@ namespace Plethora.Context.Xaml.Sample
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private XamlCallbackDelay<EventArgs> callbackDelay;
+        // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
+        // Being a field ensures that the reference to the callbackDelay is not garbage collected.
+        private readonly CallbackDelay<EventArgs> callbackDelay;
+
         private int contract;
         private string instrument;
         private string contextText;
@@ -26,7 +28,11 @@ namespace Plethora.Context.Xaml.Sample
         {
             InitializeComponent();
 
-            this.callbackDelay = new XamlCallbackDelay<EventArgs>(this.ContextManager_ContextChanged, 10);
+            // By introducing a delay one can avoid multiple hits to the ContextChanged handler.
+            // The context will change each time a control receives keyboard focus and when a the focus leaves the control.
+            // Therefore as the user moves focus from one control to another the context leaves the first, and then
+            // is given to the second. This results in two context changes. Only one is required to re-acquire the actions.
+            this.callbackDelay = new CallbackDelay<EventArgs>(this.ContextManager_ContextChanged, 10);
             ContextManager.GlobalInstance.ContextChanged += this.callbackDelay.Handler;
 
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Contract", "View Contract"));
@@ -73,7 +79,7 @@ namespace Plethora.Context.Xaml.Sample
             var contextTexts = contexts
                 .Select(context => string.Format("{0} [{1}]", context.Name, context.Data));
 
-            this.ContextText = string.Join("\r\n", contextTexts);
+            this.ContextText = string.Join(Environment.NewLine, contextTexts);
 
             var actions = ActionManager.GlobalInstance.GetActions(contexts);
 
@@ -121,6 +127,9 @@ namespace Plethora.Context.Xaml.Sample
         }
 
 
+        /// <summary>
+        /// A generic action which simply brings up a dialogue box informing the user that the action has been executed.
+        /// </summary>
         class GenericActionTemplate : UiActionTemplate
         {
             private readonly string contextName;

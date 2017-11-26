@@ -5,16 +5,10 @@
         xmlns:context="clr-namespace:Plethora.Context;assembly=Plethora.Context.Xaml"
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="MainWindow" Height="350" Width="525"
+        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
         >
 
     <Window.Resources>
-        <Style TargetType="{x:Type Button}">
-            <Setter Property="Margin" Value ="5,0,5,0" />
-        </Style>
-        <Style TargetType="{x:Type TextBox}">
-            <Setter Property="Margin" Value ="5" />
-        </Style>
-
         <context:ContextCommandListConverter x:Key="contextCommandListConverter" />
 
         <context:XamlContextSource x:Key="textboxContext" ContextName="Textbox" />
@@ -53,47 +47,57 @@
                 <context:XamlContextSource ContextName="Parent" Rank="-10"  Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=GroupBox}}" />
             </context:XamlContext.Source>
 
-            <StackPanel>
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Contract:</TextBlock>
-                    <TextBox Text="{Binding Contract}">
-                        <context:XamlContext.Source>
-                            <context:XamlContextSource ContextName="Contract" Data="{Binding Path=Contract}"/>
-                            <context:XamlContextSource ContextName="SignedContract" Data="{Binding Path=Contract}"/>
-                            <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
-                        </context:XamlContext.Source>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                        <TextBox.ContextMenu>
-                            <ContextMenu>
-                                <context:XamlContextMenuItem DisableGrouping="True" ActionsAdapter="{StaticResource itemsPrecedenceAdapter}" />
-                            </ContextMenu>
-                        </TextBox.ContextMenu>
-                    </TextBox>
-                </DockPanel>
 
-                <DockPanel>
-                    <TextBlock DockPanel.Dock="Left" VerticalAlignment="Center">Instrument:</TextBlock>
-                    <TextBox Text="{Binding Instrument}">
-                        <context:XamlContext.Source>
-                            <context:XamlContextSource ContextName="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
-                            <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
-                        </context:XamlContext.Source>
+                <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Contract:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Contract}" Margin="5" >
+                    <context:XamlContext.Source>
+                        <context:XamlContextSource ContextName="Contract" Data="{Binding Path=Contract}"/>
+                        <context:XamlContextSource ContextName="SignedContract" Data="{Binding Path=Contract}"/>
+                        <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
+                    </context:XamlContext.Source>
 
-                        <TextBox.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="Alpha" />
-                                <context:XamlContextMenuItem />
-                                <MenuItem Header="Omega" />
-                            </ContextMenu>
-                        </TextBox.ContextMenu>
-                    </TextBox>
-                </DockPanel>
-            </StackPanel>
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <context:XamlContextMenuItem DisableGrouping="True" ActionsAdapter="{StaticResource itemsPrecedenceAdapter}" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+
+                <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Instrument:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Instrument}" Margin="5" >
+                    <context:XamlContext.Source>
+                        <context:XamlContextSource ContextName="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
+                        <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
+                    </context:XamlContext.Source>
+
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Alpha" />
+                            <context:XamlContextMenuItem />
+                            <MenuItem Header="Omega" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+            </Grid>
         </GroupBox>
 
-        <TextBox Grid.Column="0" Grid.Row="1" 
+        <TextBox Grid.Column="0" Grid.Row="1"
                  Text="{Binding ContextText}"
                  context:XamlContext.IsActivityItem="True"
+                 IsReadOnly="True"
+                 BorderThickness="0"
+                 Background="Transparent"
                  />
 
         <GroupBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Header="Actions">
@@ -104,6 +108,7 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <Button Height="48"
+                                Margin="5,0"
                                 Content="{Binding Path=ActionName}"
                                 Command="{Binding}"
                                 />
@@ -113,3 +118,18 @@
         </GroupBox>
     </Grid>
 </Window>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
