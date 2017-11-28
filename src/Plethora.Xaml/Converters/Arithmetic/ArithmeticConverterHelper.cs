@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 
 namespace Plethora.Xaml.Converters
@@ -8,7 +10,7 @@ namespace Plethora.Xaml.Converters
     {
         Addition,
         Subtraction,
-        Muliplication,
+        Multiplication,
         Division,
         Modulus
     }
@@ -17,9 +19,7 @@ namespace Plethora.Xaml.Converters
     {
         public static object ExecuteOperator(ArithmeticOperator arithmeticOperator, object lvalue, object rvalue)
         {
-            ConvertForOperation(ref lvalue, ref rvalue);
-
-            MethodInfo method = GetOperatorMethod(ArithmeticOperator.Addition, lvalue.GetType(), rvalue.GetType());
+            MethodInfo method = GetOperatorMethod(arithmeticOperator, lvalue.GetType(), rvalue.GetType());
             if (method == null)
                 throw new InvalidOperationException();
 
@@ -27,20 +27,23 @@ namespace Plethora.Xaml.Converters
             return result;
         }
 
+        /// <summary>
+        /// Converts the type as is done implicitly by the C# compiler for arithmetic operations between two types.
+        /// </summary>
         /// <remarks>
         /// Both returned reference values will be of the same type.
         /// The returned values will be one of:
-        /// <list type="bullet">
-        /// <item><description>Int32</description></item>
-        /// <item><description>UInt32</description></item>
-        /// <item><description>Int64</description></item>
-        /// <item><description>UInt64</description></item>
-        /// <item><description>Single</description></item>
-        /// <item><description>Double</description></item>
-        /// <item><description>Decimal</description></item>
-        /// </list>
+        ///   <list type="bullet">
+        ///     <item><description>Int32</description></item>
+        ///     <item><description>UInt32</description></item>
+        ///     <item><description>Int64</description></item>
+        ///     <item><description>UInt64</description></item>
+        ///     <item><description>Single</description></item>
+        ///     <item><description>Double</description></item>
+        ///     <item><description>Decimal</description></item>
+        ///   </list>
         /// </remarks>
-        private static void ConvertForOperation(ref object lvalue, ref object rvalue)
+        public static void ConvertForOperation(ref object lvalue, ref object rvalue)
         {
             if (lvalue is byte)
             {
@@ -528,12 +531,58 @@ namespace Plethora.Xaml.Converters
                     throw new InvalidCastException();
                 }
             }
+            else if (lvalue is decimal)
+            {
+                if (rvalue is byte)
+                {
+                    rvalue = (decimal)(byte)rvalue;
+                }
+                else if (rvalue is sbyte)
+                {
+                    rvalue = (decimal)(sbyte)rvalue;
+                }
+                else if (rvalue is short)
+                {
+                    rvalue = (decimal)(short)rvalue;
+                }
+                else if (rvalue is ushort)
+                {
+                    rvalue = (decimal)(ushort)rvalue;
+                }
+                else if (rvalue is int)
+                {
+                    rvalue = (decimal)(int)rvalue;
+                }
+                else if (rvalue is uint)
+                {
+                    rvalue = (decimal)(uint)rvalue;
+                }
+                else if (rvalue is long)
+                {
+                    rvalue = (decimal)(long)rvalue;
+                }
+                else if (rvalue is ulong)
+                {
+                    rvalue = (decimal)(ulong)rvalue;
+                }
+                else if (rvalue is float)
+                {
+                    throw new InvalidCastException();
+                }
+                else if (rvalue is double)
+                {
+                    throw new InvalidCastException();
+                }
+                else if (rvalue is decimal)
+                {
+                }
+            }
         }
 
         private static MethodInfo GetOperatorMethod(ArithmeticOperator arithmeticOperator, Type lvalueType, Type rvalueType)
         {
             string methodName = GetOperatorMethodName(arithmeticOperator);
-            BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public;
+            const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public;
             Type[] argumentTypes = {lvalueType, rvalueType};
 
             MethodInfo operatorMethod = lvalueType.GetMethod(
@@ -566,7 +615,7 @@ namespace Plethora.Xaml.Converters
                 case ArithmeticOperator.Subtraction:
                     return "op_Subtraction";
 
-                case ArithmeticOperator.Muliplication:
+                case ArithmeticOperator.Multiplication:
                     return "op_Multiply";
 
                 case ArithmeticOperator.Division:
@@ -577,6 +626,85 @@ namespace Plethora.Xaml.Converters
             }
 
             throw new InvalidEnumArgumentException(nameof(arithmeticOperator));
+        }
+
+
+        public static object ConvertType(object value, Type targetType, IFormatProvider provider)
+        {
+            if (targetType.IsInstanceOfType(value))
+                return value;
+
+            if ((value == null) && (!targetType.IsValueType))
+                return null;
+
+            if ((targetType.IsGenericType) && (targetType.GetGenericTypeDefinition() == typeof(Nullable<>)))
+            {
+                if (value == null)
+                    return null; // Unboxing will take care of type conversion.
+
+                Type underlyingType = Nullable.GetUnderlyingType(targetType);
+
+                //Because of boxing of the underlying type, and the treatment of boxed value by Nullable<T>,
+                // no further type conversion needs to be done here.
+                object underlyingValue = ConvertType(value, underlyingType, provider);
+                return underlyingValue;
+            }
+
+            if (targetType.IsEnum)
+            {
+                Type underlyingType = targetType.GetEnumUnderlyingType();
+                object underlyingValue = ConvertType(value, underlyingType, provider);
+                object enumValue = Enum.ToObject(targetType, underlyingValue);
+                return enumValue;
+            }
+
+            if (value is IConvertible)
+            {
+                object result = Convert.ChangeType(value, targetType, provider);
+                return result;
+            }
+
+            MethodInfo castMethod = FindCastMethod(value, targetType);
+            if (castMethod != null)
+            {
+                object result = castMethod.Invoke(null, new[] {value});
+                return result;
+            }
+
+            throw new InvalidCastException();
+        }
+
+
+        private static MethodInfo FindCastMethod(object value, Type toType)
+        {
+            const BindingFlags bindingFlags = BindingFlags.Static | BindingFlags.Public;
+
+            IEnumerable<MethodInfo> methods = toType.GetMethods(bindingFlags);
+            if (value != null)
+            {
+                methods = methods.Concat(value.GetType().GetMethods(bindingFlags));
+            }
+
+            foreach (MethodInfo method in methods)
+            {
+                if ((method.IsSpecialName) &&
+                    ((method.Name == "op_Implicit") || (method.Name == "op_Explicit")) &&
+                    (toType.IsAssignableFrom(method.ReturnType)))
+                {
+                    ParameterInfo[] parameters = method.GetParameters();
+                    if (parameters.Length == 1)
+                    {
+                        Type parameterType = parameters[0].ParameterType;
+                        if (((value != null) && (parameterType.IsInstanceOfType(value))) ||
+                            ((value == null) && (!parameterType.IsValueType)))
+                        {
+                            return method;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
 
     }

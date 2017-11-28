@@ -1,53 +1,56 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 
 namespace Plethora.Xaml.Converters
 {
     /// <summary>
-    /// A <see cref="IMultiValueConverter"/> which acts to subtract two numeric values.
+    /// A <see cref="IMultiValueConverter"/> which acts to subtract two values.
     /// </summary>
     /// <remarks>
-    /// Requires two numeric values.
     /// Returns (value[0] - value[1])
     /// </remarks>
-    public class SubtractionConverter : IMultiValueConverter
+    public class SubtractionConverter : ArithmeticConverterBase
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        protected override object Operate(object lvalue, object rvalue)
         {
-            if (values == null)
-                return DependencyProperty.UnsetValue;
+            object result;
 
-            if (values.Length != 2)
-                return DependencyProperty.UnsetValue;
-
-            object lvalue = values[0];
-            object rvalue = values[1];
-
-            try
+            if ((lvalue is int) && (rvalue is int))
             {
-                object result = ArithmeticConverterHelper.ExecuteOperator(ArithmeticOperator.Subtruction, lvalue, rvalue);
-                return result;
+                result = ((int)lvalue) - ((int)rvalue);
             }
-            catch (InvalidCastException)
+            else if ((lvalue is uint) && (rvalue is uint))
             {
-                return DependencyProperty.UnsetValue;
+                result = ((uint)lvalue) - ((uint)rvalue);
             }
-            catch (InvalidOperationException)
+            else if ((lvalue is long) && (rvalue is long))
             {
-                return DependencyProperty.UnsetValue;
+                result = ((long)lvalue) - ((long)rvalue);
             }
-            catch (Exception)
+            else if ((lvalue is ulong) && (rvalue is ulong))
             {
-                return DependencyProperty.UnsetValue;
+                result = ((ulong)lvalue) - ((ulong)rvalue);
+            }
+            else if ((lvalue is float) && (rvalue is float))
+            {
+                result = ((float)lvalue) - ((float)rvalue);
+            }
+            else if ((lvalue is double) && (rvalue is double))
+            {
+                result = ((double)lvalue) - ((double)rvalue);
+            }
+            else if ((lvalue is decimal) && (rvalue is decimal))
+            {
+                result = ((decimal)lvalue) - ((decimal)rvalue);
+            }
+            else
+            {
+                result = ArithmeticConverterHelper.ExecuteOperator(
+                    ArithmeticOperator.Subtraction,
+                    lvalue,
+                    rvalue);
             }
 
-        }
-
-        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
+            return result;
         }
     }
 }

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 
 namespace Plethora.Xaml.Converters
 {
@@ -11,41 +8,49 @@ namespace Plethora.Xaml.Converters
     /// <remarks>
     /// Returns (value[0] + value[1])
     /// </remarks>
-    public class AdditionConverter : IMultiValueConverter
+    public class AdditionConverter : ArithmeticConverterBase
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        protected override object Operate(object lvalue, object rvalue)
         {
-            if (values == null)
-                return DependencyProperty.UnsetValue;
+            object result;
 
-            if (values.Length != 2)
-                return DependencyProperty.UnsetValue;
+            if ((lvalue is int) && (rvalue is int))
+            {
+                result = ((int)lvalue) + ((int)rvalue);
+            }
+            else if ((lvalue is uint) && (rvalue is uint))
+            {
+                result = ((uint)lvalue) + ((uint)rvalue);
+            }
+            else if ((lvalue is long) && (rvalue is long))
+            {
+                result = ((long)lvalue) + ((long)rvalue);
+            }
+            else if ((lvalue is ulong) && (rvalue is ulong))
+            {
+                result = ((ulong)lvalue) + ((ulong)rvalue);
+            }
+            else if ((lvalue is float) && (rvalue is float))
+            {
+                result = ((float)lvalue) + ((float)rvalue);
+            }
+            else if ((lvalue is double) && (rvalue is double))
+            {
+                result = ((double)lvalue) + ((double)rvalue);
+            }
+            else if ((lvalue is decimal) && (rvalue is decimal))
+            {
+                result = ((decimal)lvalue) + ((decimal)rvalue);
+            }
+            else
+            {
+                result = ArithmeticConverterHelper.ExecuteOperator(
+                    ArithmeticOperator.Addition,
+                    lvalue,
+                    rvalue);
+            }
 
-            object lvalue = values[0];
-            object rvalue = values[1];
-
-            try
-            {
-                object result = ArithmeticConverterHelper.ExecuteOperator(ArithmeticOperator.Addition, lvalue, rvalue);
-                return result;
-            }
-            catch (InvalidCastException)
-            {
-                return DependencyProperty.UnsetValue;
-            }
-            catch (InvalidOperationException)
-            {
-                return DependencyProperty.UnsetValue;
-            }
-            catch (Exception)
-            {
-                return DependencyProperty.UnsetValue;
-            }
-        }
-
-        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
+            return result;
         }
     }
 }

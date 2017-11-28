@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 
 namespace Plethora.Xaml.Converters
 {
@@ -12,29 +9,12 @@ namespace Plethora.Xaml.Converters
     /// Requires two boolean values.
     /// Returns (value[0] & value[1])
     /// </remarks>
-    public class BooleanAndConverter : IMultiValueConverter
+    public class BooleanAndConverter : BooleanLogicConverterBase
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        protected override bool ApplyLogic(bool lvalue, bool rvalue)
         {
-            if (values == null)
-                return DependencyProperty.UnsetValue;
-
-            if (values.Length != 2)
-                return DependencyProperty.UnsetValue;
-
-            if (!(values[0] is bool))
-                return DependencyProperty.UnsetValue;
-
-            if (!(values[1] is bool))
-                return DependencyProperty.UnsetValue;
-
-            bool result = BooleanLogicConverter.And((bool)values[0], (bool)values[1]);
+            bool result = lvalue & rvalue;
             return result;
-        }
-
-        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
         }
     }
 }

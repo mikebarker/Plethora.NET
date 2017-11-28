@@ -68,19 +68,25 @@
     <Compile Include="..\JetBrains.Annotations.cs">
       <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
+    <Compile Include="Converters\Arithmetic\ArithmeticConverterBase.cs" />
+    <Compile Include="Converters\Arithmetic\ArithmeticConverterHelper.cs" />
     <Compile Include="Converters\Arithmetic\ModulusConverter.cs" />
     <Compile Include="Converters\Arithmetic\DivisionConverter.cs" />
     <Compile Include="Converters\Arithmetic\MultiplicationConverter.cs" />
     <Compile Include="Converters\Arithmetic\SubtractionConverter.cs" />
-    <Compile Include="Converters\Arithmetic\ArithmeticConverter.cs" />
     <Compile Include="Converters\Arithmetic\AdditionConverter.cs" />
+    <Compile Include="Converters\Comparison\IsGreaterThanConverter.cs" />
+    <Compile Include="Converters\Comparison\ComparisonConverterBase.cs" />
+    <Compile Include="Converters\Comparison\IsGreaterThanOrEqualToConverter.cs" />
+    <Compile Include="Converters\Comparison\IsLessThanOrEqualToConverter.cs" />
+    <Compile Include="Converters\Comparison\IsLessThanConverter.cs" />
+    <Compile Include="Converters\Comparison\IsEqualConverter.cs" />
+    <Compile Include="Converters\Comparison\IsNullConverter.cs" />
     <Compile Include="Converters\ConditionalConverter.cs" />
-    <Compile Include="Converters\Logic\BooleanLogicConverter.cs" />
+    <Compile Include="Converters\Logic\BooleanLogicConverterBase.cs" />
     <Compile Include="Converters\Logic\BooleanXorConverter.cs" />
     <Compile Include="Converters\Logic\BooleanOrConverter.cs" />
     <Compile Include="Converters\Logic\BooleanAndConverter.cs" />
-    <Compile Include="Converters\IsEqualConverter.cs" />
-    <Compile Include="Converters\IsNullConverter.cs" />
     <Compile Include="Converters\Logic\BooleanNotConverter.cs" />
     <Compile Include="CallbackDelay.cs" />
     <Compile Include="Converters\ChainedConverter.cs" />

@@ -1,74 +1,56 @@
-﻿using System;
-using System.Globalization;
-using System.Windows;
-using System.Windows.Data;
+﻿using System.Windows.Data;
 
 namespace Plethora.Xaml.Converters
 {
-    public class DivisionConverter : IMultiValueConverter
+    /// <summary>
+    /// A <see cref="IMultiValueConverter"/> which acts to divide two values.
+    /// </summary>
+    /// <remarks>
+    /// Returns (value[0] / value[1])
+    /// </remarks>
+    public class DivisionConverter : ArithmeticConverterBase
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        protected override object Operate(object lvalue, object rvalue)
         {
-            if (values == null)
-                return DependencyProperty.UnsetValue;
+            object result;
 
-            if (values.Length != 2)
-                return DependencyProperty.UnsetValue;
-
-            object lvalue = values[0];
-            object rvalue = values[1];
-
-            try
+            if ((lvalue is int) && (rvalue is int))
             {
-                ArithmeticConverter.ConvertForOperation(ref lvalue, ref rvalue);
+                result = ((int)lvalue) / ((int)rvalue);
             }
-            catch (InvalidCastException)
+            else if ((lvalue is uint) && (rvalue is uint))
             {
-                return DependencyProperty.UnsetValue;
+                result = ((uint)lvalue) / ((uint)rvalue);
             }
-
-            if (lvalue is int)
+            else if ((lvalue is long) && (rvalue is long))
             {
-                int result = ((int)lvalue) / ((int)rvalue);
-                return result;
+                result = ((long)lvalue) / ((long)rvalue);
             }
-            if (lvalue is uint)
+            else if ((lvalue is ulong) && (rvalue is ulong))
             {
-                uint result = ((uint)lvalue) / ((uint)rvalue);
-                return result;
+                result = ((ulong)lvalue) / ((ulong)rvalue);
             }
-            if (lvalue is long)
+            else if ((lvalue is float) && (rvalue is float))
             {
-                long result = ((long)lvalue) / ((long)rvalue);
-                return result;
+                result = ((float)lvalue) / ((float)rvalue);
             }
-            if (lvalue is ulong)
+            else if ((lvalue is double) && (rvalue is double))
             {
-                ulong result = ((ulong)lvalue) / ((ulong)rvalue);
-                return result;
+                result = ((double)lvalue) / ((double)rvalue);
             }
-            if (lvalue is float)
+            else if ((lvalue is decimal) && (rvalue is decimal))
             {
-                float result = ((float)lvalue) / ((float)rvalue);
-                return result;
+                result = ((decimal)lvalue) / ((decimal)rvalue);
             }
-            if (lvalue is double)
+            else
             {
-                double result = ((double)lvalue) / ((double)rvalue);
-                return result;
-            }
-            if (lvalue is decimal)
-            {
-                decimal result = ((decimal)lvalue) / ((decimal)rvalue);
-                return result;
+                result = ArithmeticConverterHelper.ExecuteOperator(
+                    ArithmeticOperator.Division,
+                    lvalue,
+                    rvalue);
             }
 
-            return DependencyProperty.UnsetValue;
-        }
-
-        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
-        {
-            throw new NotSupportedException();
+            return result;
         }
     }
 }
