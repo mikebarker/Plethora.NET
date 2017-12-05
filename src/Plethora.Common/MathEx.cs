@@ -12,7 +12,7 @@ namespace Plethora
         /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
         /// <remarks>
         /// This implementation uses the Euclidean algorithm.
-        /// <seealso cref="https://en.wikipedia.org/wiki/Euclidean_algorithm"/>
+        /// <seealso href="https://en.wikipedia.org/wiki/Euclidean_algorithm"/>
         /// </remarks>
         public static int GreatestCommonDivisor(int a, int b)
         {
