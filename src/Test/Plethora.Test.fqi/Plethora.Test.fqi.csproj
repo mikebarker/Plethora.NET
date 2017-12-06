@@ -69,11 +69,12 @@
     <Compile Include="MultiIndexedCollection_Test.cs" />
     <Compile Include="PredicateExtensions_Test.cs" />
     <Compile Include="Trees\AvlMultiTree_Test.cs" />
-    <Compile Include="Trees\AvlTree_Test.cs" />
-    <Compile Include="Trees\BinaryTree_Test.cs" />
-    <Compile Include="Trees\BinaryTree.Enumerator_Test.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Plethora.Common\Plethora.Common.csproj">
+      <Project>{0d8a2d17-6d05-4c8d-8be9-628f3baf0d07}</Project>
+      <Name>Plethora.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Plethora.fqi\Plethora.fqi.csproj">
       <Project>{96CC92ED-DDC2-439E-8888-06E2506970E1}</Project>
       <Name>Plethora.fqi</Name>

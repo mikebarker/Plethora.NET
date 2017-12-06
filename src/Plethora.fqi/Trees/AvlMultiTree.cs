@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using Plethora.Collections.Trees;
+
 namespace Plethora.fqi.Trees
 {
     public class AvlMultiTree<TKey, TValue> : MultiTree<TKey, TValue>

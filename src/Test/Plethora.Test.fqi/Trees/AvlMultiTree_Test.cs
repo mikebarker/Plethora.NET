@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using NUnit.Framework;
+
+using Plethora.Collections.Trees;
 using Plethora.fqi.Trees;
 
 namespace Plethora.Test.fqi.Trees

@@ -89,6 +89,18 @@
     <Compile Include="Collections\DuplicatesPolicy.cs" />
     <Compile Include="Collections\SortedByKeyList.cs" />
     <Compile Include="Collections\StringObservableCollection.cs" />
+    <Compile Include="Collections\Trees\BalancedTree.cs" />
+    <Compile Include="Collections\Trees\RedBlackTree.cs" />
+    <Compile Include="Collections\Trees\AvlTree.cs" />
+    <Compile Include="Collections\Trees\BinaryTree.cs" />
+    <Compile Include="Collections\Trees\BinaryTree.Enumerators.cs">
+      <DependentUpon>BinaryTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\Trees\BinaryTree.Wrappers.cs">
+      <DependentUpon>BinaryTree.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Collections\Trees\IKeyLimitedEnumerator.cs" />
+    <Compile Include="Collections\Trees\ITree.cs" />
     <Compile Include="ComponentModel\AsyncTaskHelper.cs" />
     <Compile Include="Collections\AutoKeyedCollection.cs" />
     <Compile Include="Collections\ReverseComparer.cs" />

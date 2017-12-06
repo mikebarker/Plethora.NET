@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+
+using Plethora.Collections.Trees;
 using Plethora.Linq;
 
 namespace Plethora.fqi.Trees

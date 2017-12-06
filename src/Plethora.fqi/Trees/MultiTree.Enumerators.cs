@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
+using Plethora.Collections.Trees;
+
 namespace Plethora.fqi.Trees
 {
     partial class MultiTree<TKey, TValue>
