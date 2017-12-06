@@ -475,6 +475,31 @@ namespace Plethora.Cache
                 this.requestsLock.ExitWriteLock();
             }
         }
+
+        protected void Clear()
+        {
+            this.requestsLock.EnterWriteLock();
+            try
+            {
+                this.dataLock.EnterWriteLock();
+                try
+                {
+                    this.data.Clear();
+                }
+                finally
+                {
+                    this.dataLock.ExitWriteLock();
+                }
+
+                this.submittedRequests.Clear();
+            }
+            finally
+            {
+                this.requestsLock.ExitWriteLock();
+            }
+
+        }
+
         #endregion
 
         #region Virtual and Abstract Methods

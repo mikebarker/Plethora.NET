@@ -10,14 +10,13 @@ namespace Plethora.Cache.Sample.SimpleExample
         public Foo GetFoo(int id)
         {
             List<FooArg> fooArgs = new List<FooArg> {new FooArg(id)};
-            var foos = GetData(fooArgs, 5000);
-            return foos.Single();
+            var foos = base.GetData(fooArgs, 5000);
+            return foos.SingleOrDefault();
         }
 
-        public void DropFooFromCache(int id)
+        public void ClearCache()
         {
-            List<FooArg> fooArgs = new List<FooArg> {new FooArg(id)};
-            DropData(fooArgs);
+            base.Clear();
         }
 
         #region Overrides of CacheBase<Foo,FooArg>
@@ -26,7 +25,8 @@ namespace Plethora.Cache.Sample.SimpleExample
             IEnumerable<FooArg> arguments, int millisecondsTimeout)
         {
             return arguments
-                .Select(arg => fooSource.GetFoo(arg.Id))
+                .Select(arg => this.fooSource.GetFoo(arg.Id))
+                .Where(foo => foo != null)
                 .ToList();
         }
 

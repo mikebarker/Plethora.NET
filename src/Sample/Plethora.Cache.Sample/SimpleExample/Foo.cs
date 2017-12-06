@@ -64,7 +64,11 @@ namespace Plethora.Cache.Sample.SimpleExample
             //Simulated the source taking some time return a result
             Thread.Sleep(3000);
 
-            return new Foo(id, myFoos[id]);
+            long value;
+            if (this.myFoos.TryGetValue(id, out value))
+                return new Foo(id, value);
+            else
+                return null;
         }
     }
 }
