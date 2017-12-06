@@ -90,6 +90,10 @@
       <Project>{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}</Project>
       <Name>Plethora.Context</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Plethora.Xaml\Plethora.Xaml.csproj">
+      <Project>{0586B8E9-17E6-4B73-8B3D-DA78F40978F4}</Project>
+      <Name>Plethora.Xaml</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

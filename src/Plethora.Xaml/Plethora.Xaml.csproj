@@ -68,6 +68,7 @@
     <Compile Include="..\JetBrains.Annotations.cs">
       <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
+    <Compile Include="Collections\StringObservableCollection.cs" />
     <Compile Include="Converters\Arithmetic\ArithmeticConverterBase.cs" />
     <Compile Include="Converters\Arithmetic\ArithmeticConverterHelper.cs" />
     <Compile Include="Converters\Arithmetic\ModulusConverter.cs" />

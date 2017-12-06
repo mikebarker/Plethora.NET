@@ -88,7 +88,6 @@
     <Compile Include="Collections\SortedByKeyListHelper.cs" />
     <Compile Include="Collections\DuplicatesPolicy.cs" />
     <Compile Include="Collections\SortedByKeyList.cs" />
-    <Compile Include="Collections\StringObservableCollection.cs" />
     <Compile Include="Collections\Trees\BalancedTree.cs" />
     <Compile Include="Collections\Trees\RedBlackTree.cs" />
     <Compile Include="Collections\Trees\AvlTree.cs" />

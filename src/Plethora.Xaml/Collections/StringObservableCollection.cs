@@ -1,10 +1,10 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace Plethora.Collections
+namespace Plethora.Xaml.Collections
 {
     /// <summary>
     /// An observable collection of strings, which can be used for properties
-    /// within WPF.
+    /// within Xaml.
     /// </summary>
     public class StringObservableCollection : ObservableCollection<string>
     {

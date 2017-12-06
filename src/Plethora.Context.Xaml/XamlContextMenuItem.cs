@@ -5,8 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
-using Plethora.Collections;
 using Plethora.Context.Action;
+using Plethora.Xaml.Collections;
 
 namespace Plethora.Context
 {
