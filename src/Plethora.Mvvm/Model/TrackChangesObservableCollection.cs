@@ -68,7 +68,7 @@ namespace Plethora.Mvvm.Model
 
             base.ClearItems();
 
-            this.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
         }
 
         protected override void InsertItem(int index, T item)
@@ -97,7 +97,7 @@ namespace Plethora.Mvvm.Model
 
             if (preHasChanged != this.HasChanged)
             {
-                this.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
             }
         }
 
@@ -128,7 +128,7 @@ namespace Plethora.Mvvm.Model
 
             if (preHasChanged != this.HasChanged)
             {
-                this.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
             }
         }
 
@@ -183,7 +183,7 @@ namespace Plethora.Mvvm.Model
 
             if (preHasChanged != this.HasChanged)
             {
-                this.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
             }
         }
 
@@ -209,7 +209,7 @@ namespace Plethora.Mvvm.Model
 
                 if (preHasChanged != this.HasChanged)
                 {
-                    this.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
                 }
             }
         }
@@ -295,7 +295,7 @@ namespace Plethora.Mvvm.Model
                 this.inBulkUpdate = false;
             }
 
-            base.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+            base.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
         }
 
         /// <summary>
@@ -336,10 +336,10 @@ namespace Plethora.Mvvm.Model
                 this.inBulkUpdate = false;
             }
 
-            base.OnPropertyChanged(new PropertyChangedEventArgs("Count"));
+            base.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Count)));
             base.OnPropertyChanged(new PropertyChangedEventArgs("Item[]"));
             base.OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            base.OnPropertyChanged(new PropertyChangedEventArgs("HasChanged"));
+            base.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.HasChanged)));
         }
     }
 }

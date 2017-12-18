@@ -298,10 +298,10 @@ namespace Plethora.Collections
                 keyComparer,
                 valueEqualityComparer,
 
-                (key, value) => mergeSet.Add(MergeItem<TKey, TValue>.Match(key, value)),
-                (key, leftValue, rightValue) => mergeSet.Add(MergeItem<TKey, TValue>.Different(key, leftValue, rightValue)),
-                (key, leftValue) => mergeSet.Add(MergeItem<TKey, TValue>.LeftOnly(key, leftValue)),
-                (key, rightValue) => mergeSet.Add(MergeItem<TKey, TValue>.RightOnly(key, rightValue)));
+                (key, value) => mergeSet.Add(MergeItem.Match(key, value)),
+                (key, leftValue, rightValue) => mergeSet.Add(MergeItem.Different(key, leftValue, rightValue)),
+                (key, leftValue) => mergeSet.Add(MergeItem.LeftOnly(key, leftValue)),
+                (key, rightValue) => mergeSet.Add(MergeItem.RightOnly(key, rightValue)));
 
             return mergeSet;
         }
@@ -847,31 +847,35 @@ namespace Plethora.Collections
         #endregion
     }
 
-    public struct MergeItem<TKey, TValue>
+    public static class MergeItem
     {
         #region Static Methods
 
-        public static MergeItem<TKey, TValue> LeftOnly(TKey key, TValue leftValue)
+        public static MergeItem<TKey, TValue> LeftOnly<TKey, TValue>(TKey key, TValue leftValue)
         {
             return new MergeItem<TKey, TValue>(MergeType.LeftOnly, key, leftValue, default(TValue));
         }
 
-        public static MergeItem<TKey, TValue> RightOnly(TKey key, TValue rightValue)
+        public static MergeItem<TKey, TValue> RightOnly<TKey, TValue>(TKey key, TValue rightValue)
         {
             return new MergeItem<TKey, TValue>(MergeType.RightOnly, key, default(TValue), rightValue);
         }
 
-        public static MergeItem<TKey, TValue> Match(TKey key, TValue value)
+        public static MergeItem<TKey, TValue> Match<TKey, TValue>(TKey key, TValue value)
         {
             return new MergeItem<TKey, TValue>(MergeType.Match, key, value, value);
         }
 
-        public static MergeItem<TKey, TValue> Different(TKey key, TValue leftValue, TValue rightValue)
+        public static MergeItem<TKey, TValue> Different<TKey, TValue>(TKey key, TValue leftValue, TValue rightValue)
         {
             return new MergeItem<TKey, TValue>(MergeType.Different, key, leftValue, rightValue);
         }
-        #endregion
 
+        #endregion
+    }
+
+    public struct MergeItem<TKey, TValue>
+    {
         #region Fields
 
         public readonly MergeType MergeType;
@@ -882,13 +886,14 @@ namespace Plethora.Collections
 
         #region Constructors
 
-        private MergeItem(MergeType mergeType, TKey key, TValue leftValue, TValue rightValue)
+        internal MergeItem(MergeType mergeType, TKey key, TValue leftValue, TValue rightValue)
         {
             this.MergeType = mergeType;
             this.Key = key;
             this.LeftValue = leftValue;
             this.RightValue = rightValue;
         }
+
         #endregion
     }
 

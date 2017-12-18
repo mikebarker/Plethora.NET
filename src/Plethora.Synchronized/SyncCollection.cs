@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
+using System.Threading;
 
 using JetBrains.Annotations;
 
 using Plethora.ComponentModel;
 using Plethora.Synchronized.Change;
-using Plethora.Threading;
 
 namespace Plethora.Synchronized
 {
@@ -51,7 +50,7 @@ namespace Plethora.Synchronized
         private readonly Func<T, TKey> getKeyFunc;
         private readonly SortedList<TKey, T> innerList;
         private readonly ISynchronizeInvoke synchInvoke;
-        private readonly LiteLock listLock = new LiteLock();
+        private readonly object listLock = new object();
 
         /// <summary>
         /// Initialise a new instance of the <see cref="SyncCollection{TKey,T}"/> class with the default key comparer, and synchronised on a new thread.
@@ -112,7 +111,12 @@ namespace Plethora.Synchronized
         [NotNull]
         public IDisposable EnterLock()
         {
-            return this.listLock.AcquireLock();
+            Monitor.Enter(this.listLock);
+
+            return new ActionOnDispose(delegate
+            {
+                Monitor.Exit(this.listLock);
+            });
         }
 
         /// <summary>
@@ -120,7 +124,7 @@ namespace Plethora.Synchronized
         /// </summary>
         public bool IsLockEntered
         {
-            get { return this.listLock.IsLockAcquired; }
+            get { return Monitor.IsEntered(this.listLock); }
         }
 
 

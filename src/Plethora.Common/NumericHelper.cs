@@ -161,6 +161,7 @@ namespace Plethora
         ///  </code>
         ///  returns 10.
         /// </example>
+        [Obsolete("Prefer the modulus operator %.")]
         public static int Wrap(int value, int min, int max)
         {
             //Validation
@@ -198,6 +199,7 @@ namespace Plethora
         ///  </code>
         ///  returns 10.0m.
         /// </example>
+        [Obsolete("Prefer the modulus operator %.")]
         public static decimal Wrap(decimal value, decimal min, decimal max)
         {
             var range = max - min;
@@ -234,6 +236,7 @@ namespace Plethora
         ///  </code>
         ///  returns 10.0f.
         /// </example>
+        [Obsolete("Prefer the modulus operator %.")]
         public static float Wrap(float value, float min, float max)
         {
             var range = max - min;
@@ -270,6 +273,7 @@ namespace Plethora
         ///  </code>
         ///  returns 10.0.
         /// </example>
+        [Obsolete("Prefer the modulus operator %.")]
         public static double Wrap(double value, double min, double max)
         {
             var range = max - min;
@@ -492,7 +496,7 @@ namespace Plethora
         /// </returns>
         /// <remarks>
         /// This conversion follows the strict definition where a value of 10E+x
-        /// can not proceed a value of 10E+(x+1). This, 1990 is represented by
+        /// can not proceed a value of 10E+(x+1). Thus, 1990 is represented by
         /// 'MCMXC' and not by 'MXM'.
         /// </remarks>
         public static int FromRomanNumerals(string romanNumerals)

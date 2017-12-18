@@ -1,6 +1,8 @@
 using System;
 using NUnit.Framework;
 
+#pragma warning disable 618  // Obselete members
+
 namespace Plethora.Test
 {
     /// <summary>

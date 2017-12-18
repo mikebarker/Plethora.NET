@@ -62,6 +62,7 @@
     <Compile Include="..\JetBrains.Annotations.cs">
       <Link>Properties\JetBrains.Annotations.cs</Link>
     </Compile>
+    <Compile Include="ActionOnDispose.cs" />
     <Compile Include="Calendar\CalendarGenerator.cs" />
     <Compile Include="Calendar\DailyCalendarProperties.cs" />
     <Compile Include="Calendar\DateRollType.cs" />
@@ -108,7 +109,6 @@
     <Compile Include="MathEx.cs" />
     <Compile Include="WildcardSearch.cs" />
     <Compile Include="WeakEvent.cs" />
-    <Compile Include="Threading\LiteLock.cs" />
     <Compile Include="Threading\WorkQueue.cs" />
     <Compile Include="ComponentModel\SynchronizeInvoke.cs" />
     <Compile Include="EqualityHelper.cs" />

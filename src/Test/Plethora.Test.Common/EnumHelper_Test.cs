@@ -2,6 +2,8 @@
 using NUnit.Framework;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
+#pragma warning disable 618  // Obselete members
+
 namespace Plethora.Test
 {
     [TestFixture]

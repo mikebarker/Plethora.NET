@@ -44,6 +44,7 @@ namespace Plethora
         /// <returns>
         /// The description for an enum.
         /// </returns>
+        [Obsolete("Prefer to use a resource and mapping code to allow for globalization.")]
         public static string Description(this Enum value)
         {
             return Description(value, DEFAULT_SEPARATOR);
@@ -58,6 +59,7 @@ namespace Plethora
         /// The description for an enum. If the enum has the FlagAttribute set
         /// multiple values are return separated by 'separator', if required.
         /// </returns>
+        [Obsolete("Prefer to use a resource and mapping code to allow for globalization.")]
         public static string Description(this Enum value, string separator)
         {
             return Description(value, separator, typeof(DescriptionAttribute), "Description");
@@ -74,6 +76,7 @@ namespace Plethora
         /// The description for an enum. If the enum has the FlagAttribute set
         /// multiple values are return separated by 'separator', if required.
         /// </returns>
+        [Obsolete("Prefer to use a resource and mapping code to allow for globalization.")]
         public static string Description(this Enum value, string separator, Type attributeType, string attributeProperty)
         {
             //Validation
@@ -105,7 +108,7 @@ namespace Plethora
         }
         #endregion
 
-        #region Protected Methods
+        #region Private Methods
 
         /// <summary>
         /// Returns the defined description for an Enum where the Enum type does
