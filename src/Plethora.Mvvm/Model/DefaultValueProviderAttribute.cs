@@ -8,6 +8,10 @@ namespace Plethora.Mvvm.Model
     /// the default value of a <see cref="ModelBase"/> property.
     /// </summary>
     /// <remarks>
+    /// <para>
+    /// The static member must be public, and may be either a field or a property.
+    /// </para>
+    /// <para>
     /// The attribute is utilised as follows:
     /// <example><code><![CDATA[
     ///     public sealed class Person : ModelBase
@@ -25,6 +29,7 @@ namespace Plethora.Mvvm.Model
     ///         private static readonly Country UnitedKingdom = new Country("GB", "United Kingdom");
     ///     }
     /// ]]></code></example>
+    /// </para>
     /// </remarks>
     /// <see cref="ModelBase"/>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]

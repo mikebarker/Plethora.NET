@@ -15,7 +15,7 @@ namespace Plethora.Mvvm.Model
     }
 
     /// <summary>
-    /// Generic implementation of <see cref="IModelPropertyMetadata"/>
+    /// Generic implementation of <see cref="IModelProperty"/>
     /// </summary>
     /// <typeparam name="T">
     /// The data type of this property.

@@ -118,7 +118,7 @@ namespace Plethora.Mvvm.Model
                             }
                             else
                             {
-                                throw new ArgumentException(string.Format("Can not find member {0} on type {1}", staticMemberName, providerType.Name));
+                                throw new ArgumentException(ResourceProvider.CantFindStaticMember(staticMemberName, providerType));
                             }
                         }
                     }
@@ -145,18 +145,18 @@ namespace Plethora.Mvvm.Model
             {
                 if (!TypeIsNullable(propertyInfo.PropertyType))
                 {
-                    throw new ArgumentException(string.Format("The default value '<null>' specified on property {0} is not of type {1}",
+                    throw new ArgumentException(ResourceProvider.DefaultPropertyValueNotOfType(
                         propertyInfo.Name,
-                        propertyInfo.PropertyType.Name));
+                        propertyInfo.PropertyType,
+                        null));
                 }
             }
             else if (!propertyInfo.PropertyType.IsInstanceOfType(defaultValue))
             {
-                throw new ArgumentException(string.Format("The default value '{0}' of type {1} specified on property {2} is not of type {3}",
-                    defaultValue,
-                    defaultValue.GetType().Name,
+                throw new ArgumentException(ResourceProvider.DefaultPropertyValueNotOfType(
                     propertyInfo.Name,
-                    propertyInfo.PropertyType.Name));
+                    propertyInfo.PropertyType,
+                    defaultValue));
             }
         }
 
@@ -296,7 +296,7 @@ namespace Plethora.Mvvm.Model
                 {
                     if (this.hasChanged != true)
                     {
-                        this.OnPropertyChanging(new DependentPropertyChangingEventArgs("HasChanged", propertyName));
+                        this.OnPropertyChanging(new DependentPropertyChangingEventArgs(nameof(this.HasChanged), propertyName));
                         this.hasChanged = true;
                         raiseHasChanged = true;
                     }
@@ -308,7 +308,7 @@ namespace Plethora.Mvvm.Model
                         bool newHasChanged = this.modelPropertiesByName.Values.Any(mp => mp.HasChanged);
                         if (this.hasChanged != newHasChanged)
                         {
-                            this.OnPropertyChanging(new DependentPropertyChangingEventArgs("HasChanged", propertyName));
+                            this.OnPropertyChanging(new DependentPropertyChangingEventArgs(nameof(this.HasChanged), propertyName));
                             this.hasChanged = newHasChanged;
                             raiseHasChanged = true;
                         }
@@ -317,7 +317,7 @@ namespace Plethora.Mvvm.Model
                 this.OnPropertyChanged(propertyName);
 
                 if(raiseHasChanged)
-                    this.OnPropertyChanged(new DependentPropertyChangedEventArgs("HasChanged", propertyName));
+                    this.OnPropertyChanged(new DependentPropertyChangedEventArgs(nameof(this.HasChanged), propertyName));
 
                 return true;
             }
@@ -414,7 +414,7 @@ namespace Plethora.Mvvm.Model
                 bool newHasChanged = this.modelPropertiesByName.Values.Any(mp => mp.HasChanged);
                 if (this.hasChanged != newHasChanged)
                 {
-                    this.OnPropertyChanging(new DependentPropertyChangingEventArgs("HasChanged", propertyName));
+                    this.OnPropertyChanging(new DependentPropertyChangingEventArgs(nameof(this.HasChanged), propertyName));
                     this.hasChanged = newHasChanged;
                     raiseHasChanged = true;
                 }
@@ -422,7 +422,7 @@ namespace Plethora.Mvvm.Model
 
             this.OnPropertyChanged(propertyName);
             if (raiseHasChanged)
-                this.OnPropertyChanged(new DependentPropertyChangedEventArgs("HasChanged", propertyName));
+                this.OnPropertyChanged(new DependentPropertyChangedEventArgs(nameof(this.HasChanged), propertyName));
 
             return true;
         }
@@ -458,9 +458,9 @@ namespace Plethora.Mvvm.Model
 
             if (this.hasChanged)
             {
-                this.OnPropertyChanging(new DependentPropertyChangingEventArgs("HasChanged", null));
+                this.OnPropertyChanging(new DependentPropertyChangingEventArgs(nameof(this.HasChanged), null));
                 this.hasChanged = false;
-                this.OnPropertyChanged(new DependentPropertyChangedEventArgs("HasChanged", null));
+                this.OnPropertyChanged(new DependentPropertyChangedEventArgs(nameof(this.HasChanged), null));
             }
         }
 
@@ -488,9 +488,9 @@ namespace Plethora.Mvvm.Model
 
             if (this.hasChanged)
             {
-                this.OnPropertyChanging(new DependentPropertyChangingEventArgs("HasChanged", null));
+                this.OnPropertyChanging(new DependentPropertyChangingEventArgs(nameof(this.HasChanged), null));
                 this.hasChanged = false;
-                changedPropertyNames.Add("HasChanged");
+                changedPropertyNames.Add(nameof(this.HasChanged));
             }
 
             foreach (string propertyName in changedPropertyNames)
@@ -566,25 +566,25 @@ namespace Plethora.Mvvm.Model
             Expression bodyExpression = propertyExpression.Body;
             if (!(bodyExpression is MemberExpression))
             {
-                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
             }
 
             MemberExpression memberExpression = (MemberExpression)bodyExpression;
             if (!(memberExpression.Expression is ConstantExpression))
             {
-                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
             }
 
             ConstantExpression constantExpression = (ConstantExpression)memberExpression.Expression;
             if (!ReferenceEquals(constantExpression.Value, this))
             {
-                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
             }
 
             MemberInfo memberInfo = memberExpression.Member;
             if (!(memberInfo is PropertyInfo))
             {
-                throw new ArgumentException(nameof(propertyExpression) + " must be an expression returning the value of a property of this class.");
+                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
             }
         }
     }
