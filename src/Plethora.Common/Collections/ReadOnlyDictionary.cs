@@ -6,16 +6,21 @@ using System.Runtime.Serialization;
 
 namespace Plethora.Collections
 {
-    [DebuggerDisplay("Count = {Count}")]
+    [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [Serializable]
-    public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, ISerializable, IDeserializationCallback
+    public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>, ISerializable, IDeserializationCallback
     {
         private readonly Dictionary<TKey, TValue> innerDictionary;
 
         #region Constructors
 
-        public ReadOnlyDictionary(IEnumerable<KeyValuePair<TKey, TValue>> dictionary)
-            : this(dictionary, EqualityComparer<TKey>.Default)
+        public ReadOnlyDictionary(IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
+            : this(enumerable, ExtractKeyComparer(enumerable) ?? EqualityComparer<TKey>.Default)
+        {
+        }
+
+        public ReadOnlyDictionary(Dictionary<TKey, TValue> dictionary)
+            : this(dictionary, dictionary.Comparer)
         {
         }
 
@@ -41,12 +46,12 @@ namespace Plethora.Collections
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
         {
-            return innerDictionary.GetEnumerator();
+            return this.innerDictionary.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return this.GetEnumerator();
         }
 
         #endregion
@@ -112,27 +117,56 @@ namespace Plethora.Collections
 
         public bool ContainsKey(TKey key)
         {
-            return innerDictionary.ContainsKey(key);
+            return this.innerDictionary.ContainsKey(key);
         }
 
         public bool TryGetValue(TKey key, out TValue value)
         {
-            return innerDictionary.TryGetValue(key, out value);
+            return this.innerDictionary.TryGetValue(key, out value);
         }
 
         public TValue this[TKey key]
         {
-            get { return innerDictionary[key]; }
+            get { return this.innerDictionary[key]; }
         }
 
         public ICollection<TKey> Keys
         {
-            get { return innerDictionary.Keys; }
+            get { return this.innerDictionary.Keys; }
         }
 
         public ICollection<TValue> Values
         {
-            get { return innerDictionary.Values; }
+            get { return this.innerDictionary.Values; }
+        }
+
+        #endregion
+
+        #region Implementation of IReadOnlyDictionary<TKey, TValue>
+
+        bool IReadOnlyDictionary<TKey, TValue>.ContainsKey(TKey key)
+        {
+            return this.ContainsKey(key);
+        }
+
+        bool IReadOnlyDictionary<TKey, TValue>.TryGetValue(TKey key, out TValue value)
+        {
+            return this.TryGetValue(key, out value);
+        }
+
+        TValue IReadOnlyDictionary<TKey, TValue>.this[TKey key]
+        {
+            get { return this[key]; }
+        }
+
+        IEnumerable<TKey> IReadOnlyDictionary<TKey, TValue>.Keys
+        {
+            get { return this.Keys; }
+        }
+
+        IEnumerable<TValue> IReadOnlyDictionary<TKey, TValue>.Values
+        {
+            get { return this.Values; }
         }
 
         #endregion
@@ -141,12 +175,25 @@ namespace Plethora.Collections
 
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            innerDictionary.GetObjectData(info, context);
+            this.innerDictionary.GetObjectData(info, context);
         }
 
         void IDeserializationCallback.OnDeserialization(object sender)
         {
-            innerDictionary.OnDeserialization(sender);
+            this.innerDictionary.OnDeserialization(sender);
+        }
+
+        #endregion
+
+        #region Private Static Members
+
+        private static IEqualityComparer<TKey> ExtractKeyComparer(IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
+        {
+            Dictionary<TKey, TValue> dictionary = enumerable as Dictionary<TKey, TValue>;
+            if (dictionary == null)
+                return null;
+
+            return dictionary.Comparer;
         }
 
         #endregion

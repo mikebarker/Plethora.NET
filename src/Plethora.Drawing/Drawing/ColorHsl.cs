@@ -273,7 +273,7 @@ namespace Plethora.Drawing
 
         private static float GetColorComponentPercent(float Tc, float P, float Q)
         {
-            Tc = NumericHelper.Wrap(Tc, 0.0f, 1.0f);
+            Tc %= 1.0f;
 
             if (Tc < SIXTH)
                 return P + ((Q - P) * Tc * 6.0f);

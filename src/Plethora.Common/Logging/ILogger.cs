@@ -1,4 +1,5 @@
 ﻿using System;
+
 using JetBrains.Annotations;
 
 namespace Plethora.Logging
@@ -28,13 +29,13 @@ namespace Plethora.Logging
         [StringFormatMethod("message")]
         void Verbose(string message);
 
-        [StringFormatMethod("message")]
+        [StringFormatMethod("format")]
         void Verbose(string format, params object[] args);
 
         [StringFormatMethod("message")]
         void Verbose(Exception exception, string message);
 
-        [StringFormatMethod("message")]
+        [StringFormatMethod("format")]
         void Verbose(Exception exception, string format, params object[] args);
         #endregion
 

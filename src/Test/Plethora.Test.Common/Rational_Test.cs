@@ -398,7 +398,7 @@ namespace Plethora.Test
 
                 Assert.Fail();
             }
-            catch (ArgumentException e)
+            catch (ArgumentException ex)
             {
             }
         }

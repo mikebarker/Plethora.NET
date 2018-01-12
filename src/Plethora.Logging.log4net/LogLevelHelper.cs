@@ -7,7 +7,7 @@ namespace Plethora.Logging.log4net
     {
         public static Level ToLog4Net(this LogLevel logLevel)
         {
-            if (logLevel <= 0)
+            if (logLevel < 0)
                 throw new InvalidCastException(ResourceProvider.InvalidCast());
 
             if (logLevel >= LogLevel.Off)
