@@ -138,18 +138,25 @@ namespace Plethora.Threading
 
         private readonly List<Thread> threads;
         private readonly Queue<WorkItem> workQueue = new Queue<WorkItem>();
-        private readonly ManualResetEvent workWaitHandle = new ManualResetEvent(false);
+        private readonly ManualResetEventSlim workWaitHandle = new ManualResetEventSlim(false);
         private bool exitDoLoop = false;
+        private int availableThreadCount;
+
         #endregion
 
         #region Constructors
 
         public WorkQueue()
-            : this(Environment.ProcessorCount)
+            : this(Environment.ProcessorCount, true)
         {
         }
 
         public WorkQueue(int threadCount)
+            : this(threadCount, true)
+        {
+        }
+
+        public WorkQueue(int threadCount, bool isBackground)
         {
             //Validation
             if (threadCount <= 0)
@@ -157,12 +164,12 @@ namespace Plethora.Threading
                     ResourceProvider.ArgMustBeGreaterThanZero(nameof(threadCount)));
 
 
+            this.availableThreadCount = threadCount;
             this.threads = new List<Thread>(threadCount);
-
             for (int i = 0; i < threadCount; i++)
             {
                 Thread thread = new Thread(this.DoLoop);
-                thread.IsBackground = true;
+                thread.IsBackground = isBackground;
                 thread.Name = "WorkQueue_" + i.ToString(CultureInfo.InvariantCulture);
                 thread.Start();
 
@@ -214,6 +221,36 @@ namespace Plethora.Threading
                 this.disposed = true;
             }
         }
+
+        #endregion
+
+        #region Public Events
+
+        /// <summary>
+        /// Raised when a thread becomes available for additional work.
+        /// </summary>
+        /// <remarks>
+        /// This event will be called on a <see cref="ThreadPool"/> thread. Logic contained in this event handler should therefore be kept short.
+        /// 
+        /// Due to race conditions all worker threads may have been consumed by the time work is queued.
+        /// Similarly the <see cref="AvailableThreadCount"/> may show zero after this event has triggered.
+        /// </remarks>
+        /// <seealso cref="AvailableThreadCount"/>
+        public event EventHandler ThreadAvailable;
+
+        #endregion
+
+        #region Public Properties
+
+        /// <summary>
+        /// Gets the number of threads which are not currently working.
+        /// </summary>
+        /// <seealso cref="ThreadAvailable"/>
+        public int AvailableThreadCount
+        {
+            get { return this.availableThreadCount; }
+        }
+
         #endregion
 
         #region Public Methods
@@ -293,6 +330,9 @@ namespace Plethora.Threading
             return this.EndInvoke(asyncResult);
         }
 
+        /// <summary>
+        /// Removes all waiting work from the queue, and signals worker threads to end after they complete their current work.
+        /// </summary>
         public void Abort()
         {
             this.exitDoLoop = true;
@@ -302,6 +342,7 @@ namespace Plethora.Threading
                 this.workWaitHandle.Set();
             }
         }
+
         #endregion
 
         #region Protected Methods
@@ -318,6 +359,8 @@ namespace Plethora.Threading
 
         private void DoLoop()
         {
+            bool isThisThreadAvailable = true;
+
             //Semi-inifinite loop
             while (!this.exitDoLoop)
             {
@@ -343,18 +386,42 @@ namespace Plethora.Threading
 
                 if (workItem != null)
                 {
+                    //Ensure the decrement only happens once per thread
+                    if (isThisThreadAvailable)
+                    {
+                        Interlocked.Decrement(ref this.availableThreadCount);
+                        isThisThreadAvailable = false;
+                    }
+
                     //Execute the workItem
-                    try { workItem.Execute(); }
-                    catch(Exception ex) { }
+                    try
+                    {
+                        workItem.Execute();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Swallow the exception
+                    }
                 }
 
                 if (workComplete)
                 {
+                    if (!isThisThreadAvailable)
+                    {
+                        Interlocked.Increment(ref this.availableThreadCount);
+                        isThisThreadAvailable = true;
+
+                        EventHandler handler = this.ThreadAvailable;
+                        if (handler != null)
+                            ThreadPool.QueueUserWorkItem((o) => handler(this, EventArgs.Empty));
+                    }
+
                     //Wait for work to arrive.
-                    this.workWaitHandle.WaitOne();
+                    this.workWaitHandle.Wait();
                 }
             }
         }
+
         #endregion
     }
 }

@@ -74,6 +74,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Xaml", "Plethora.X
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Test.Xaml", "Test\Plethora.Test.Xaml\Plethora.Test.Xaml.csproj", "{EAB4DEAA-B993-40C1-BCAE-D8F3D4C3D160}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Workflow", "Plethora.Workflow\Plethora.Workflow.csproj", "{922B5F04-7696-49FF-B232-D0E99662EBB4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.Workflow.Sample", "Sample\Plethora.Workflow.Sample\Plethora.Workflow.Sample.csproj", "{D7964808-171F-4B4C-984C-8980F51BD17A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -200,6 +204,14 @@ Global
 		{EAB4DEAA-B993-40C1-BCAE-D8F3D4C3D160}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAB4DEAA-B993-40C1-BCAE-D8F3D4C3D160}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAB4DEAA-B993-40C1-BCAE-D8F3D4C3D160}.Release|Any CPU.Build.0 = Release|Any CPU
+		{922B5F04-7696-49FF-B232-D0E99662EBB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{922B5F04-7696-49FF-B232-D0E99662EBB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{922B5F04-7696-49FF-B232-D0E99662EBB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{922B5F04-7696-49FF-B232-D0E99662EBB4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7964808-171F-4B4C-984C-8980F51BD17A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7964808-171F-4B4C-984C-8980F51BD17A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7964808-171F-4B4C-984C-8980F51BD17A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7964808-171F-4B4C-984C-8980F51BD17A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -220,5 +232,6 @@ Global
 		{3F9BA746-6B8A-4D54-827F-1704510414DC} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
 		{987D1CEE-80CF-4F4B-AFE9-155AEC37D3AE} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
 		{EAB4DEAA-B993-40C1-BCAE-D8F3D4C3D160} = {8168997C-EF7C-4B90-8408-F79A33EF63AC}
+		{D7964808-171F-4B4C-984C-8980F51BD17A} = {270D176B-32CF-4794-A215-CF1D77615257}
 	EndGlobalSection
 EndGlobal
