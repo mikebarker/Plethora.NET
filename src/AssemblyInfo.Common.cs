@@ -22,8 +22,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 
 // Version
-[assembly: AssemblyVersion("0.13.*")]
-[assembly: AssemblyFileVersion("0.13.0.3")]
+[assembly: AssemblyVersion("0.16.*")]
+[assembly: AssemblyFileVersion("0.16.0.1")]
 
 // Interoperability
 [assembly: ComVisible(false)]
