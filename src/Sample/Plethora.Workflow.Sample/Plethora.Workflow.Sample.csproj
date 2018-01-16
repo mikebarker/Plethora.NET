@@ -107,9 +107,6 @@
     <None Include="static.sql" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="start_workflow.sql" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="!readme.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

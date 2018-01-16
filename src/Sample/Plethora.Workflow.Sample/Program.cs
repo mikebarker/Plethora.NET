@@ -44,8 +44,24 @@ namespace Plethora.Workflow.Sample
 
             engine.Start();
 
+            string externalId = Guid.NewGuid().ToString();
+            string initialState = "Example.Initial";
+
+            Console.WriteLine("Starting workflow with external ID = {0}", externalId);
+
+            long workflowId = workAccessor.InitiateWorkflow(
+                new Guid(), 
+                externalId,
+                initialState,
+                "Testing the Workflow system",
+                new Dictionary<string, string>());
+
+            Console.WriteLine("Workflow started with workflow ID = {0}", workflowId);
+
             Console.WriteLine();
-            Console.WriteLine("Press any key...");
+            Console.WriteLine("Press any key to exit...");
+            Console.WriteLine();
+            Console.WriteLine();
             Console.ReadKey(true);
 
             engine.Stop();
@@ -72,7 +88,11 @@ namespace Plethora.Workflow.Sample
 
         public void Process(WorkItem workItem)
         {
+            Console.WriteLine("Received work item [Workflow ID= {0}] with State= {1}", workItem.WorkflowId, this.initialState);
+
             workItem.Complete(this.finalState);
+
+            Console.WriteLine("Received work item [Workflow ID= {0}] completed with State= {1}", workItem.WorkflowId, this.finalState);
         }
     }
 }

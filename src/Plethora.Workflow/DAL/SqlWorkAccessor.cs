@@ -29,6 +29,69 @@ namespace Plethora.Workflow.DAL
             this.connectionString = connectionString;
         }
 
+        public long InitiateWorkflow(Guid systemId, string externalId, string workflowState, string description, IDictionary<string, string> data)
+        {
+            WorkflowStatic workflowStatic = this.StaticData;
+
+            long initialBusinessStateId;
+            try
+            {
+                initialBusinessStateId = workflowStatic.GetBusinessStateIdByName(workflowState);
+            }
+            catch (Exception ex)
+            {
+                log.Error(ex, ex.Message);
+                throw;
+            }
+
+            DataTable dataTable = new DataTable();
+            dataTable.Columns.Add("Key", typeof(string));
+            dataTable.Columns.Add("Value", typeof(string));
+
+            foreach (KeyValuePair<string, string> pair in data)
+            {
+                dataTable.Rows.Add(pair.Key, pair.Value);
+            }
+
+            using (SqlConnection connection = new SqlConnection(this.connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = connection.CreateCommand())
+                {
+                    command.CommandText = "work.InitiateWorkflow";
+                    command.CommandType = CommandType.StoredProcedure;
+
+                    SqlParameter externalIdParameter = command.Parameters.Add("@externalId", SqlDbType.VarChar);
+                    externalIdParameter.Direction = ParameterDirection.Input;
+                    externalIdParameter.Value = externalId;
+
+                    SqlParameter descriptionParameter = command.Parameters.Add("@description", SqlDbType.VarChar);
+                    descriptionParameter.Direction = ParameterDirection.Input;
+                    descriptionParameter.Value = description;
+
+                    SqlParameter initialBusinessStateIdParameter = command.Parameters.Add("@initialBusinessStateId", SqlDbType.Int);
+                    initialBusinessStateIdParameter.Direction = ParameterDirection.Input;
+                    initialBusinessStateIdParameter.Value = initialBusinessStateId;
+
+                    SqlParameter dataParameter = command.Parameters.Add("@data", SqlDbType.Structured);
+                    dataParameter.Direction = ParameterDirection.Input;
+                    dataParameter.Value = dataTable;
+
+                    SqlParameter workflowIdParameter = command.Parameters.Add("@workflowId", SqlDbType.BigInt);
+                    workflowIdParameter.Direction = ParameterDirection.Output;
+
+
+                    command.ExecuteNonQuery();
+
+
+                    object workflowIdObj = workflowIdParameter.Value;
+                    long workflowId = (long)workflowIdObj;
+
+                    return workflowId;
+                }
+            }
+        }
+
         public void CreateWorkItems(Guid systemId, IEnumerable<WorkItemLite> workItems)
         {
             WorkflowStatic workflowStatic = this.StaticData;

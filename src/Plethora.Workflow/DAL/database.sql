@@ -698,11 +698,11 @@ END
 GO
 
 
-IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('work.StartWorkflow') AND type = 'P')
-    DROP PROCEDURE work.StartWorkflow;
+IF EXISTS(SELECT 1 FROM sys.objects WHERE object_id = OBJECT_ID('work.InitiateWorkflow') AND type = 'P')
+    DROP PROCEDURE work.InitiateWorkflow;
 GO
 
-CREATE PROCEDURE work.StartWorkflow
+CREATE PROCEDURE work.InitiateWorkflow
 (
     @externalId                 VARCHAR(8000) = NULL,
     @description                VARCHAR(MAX) = NULL,
@@ -840,15 +840,6 @@ BEGIN
                 @startSequenceAt,
                 @result OUTPUT
             ;
-
-            IF (@result = 1)
-            BEGIN
-                PRINT '@result = 1';
-            END
-            ELSE
-            BEGIN
-                PRINT '@result <> 1';
-            END
         END
     END
 END
