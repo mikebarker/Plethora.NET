@@ -708,7 +708,9 @@ CREATE PROCEDURE work.InitiateWorkflow
     @description                VARCHAR(MAX) = NULL,
     @initialBusinessStateId     INT,
 
-    @data                       dbo.KeyValueList READONLY
+    @data                       dbo.KeyValueList READONLY,
+
+    @workflowId                 BIGINT OUTPUT
 )
 AS
 BEGIN
@@ -813,6 +815,10 @@ BEGIN
     JOIN @newWorkItemIds ids
             ON  ids.WorkItemId = wi.WorkItemId
     ;
+
+    SELECT
+        @workflowId = WorkflowId
+    FROM @workflowIds;
 
 
     IF (EXISTS (SELECT 1 FROM work.BusinessStateTransition bst WHERE bst.PrevFinalBusinessStateId = @initialBusinessStateId))
