@@ -6,6 +6,7 @@
         DataContext="{Binding RelativeSource={RelativeSource Self}}"
         Title="MainWindow" Height="350" Width="525"
         Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+        KeyDown="MainWindow_OnKeyDown"
         >
 
     <Window.Resources>
@@ -35,6 +36,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -116,6 +118,14 @@
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </GroupBox>
+        
+        <RichTextBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
+                     IsTabStop="False"
+                     IsReadOnly="True"
+                     Name="HelpRichTextBox"
+                     Height="48"
+                     Margin="5"
+                     />
     </Grid>
 </Window>
 

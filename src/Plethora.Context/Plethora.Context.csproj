@@ -82,17 +82,25 @@
     <Compile Include="ContextInfoComparer.cs" />
     <Compile Include="ContextManager.cs" />
     <Compile Include="ContextProviderBase.cs" />
+    <Compile Include="Help\Factory\IHelpDocumentCreator.cs" />
+    <Compile Include="Help\Factory\IHelpAccessor.cs" />
+    <Compile Include="Help\HelpDocuments\RtfHelpDocument.cs" />
+    <Compile Include="Help\Factory\IHelpKeyer.cs" />
+    <Compile Include="Help\HelpManager.cs" />
+    <Compile Include="Help\Factory\HelpFactory.cs" />
+    <Compile Include="Help\IHelpFactory.cs" />
+    <Compile Include="Help\IHelpDocument.cs" />
+    <Compile Include="Help\LocalFileSystem\LocalFileSystemHelpAccessor.cs" />
+    <Compile Include="Help\LocalFileSystem\LocalFileSystemHelpKeyer.cs" />
     <Compile Include="IContextAugmentor.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

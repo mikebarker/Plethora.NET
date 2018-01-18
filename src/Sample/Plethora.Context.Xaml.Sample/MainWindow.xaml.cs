@@ -3,8 +3,15 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
 
 using Plethora.Context.Action;
+using Plethora.Context.Help;
+using Plethora.Context.Help.Factory;
+using Plethora.Context.Help.HelpDocuments;
+using Plethora.Context.Help.LocalFileSystem;
 using Plethora.Xaml;
 
 namespace Plethora.Context.Xaml.Sample
@@ -23,6 +30,7 @@ namespace Plethora.Context.Xaml.Sample
         private string contextText;
         private IEnumerable<IAction> actions;
 
+        private FlowDocument defaultFlowDocument;
 
         public MainWindow()
         {
@@ -43,8 +51,27 @@ namespace Plethora.Context.Xaml.Sample
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Copy"));
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Paste"));
 
+            IHelpKeyer<string> keyer = new LocalFileSystemHelpKeyer(@".", "*.rtf");
+            IHelpAccessor<string, string> accessor = new LocalFileSystemHelpAccessor();
+            IHelpDocumentCreator<string, string> creator = new RtfHelpDocumentCreator<string>();
+
+            IHelpFactory helpFactory = new HelpFactory<string, string>(
+                keyer,
+                accessor,
+                creator);
+
+            HelpManager.GlobalInstance.RegisterFactory(helpFactory);
+
             this.Contract = 12345;
             this.Instrument = "VOD.L";
+
+            Paragraph paragraph = new Paragraph();
+            paragraph.Foreground = Brushes.DarkGray;
+            paragraph.FontStyle = FontStyles.Italic;
+            paragraph.Inlines.Add("Press F1 for help.");
+            this.defaultFlowDocument = new FlowDocument(paragraph);
+
+            this.HelpRichTextBox.Document = this.defaultFlowDocument;
         }
 
         #region PropertyChanged Event
@@ -196,6 +223,35 @@ namespace Plethora.Context.Xaml.Sample
             }
 
             #endregion
+        }
+
+        private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.F1)
+            {
+                IEnumerable<ContextInfo> contexts = ContextManager.GlobalInstance.GetContexts();
+
+                IEnumerable<IHelpDocument> documents = HelpManager.GlobalInstance.GetHelpDocuments(contexts);
+
+
+                FlowDocument flowDocument = this.defaultFlowDocument;
+
+                IHelpDocument doc = documents.FirstOrDefault();
+                object data = null;
+                if (doc != null)
+                {
+                    data = doc.Data;
+                    if (data is string)
+                    {
+                        Paragraph paragraph = new Paragraph();
+                        paragraph.Inlines.Add((string)data);
+
+                        flowDocument = new FlowDocument(paragraph);
+                    }
+                }
+
+                this.HelpRichTextBox.Document = flowDocument;
+            }
         }
     }
 }

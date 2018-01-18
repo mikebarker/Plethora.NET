@@ -41,7 +41,7 @@ namespace Plethora.Context.Action
         #region Public Methods
 
         /// <summary>
-        /// Registers an action factory with this <see cref="ContextManager"/>.
+        /// Registers an action factory with this <see cref="ActionManager"/>.
         /// </summary>
         /// <param name="factory">The action factory to be registered.</param>
         /// <remarks>
@@ -95,7 +95,7 @@ namespace Plethora.Context.Action
 
 
         /// <summary>
-        /// Registers an action template with this <see cref="ContextManager"/>.
+        /// Registers an action template with this <see cref="ActionManager"/>.
         /// </summary>
         /// <param name="template">The action template to be registered.</param>
         /// <remarks>
@@ -126,7 +126,7 @@ namespace Plethora.Context.Action
         }
 
         /// <summary>
-        /// Registers an action template with this <see cref="ContextManager"/>.
+        /// Registers an action template with this <see cref="ActionManager"/>.
         /// </summary>
         /// <param name="template">The action template to be registered.</param>
         /// <remarks>
