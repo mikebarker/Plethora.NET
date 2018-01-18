@@ -1,7 +1,10 @@
 ﻿using System;
 using System.IO;
 
+using JetBrains.Annotations;
+
 using Plethora.Context.Help.Factory;
+using Plethora.Context.Help.Streaming;
 
 namespace Plethora.Context.Help.LocalFileSystem
 {
@@ -12,9 +15,19 @@ namespace Plethora.Context.Help.LocalFileSystem
     /// The help key is the path of the file.
     /// </remarks>
     /// <seealso cref="LocalFileSystemHelpKeyer"/>
-    public class LocalFileSystemHelpAccessor : IHelpAccessor<string, string>
+    public class LocalFileSystemHelpAccessor<TData> : IHelpAccessor<string, TData>
     {
-        public string GetData(string key)
+        private IDataStreamCapture<TData> dataStreamCapture;
+
+        public LocalFileSystemHelpAccessor([NotNull] IDataStreamCapture<TData> dataStreamCapture)
+        {
+            if (dataStreamCapture == null)
+                throw new ArgumentNullException(nameof(dataStreamCapture));
+
+            this.dataStreamCapture = dataStreamCapture;
+        }
+
+        public TData GetData(string key)
         {
             if (key == null)
                 throw new ArgumentNullException(nameof(key));
@@ -22,15 +35,14 @@ namespace Plethora.Context.Help.LocalFileSystem
             try
             {
                 using (Stream stream = new FileStream(key, FileMode.Open, FileAccess.Read, FileShare.Read))
-                using (StreamReader reader = new StreamReader(stream))
                 {
-                    string data = reader.ReadToEnd();
+                    TData data = this.dataStreamCapture.CaptureDataFromStream(stream);
                     return data;
                 }
             }
             catch (IOException)
             {
-                return null;
+                return default(TData);
             }
         }
     }

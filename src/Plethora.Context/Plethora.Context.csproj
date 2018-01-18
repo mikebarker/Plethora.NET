@@ -92,6 +92,8 @@
     <Compile Include="Help\IHelpDocument.cs" />
     <Compile Include="Help\LocalFileSystem\LocalFileSystemHelpAccessor.cs" />
     <Compile Include="Help\LocalFileSystem\LocalFileSystemHelpKeyer.cs" />
+    <Compile Include="Help\Streaming\TextStreamCapture.cs" />
+    <Compile Include="Help\Streaming\IDataStreamCapture.cs" />
     <Compile Include="IContextAugmentor.cs" />
     <Compile Include="IContextProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

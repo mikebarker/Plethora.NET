@@ -12,6 +12,7 @@ using Plethora.Context.Help;
 using Plethora.Context.Help.Factory;
 using Plethora.Context.Help.HelpDocuments;
 using Plethora.Context.Help.LocalFileSystem;
+using Plethora.Context.Help.Streaming;
 using Plethora.Xaml;
 
 namespace Plethora.Context.Xaml.Sample
@@ -30,7 +31,7 @@ namespace Plethora.Context.Xaml.Sample
         private string contextText;
         private IEnumerable<IAction> actions;
 
-        private FlowDocument defaultFlowDocument;
+        private readonly FlowDocument defaultFlowDocument;
 
         public MainWindow()
         {
@@ -52,7 +53,7 @@ namespace Plethora.Context.Xaml.Sample
             ActionManager.GlobalInstance.RegisterActionTemplate(new GenericActionTemplate("Textbox", "Paste"));
 
             IHelpKeyer<string> keyer = new LocalFileSystemHelpKeyer(@".", "*.rtf");
-            IHelpAccessor<string, string> accessor = new LocalFileSystemHelpAccessor();
+            IHelpAccessor<string, string> accessor = new LocalFileSystemHelpAccessor<string>(new TextStreamCapture());
             IHelpDocumentCreator<string, string> creator = new RtfHelpDocumentCreator<string>();
 
             IHelpFactory helpFactory = new HelpFactory<string, string>(
@@ -233,14 +234,11 @@ namespace Plethora.Context.Xaml.Sample
 
                 IEnumerable<IHelpDocument> documents = HelpManager.GlobalInstance.GetHelpDocuments(contexts);
 
-
                 FlowDocument flowDocument = this.defaultFlowDocument;
-
                 IHelpDocument doc = documents.FirstOrDefault();
-                object data = null;
                 if (doc != null)
                 {
-                    data = doc.Data;
+                    object data = doc.Data;
                     if (data is string)
                     {
                         Paragraph paragraph = new Paragraph();
