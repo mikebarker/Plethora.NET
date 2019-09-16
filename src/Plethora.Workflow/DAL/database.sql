@@ -1,7 +1,8 @@
-﻿/*
-CREATE SCHEMA work;
+IF NOT EXISTS (SELECT schema_id FROM sys.schemas WHERE [name] = 'work')
+BEGIN
+    EXEC sp_executesql N'CREATE SCHEMA work';
+END
 GO
-*/
 
 IF EXISTS(SELECT 1 FROM sys.types WHERE user_type_id = TYPE_ID('dbo.IntList') AND is_table_type = 1)
     DROP TYPE dbo.IntList;
@@ -217,9 +218,10 @@ GO
 
 CREATE FUNCTION work.GetDefaultTimeoutMillisecond ()
 RETURNS INT
+WITH SCHEMABINDING
 AS
 BEGIN
-    RETURN (5 * 60 * 1000);
+    RETURN (5 * 60 * 1000); -- 5 Minutes
 END;
 GO
 
