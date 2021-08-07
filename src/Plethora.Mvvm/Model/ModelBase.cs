@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 using JetBrains.Annotations;
 
 using Plethora.Collections;
-using Plethora.Linq.Expressions;
 
 namespace Plethora.Mvvm.Model
 {
@@ -203,7 +202,7 @@ namespace Plethora.Mvvm.Model
         /// Gets the value of a property.
         /// </summary>
         /// <typeparam name="T">The data type of the property.</typeparam>
-        /// <param name="propertyExpression">The expression of the property for which the value is to be retrieved.</param>
+        /// <param name="propertyName">The name of the property for which the value is to be retrieved.</param>
         /// <returns>
         /// The value of the property.
         /// </returns>
@@ -213,19 +212,18 @@ namespace Plethora.Mvvm.Model
         ///  <code><![CDATA[
         ///     public string Name
         ///     {
-        ///         get { return this.GetValue(() => this.Name); }
-        ///         set { this.SetValue(() => this.Name, value); }
+        ///         get { return this.GetValue(); }
+        ///         set { this.SetValue(value); }
         ///     }
         ///  ]]></code>
         ///  </example>
         /// </remarks>
         /// <seealso cref="SetValue{T}"/>
         [CanBeNull]
-        public T GetValue<T>([NotNull] Expression<Func<T>> propertyExpression)
+        public T GetValue<T>([NotNull][CallerMemberName] string propertyName = null)
         {
-            this.ValidatePropertyExpression(propertyExpression);
-
-            string propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
+            if (ReferenceEquals(propertyName, null))
+                throw new ArgumentNullException(nameof(propertyName));
 
             ModelProperty<T> modelProperty;
             if (!this.TryGetModelProperty(propertyName, out modelProperty))
@@ -241,7 +239,7 @@ namespace Plethora.Mvvm.Model
         /// Sets the value of a property.
         /// </summary>
         /// <typeparam name="T">The data type of the property.</typeparam>
-        /// <param name="propertyExpression">The expression of the property for which the value is to be set.</param>
+        /// <param name="propertyName">The name of the property for which the value is to be set.</param>
         /// <param name="value">The value of the property.</param>
         /// <returns>
         /// true if the value of the property was changed; otherwise false.
@@ -252,18 +250,17 @@ namespace Plethora.Mvvm.Model
         ///  <code><![CDATA[
         ///     public string Name
         ///     {
-        ///         get { return this.GetValue(() => this.Name); }
-        ///         set { this.SetValue(() => this.Name, value); }
+        ///         get { return this.GetValue(); }
+        ///         set { this.SetValue(value); }
         ///     }
         ///  ]]></code>
         ///  </example>
         /// </remarks>
         /// <seealso cref="GetValue{T}"/>
-        public bool SetValue<T>([NotNull] Expression<Func<T>> propertyExpression, [CanBeNull] T value)
+        public bool SetValue<T>([CanBeNull] T value, [NotNull][CallerMemberName] string propertyName = null)
         {
-            this.ValidatePropertyExpression(propertyExpression);
-
-            string propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
+            if (ReferenceEquals(propertyName, null))
+                throw new ArgumentNullException(nameof(propertyName));
 
             ModelProperty<T> modelProperty;
             if (!this.TryGetModelProperty(propertyName, out modelProperty))
@@ -323,22 +320,20 @@ namespace Plethora.Mvvm.Model
             }
         }
 
-
         /// <summary>
         /// Gets the original value of a property.
         /// </summary>
         /// <typeparam name="T">The data type of the property.</typeparam>
-        /// <param name="propertyExpression">The expression of the property for which the original value is to be retrieved.</param>
+        /// <param name="propertyName">The name of the property for which the original value is to be retrieved.</param>
         /// <returns>
         /// The value of the property.
         /// </returns>
         /// <seealso cref="SetOriginalValue{T}"/>
         [CanBeNull]
-        public T GetOriginalValue<T>([NotNull] Expression<Func<T>> propertyExpression)
+        public T GetOriginalValue<T>([NotNull][CallerMemberName] string propertyName = null)
         {
-            this.ValidatePropertyExpression(propertyExpression);
-
-            string propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
+            if (ReferenceEquals(propertyName, null))
+                throw new ArgumentNullException(nameof(propertyName));
 
             ModelProperty<T> modelProperty;
             if (!this.TryGetModelProperty(propertyName, out modelProperty))
@@ -354,7 +349,7 @@ namespace Plethora.Mvvm.Model
         /// Sets the original value of a property.
         /// </summary>
         /// <typeparam name="T">The data type of the property.</typeparam>
-        /// <param name="propertyExpression">The expression of the property for which the original value is to be set.</param>
+        /// <param name="propertyName">The name of the property for which the original value is to be set.</param>
         /// <param name="originalValue">The original value of the property.</param>
         /// <returns>
         /// true if the original value of the property was changed; otherwise false.
@@ -363,11 +358,10 @@ namespace Plethora.Mvvm.Model
         /// Setting the original value will also set the current value.
         /// </remarks>
         /// <seealso cref="GetOriginalValue{T}"/>
-        public bool SetOriginalValue<T>([NotNull] Expression<Func<T>> propertyExpression, [CanBeNull] T originalValue)
+        public bool SetOriginalValue<T>([CanBeNull] T originalValue, [NotNull][CallerMemberName] string propertyName = null)
         {
-            this.ValidatePropertyExpression(propertyExpression);
-
-            string propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
+            if (ReferenceEquals(propertyName, null))
+                throw new ArgumentNullException(nameof(propertyName));
 
             T defaultValue = this.GetDefaultValue<T>(propertyName);
 
@@ -555,37 +549,6 @@ namespace Plethora.Mvvm.Model
 
             modelProperty = (ModelProperty<T>)iModelProperty;
             return true;
-        }
-
-        [Conditional("DEBUG")]
-        private void ValidatePropertyExpression<T>([NotNull] Expression<Func<T>> propertyExpression)
-        {
-            if (propertyExpression == null)
-                throw new ArgumentNullException(nameof(propertyExpression));
-
-            Expression bodyExpression = propertyExpression.Body;
-            if (!(bodyExpression is MemberExpression))
-            {
-                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
-            }
-
-            MemberExpression memberExpression = (MemberExpression)bodyExpression;
-            if (!(memberExpression.Expression is ConstantExpression))
-            {
-                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
-            }
-
-            ConstantExpression constantExpression = (ConstantExpression)memberExpression.Expression;
-            if (!ReferenceEquals(constantExpression.Value, this))
-            {
-                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
-            }
-
-            MemberInfo memberInfo = memberExpression.Member;
-            if (!(memberInfo is PropertyInfo))
-            {
-                throw new ArgumentException(ResourceProvider.PropertyExpression(nameof(propertyExpression), this.GetType()));
-            }
         }
     }
 }

@@ -1,10 +1,6 @@
-﻿using System;
-using System.ComponentModel;
-using System.Linq.Expressions;
-
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-
-using Plethora.Linq.Expressions;
 
 namespace Plethora.Mvvm.Model
 {
@@ -46,6 +42,17 @@ namespace Plethora.Mvvm.Model
     {
         private bool isNotifying = true;
 
+        protected bool ChangeProperty<T>(T value, ref T field, [CallerMemberName] string propertyName = null)
+        {
+            if (Equals(value, field))
+                return false;
+
+            this.OnPropertyChanging(propertyName);
+            field = value;
+            this.OnPropertyChanged(propertyName);
+            return true;
+        }
+
         #region PropertyChanging Event
 
         /// <summary>
@@ -70,19 +77,8 @@ namespace Plethora.Mvvm.Model
         /// Raises the <see cref="InternalPropertyChanging"/> event.
         /// </summary>
         [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanging([CanBeNull] string propertyName)
+        protected void OnPropertyChanging([CanBeNull][CallerMemberName] string propertyName = null)
         {
-            this.OnPropertyChanging(new PropertyChangingEventArgs(propertyName));
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanging<T>([NotNull] Expression<Func<T>> propertyExpression)
-        {
-            string propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
-
             this.OnPropertyChanging(new PropertyChangingEventArgs(propertyName));
         }
 
@@ -112,19 +108,8 @@ namespace Plethora.Mvvm.Model
         /// Raises the <see cref="PropertyChanged"/> event.
         /// </summary>
         [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanged([CanBeNull] string propertyName)
+        protected void OnPropertyChanged([CanBeNull][CallerMemberName] string propertyName = null)
         {
-            this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
-        }
-
-        /// <summary>
-        /// Raises the <see cref="PropertyChanged"/> event.
-        /// </summary>
-        [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanged<T>([NotNull] Expression<Func<T>> propertyExpression)
-        {
-            string propertyName = ExpressionHelper.GetPropertyName(propertyExpression);
-
             this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }
 

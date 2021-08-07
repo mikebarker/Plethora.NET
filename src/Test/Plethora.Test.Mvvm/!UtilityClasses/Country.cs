@@ -2,8 +2,8 @@
 {
     class Country
     {
-        public static Country UnitedKingdom = new Country("GB", "United Kingdom");
-        public static Country UnitedStatesOfAmerica = new Country("US", "United States of America");
+        public static readonly Country UnitedKingdom = new Country("GB", "United Kingdom");
+        public static readonly Country UnitedStatesOfAmerica = new Country("US", "United States of America");
 
         private readonly string code;
         private readonly string name;

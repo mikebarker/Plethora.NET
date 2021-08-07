@@ -17,43 +17,43 @@ namespace Plethora.Test.Mvvm._UtilityClasses
             string familyName,
             DateTime dateOfBirth)
         {
-            this.SetOriginalValue(() => this.Id, id);
-            this.SetOriginalValue(() => this.GivenName, givenName);
-            this.SetOriginalValue(() => this.FamilyName, familyName);
-            this.SetOriginalValue(() => this.DateOfBirth, dateOfBirth);
+            this.SetOriginalValue(id, nameof(Id));
+            this.SetOriginalValue(givenName, nameof(GivenName));
+            this.SetOriginalValue(familyName, nameof(FamilyName));
+            this.SetOriginalValue(dateOfBirth, nameof(DateOfBirth));
         }
 
         public Guid Id
         {
-            get { return this.GetValue(() => this.Id); }
-            set { this.SetValue(() => this.Id, value); }
+            get { return this.GetValue<Guid>(); }
+            set { this.SetValue(value); }
         }
 
         [DefaultValue("")]
         public string GivenName
         {
-            get { return this.GetValue(() => this.GivenName); }
-            set { this.SetValue(() => this.GivenName, value); }
+            get { return this.GetValue<string>(); }
+            set { this.SetValue(value); }
         }
 
         [DefaultValue("")]
         public string FamilyName
         {
-            get { return this.GetValue(() => this.FamilyName); }
-            set { this.SetValue(() => this.FamilyName, value); }
+            get { return this.GetValue<string>(); }
+            set { this.SetValue(value); }
         }
 
         public DateTime DateOfBirth
         {
-            get { return this.GetValue(() => this.DateOfBirth); }
-            set { this.SetValue(() => this.DateOfBirth, value); }
+            get { return this.GetValue<DateTime>(); }
+            set { this.SetValue(value); }
         }
 
         [DefaultValueProvider(typeof(Country), "UnitedKingdom")]
         public Country CountryOfResidence
         {
-            get { return this.GetValue(() => this.CountryOfResidence); }
-            set { this.SetValue(() => this.CountryOfResidence, value); }            
+            get { return this.GetValue<Country>(); }
+            set { this.SetValue(value); }            
         }
 
         [DependsOn("DateOfBirth")]
