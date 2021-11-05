@@ -1,17 +1,17 @@
 using System;
 using System.Linq;
 using System.Linq.Expressions;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.fqi;
 
 namespace Plethora.Test.fqi
 {
-    [TestFixture]
+    [TestClass]
     public class MultiIndexedCollectionExtension_Test
     {
         private MultiIndexedCollection<DateTime> collection;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUp()
         {
             var spec = new MultiIndexSpecification<DateTime>();
@@ -34,33 +34,33 @@ namespace Plethora.Test.fqi
                                  };
         }
 
-        [Test]
+        [TestMethod]
         public void SingleElement()
         {
-            //Setup
+            // Arrange
             Expression<Func<DateTime, bool>> expression = date => (date.Month == 5);
             Func<DateTime, bool> func = expression.Compile();
 
-            //Execute
+            // Action
             var fqiLimited = this.collection.Where(expression).Single();
             var linqLimited = this.collection.AsEnumerable().Where(func).Single();
 
-            //Test
+            // Assert
             Assert.AreEqual(fqiLimited, linqLimited);
         }
 
-        [Test]
+        [TestMethod]
         public void MulitpleElements()
         {
-            //Setup
+            // Arrange
             Expression<Func<DateTime, bool>> expression = date => (date.Month >= 6);
             Func<DateTime, bool> func = expression.Compile();
 
-            //Execute
+            // Action
             var fqiLimited = this.collection.Where(expression).ToArray();
             var linqLimited = this.collection.AsEnumerable().Where(func).ToArray();
 
-            //Test
+            // Assert
             Assert.AreEqual(fqiLimited.Count(), linqLimited.Count());
             foreach (DateTime linqDate in linqLimited)
             {
@@ -68,18 +68,18 @@ namespace Plethora.Test.fqi
             }
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicatedElements()
         {
-            //Setup
+            // Arrange
             Expression<Func<DateTime, bool>> expression = date => (date.Month == 1);
             Func<DateTime, bool> func = expression.Compile();
 
-            //Execute
+            // Action
             var fqiLimited = this.collection.Where(expression).ToArray();
             var linqLimited = this.collection.AsEnumerable().Where(func).ToArray();
 
-            //Test
+            // Assert
             Assert.AreEqual(fqiLimited.Count(), linqLimited.Count());
             foreach (DateTime linqDate in linqLimited)
             {

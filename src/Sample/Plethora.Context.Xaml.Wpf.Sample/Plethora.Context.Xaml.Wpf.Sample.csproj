@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Version>0.20.0</Version>
+    <Authors>The Plethora .NET Project</Authors>
+    <Copyright>Copyright © The Plethora Project. All rights reserved.</Copyright>
+    <Product>The Plethora .NET Project</Product>
+    <PackageLicenseFile>license.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/mikebarker/Plethora.NET</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Contract.rtf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Plethora.Common\Plethora.Common.csproj" />
+    <ProjectReference Include="..\..\Plethora.Context.Xaml.Wpf\Plethora.Context.Xaml.Wpf.csproj" />
+    <ProjectReference Include="..\..\Plethora.Context\Plethora.Context.csproj" />
+    <ProjectReference Include="..\..\Plethora.Xaml.Wpf\Plethora.Xaml.Wpf.csproj" />
+  </ItemGroup>
+
+</Project>

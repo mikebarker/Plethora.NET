@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class AutoKeyedCollection_Test
     {
-        AutoKeyedCollection<Person> autoKeyedCollection = new AutoKeyedCollection<Person>();
+        private AutoKeyedCollection<Person> autoKeyedCollection = new AutoKeyedCollection<Person>();
 
-        [SetUp]
-        public void SetUp()
+        public AutoKeyedCollection_Test()
         {
             autoKeyedCollection = new AutoKeyedCollection<Person>();
             autoKeyedCollection.Add(Person.Bob_Jameson);
@@ -23,91 +22,89 @@ namespace Plethora.Test.Collections
 
         #region Constructors
 
-        [Test]
+        [TestMethod]
         public void ctor()
         {
-            //exec
+            // Action
             autoKeyedCollection = new AutoKeyedCollection<Person>();
 
-            //test
+            // Assert
             Assert.IsNotNull(autoKeyedCollection);
             Assert.AreEqual(0, autoKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Enumerable()
         {
-            //setup
+            // Arrange
             Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
-            //exec
+            // Action
             autoKeyedCollection = new AutoKeyedCollection<Person>(array);
 
-            //test
+            // Assert
             Assert.IsNotNull(autoKeyedCollection);
             Assert.AreEqual(3, autoKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Enumerable_Fail_NullEnumerable()
         {
             try
             {
-                //exec
+                // Action
                 autoKeyedCollection = new AutoKeyedCollection<Person>((IEnumerable<Person>)null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_EnumerableComparer()
         {
-            //setup
+            // Arrange
             Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
             EqualityComparer<Person> equalityComparer = EqualityComparer<Person>.Default;
 
-            //exec
+            // Action
             autoKeyedCollection = new AutoKeyedCollection<Person>(array, equalityComparer);
 
-            //test
+            // Assert
             Assert.IsNotNull(autoKeyedCollection);
             Assert.AreEqual(3, autoKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_EnumerableComparer_Fail_NullEnumerable()
         {
-            //setup
+            // Arrange
             EqualityComparer<Person> equalityComparer = EqualityComparer<Person>.Default;
 
             try
             {
-                //exec
+                // Action
                 autoKeyedCollection = new AutoKeyedCollection<Person>(null, equalityComparer);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Comparer()
         {
-            //setup
+            // Arrange
             EqualityComparer<Person> equalityComparer = EqualityComparer<Person>.Default;
 
-            //exec
+            // Action
             autoKeyedCollection = new AutoKeyedCollection<Person>(equalityComparer);
 
-            //test
+            // Assert
             Assert.IsNotNull(autoKeyedCollection);
             Assert.AreEqual(0, autoKeyedCollection.Count);
         }
@@ -115,22 +112,22 @@ namespace Plethora.Test.Collections
 
         #region Add
 
-        [Test]
+        [TestMethod]
         public void Add()
         {
-            //setup
+            // Arrange
             int preAddCount = autoKeyedCollection.Count;
             long id = Person.Jill_Dorrman.ID;
 
-            //exec
+            // Action
             autoKeyedCollection.Add(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.AreEqual(preAddCount + 1, autoKeyedCollection.Count);
             Assert.AreEqual(Person.Jill_Dorrman, autoKeyedCollection[Person.Jill_Dorrman]);
         }
 
-        [Test]
+        [TestMethod]
         public void Add_Fail_Null()
         {
             try
@@ -139,13 +136,12 @@ namespace Plethora.Test.Collections
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Add_Fail_Duplicate()
         {
             try
@@ -154,116 +150,114 @@ namespace Plethora.Test.Collections
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region Clear
 
-        [Test]
+        [TestMethod]
         public void Clear()
         {
-            //exec
+            // Action
             autoKeyedCollection.Clear();
 
-            //test
+            // Assert
             Assert.AreEqual(0, autoKeyedCollection.Count);
         }
         #endregion
 
         #region Contains
 
-        [Test]
+        [TestMethod]
         public void Contains_True()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.Contains(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_False()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.Contains(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 autoKeyedCollection.Contains(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region ContainsKey
 
-        [Test]
+        [TestMethod]
         public void ContainsKey_True()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.ContainsKey(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void ContainsKey_False()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.ContainsKey(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
         #endregion
 
         #region CopyTo
 
-        [Test]
+        [TestMethod]
         public void CopyTo()
         {
-            //setup
+            // Arrange
             Person[] array = new Person[3];
 
-            //exec
+            // Action
             autoKeyedCollection.CopyTo(array, 0);
 
-            //test
+            // Assert
             Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 0);
             Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 0);
             Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 0);
             Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 0);
         }
 
-        [Test]
+        [TestMethod]
         public void CopyTo_NonZero()
         {
-            //setup
+            // Arrange
             Person[] array = new Person[5];
 
-            //exec
+            // Action
             autoKeyedCollection.CopyTo(array, 2);
 
-            //test
+            // Assert
             Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 2);
             Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 2);
             Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 2);
@@ -273,26 +267,26 @@ namespace Plethora.Test.Collections
 
         #region Count
 
-        [Test]
+        [TestMethod]
         public void Count()
         {
-            //exec
+            // Action
             int count = autoKeyedCollection.Count;
 
-            //test
+            // Assert
             Assert.AreEqual(3, count);
         }
         #endregion
 
         #region GetEnumerator
 
-        [Test]
+        [TestMethod]
         public void GetEnumerator()
         {
-            //exec
+            // Action
             var enumerator = autoKeyedCollection.GetEnumerator();
 
-            //test
+            // Assert
             Assert.IsNotNull(enumerator);
 
             int i = 0;
@@ -312,32 +306,32 @@ namespace Plethora.Test.Collections
 
         #region IsReadOnly
 
-        [Test]
+        [TestMethod]
         public void IsReadOnly()
         {
-            //exec
+            // Action
             bool isReadonly = autoKeyedCollection.IsReadOnly;
 
-            //test
+            // Assert
             Assert.IsFalse(isReadonly);
         }
         #endregion
 
         #region Keys
 
-        [Test]
+        [TestMethod]
         public void Keys()
         {
-            //setup
+            // Arrange
             var ids = new List<Person>();
             ids.Add(Person.Bob_Jameson);
             ids.Add(Person.Fred_Carlile);
             ids.Add(Person.Amy_Cathson);
 
-            //exec
+            // Action
             var keys = autoKeyedCollection.Keys;
 
-            //test
+            // Assert
             int i = 0;
             foreach (var key in keys)
             {
@@ -353,65 +347,64 @@ namespace Plethora.Test.Collections
 
         #region Remove
 
-        [Test]
+        [TestMethod]
         public void Remove_InCollection()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.Remove(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(2, autoKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_NotInCollection()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.Remove(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(3, autoKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 autoKeyedCollection.Remove(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region RemoveKey
 
-        [Test]
+        [TestMethod]
         public void RemoveKey_InCollection()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.RemoveKey(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(2, autoKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void RemoveKey_NotInCollection()
         {
-            //exec
+            // Action
             bool result = autoKeyedCollection.RemoveKey(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(3, autoKeyedCollection.Count);
         }
@@ -419,27 +412,27 @@ namespace Plethora.Test.Collections
 
         #region TryGetValue
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_InCollection()
         {
-            //exec
+            // Action
             Person person;
             bool result = autoKeyedCollection.TryGetValue(Person.Bob_Jameson, out person);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.IsNotNull(person);
             Assert.AreEqual(Person.Bob_Jameson, person);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_NotInCollection()
         {
-            //exec
+            // Action
             Person person;
             bool result = autoKeyedCollection.TryGetValue(Person.Jill_Dorrman, out person);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.IsNull(person);
         }
@@ -447,38 +440,38 @@ namespace Plethora.Test.Collections
 
         #region Upsert
 
-        [Test]
+        [TestMethod]
         public void Upsert_NotInCollection()
         {
-            //exec
+            // Action
             autoKeyedCollection.Upsert(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.AreEqual(4, autoKeyedCollection.Count);
             Assert.IsTrue(autoKeyedCollection.Contains(Person.Jill_Dorrman));
         }
 
-        [Test]
+        [TestMethod]
         public void Upsert_InCollection()
         {
-            //exec
+            // Action
             autoKeyedCollection.Upsert(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.AreEqual(3, autoKeyedCollection.Count);
         }
         #endregion
 
         #region AsReadOnly
 
-        [Test]
+        [TestMethod]
         public void AsReadOnly()
         {
-            //exec
+            // Action
             IKeyedCollection<Person, Person> readonlyCollection =
                 autoKeyedCollection.AsReadOnly();
 
-            //test
+            // Assert
             Assert.IsNotNull(readonlyCollection);
             Assert.IsTrue(readonlyCollection.IsReadOnly);
         }
@@ -486,14 +479,14 @@ namespace Plethora.Test.Collections
 
         #region AsReadOnlyDictionary
 
-        [Test]
+        [TestMethod]
         public void AsReadOnlyDictionary()
         {
-            //exec
+            // Action
             IDictionary<Person, Person> readonlyDictionary =
                 autoKeyedCollection.AsReadOnlyDictionary();
 
-            //test
+            // Assert
             Assert.IsNotNull(readonlyDictionary);
             Assert.IsTrue(readonlyDictionary.IsReadOnly);
         }
@@ -501,10 +494,10 @@ namespace Plethora.Test.Collections
 
         #region ToKeyedCollection Extension Method
 
-        [Test]
+        [TestMethod]
         public void ToKeyedCollection()
         {
-            //setup
+            // Arrange
             IEnumerable<Person> people = new List<Person>
                 {
                     Person.Bob_Jameson,
@@ -512,18 +505,18 @@ namespace Plethora.Test.Collections
                     Person.Amy_Cathson
                 };
 
-            //exec
+            // Action
             KeyedCollection<long, Person> collection = people.ToKeyedCollection(person => person.ID);
 
-            //test
+            // Assert
             Assert.IsNotNull(collection);
             Assert.AreEqual(3, collection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ToKeyedCollection_Fail_Duplicate()
         {
-            //setup
+            // Arrange
             IEnumerable<Person> people = new List<Person>
                 {
                     Person.Bob_Jameson,
@@ -533,14 +526,13 @@ namespace Plethora.Test.Collections
 
             try
             {
-                //exec
+                // Action
                 people.ToKeyedCollection(person => person.ID);
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion

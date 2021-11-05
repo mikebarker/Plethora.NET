@@ -1,129 +1,129 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class MathEx_Test
     {
         #region GreatestCommonDivisor
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_CommonElement()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(4, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(2, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_PrimeMultiple()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(45, 20);
 
-            //test
+            // Assert
             Assert.AreEqual(5, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_DoublePrimeMultiple()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(50, 20);
 
-            //test
+            // Assert
             Assert.AreEqual(10, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_NoCommonDivisor()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(5, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(1, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_With1()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(1024, 1);
 
-            //test
+            // Assert
             Assert.AreEqual(1, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_With0()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(1, 0);
 
-            //test
+            // Assert
             Assert.AreEqual(1, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_With0_v2()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(0, 1);
 
-            //test
+            // Assert
             Assert.AreEqual(1, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_LargestFirst()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(4, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(2, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_LargestSecond()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(2, 4);
 
-            //test
+            // Assert
             Assert.AreEqual(2, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_NegativeFirst()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(-4, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(2, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_NegativeSecond()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(4, -2);
 
-            //test
+            // Assert
             Assert.AreEqual(2, gcd);
         }
 
-        [Test]
+        [TestMethod]
         public void GreatestCommonDivisor_NegativeSecond_v2()
         {
-            //exec
+            // Action
             int gcd = MathEx.GreatestCommonDivisor(4, -8);
 
-            //test
+            // Assert
             Assert.AreEqual(4, gcd);
         }
 

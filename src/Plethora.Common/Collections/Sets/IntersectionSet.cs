@@ -5,7 +5,7 @@ namespace Plethora.Collections.Sets
     /// <summary>
     /// Represents the intersection of two underlying sets.
     /// </summary>
-    internal sealed class IntersectionSet<T> : BaseSetImpl<T>, ISetCore<T>
+    internal sealed class IntersectionSet<T> : BaseSetImpl<T>
     {
         #region Fields
 

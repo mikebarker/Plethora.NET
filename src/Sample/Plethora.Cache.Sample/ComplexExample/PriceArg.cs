@@ -3,48 +3,48 @@ using System.Collections.Generic;
 
 using Plethora.Cache.Spacial;
 using Plethora.Collections.Sets;
+using Plethora.Spacial;
 
 namespace Plethora.Cache.Sample.ComplexExample
 {
-    public class PriceArg : SpacialArgument<Price, PriceArg, long, DateTime>
+    public class PriceArg : SpacialArgumentBase<Price, PriceArg, string, DateTime>
     {
-        public PriceArg(long stockId, DateTime minDate, DateTime maxDate)
-            : this(new SpaceRegion<long, DateTime>(
-                new InclusiveSet<long>(stockId),
-                new RangeSet<DateTime>(minDate, maxDate)))
+        public PriceArg(string tickerSymbol, DateTime minDate, DateTime maxDate)
+            : this(new SpaceRegion<string, DateTime>(
+                new InclusiveSet<string>(tickerSymbol),
+                new RangeInclusiveSet<DateTime>(minDate, maxDate)))
         {
         }
 
-        private PriceArg(SpaceRegion<long, DateTime> region)
+        private PriceArg(SpaceRegion<string, DateTime> region)
             : base(GetKeyPointFromData, region)
         {
         }
 
-        public PriceArg()
-            : base(GetKeyPointFromData)
+        protected override PriceArg CreateArgWithRegion(SpaceRegion<string, DateTime> newRegion)
         {
+            return new PriceArg(newRegion);
+        }
+
+        private static Tuple<string, DateTime> GetKeyPointFromData(Price price)
+        {
+            return new Tuple<string, DateTime>(price.TickerSymbol, price.Date);
         }
 
 
-        private static Tuple<long, DateTime> GetKeyPointFromData(Price price)
+        public IEnumerable<string> TickerSymbols
         {
-            return new Tuple<long, DateTime>(price.StockId, price.Date);
-        }
-
-
-        public IEnumerable<long> StockIds
-        {
-            get { return ((InclusiveSet<long>)base.Region.Dimension1).IncludedElements; }
+            get { return ((InclusiveSet<string>)base.Region.Dimension1).IncludedElements; }
         }
 
         public DateTime MinDate
         {
-            get { return ((RangeSet<DateTime>)base.Region.Dimension2).Min; }
+            get { return ((RangeInclusiveSet<DateTime>)base.Region.Dimension2).Range.Min; }
         }
 
         public DateTime MaxDate
         {
-            get { return ((RangeSet<DateTime>)base.Region.Dimension2).Max; }
+            get { return ((RangeInclusiveSet<DateTime>)base.Region.Dimension2).Range.Max; }
         }
     }
 }

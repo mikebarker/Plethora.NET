@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 
 using JetBrains.Annotations;
 
@@ -131,10 +130,7 @@ namespace Plethora
                     typeof(TDelegate).Name));
 
             if (!del.Method.ReturnType.IsAssignableFrom(typeof(TResult)))
-                throw new ArgumentException(string.Format("The return type of the {0} is {1}, but this is not assignable from the type of TResult specified, {2}.",
-                    typeof(TDelegate).Name,
-                    del.Method.ReturnType.Name,
-                    typeof(TResult).Name));
+                throw new ArgumentException($"The return type of the {typeof(TDelegate).Name} is {del.Method.ReturnType.Name}, but this is not assignable from the type of TResult specified, {typeof(TResult).Name}.");
 
 
             /* ****************************
@@ -330,17 +326,31 @@ namespace Plethora
 
     public static class WeakDelegateHelper
     {
+        private const string ClosureTypeName = "System.Runtime.CompilerServices.Closure";
+        private const string ConstantsFieldName = "Constants";
+
         public static bool IsTargetAlive(this Delegate @delegate)
         {
-            Closure closure = @delegate.Target as Closure;
-            if (closure != null)
+            object target = @delegate.Target;
+            if (target != null)
             {
-                WeakDelegate.DelegateReference delegateReference = closure.Constants
-                    .OfType<WeakDelegate.DelegateReference>()
-                    .SingleOrDefault();
+                Type targetType = target.GetType();
+                if (targetType.FullName == ClosureTypeName)
+                {
+                    FieldInfo fieldInfo = targetType.GetField(ConstantsFieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    if (fieldInfo == null)
+                        throw new MissingFieldException($"Expected field {ConstantsFieldName} not found on type {ClosureTypeName}.");
 
-                if (delegateReference != null)
-                    return delegateReference.IsTargetAlive;
+                    object value = fieldInfo.GetValue(target);
+                    object[] closureConstants = (object[])value;
+
+                    WeakDelegate.DelegateReference delegateReference = closureConstants
+                        .OfType<WeakDelegate.DelegateReference>()
+                        .SingleOrDefault();
+
+                    if (delegateReference != null)
+                        return delegateReference.IsTargetAlive;
+                }
             }
 
             return true;

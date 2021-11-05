@@ -1,14 +1,14 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Data;
 using Plethora.Test._MockClasses;
 
 namespace Plethora.Test.Data
 {
-    [TestFixture]
+    [TestClass]
     public class DataRecordHelper_Test
     {
-        [Test]
+        [TestMethod]
         public void GetAs_Int32_FromInt32()
         {
             //setup
@@ -22,7 +22,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(134, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Int32_FromInt64()
         {
             //setup
@@ -36,7 +36,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(134, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Int32_Error_IsNull()
         {
             //setup
@@ -56,7 +56,7 @@ namespace Plethora.Test.Data
             }
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Int32_Error_IsDBNull()
         {
             //setup
@@ -76,7 +76,7 @@ namespace Plethora.Test.Data
             }
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Int32_Error_IsString()
         {
             //setup
@@ -97,7 +97,7 @@ namespace Plethora.Test.Data
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetAs_Decimal_FromDecimal()
         {
             //setup
@@ -111,7 +111,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(134.5m, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Decimal_FromDouble()
         {
             //setup
@@ -126,7 +126,7 @@ namespace Plethora.Test.Data
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetAs_String_FromString()
         {
             //setup
@@ -140,7 +140,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual("Hello", result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_String_Null()
         {
             //setup
@@ -154,7 +154,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(null, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_String_DBNull()
         {
             //setup
@@ -170,7 +170,7 @@ namespace Plethora.Test.Data
 
 
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableInt32_FromInt32()
         {
             //setup
@@ -184,7 +184,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(134, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableInt32_FromInt64()
         {
             //setup
@@ -198,7 +198,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(134, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableInt32_IsNull()
         {
             //setup
@@ -212,7 +212,7 @@ namespace Plethora.Test.Data
             Assert.IsFalse(result.HasValue);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableInt32_IsDBNull()
         {
             //setup
@@ -226,7 +226,7 @@ namespace Plethora.Test.Data
             Assert.IsFalse(result.HasValue);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableInt32_Error_IsString()
         {
             //setup
@@ -247,7 +247,7 @@ namespace Plethora.Test.Data
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableEnum_Null()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -259,7 +259,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(null, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableEnum_FromString()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -271,7 +271,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(DayOfWeek.Tuesday, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableEnum_Error_NotValidEnum()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -290,7 +290,7 @@ namespace Plethora.Test.Data
             }
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableEnum_FromInt32()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -302,7 +302,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(DayOfWeek.Tuesday, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_NullableEnum_FromInt64()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -315,7 +315,7 @@ namespace Plethora.Test.Data
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetAs_Enum_FromString()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -327,7 +327,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(DayOfWeek.Tuesday, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Enum_Error_NotValidEnum()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -346,7 +346,7 @@ namespace Plethora.Test.Data
             }
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Enum_FromInt32()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -358,7 +358,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(DayOfWeek.Tuesday, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Enum_FromInt64()
         {
             MockDataRecord dataRecord = new MockDataRecord();
@@ -370,7 +370,7 @@ namespace Plethora.Test.Data
             Assert.AreEqual(DayOfWeek.Tuesday, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetAs_Guid_FromString()
         {
             //setup

@@ -200,6 +200,29 @@ namespace Plethora.Linq
         #region ToCollectionIfRequired<T>
 
         /// <summary>
+        /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="IReadOnlyCollection{T}"/> if required,
+        /// otherwise returns the source directly.
+        /// </summary>
+        /// <typeparam name="T">The type of the collection.</typeparam>
+        /// <param name="source">The <see cref="IEnumerable{T}"/> to be converted.</param>
+        /// <returns>
+        /// The <paramref name="source"/> if it is already an <see cref="IReadOnlyCollection{T}"/>, else
+        /// an <see cref="IReadOnlyCollection{T}"/> containing the elements from <paramref name="source"/>.
+        /// </returns>
+        public static IReadOnlyCollection<T> ToReadOnlyCollectionIfRequired<T>(this IEnumerable<T> source)
+        {
+            var sourceCollection = source as IReadOnlyCollection<T>;
+            if (sourceCollection != null)
+                return sourceCollection;
+
+            return source.ToList();
+        }
+
+        #endregion
+
+        #region ToCollectionIfRequired<T>
+
+        /// <summary>
         /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="ICollection{T}"/> if required,
         /// otherwise returns the source directly.
         /// </summary>

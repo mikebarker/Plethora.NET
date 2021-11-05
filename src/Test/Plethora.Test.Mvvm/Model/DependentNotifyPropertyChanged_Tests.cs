@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Mvvm.Model;
 
 namespace Plethora.Test.Mvvm.Model
 {
-    [TestFixture]
+    [TestClass]
     public class DependentNotifyPropertyChanged_Tests
     {
-        [Test]
+        [TestMethod]
         public void PropertyChangedPropegation()
         {
             // setup

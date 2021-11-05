@@ -1,23 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class ListIndexIterator_Test
     {
-        private List<int> list;
+        private readonly List<int> list = Enumerable.Range(0, 10).ToList();
 
-        [SetUp]
-        public void SetUp()
-        {
-            list = Enumerable.Range(0, 10).ToList();
-        }
-
-        [Test]
+        [TestMethod]
         public void ctor_Fail_NullList()
         {
             bool isCaught = false;
@@ -26,14 +20,14 @@ namespace Plethora.Test.Collections
                 //Exec
                 ListIndexIterator<int> itterator = new ListIndexIterator<int>(null, 3, 4);
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
                 isCaught = true;
             }
             Assert.IsTrue(isCaught);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Fail_StartLessThan0()
         {
             bool isCaught = false;
@@ -42,14 +36,14 @@ namespace Plethora.Test.Collections
                 //Exec
                 ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, -2, 4);
             }
-            catch (ArgumentOutOfRangeException  ex)
+            catch (ArgumentOutOfRangeException)
             {
                 isCaught = true;
             }
             Assert.IsTrue(isCaught);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Fail_CountLessThan0()
         {
             bool isCaught = false;
@@ -58,14 +52,14 @@ namespace Plethora.Test.Collections
                 //Exec
                 ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, -2);
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
                 isCaught = true;
             }
             Assert.IsTrue(isCaught);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Fail_CountPlusStartGreaterThanListLength()
         {
             bool isCaught = false;
@@ -74,79 +68,79 @@ namespace Plethora.Test.Collections
                 //Exec
                 ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 20);
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
                 isCaught = true;
             }
             Assert.IsTrue(isCaught);
         }
 
-        [Test]
+        [TestMethod]
         public void Empty()
         {
             //Exec
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 0);
 
-            //Test
+            // Assert
             Assert.AreEqual(0, itterator.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void SingleElement()
         {
             //Exec
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 1);
 
-            //Test
+            // Assert
             Assert.AreEqual(1, itterator.Count());
 
             bool areEqual = itterator.SequenceEqual(new[] {3});
             Assert.IsTrue(areEqual);
         }
 
-        [Test]
+        [TestMethod]
         public void MultipleElements()
         {
             //Exec
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
-            //Test
+            // Assert
             Assert.AreEqual(4, itterator.Count());
 
             bool areEqual = itterator.SequenceEqual(new[] { 3, 4, 5, 6 });
             Assert.IsTrue(areEqual);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_True()
         {
-            //Setup
+            // Arrange
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             bool result = itterator.Contains(5);
 
-            //Test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_False()
         {
-            //Setup
+            // Arrange
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             bool result = itterator.Contains(1);
 
-            //Test
+            // Assert
             Assert.IsFalse(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_EdgeCases()
         {
-            //Setup
+            // Arrange
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
@@ -156,57 +150,57 @@ namespace Plethora.Test.Collections
             bool afterEnd = itterator.Contains(7);
 
 
-            //Test
+            // Assert
             Assert.IsFalse(beforeStart);
             Assert.IsTrue(atStart);
             Assert.IsTrue(atEnd);
             Assert.IsFalse(afterEnd);
         }
 
-        [Test]
+        [TestMethod]
         public void CopyTo_ZeroIndex()
         {
-            //Setup
+            // Arrange
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             int[] array = new int[10];
             itterator.CopyTo(array, 0);
 
-            //Test
+            // Assert
             Assert.AreEqual(3, array[0]);
             Assert.AreEqual(4, array[1]);
             Assert.AreEqual(5, array[2]);
             Assert.AreEqual(6, array[3]);
         }
 
-        [Test]
+        [TestMethod]
         public void CopyTo_NonZeroIndex()
         {
-            //Setup
+            // Arrange
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             int[] array = new int[10];
             itterator.CopyTo(array, 5);
 
-            //Test
+            // Assert
             Assert.AreEqual(3, array[5]);
             Assert.AreEqual(4, array[6]);
             Assert.AreEqual(5, array[7]);
             Assert.AreEqual(6, array[8]);
         }
 
-        [Test]
+        [TestMethod]
         public void Count()
         {
-            //Setup
+            // Arrange
             ListIndexIterator<int> itterator = new ListIndexIterator<int>(list, 3, 4);
 
             //Exec
             var count = itterator.Count;
 
-            //Test
+            // Assert
             Assert.AreEqual(4, count);
         }
     }

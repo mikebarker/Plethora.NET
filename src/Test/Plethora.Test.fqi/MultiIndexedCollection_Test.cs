@@ -1,15 +1,15 @@
 using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.fqi;
 
 namespace Plethora.Test.fqi
 {
-    [TestFixture]
+    [TestClass]
     public class MultiIndexedCollection_Test
     {
         private MultiIndexedCollection<DateTime> collection;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUp()
         {
             var spec = new MultiIndexSpecification<DateTime>();
@@ -19,124 +19,124 @@ namespace Plethora.Test.fqi
             collection = new MultiIndexedCollection<DateTime>(spec);
         }
 
-        [Test]
+        [TestMethod]
         public void UniqueSpecification()
         {
-            //Setup
+            // Arrange
             var spec = new MultiIndexSpecification<DateTime>();
             spec
                 .AddIndex(true, r => r.Year).Then(r => r.Month).Then(r => r.Day);
 
-            //Execute
+            // Action
             collection = new MultiIndexedCollection<DateTime>(spec);
 
-            //Test
+            // Assert
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
-            Assert.Throws(typeof (ArgumentException), delegate
-                                                          {
-                                                              collection.Add(new DateTime(2009, 01, 02));
-                                                          });
+            Assert.ThrowsException<ArgumentException>(() =>
+            {
+                collection.Add(new DateTime(2009, 01, 02));
+            });
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateSpecification()
         {
-            //Setup
+            // Arrange
             var spec = new MultiIndexSpecification<DateTime>();
             spec
                 .AddIndex(false, r => r.Year).Then(r => r.Month).Then(r => r.Day);
 
-            //Execute
+            // Action
             collection = new MultiIndexedCollection<DateTime>(spec);
 
-            //Test
+            // Assert
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
             collection.Add(new DateTime(2009, 01, 02));
         }
 
-        [Test]
+        [TestMethod]
         public void Add()
         {
-            //Setup
+            // Arrange
 
-            //Execute
+            // Action
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
 
-            //Test
+            // Assert
             Assert.AreEqual(collection.Count, 2);
         }
 
-        [Test]
+        [TestMethod]
         public void Clear()
         {
-            //Setup
+            // Arrange
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
 
             Assert.AreEqual(collection.Count, 2);
 
-            //Execute
+            // Action
             collection.Clear();
             
-            //Test
+            // Assert
             Assert.AreEqual(collection.Count, 0);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains()
         {
-            //Setup
+            // Arrange
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
 
-            //Execute
+            // Action
             bool result = collection.Contains(new DateTime(2009, 01, 02));
 
-            //Test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetEnumerator()
         {
-            //Setup
+            // Arrange
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
 
-            //Execute
+            // Action
             int count = 0;
             foreach (DateTime time in collection)
             {
                 count++;
             }
 
-            //Test
+            // Assert
             Assert.AreEqual(count, collection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove()
         {
-            //Setup
+            // Arrange
             collection.Add(new DateTime(2009, 01, 01));
             collection.Add(new DateTime(2009, 01, 02));
 
             Assert.AreEqual(collection.Count, 2);
 
-            //Execute
+            // Action
             bool result = collection.Remove(new DateTime(2009, 01, 02));
 
-            //Test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(collection.Count, 1);
 
-            //Execute
+            // Action
             result = collection.Remove(new DateTime(2009, 01, 02));
 
-            //Test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(collection.Count, 1);
         }

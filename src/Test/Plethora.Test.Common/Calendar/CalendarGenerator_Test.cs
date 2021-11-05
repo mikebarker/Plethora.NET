@@ -1,67 +1,67 @@
 ﻿using System;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Calendar;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Calendar
 {
-    [TestFixture]
+    [TestClass]
     public class CalendarGenerator_Test
     {
         #region RollDate
 
         #region Actual
 
-        [Test]
+        [TestMethod]
         public void RollDate_Actual_Weekday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 12);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Actual,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 12), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Actual_Weekend()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 15);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Actual,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 15), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Actual_Holiday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 24); //Easter Monday
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Actual,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 24), rolledDate);
         }
 
@@ -69,157 +69,157 @@ namespace Plethora.Test.Calendar
 
         #region Following
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_Friday01()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 01), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_Tuesday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 12);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 12), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_Friday29()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 29);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 29), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_Saturday30()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 31);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 09, 01), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_Sunday31()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 31);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 09, 01), rolledDate);
         }
 
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_Holiday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 05, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 05, 02), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_HolidayChristmasOnWeekend()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(1999, 12, 26);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(1999, 12, 29), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_HolidayEaster()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 23); // Easter Sunday
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 25), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Following_HolidayNewYear()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 01, 02);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Following,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 04), rolledDate);
         }
 
@@ -227,157 +227,157 @@ namespace Plethora.Test.Calendar
 
         #region ModifiedFollowing
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_Friday01()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 01), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_Tuesday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 12);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 12), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_Friday29()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 29);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 29), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_Saturday30()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 31);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 29), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_Sunday31()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 08, 31);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 08, 29), rolledDate);
         }
 
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_Holiday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 05, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 05, 02), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_HolidayChristmasOnWeekend()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(1999, 12, 26);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(1999, 12, 29), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_HolidayEaster()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 23); // Easter Sunday
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 25), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedFollowing_HolidayNewYear()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 01, 02);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedFollowing,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 04), rolledDate);
         }
 
@@ -385,157 +385,157 @@ namespace Plethora.Test.Calendar
 
         #region Preceding
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_Saturday01()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 10, 31), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_Sunday02()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 02);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 10, 31), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_Monday03()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 03);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 11, 03), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_Tuesday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 12);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 11, 12), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_Monday31()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 03, 31);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 03, 31), rolledDate);
         }
 
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_Holiday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 05, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 28), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_HolidayChristmasOnWeekend()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(1999, 12, 26);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(1999, 12, 24), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_HolidayEaster()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 23); // Easter Sunday
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 20), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_Preceding_HolidayNewYear()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 01, 02);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.Preceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(1999, 12, 30), rolledDate);
         }
 
@@ -543,157 +543,157 @@ namespace Plethora.Test.Calendar
 
         #region ModifiedPreceding
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_Saturday01()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 11, 03), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_Sunday02()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 02);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 11, 03), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_Monday03()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 03);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 11, 03), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_Tuesday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 11, 12);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 11, 12), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_Monday31()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2003, 03, 31);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2003, 03, 31), rolledDate);
         }
 
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_Holiday()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 05, 01);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 05, 02), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_HolidayChristmasOnWeekend()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(1999, 12, 26);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(1999, 12, 24), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_HolidayEaster()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 04, 23); // Easter Sunday
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 20), rolledDate);
         }
 
-        [Test]
+        [TestMethod]
         public void RollDate_ModifiedPreceding_HolidayNewYear()
         {
-            //setup
+            // Arrange
             DateTime date = new DateTime(2000, 01, 02);
 
-            // exec
+            // Action
             DateTime rolledDate = CalendarGenerator.RollDate(
                 date,
                 DateRollType.ModifiedPreceding,
                 Dates.Weekends,
                 Dates.EnglishHolidays);
 
-            // test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 04), rolledDate);
         }
 

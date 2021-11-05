@@ -1,9 +1,9 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class StringHelper_Test
     {
         //                        000000000011111111112222222222
@@ -21,13 +21,13 @@ namespace Plethora.Test
 
         #region WhiteSpace
 
-        [Test]
+        [TestMethod]
         public void WhiteSpace()
         {
-            //exec
+            // Action
             char[] whiteSpace = StringHelper.WhiteSpace;
 
-            //test
+            // Assert
             Assert.IsNotNull(whiteSpace);
             var spaceIndex = Array.IndexOf(whiteSpace, ' ');
             Assert.IsTrue(spaceIndex >= 0);
@@ -36,1012 +36,984 @@ namespace Plethora.Test
 
         #region IndexNotOfAny
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny()
         {
-            //exec
+            // Action
             int index = s.IndexNotOfAny(notOfAny);
 
-            //test
+            // Assert
             Assert.AreEqual(8, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexNotOfAny(s.ToCharArray());
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Start()
         {
-            //exec
+            // Action
             int index = s.IndexNotOfAny(notOfAny, 4);
 
-            //test
+            // Assert
             Assert.AreEqual(8, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Start_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexNotOfAny(s.ToCharArray(), 4);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Start_Count()
         {
-            //exec
+            // Action
             int index = s.IndexNotOfAny(notOfAny, 4, 9);
 
-            //test
+            // Assert
             Assert.AreEqual(8, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Start_Count_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexNotOfAny(notOfAny, 4, 3);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).IndexNotOfAny(notOfAny);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexNotOfAny(notOfAny, -5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Fail_CountNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexNotOfAny(notOfAny, 4, -2);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfAny_Fail_StartPlusCountTooLarge()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexNotOfAny(notOfAny, 17, 22);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region LastIndexNotOfAny
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny()
         {
-            //exec
+            // Action
             int index = s.LastIndexNotOfAny(notOfAny);
 
-            //test
+            // Assert
             Assert.AreEqual(17, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_NotFound()
         {
-            //exec
+            // Action
             int index = s.LastIndexNotOfAny(s.ToCharArray());
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Start()
         {
-            //exec
+            // Action
             int index = s.LastIndexNotOfAny(notOfAny, 15);
 
-            //test
+            // Assert
             Assert.AreEqual(11, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Start_NotFound()
         {
-            //exec
+            // Action
             int index = s.LastIndexNotOfAny(s.ToCharArray(), 4);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Start_Count()
         {
-            //exec
+            // Action
             int index = s.LastIndexNotOfAny(notOfAny, 15, 9);
 
-            //test
+            // Assert
             Assert.AreEqual(11, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Start_Count_NotFound()
         {
-            //exec
+            // Action
             int index = s.LastIndexNotOfAny(notOfAny, 4, 3);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).LastIndexNotOfAny(notOfAny);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.LastIndexNotOfAny(notOfAny, -5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Fail_CountNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.LastIndexNotOfAny(notOfAny, 4, -2);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfAny_Fail_StartPlusCountTooLarge()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexNotOfAny(notOfAny, 17, 22);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IndexOfWhiteSpace
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace()
         {
-            //exec
+            // Action
             int index = s.IndexOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(4, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_NotFound()
         {
-            //exec
+            // Action
             int index = "ThereIsNoWhiteSpace".IndexOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_StartIndex()
         {
-            //exec
+            // Action
             int index = s.IndexOfWhiteSpace(11);
 
-            //test
+            // Assert
             Assert.AreEqual(14, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_StartIndex_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexOfWhiteSpace(16);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_StartIndex_Count()
         {
-            //exec
+            // Action
             int index = s.IndexOfWhiteSpace(11, 5);
 
-            //test
+            // Assert
             Assert.AreEqual(14, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_StartIndex_Count_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexOfWhiteSpace(11, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).IndexOfWhiteSpace();
     
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexOfWhiteSpace(-5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_Fail_CountNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexOfWhiteSpace(0, -5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWhiteSpace_Fail_StartPlusCountTooLarge()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexOfWhiteSpace(16, 22);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region LastIndexOfWhiteSpace
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(14, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_NotFound()
         {
-            //exec
+            // Action
             int index = "ThereIsNoWhiteSpace".LastIndexOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_StartIndex()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWhiteSpace(11);
 
-            //test
+            // Assert
             Assert.AreEqual(9, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_StartIndex_NotFound()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWhiteSpace(3);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_StartIndex_Count()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWhiteSpace(11, 5);
 
-            //test
+            // Assert
             Assert.AreEqual(9, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_StartIndex_Count_NotFound()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWhiteSpace(11, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).LastIndexOfWhiteSpace();
     
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.LastIndexOfWhiteSpace(-5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_Fail_CountNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.LastIndexOfWhiteSpace(0, -5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWhiteSpace_Fail_StartPlusCountTooLarge()
         {
             try
             {
-                //exec
+                // Action
                 s.LastIndexOfWhiteSpace(16, 22);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IndexNotOfWhiteSpace
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.IndexNotOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(4, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_NotFound()
         {
-            //exec
+            // Action
             int index = "  \t  ".IndexNotOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_StartIndex()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.IndexNotOfWhiteSpace(19);
 
-            //test
+            // Assert
             Assert.AreEqual(22, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_StartIndex_NotFound()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.IndexNotOfWhiteSpace(30);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_StartIndex_Count()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.IndexNotOfWhiteSpace(19, 5);
 
-            //test
+            // Assert
             Assert.AreEqual(22, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_StartIndex_Count_NotFound()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.IndexNotOfWhiteSpace(19, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).IndexNotOfWhiteSpace();
     
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 lotsOfWhiteSpace.IndexNotOfWhiteSpace(-5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_Fail_CountNegative()
         {
             try
             {
-                //exec
+                // Action
                 lotsOfWhiteSpace.IndexNotOfWhiteSpace(0, -5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexNotOfWhiteSpace_Fail_StartPlusCountTooLarge()
         {
             try
             {
-                //exec
+                // Action
                 lotsOfWhiteSpace.IndexNotOfWhiteSpace(16, 22);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region LastIndexNotOfWhiteSpace
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.LastIndexNotOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(27, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_NotFound()
         {
-            //exec
+            // Action
             int index = "   \t   ".LastIndexNotOfWhiteSpace();
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_StartIndex()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(21);
 
-            //test
+            // Assert
             Assert.AreEqual(18, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_StartIndex_NotFound()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(3);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_StartIndex_Count()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(21, 5);
 
-            //test
+            // Assert
             Assert.AreEqual(18, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_StartIndex_Count_NotFound()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(21, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).LastIndexNotOfWhiteSpace();
     
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(-5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_Fail_CountNegative()
         {
             try
             {
-                //exec
+                // Action
                 lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(0, -5);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexNotOfWhiteSpace_Fail_StartPlusCountTooLarge()
         {
             try
             {
-                //exec
+                // Action
                 lotsOfWhiteSpace.LastIndexNotOfWhiteSpace(16, 22);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IndexOfWord
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord()
         {
-            //exec
+            // Action
             int index = s.IndexOfWord();
 
-            //test
+            // Assert
             Assert.AreEqual(1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_NotFound()
         {
-            //exec
+            // Action
             int index = "    ".IndexOfWord();
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_NotLeading()
         {
-            //exec
+            // Action
             int index = lotsOfWhiteSpace.IndexOfWord();
 
-            //test
+            // Assert
             Assert.AreEqual(4, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_Start()
         {
-            //exec
+            // Action
             int index = s.IndexOfWord(11);
 
-            //test
+            // Assert
             Assert.AreEqual(15, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_Start_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexOfWord(19);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_StartBeginning()
         {
-            //exec
+            // Action
             int index = s.IndexOfWord(11, true);
 
-            //test
+            // Assert
             Assert.AreEqual(15, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_StartBeginning_NotFound()
         {
-            //exec
+            // Action
             int index = s.IndexOfWord(19, true);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_StartEnd()
         {
-            //exec
+            // Action
             int index = s.IndexOfWord(11, false);
 
-            //test
+            // Assert
             Assert.AreEqual(13, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_StartEnd_NotFound()
         {
-            //exec
+            // Action
             int index = "     ".IndexOfWord(2, false);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).IndexOfWord();
 
                 Assert.Fail();
             }
-            catch(ArgumentNullException ex)
+            catch(ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IndexOfWord_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.IndexOfWord(-5);
 
                 Assert.Fail();
             }
-            catch(ArgumentOutOfRangeException ex)
+            catch(ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region LastIndexOfWord
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWord();
 
-            //test
+            // Assert
             Assert.AreEqual(15, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_NotFound()
         {
-            //exec
+            // Action
             int index = "    ".LastIndexOfWord();
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_Start()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWord(11);
 
-            //test
+            // Assert
             Assert.AreEqual(10, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_Start_NotFound()
         {
-            //exec
+            // Action
             int index = "    this".LastIndexOfWord(3);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_StartBeginning()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWord(12, true);
 
-            //test
+            // Assert
             Assert.AreEqual(10, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_StartBeginning_NotFound()
         {
-            //exec
+            // Action
             int index = "    this".LastIndexOfWord(3, true);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_StartEnd_NotEndOfWord()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWord(11, false);
 
-            //test
+            // Assert
             Assert.AreEqual(8, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_StartEnd_EndOfWord()
         {
-            //exec
+            // Action
             int index = s.LastIndexOfWord(13, false);
 
-            //test
+            // Assert
             Assert.AreEqual(13, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_StartEnd_NotFound()
         {
-            //exec
+            // Action
             int index = "     ".LastIndexOfWord(2, false);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, index);
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((string)null).LastIndexOfWord();
 
                 Assert.Fail();
             }
-            catch(ArgumentNullException ex)
+            catch(ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void LastIndexOfWord_Fail_StartNegative()
         {
             try
             {
-                //exec
+                // Action
                 s.LastIndexOfWord(-5);
 
                 Assert.Fail();
             }
-            catch(ArgumentOutOfRangeException ex)
+            catch(ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Plethora.Collections.Sets
 {
-    public sealed class ExclusiveSet<T> : BaseSetImpl<T>, ISetCore<T>
+    public sealed class ExclusiveSet<T> : BaseSetImpl<T>
     {
         #region Fields
 
@@ -85,8 +85,7 @@ namespace Plethora.Collections.Sets
             // is the case, nothing is to be gained by making the call commutative.
             // An infinite loop can result from calling base.Intersect if IsNativeUnion
             // is set.
-            var otherExclusive = other as ExclusiveSet<T>;
-            if (otherExclusive != null)
+            if (other is ExclusiveSet<T> otherExclusive)
             {
                 var newElements = this.excludedElements
                     .Concat(otherExclusive.excludedElements);
@@ -115,14 +114,13 @@ namespace Plethora.Collections.Sets
             if (otherExclusive != null)
             {
                 var newElements = otherExclusive.excludedElements
-                    .Where(element => !this.excludedElements.Contains(element));
+                    .Except(this.excludedElements);
 
                 return new InclusiveSet<T>(newElements);
             }
 
             //Short-cut method to subtract an inclusive set.
-            var otherInclusive = other as InclusiveSet<T>;
-            if (otherInclusive != null)
+            if (other is InclusiveSet<T> otherInclusive)
             {
                 var newElements = this.excludedElements
                     .Concat(otherInclusive.includedElements);

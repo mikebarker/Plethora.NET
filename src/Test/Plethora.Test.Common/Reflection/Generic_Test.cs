@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Reflection;
 
 namespace Plethora.Test.Reflection
 {
-    [TestFixture]
+    [TestClass]
     public class Generic_Test
     {
-        [Test]
+        [TestMethod]
         public void SingleGenericMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "SingleGenericMethod",
                 new Type[]
@@ -21,7 +21,7 @@ namespace Plethora.Test.Reflection
                         typeof(Generic.Arg1),
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -30,10 +30,10 @@ namespace Plethora.Test.Reflection
             Assert.AreEqual(method.GetGenericArguments()[0], method.GetParameters()[0].ParameterType);
         }
 
-        [Test]
+        [TestMethod]
         public void StructRestrictedGenericMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "StructRestrictedGenericMethod",
                 new Type[]
@@ -41,7 +41,7 @@ namespace Plethora.Test.Reflection
                         typeof(Generic.Arg1),
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -50,10 +50,10 @@ namespace Plethora.Test.Reflection
             Assert.AreEqual(method.GetGenericArguments()[0], method.GetParameters()[0].ParameterType);
         }
 
-        [Test]
+        [TestMethod]
         public void ClassRestrictedGenericMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "ClassRestrictedGenericMethod",
                 new Type[]
@@ -61,7 +61,7 @@ namespace Plethora.Test.Reflection
                         typeof(Generic.Arg1),
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -70,10 +70,10 @@ namespace Plethora.Test.Reflection
             Assert.AreEqual(method.GetGenericArguments()[0], method.GetParameters()[0].ParameterType);
         }
 
-        [Test]
+        [TestMethod]
         public void NonGenericMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "NonGenericMethod",
                 new Type[]
@@ -82,7 +82,7 @@ namespace Plethora.Test.Reflection
                         typeof(int)
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -90,10 +90,10 @@ namespace Plethora.Test.Reflection
             Assert.AreEqual(1, method.GetGenericArguments().Length);
         }
 
-        [Test]
+        [TestMethod]
         public void QuadrupleGenericMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "QuadrupleGenericMethod",
                 new Type[]
@@ -104,7 +104,7 @@ namespace Plethora.Test.Reflection
                         typeof(Generic.Arg4),
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -112,10 +112,10 @@ namespace Plethora.Test.Reflection
             Assert.AreEqual(4, method.GetGenericArguments().Length);
         }
 
-        [Test]
+        [TestMethod]
         public void NestedGenericMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "NestedGenericMethod",
                 new Type[]
@@ -124,7 +124,7 @@ namespace Plethora.Test.Reflection
                         typeof(Expression<Func<ICollection<Generic.Arg1>>>),
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -132,10 +132,10 @@ namespace Plethora.Test.Reflection
             Assert.AreEqual(1, method.GetGenericArguments().Length);
         }
 
-        [Test]
+        [TestMethod]
         public void OverloadedMethod()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "OverloadedMethod",
                 new Type[]
@@ -144,7 +144,7 @@ namespace Plethora.Test.Reflection
                         typeof(Func<Generic.Arg1>),
                     });
 
-            //test
+            // Assert
             Assert.IsNotNull(method);
             Assert.IsTrue(method.IsGenericMethod);
             Assert.IsTrue(method.IsGenericMethodDefinition);
@@ -153,10 +153,10 @@ namespace Plethora.Test.Reflection
             Assert.IsTrue(method.GetParameters()[1].ParameterType.Name.StartsWith("Func"));
         }
 
-        [Test]
+        [TestMethod]
         public void DoesNotExist()
         {
-            //exec
+            // Action
             MethodInfo method = typeof(SampleClass).GetGenericMethod(
                 "DoesNotExist",
                 new Type[]
@@ -164,44 +164,52 @@ namespace Plethora.Test.Reflection
                         typeof(Generic.Arg1),
                     });
 
-            //test
+            // Assert
             Assert.IsNull(method);
         }
 
 
         private class SampleClass
         {
-            public void SingleGenericMethod<T>(T t)
+            [TestMethod]
+        public void SingleGenericMethod<T>(T t)
             {
             }
 
-            public void StructRestrictedGenericMethod<T>(T t)
+            [TestMethod]
+        public void StructRestrictedGenericMethod<T>(T t)
                 where T : struct
             {
             }
 
-            public void ClassRestrictedGenericMethod<T>(T t)
+            [TestMethod]
+        public void ClassRestrictedGenericMethod<T>(T t)
                 where T : class
             {
             }
 
-            public void NonGenericMethod<T>(T t, int i)
+            [TestMethod]
+        public void NonGenericMethod<T>(T t, int i)
             {
             }
 
-            public void QuadrupleGenericMethod<T1, T2, T3, T4>(T1 t1, T2 t2, T3 t3, T4 t4)
+            [TestMethod]
+        public void QuadrupleGenericMethod<T1, T2, T3, T4>(T1 t1, T2 t2, T3 t3, T4 t4)
             {
             }
 
-            public void NestedGenericMethod<T>(IEnumerable<T> t, Expression<Func<ICollection<T>>> func)
+            [TestMethod]
+        public void NestedGenericMethod<T>(IEnumerable<T> t, Expression<Func<ICollection<T>>> func)
             {
             }
 
-            public void OverloadedMethod<T>(T t, Func<T> func)
+            [TestMethod]
+        public void OverloadedMethod<T>(T t, Func<T> func)
             {
             }
 
-            public void OverloadedMethod<T>(T t, Action<T> action)
+            [TestMethod]
+        public void OverloadedMethod<T>(T t, Action<T> action)
             {
             }
         }

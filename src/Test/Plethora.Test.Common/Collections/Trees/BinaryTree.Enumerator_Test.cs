@@ -1,17 +1,16 @@
 using System.Collections.Generic;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Collections.Trees;
 
 namespace Plethora.Test.Collections.Trees
 {
-    [TestFixture]
+    [TestClass]
     public class BinaryTreeEnumerator_Test
     {
         private IKeyLimitedEnumerator<string, KeyValuePair<string, int>> enumerator;
 
-        [SetUp]
-        public void SetUp()
+        public BinaryTreeEnumerator_Test()
         {
             BinaryTree<string, int> tree = new BinaryTree<string, int>
                        {
@@ -23,12 +22,12 @@ namespace Plethora.Test.Collections.Trees
             this.enumerator = tree.GetPairEnumerator();
         }
 
-        [Test]
+        [TestMethod]
         public void All()
         {
-            //Setup
+            // Arrange
 
-            //Execute and Test
+            // Action and Test
             int count = 0;
             while(this.enumerator.MoveNext())
             {
@@ -47,13 +46,13 @@ namespace Plethora.Test.Collections.Trees
             Assert.AreEqual(count, 3);
         }
 
-        [Test]
+        [TestMethod]
         public void LimitMin()
         {
-            //Setup
+            // Arrange
             this.enumerator.Min = "I"; // excludes "Harry"
 
-            //Execute and Test
+            // Action and Test
             int count = 0;
             while(this.enumerator.MoveNext())
             {
@@ -70,13 +69,13 @@ namespace Plethora.Test.Collections.Trees
             Assert.AreEqual(count, 2);
         }
 
-        [Test]
+        [TestMethod]
         public void LimitMax()
         {
-            //Setup
+            // Arrange
             this.enumerator.Max = "L"; // excludes "Mark"
 
-            //Execute and Test
+            // Action and Test
             int count = 0;
             while (this.enumerator.MoveNext())
             {
@@ -93,14 +92,14 @@ namespace Plethora.Test.Collections.Trees
             Assert.AreEqual(count, 2);
         }
 
-        [Test]
+        [TestMethod]
         public void LimitMinAndMax()
         {
-            //Setup
+            // Arrange
             this.enumerator.Min = "I"; // excludes "Harry"
             this.enumerator.Max = "L"; // excludes "Mark"
 
-            //Execute and Test
+            // Action and Test
             int count = 0;
             while (this.enumerator.MoveNext())
             {

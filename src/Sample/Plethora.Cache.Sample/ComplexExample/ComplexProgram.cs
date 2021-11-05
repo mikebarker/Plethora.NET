@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Plethora.Cache.Sample.ComplexExample
 {
     static class ComplexProgram
     {
-        public static void Run()
+        public static async Task RunAsync()
         {
             Console.Write("Cache hits (when the data requested is in the cache) return ");
             Console.Write("almost instantaneously; whilst cache misses take time for the ");
@@ -17,17 +18,17 @@ namespace Plethora.Cache.Sample.ComplexExample
 
             IEnumerable<Price> prices;
 
-            Console.Write("Getting prices for stock 54, from 2004-03-16 - 2005-09-10... ");
-            prices = cache.GetStockPrices(54, new DateTime(2004, 03, 16), new DateTime(2005, 09, 10));
+            Console.Write("Getting prices for stock MSFT, from 2004-03-16 - 2005-09-10... ");
+            prices = await cache.GetStockPricesAsync("MSFT", new DateTime(2004, 03, 16), new DateTime(2005, 09, 10)).ConfigureAwait(false);
             Console.WriteLine("done.");
 
-            Console.Write("Getting prices for stock 54, from 2004-05-01 - 2004-05-20... ");
-            prices = cache.GetStockPrices(54, new DateTime(2004, 05, 01), new DateTime(2004, 05, 20));
+            Console.Write("Getting prices for stock MSFT, from 2004-05-01 - 2004-05-20... ");
+            prices = await cache.GetStockPricesAsync("MSFT", new DateTime(2004, 05, 01), new DateTime(2004, 05, 20)).ConfigureAwait(false);
             Console.WriteLine("done.");
 
             foreach (Price price in prices)
             {
-                Console.WriteLine("{0} [{1}] = {2}", price.StockId, price.Date.ToString("yyyy-MM-dd"), price.Value);
+                Console.WriteLine($"{price.TickerSymbol} [{price.Date.ToString("yyyy-MM-dd")}] = {price.Value}");
             }
         }
     }

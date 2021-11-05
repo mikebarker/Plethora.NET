@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Test.Mvvm._UtilityClasses;
 
 namespace Plethora.Test.Mvvm.Model
 {
-    [TestFixture]
+    [TestClass]
     public class ModelBase_Tests
     {
-        [Test]
+        [TestMethod]
         public void NoChanges()
         {
             // setup
@@ -32,7 +32,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(Country.UnitedKingdom, person.CountryOfResidence);
         }
 
-        [Test]
+        [TestMethod]
         public void NoChangesSetOriginalValue()
         {
             // setup
@@ -56,7 +56,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(Country.UnitedKingdom, person.CountryOfResidence);  // [DefaultValueProvider(typeof(Country), "UnitedKingdom")]
         }
 
-        [Test]
+        [TestMethod]
         public void SetChangeValue()
         {
             // setup
@@ -80,7 +80,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual("Brown", person.FamilyName);
         }
 
-        [Test]
+        [TestMethod]
         public void SetUnchangedValue()
         {
             // setup
@@ -102,7 +102,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual("Smith", person.FamilyName);
         }
 
-        [Test]
+        [TestMethod]
         public void UndoChangeValue()
         {
             // setup
@@ -129,7 +129,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual("Smith", person.FamilyName);
         }
 
-        [Test]
+        [TestMethod]
         public void DependsOnChangeValue()
         {
             // setup
@@ -155,7 +155,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(new DateTime(1990, 07, 14), person.DateOfBirth);
         }
 
-        [Test]
+        [TestMethod]
         public void Rollback()
         {
             // setup
@@ -190,7 +190,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(new DateTime(2000, 01, 01), person.DateOfBirth);
         }
 
-        [Test]
+        [TestMethod]
         public void Commit()
         {
             // setup

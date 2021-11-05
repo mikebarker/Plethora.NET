@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 
 using Plethora.Linq;
-using Plethora.Threading;
-using Plethora.Timing;
 
 namespace Plethora.Cache
 {
@@ -20,8 +18,8 @@ namespace Plethora.Cache
             #region Fields
 
             private readonly TArgument argument;
-            private readonly ManualResetEvent completeWaitHandle;
-            private Exception exception;
+            private readonly TaskCompletionSource<object> taskCompletionSource;
+
             #endregion
             
             #region Constructors
@@ -31,7 +29,7 @@ namespace Plethora.Cache
                 if (argument == null)
                     throw new ArgumentNullException(nameof(argument));
 
-                this.completeWaitHandle = new ManualResetEvent(false);
+                this.taskCompletionSource = new TaskCompletionSource<object>();
                 this.argument = argument;
             }
             #endregion
@@ -45,172 +43,23 @@ namespace Plethora.Cache
             }
 
             [NotNull]
-            public WaitHandle CompleteWaitHandle
+            public Task Task
             {
-                get { return this.completeWaitHandle; }
+                get { return this.taskCompletionSource.Task; }
             }
 
-            public bool IsComplete
-            {
-                get { return this.completeWaitHandle.WaitOne(0); }
-            }
-
-            [CanBeNull]
-            public Exception Exception
-            {
-                get { return this.exception; }
-            }
             #endregion
 
             #region Methods
 
             internal void Success()
             {
-                this.completeWaitHandle.Set();
+                taskCompletionSource.SetResult(null);
             }
 
             internal void Fail([NotNull] Exception ex)
             {
-                this.exception = ex;
-                this.completeWaitHandle.Set();
-            }
-            #endregion
-        }
-
-        private class GetDataAsyncResult : IAsyncResult
-        {
-            #region Fields
-
-            private readonly object aggregateHandleLock = new object();
-            private AggregateWaitHandle aggregateHandle;
-            private readonly IEnumerable<Request> requests;
-            private readonly CacheBase<TData, TArgument> parent;
-            private readonly IEnumerable<TArgument> originatingArguments;
-            #endregion
-
-            #region Constructor
-
-            public GetDataAsyncResult(
-                CacheBase<TData, TArgument> parent,
-                IEnumerable<Request> requests,
-                IEnumerable<TArgument> originatingArguments)
-            {
-                this.parent = parent;
-                this.requests = requests;
-                this.originatingArguments = originatingArguments;
-            }
-            #endregion
-
-            #region Properties
-
-            public CacheBase<TData, TArgument> Parent
-            {
-                get { return this.parent; }
-            }
-
-            public IEnumerable<Request> Requests
-            {
-                get { return this.requests; }
-            }
-
-            public IEnumerable<TArgument> OriginatingArguments
-            {
-                get { return this.originatingArguments; }
-            }
-            #endregion
-
-            #region Implementation of IAsyncResult
-
-            /// <summary>
-            /// Gets a value that indicates whether the asynchronous operation has completed.
-            /// </summary>
-            /// <returns>
-            /// true if the operation is complete; otherwise, false.
-            /// </returns>
-            public bool IsCompleted
-            {
-                get { return this.requests.All(r => r.IsComplete); }
-            }
-
-            /// <summary>
-            /// Gets a <see cref="WaitHandle"/> that is used to wait for an asynchronous operation to complete.
-            /// </summary>
-            /// <returns>
-            /// A <see cref="WaitHandle"/> that is used to wait for an asynchronous operation to complete.
-            /// </returns>
-            public WaitHandle AsyncWaitHandle
-            {
-                get
-                {
-                    if (this.aggregateHandle == null)
-                    {
-                        lock (this.aggregateHandleLock)
-                        {
-                            if (this.aggregateHandle == null)
-                            {
-                                this.aggregateHandle = new AggregateWaitHandle(this.requests
-                                    .Select(r => r.CompleteWaitHandle)
-                                    .ToArray());
-                            }
-                        }
-                    }
-
-                    return this.aggregateHandle;
-                }
-            }
-
-            /// <summary>
-            /// Gets a user-defined object that qualifies or contains information about an asynchronous operation.
-            /// </summary>
-            /// <returns>
-            /// A user-defined object that qualifies or contains information about an asynchronous operation.
-            /// </returns>
-            public object AsyncState
-            {
-                get { return null; }
-            }
-
-            /// <summary>
-            /// Gets a value that indicates whether the asynchronous operation completed synchronously.
-            /// </summary>
-            /// <returns>
-            /// true if the asynchronous operation completed synchronously; otherwise, false.
-            /// </returns>
-            public bool CompletedSynchronously
-            {
-                get { return false; }
-            }
-
-            #endregion
-        }
-
-        private class CacheDataParameters
-        {
-            #region Fields
-
-            private readonly IEnumerable<Request> requests;
-            private readonly OperationTimeout timeout;
-            #endregion
-
-            #region Constructors
-
-            public CacheDataParameters(IEnumerable<Request> requests, OperationTimeout timeout)
-            {
-                this.requests = requests;
-                this.timeout = timeout;
-            }
-            #endregion
-
-            #region Properties
-
-            public IEnumerable<Request> Requests
-            {
-                get { return this.requests; }
-            }
-
-            public OperationTimeout Timeout
-            {
-                get { return this.timeout; }
+                taskCompletionSource.SetException(ex);
             }
             #endregion
         }
@@ -232,37 +81,14 @@ namespace Plethora.Cache
         /// retrieved from the source and cached.
         /// </summary>
         /// <param name="arguments">The <typeparamref name="TArgument"/>s representing the data required.</param>
-        /// <param name="millisecondsTimeout">
-        /// The time in milliseconds to wait for the operation to complete, otherwise a
-        /// <see cref="TimeoutException"/> is thrown. Specify <see cref="Timeout.Infinite"/> (-1) for
-        /// no timeout.
+        /// <param name="cancellationToken">
+        /// The token to monitor for cancellation requests.
         /// </param>
         /// <returns>
         /// The data requested, as described by <paramref name="arguments"/>.
         /// </returns>
-        protected IEnumerable<TData> GetData(IEnumerable<TArgument> arguments, int millisecondsTimeout)
+        protected async Task<IEnumerable<TData>> GetDataAsync(IEnumerable<TArgument> arguments, CancellationToken cancellationToken = default)
         {
-            var asyncResult = this.BeginGetData(arguments, millisecondsTimeout);
-            return this.EndGetData(asyncResult);
-        }
-
-        /// <summary>
-        /// Begin the retrieval of data from the cache or if data is not available within the cache it is
-        /// retrieved from the source and cached.
-        /// </summary>
-        /// <param name="arguments">The <typeparamref name="TArgument"/>s representing the data required.</param>
-        /// <param name="millisecondsTimeout">
-        /// The time in milliseconds to wait for the operation to complete, otherwise a
-        /// <see cref="TimeoutException"/> is thrown. Specify <see cref="Timeout.Infinite"/> (-1) for
-        /// no timeout.
-        /// </param>
-        /// <returns>
-        /// An <see cref="IAsyncResult"/> which can be passed to <see cref="EndGetData"/>.
-        /// </returns>
-        protected IAsyncResult BeginGetData(IEnumerable<TArgument> arguments, int millisecondsTimeout)
-        {
-            OperationTimeout timeout = new OperationTimeout(millisecondsTimeout);
-
             List<Request> submitted;
             List<Request> required;
 
@@ -292,7 +118,7 @@ namespace Plethora.Cache
             //Load the data in another thread.
             if (required.Count != 0)
             {
-                ThreadPool.QueueUserWorkItem(this.CacheDataForRequests, new CacheDataParameters(required, timeout));
+                _ = this.CacheDataForRequestsAsync(required, cancellationToken);
             }
 
             IEnumerable<Request> requests;
@@ -306,70 +132,10 @@ namespace Plethora.Cache
                 //This should not occur
                 throw new InvalidOperationException("Neither submitted nor required returned any results.");
 
-            var asyncResult = new GetDataAsyncResult(this, requests, arguments);
-            return asyncResult;
-        }
-
-        /// <summary>
-        /// Ends the retrieval of data from the cache or if data is not available within the cache it is
-        /// retrieved from the source and cached.
-        /// </summary>
-        /// <param name="asyncResult">
-        /// A <see cref="IAsyncResult"/> as returned from <see cref="BeginGetData"/>.
-        /// </param>
-        /// <returns>
-        /// The data requested, as described by 'arguments' in <see cref="BeginGetData"/>.
-        /// </returns>
-        protected IEnumerable<TData> EndGetData(IAsyncResult asyncResult)
-        {
-            if (asyncResult == null)
-                throw new ArgumentNullException(nameof(asyncResult));
-
-            var dataAsyncResult = asyncResult as GetDataAsyncResult;
-            if (dataAsyncResult == null)
-                throw new ArgumentException( /* TODO: */);
-
-            if (!ReferenceEquals(dataAsyncResult.Parent, this))
-                throw new ArgumentException( /* TODO: */);
-
-
-            //This loop essentially acts as WaitHandle.WaitAll(..) but allows for early
-            // exit in the case where a request fails before the rest have completed.
-            do
+            foreach (var request in requests)
             {
-                //Get the first 64 incomplete wait handles.
-                // If there are more than 64 there is little we can do to use WaitAny across all
-                // without a complex thread structure. Generally the requests should not exceed
-                // 64.
-                // In the case of more than 64 requests this method may not return as early as
-                // possible, but it does allow for some degree of early exit.
-                WaitHandle[] first64IncompleteWaitHandles = dataAsyncResult.Requests
-                    .Where(r => !r.IsComplete)
-                    .Select(r => r.CompleteWaitHandle)
-                    .Take(AggregateWaitHandle.MaxWaitHandles)
-                    .ToArray();
-
-                //Test if none are incomplete
-                if (first64IncompleteWaitHandles.Length == 0)
-                    break;
-
-                WaitHandle.WaitAny(first64IncompleteWaitHandles);
-
-                //Test if any requests have failed.
-                Exception ex = dataAsyncResult.Requests
-                    .Where(r => r.IsComplete && r.Exception != null)
-                    .Select(r => r.Exception)
-                    .FirstOrDefault();
-
-                if (ex != null)
-                {
-                    //TODO: A more intellegent exception
-                    throw new Exception("", ex);
-                }
-            } while (true);
-
-            //Ensure all requests are complete (should have been completed in loop above)
-            dataAsyncResult.AsyncWaitHandle.WaitOne();
+                await request.Task;
+            }
 
             //The data should now have been cached filter the cache to find the requested data.
             IEnumerable<TData> requiredData;
@@ -378,7 +144,7 @@ namespace Plethora.Cache
             {
                 requiredData = FilterDataSetByArgument(
                     this.data,
-                    dataAsyncResult.OriginatingArguments);
+                    arguments);
             }
             finally
             {
@@ -389,7 +155,7 @@ namespace Plethora.Cache
             return requiredData.CacheResult();
         }
 
-        protected void DropData(IEnumerable<TArgument> arguments)
+        protected async Task DropDataAsync(IEnumerable<TArgument> arguments)
         {
             this.requestsLock.EnterWriteLock();
             try
@@ -421,7 +187,15 @@ namespace Plethora.Cache
                             // in the cache without a corresponding request.
                             // Therefore WaitOne() can not be called inside the
                             // "if (remainingArgs != null)" block
-                            originalRequest.CompleteWaitHandle.WaitOne();
+                            Exception originalRequestException = null;
+                            try
+                            {
+                                await originalRequest.Task;
+                            }
+                            catch (Exception ex)
+                            {
+                                originalRequestException = ex;
+                            }
 
                             //Create remainder requests from the remainder args, duplicating the state
                             // of the orginal argument
@@ -432,11 +206,10 @@ namespace Plethora.Cache
                                     Request remainingRequest = new Request(remainingArg);
 
                                     //Test if the original request had been successful, or failed
-                                    Exception ex = originalRequest.Exception;
-                                    if (ex == null)
+                                    if (originalRequestException == null)
                                         remainingRequest.Success();
                                     else
-                                        remainingRequest.Fail(ex);
+                                        remainingRequest.Fail(originalRequestException);
 
                                     nextRemainingRequests.Add(remainingRequest);
                                 }
@@ -508,8 +281,8 @@ namespace Plethora.Cache
         /// Fetches the required data from the data source.
         /// </summary>
         /// <param name="arguments">The <typeparamref name="TArgument"/>s describing the data required.</param>
-        /// <param name="millisecondsTimeout">
-        /// The operation timeout in milliseconds. <see cref="Timeout.Infinite"/> (-1) for no timeout.
+        /// <param name="cancellationToken">
+        /// The token to monitor for cancellation requests.
         /// </param>
         /// <returns>
         /// An <see cref="IEnumerable{TData}"/> containing the data required from the source, as described
@@ -526,7 +299,7 @@ namespace Plethora.Cache
         ///   be queried once only. i.e. A forward-only cursor maybe used to retrieve data.
         ///  </para>
         /// </remarks>
-        protected abstract IEnumerable<TData> GetDataFromSource(IEnumerable<TArgument> arguments, int millisecondsTimeout);
+        protected abstract Task<IEnumerable<TData>> GetDataFromSourceAsync(IEnumerable<TArgument> arguments, CancellationToken cancellationToken);
 
         /// <summary>
         /// Tests whether an exception indicates that a subsiquent matching query may succeed.
@@ -551,37 +324,25 @@ namespace Plethora.Cache
 
         #region Private Methods
 
-        private void CacheDataForRequests(object obj)
+        private async Task CacheDataForRequestsAsync(IEnumerable<Request> requests, CancellationToken cancellationToken)
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
-
-            var parameters = obj as CacheDataParameters;
-            if (parameters == null)
-                throw new ArgumentException(
-                    ResourceProvider.ArgMustBeOfType(nameof(obj), typeof(CacheDataParameters)), nameof(obj));
-
-            this.CacheDataForRequests(parameters.Requests, parameters.Timeout);
-        }
-
-        private void CacheDataForRequests(IEnumerable<Request> requests, OperationTimeout timeout)
-        {
-            //Load the data for the 'required' requests.
-            List<TData> loadedData;
+            // Load the data for the 'required' requests.
+            IReadOnlyCollection<TData> loadedData;
             try
             {
-                loadedData = this.GetDataForRequests(requests, timeout).ToList();
+                var data = await this.GetDataForRequestsAsync(requests, cancellationToken).ConfigureAwait(false);
+                loadedData = data.ToReadOnlyCollectionIfRequired();
 
-                //Final test on the timeout. Once this try block is exited, all
+                // Final test on the timeout. Once this try block is exited, all
                 // data should committed, and the requests marked successful.
-                timeout.ThrowIfElapsed();
+                cancellationToken.ThrowIfCancellationRequested();
             }
             catch (Exception ex)
             {
-                //Mark all requests as failed.
+                // Mark all requests as failed.
                 requests.ForEach(r => r.Fail(ex));
 
-                //If the exception is recoverable, then remove the requests from
+                // If the exception is recoverable, then remove the requests from
                 // the submitted requests to allow future calls to attempt to
                 // reload the data.
                 if (this.IsExceptionRecoverable(ex))
@@ -603,7 +364,7 @@ namespace Plethora.Cache
                 throw;
             }
 
-            //Add the loaded data to the cache
+            // Add the loaded data to the cache
             this.dataLock.EnterWriteLock();
             try
             {
@@ -617,21 +378,25 @@ namespace Plethora.Cache
                 this.dataLock.ExitWriteLock();
             }
 
-            //Mark the requests as successful
+            // Mark the requests as successful
             foreach (var request in requests)
             {
                 request.Success();
             }
         }
 
-        private IEnumerable<TData> GetDataForRequests(
+
+
+        private async Task<IEnumerable<TData>> GetDataForRequestsAsync(
             IEnumerable<Request> requests,
-            OperationTimeout timeout)
+            CancellationToken cancellationToken)
         {
-            IEnumerable<TData> returnedData = this.GetDataFromSource(
-                requests.Select(request => request.Argument),
-                timeout.RemainingThrowIfElapsed);
-            timeout.ThrowIfElapsed();
+            IEnumerable<TData> returnedData = await this.GetDataFromSourceAsync(
+                    requests.Select(request => request.Argument),
+                    cancellationToken)
+                .ConfigureAwait(false);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             //Ensure that each element of the data is retrieved once only.
             returnedData = returnedData.CacheResult();
@@ -641,7 +406,8 @@ namespace Plethora.Cache
             IEnumerable<TData> dataforRequests = FilterDataSetByArgument(
                 returnedData,
                 requests.Select(request => request.Argument));
-            timeout.ThrowIfElapsed();
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             return dataforRequests;
         }

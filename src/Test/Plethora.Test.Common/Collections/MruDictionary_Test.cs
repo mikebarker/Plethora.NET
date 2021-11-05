@@ -1,61 +1,61 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class MruDictionary_Test
     {
-        [Test]
+        [TestMethod]
         public void AddUptoMaxEntries()
         {
-            //setup
+            // Arrange
             Random random = new Random(1778);  // constant makes tests repeatable, but has no significance.
             var mruDictionary = new MruDictionary<string, string>(maxEntries: 100);
 
             Populate(mruDictionary, random, 99);
 
-            //exec
+            // Action
             string str = GeneratRandomString(random, 8);
             mruDictionary.Add(str, str);
 
-            //test
+            // Assert
             Assert.AreEqual(100, mruDictionary.Count);
             Assert.IsTrue(mruDictionary.ContainsKey(str));
         }
 
-        [Test]
+        [TestMethod]
         public void AddOverMaxEntries()
         {
-            //setup
+            // Arrange
             Random random = new Random(1778);  // constant makes tests repeatable, but has no significance.
             var mruDictionary = new MruDictionary<string, string>(maxEntries: 100, watermark: 70);
 
             Populate(mruDictionary, random, 100);
 
-            //exec
+            // Action
             string str = GeneratRandomString(random, 8);
             mruDictionary.Add(str, str);
 
-            //test
+            // Assert
             Assert.AreEqual(70, mruDictionary.Count);
             Assert.IsTrue(mruDictionary.ContainsKey(str));
         }
 
-        [Test]
+        [TestMethod]
         public void DropLeastUsed()
         {
-            //setup
+            // Arrange
             //-----
             Random random = new Random(1778);  // constant makes tests repeatable, but has no significance.
             var mruDictionary = new MruDictionary<string, string>(maxEntries: 100, watermark: 70);
 
             Populate(mruDictionary, random, 100);
 
-            //exec
+            // Action
             //----
             ICollection<string> keys = mruDictionary.Keys;  // Keys collection doesn not impact access count
 
@@ -72,7 +72,7 @@ namespace Plethora.Test.Collections
             string str = GeneratRandomString(random, 8);
             mruDictionary.Add(str, str);
 
-            //test
+            // Assert
             //----
             //Ensure the single item not access was one of the ones removed.
             Assert.IsFalse(mruDictionary.ContainsKey(unaccessedKey));

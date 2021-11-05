@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Calendar;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Calendar
 {
-    [TestFixture]
+    [TestClass]
     public class DailyCalendarProperties_Test
     {
-        [Test]
+        [TestMethod]
         public void Generate_Each_Day()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.Day);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 01), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 01, 02), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[2]);
@@ -35,17 +35,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_EverySecond_Day()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(2, DailyType.Day);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 01), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 01, 05), calendarArray[2]);
@@ -58,17 +58,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 01, 19), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Each_WeekDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.WeekDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 01, 04), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 01, 05), calendarArray[2]);
@@ -81,17 +81,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 01, 14), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_EverySecond_WeekDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(2, DailyType.WeekDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 01, 05), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 01, 07), calendarArray[2]);
@@ -104,17 +104,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 01, 27), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Each_WeekendDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.WeekendDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 01), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 01, 02), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 01, 08), calendarArray[2]);
@@ -127,17 +127,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 01, 30), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_EverySecond_WeekendDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(2, DailyType.WeekendDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 01), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 01, 08), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 01, 15), calendarArray[2]);
@@ -150,17 +150,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 03, 04), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Each_BusinessDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.BusinessDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 04, 17), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 17), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 04, 18), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 04, 19), calendarArray[2]);
@@ -176,17 +176,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 05, 03), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_EverySecond_BusinessDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(2, DailyType.BusinessDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 04, 17), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 17), calendarArray[0]);
             Assert.AreEqual(new DateTime(2000, 04, 19), calendarArray[1]);
             // 2000-04-21  Good Friday
@@ -202,17 +202,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 05, 16), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Each_NonBusinessDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.NonBusinessDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 04, 17), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 21), calendarArray[0]); // Good Friday
             Assert.AreEqual(new DateTime(2000, 04, 22), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 04, 23), calendarArray[2]);
@@ -225,17 +225,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2000, 05, 13), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_EverySecond_NonBusinessDay()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new DailyCalendarProperties(2, DailyType.NonBusinessDay);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 04, 17), Dates.Weekends, Dates.EnglishHolidays);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 04, 21), calendarArray[0]); // Good Friday
             Assert.AreEqual(new DateTime(2000, 04, 23), calendarArray[1]);
             Assert.AreEqual(new DateTime(2000, 04, 29), calendarArray[2]);

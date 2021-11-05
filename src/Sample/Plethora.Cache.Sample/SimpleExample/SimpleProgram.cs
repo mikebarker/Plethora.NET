@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace Plethora.Cache.Sample.SimpleExample
 {
     static class SimpleProgram
     {
-        public static void Run()
+        public static async Task RunAsync()
         {
             Console.WriteLine("Cache hits (when the data requested is in the cache) return ");
             Console.WriteLine("almost instantaneously; whilst cache misses take time for the ");
@@ -26,14 +27,14 @@ namespace Plethora.Cache.Sample.SimpleExample
                 int numeric;
                 if (int.TryParse(x.KeyChar.ToString(), out numeric))
                 {
-                    Console.Write("Requesting Foo Id={0}... ", numeric);
-                    Foo foo = simpleCache.GetFoo(numeric);
+                    Console.Write("Requesting Person Id={0}... ", numeric);
+                    Person person = await simpleCache.GetPersonAsync(numeric).ConfigureAwait(false);
                     Console.Write("done. ");
 
-                    if (foo == null)
+                    if (person == null)
                         Console.WriteLine("- null -");
                     else
-                        Console.WriteLine("Foo{{Id={0}; Value={1}}}", foo.Id, foo.Value);
+                        Console.WriteLine($"Person[Id={person.Id}; Name={person.Name}]");
                 }
                 else if (x.Key == ConsoleKey.C)
                 {

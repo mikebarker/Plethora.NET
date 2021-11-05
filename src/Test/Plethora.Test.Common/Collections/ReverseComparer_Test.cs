@@ -1,51 +1,51 @@
 ﻿using System.Collections.Generic;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class ReverseComparer_Test
     {
-        [Test]
+        [TestMethod]
         public void Equal()
         {
-            //setup
+            // Arrange
             IComparer<int> comparer = Comparer<int>.Default;
             IComparer<int> reverseComparer = comparer.Reverse();
 
-            //exec
+            // Action
             var reverseResult = reverseComparer.Compare(1, 1);
 
-            //test
+            // Assert
             Assert.IsTrue(reverseResult == 0);
         }
 
-        [Test]
+        [TestMethod]
         public void GreaterThan()
         {
-            //setup
+            // Arrange
             IComparer<int> comparer = Comparer<int>.Default;
             IComparer<int> reverseComparer = comparer.Reverse();
 
-            //exec
+            // Action
             var reverseResult = reverseComparer.Compare(1, 2);
 
-            //test
+            // Assert
             Assert.IsTrue(reverseResult > 0);
         }
 
-        [Test]
+        [TestMethod]
         public void LessThan()
         {
-            //setup
+            // Arrange
             IComparer<int> comparer = Comparer<int>.Default;
             IComparer<int> reverseComparer = comparer.Reverse();
 
-            //exec
+            // Action
             var reverseResult = reverseComparer.Compare(2, 1);
 
-            //test
+            // Assert
             Assert.IsTrue(reverseResult < 0);
         }
     }

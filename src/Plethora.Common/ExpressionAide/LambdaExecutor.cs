@@ -157,7 +157,7 @@ namespace Plethora.ExpressionAide
                     break;
             }
 
-            throw new ArgumentException(string.Format("Step {0} not recognised for Expression type {1}", step.Direction, expr.GetType().Name));
+            throw new ArgumentException($"Step {step.Direction} not recognised for Expression type {expr.GetType().Name}");
         }
 
         #region InvokeMethod Members

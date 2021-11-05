@@ -1,5 +1,6 @@
 ﻿using System;
-
+using System.Threading.Tasks;
+using Plethora.Cache.Sample.BuilderExample;
 using Plethora.Cache.Sample.ComplexExample;
 using Plethora.Cache.Sample.SimpleExample;
 
@@ -11,11 +12,12 @@ namespace Plethora.Cache.Sample
         /// The main entry point for the application.
         /// </summary>
         [STAThread]
-        static void Main()
+        static async Task Main()
         {
             Console.WriteLine("Select which example to run:");
             Console.WriteLine("\t1. Simple demo");
-            Console.WriteLine("\t2. Comnplex demo");
+            Console.WriteLine("\t2. Complex demo");
+            Console.WriteLine("\t3. CacheBuilder demo");
 
             int result;
             bool isValid = false;
@@ -27,7 +29,8 @@ namespace Plethora.Cache.Sample
                 {
                     isValid =
                         (result == 1) ||
-                        (result == 2);
+                        (result == 2) ||
+                        (result == 3);
                 }
             } while (!isValid);
 
@@ -35,10 +38,13 @@ namespace Plethora.Cache.Sample
             switch (result)
             {
                 case 1:
-                    SimpleProgram.Run();
+                    await SimpleProgram.RunAsync().ConfigureAwait(false);
                     break;
                 case 2:
-                    ComplexProgram.Run();
+                    await ComplexProgram.RunAsync().ConfigureAwait(false);
+                    break;
+                case 3:
+                    await BuilderProgram.RunAsync().ConfigureAwait(false);
                     break;
             }
 

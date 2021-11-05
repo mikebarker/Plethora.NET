@@ -36,7 +36,9 @@ namespace Plethora.Context
 
         private readonly ReaderWriterLockSlim rwLock = new ReaderWriterLockSlim();
         private readonly ICollection<IContextProvider> activeProviders = new HashSet<IContextProvider>();
-        private readonly Dictionary<string, ICollection<IContextAugmentor>> augmentors = new Dictionary<string, ICollection<IContextAugmentor>>(0);
+        private readonly Dictionary<string, ICollection<IContextAugmenter>> augmenters = new Dictionary<string, ICollection<IContextAugmenter>>(0);
+
+        private IEnumerable<ContextInfo> cachedContexts = null;
 
         #endregion
 
@@ -67,6 +69,8 @@ namespace Plethora.Context
         /// </summary>
         protected virtual void OnContextChanged(object sender, EventArgs e)
         {
+            this.cachedContexts = null;
+
             foreach (var handler in this.contextChanged.GetInvocationList())
             {
                 if (handler != null)
@@ -120,30 +124,29 @@ namespace Plethora.Context
 
 
         /// <summary>
-        /// Registers an augmentor with this <see cref="ContextManager"/>.
+        /// Registers an augmenter with this <see cref="ContextManager"/>.
         /// </summary>
-        /// <param name="augmentor">The augmentor to be registered.</param>
+        /// <param name="augmenter">The augmenter to be registered.</param>
         /// <remarks>
-        /// The augmentor is used to provide addition contexts, based on a current
+        /// The augmenter is used to provide addition contexts, based on a current
         /// in-scope context.
         /// </remarks>
-        public void RegisterAugmentor([NotNull] IContextAugmentor augmentor)
+        public void RegisterAugmenter([NotNull] IContextAugmenter augmenter)
         {
             //Validation
-            if (augmentor == null)
-                throw new ArgumentNullException(nameof(augmentor));
+            if (augmenter == null)
+                throw new ArgumentNullException(nameof(augmenter));
 
             this.rwLock.EnterWriteLock();
             try
             {
-                ICollection<IContextAugmentor> list;
-                if (!this.augmentors.TryGetValue(augmentor.ContextName, out list))
+                if (!this.augmenters.TryGetValue(augmenter.ContextName, out var list))
                 {
-                    list = new List<IContextAugmentor>();
-                    this.augmentors.Add(augmentor.ContextName, list);
+                    list = new List<IContextAugmenter>();
+                    this.augmenters.Add(augmenter.ContextName, list);
                 }
 
-                list.Add(augmentor);
+                list.Add(augmenter);
             }
             finally
             {
@@ -152,27 +155,32 @@ namespace Plethora.Context
         }
 
         /// <summary>
-        /// Deregisters an augmentor.
+        /// Deregisters an augmenter.
         /// </summary>
-        public void DeregisterAugmentor([NotNull] IContextAugmentor augmentor)
+        public void DeregisterAugmenter([NotNull] IContextAugmenter augmenter)
         {
             //Validation
-            if (augmentor == null)
-                throw new ArgumentNullException(nameof(augmentor));
+            if (augmenter == null)
+                throw new ArgumentNullException(nameof(augmenter));
 
             this.rwLock.EnterWriteLock();
             try
             {
-                ICollection<IContextAugmentor> list;
-                if (this.augmentors.TryGetValue(augmentor.ContextName, out list))
-                    list.Remove(augmentor);
+                if (this.augmenters.TryGetValue(augmenter.ContextName, out var list))
+                {
+                    list.Remove(augmenter);
+
+                    if (list.Count == 0)
+                    {
+                        this.augmenters.Remove(augmenter.ContextName);
+                    }
+                }
             }
             finally
             {
                 this.rwLock.ExitWriteLock();
             }
         }
-
 
         /// <summary>
         /// Gets the list of contexts which are currently in-scope.
@@ -183,12 +191,16 @@ namespace Plethora.Context
         [NotNull]
         public IEnumerable<ContextInfo> GetContexts()
         {
-            // TODO: This could be more efficient by keeping a cache of the contexts, and only updating those per provider when the context changes
+            // Keep a cache of the contexts, and only updating those when the context changes.
+            var localCachedContexts = this.cachedContexts;
+            if (localCachedContexts != null)
+                return localCachedContexts;
+
 
             this.rwLock.EnterReadLock();
             try
             {
-                var contextSet = new Dictionary<ContextInfo, ContextInfo>(new ContextInfoComparer());
+                var contextSet = new Dictionary<ContextInfo, ContextInfo>(new ContextInfoIgnoreRankComparer());
 
                 var localContextsEnumerable = this.activeProviders
                     .Where(provider => provider != null)
@@ -199,7 +211,7 @@ namespace Plethora.Context
 
                 IEnumerable<ContextInfo> contextsEnumerable = localContextsEnumerable;
 
-                //Use the augmentors to augment the in-scope contexts
+                //Use the augmenters to augment the in-scope contexts
                 bool newContexts = true;
                 while (newContexts)
                 {
@@ -245,6 +257,7 @@ namespace Plethora.Context
                     contextsEnumerable = nextContextsEnumerable;
                 }
 
+                this.cachedContexts = contextSet.Keys;
                 return contextSet.Keys;
             }
             finally
@@ -265,12 +278,11 @@ namespace Plethora.Context
         {
             IEnumerable<ContextInfo> augmentedContexts = null;
 
-            ICollection<IContextAugmentor> augmentorList;
-            if (this.augmentors.TryGetValue(context.Name, out augmentorList))
+            if (this.augmenters.TryGetValue(context.Name, out var augmenterList))
             {
-                foreach (var augmentor in augmentorList)
+                foreach (var augmenter in augmenterList)
                 {
-                    IEnumerable<ContextInfo> additionalContexts = augmentor.Augment(context);
+                    IEnumerable<ContextInfo> additionalContexts = augmenter.Augment(context);
                     if (additionalContexts != null)
                     {
                         if (augmentedContexts == null)

@@ -13,6 +13,13 @@ ignorred in the case of false.
 
 COMPLEX EXAMPLE
 ===============
-The complex example show a cache in which the key-space is covered by two properties, ID and date.
+The complex example shows a cache in which the key-space is covered by two properties, ID and date.
 
 For more information on the complexity of the example, see the PriceArg.IsOverlapped method definition.
+
+
+BUILDER EXAMPLE
+===============
+The builder example shows the same logic as the complex example (in which the key-space is covered by two properties, ID and date)
+but utilises the CacheBuilder class to hide the complexities of implementation.
+

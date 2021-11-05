@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.20.0</Version>
+    <Authors>The Plethora .NET Project</Authors>
+    <Copyright>Copyright © The Plethora Project. All rights reserved.</Copyright>
+    <Product>The Plethora .NET Project</Product>
+    <PackageLicenseFile>license.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/mikebarker/Plethora.NET</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plethora.Workflow\Plethora.Workflow.csproj" />
+  </ItemGroup>
+
+</Project>

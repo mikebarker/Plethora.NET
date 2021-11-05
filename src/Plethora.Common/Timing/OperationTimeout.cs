@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 
 namespace Plethora.Timing
@@ -8,77 +9,65 @@ namespace Plethora.Timing
     /// </summary>
     public class OperationTimeout
     {
-        private const long INFINITE_TICKS = -1;
-        private readonly long endTicks;
+        private readonly Stopwatch stopwatch;
+        private readonly TimeSpan timeout;
 
-        public OperationTimeout(int millisecondsTimeout)
+        public OperationTimeout(TimeSpan timeout)
         {
-            if ((millisecondsTimeout < 0) && (millisecondsTimeout != Timeout.Infinite))
-                throw new ArgumentOutOfRangeException(nameof(millisecondsTimeout), millisecondsTimeout,
-                    ResourceProvider.ArgTimeout(nameof(millisecondsTimeout)));
+            if ((timeout < TimeSpan.Zero) && (timeout != Timeout.InfiniteTimeSpan))
+                throw new ArgumentOutOfRangeException(nameof(timeout), timeout,
+                    ResourceProvider.ArgTimeout(nameof(timeout)));
 
-            if (millisecondsTimeout == Timeout.Infinite)
-            {
-                this.endTicks = INFINITE_TICKS;
-            }
-            else
-            {
-                long timeoutTicks = TimeSpan.TicksPerMillisecond * millisecondsTimeout;
-                this.endTicks = DateTime.Now.Ticks + timeoutTicks;
-            }
+            this.stopwatch = Stopwatch.StartNew();
+            this.timeout = timeout;
         }
 
         /// <summary>
-        /// Gets a flag indicating whether 'millisecondsTimeout' milliseconds have elapsed since
-        /// the class was constructed.
+        /// Gets a flag indicating whether 'timeout' has elapsed since the class was constructed.
         /// </summary>
         public bool HasElapsed
         {
             get
             {
-                if (this.endTicks == INFINITE_TICKS)
-                    return false;
-
-                return (this.endTicks <= DateTime.Now.Ticks);
+                return (this.Remaining == TimeSpan.Zero);
             }
         }
 
         /// <summary>
-        /// Gets the remaining time in milliseconds.
+        /// Gets the remaining time.
         /// </summary>
         /// <value>
-        /// Returns <see cref="Timeout.Infinite"/> if the class was constructed with
-        /// <see cref="Timeout.Infinite"/>
-        /// specified for 'millisecondsTimeout'.
+        /// Returns <see cref="Timeout.InfiniteTimeSpan"/> if the class was constructed with
+        /// <see cref="Timeout.InfiniteTimeSpan"/> specified for 'timeout'.
         /// - OR -
-        /// Returns 'millisecondsTimeout' minus the number of elapsed milliseconds since the class was
-        /// constructed. If more than 'millisecondsTimeout' milliseconds has elapsed then zero is returned.
+        /// Returns 'timeout' minus the elapsed time since the class was constructed.
+        /// If more than 'timeout' has elapsed then TimeSpan.Zero is returned.
         /// </value>
-        public int Remaining
+        public TimeSpan Remaining
         {
             get
             {
-                if (this.endTicks == INFINITE_TICKS)
-                    return Timeout.Infinite;
+                if (this.timeout == Timeout.InfiniteTimeSpan)
+                    return Timeout.InfiniteTimeSpan;
 
-                long remainingTicks = this.endTicks - DateTime.Now.Ticks;
-                if (remainingTicks <= 0)
-                    return 0;
+                TimeSpan remaining = this.timeout - this.stopwatch.Elapsed;
+                if (remaining < TimeSpan.Zero)
+                    return TimeSpan.Zero;
 
-                return (int)((remainingTicks) / TimeSpan.TicksPerMillisecond);
+                return remaining;
             }
         }
 
         /// <summary>
-        /// Gets the remaining time in milliseconds, and throws a <see cref="TimeoutException"/>
+        /// Gets the remaining time, and throws a <see cref="TimeoutException"/>
         /// exception if the timeout has elapsed.
         /// </summary>
-        public int RemainingThrowIfElapsed
+        public TimeSpan RemainingThrowIfElapsed
         {
             get
             {
-                int remaining = this.Remaining;
-                if (remaining == 0)
+                TimeSpan remaining = this.Remaining;
+                if (remaining == TimeSpan.Zero)
                     throw new TimeoutException();
 
                 return remaining;
@@ -90,7 +79,7 @@ namespace Plethora.Timing
         /// </summary>
         public void ThrowIfElapsed()
         {
-            if (this.Remaining == 0)
+            if (this.HasElapsed)
                 throw new TimeoutException();
         }
     }

@@ -1,8 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class HashCodeHelper_Test
     {
         private readonly object item1 = new object();
@@ -14,190 +14,185 @@ namespace Plethora.Test
         private readonly long item7 = 7L;
         private readonly int? item8 = null;
 
-        [SetUp]
-        public void SetUp()
-        {
-        }
-
-        [Test]
+        [TestMethod]
         public void GetHashCode_Null()
         {
             HashCodeHelper.GetHashCode<object>(null);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_1_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1);
             int hash2 = HashCodeHelper.GetHashCode(item1);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_1_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1);
             int hash2 = HashCodeHelper.GetHashCode(new object());
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_2_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_2_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_3_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2, item3);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_3_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2, item3);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_4_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2, item3, item4);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_4_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2, item3, item4);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_5_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_5_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2, item3, item4, item5);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_6_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_6_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2, item3, item4, item5, item6);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_7_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6, item7);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6, item7);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_7_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6, item7);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2, item3, item4, item5, item6, item7);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_8_Equal()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6, item7, item8);
             int hash2 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6, item7, item8);
 
-            //test
+            // Assert
             Assert.AreEqual(hash1, hash2);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_8_NotEqual()
         {
-            //exec
+            // Action
             int hash1 = HashCodeHelper.GetHashCode(item1, item2, item3, item4, item5, item6, item7, item8);
             int hash2 = HashCodeHelper.GetHashCode(new object(), item2, item3, item4, item5, item6, item7, item8);
 
-            //test
+            // Assert
             Assert.AreNotEqual(hash1, hash2);
         }
     }

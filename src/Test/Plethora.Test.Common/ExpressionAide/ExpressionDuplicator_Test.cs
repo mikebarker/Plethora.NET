@@ -1,569 +1,573 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Test.ExtensionClasses;
 
 namespace Plethora.Test.ExpressionAide
 {
-    [TestFixture]
+    [TestClass]
     public class ExpressionDuplicator_Test
     {
-        private ExpressionDuplicatorEx duplicator;
+        private readonly ExpressionDuplicatorEx duplicator = new ExpressionDuplicatorEx();
 
-        [SetUp]
-        public void SetUp()
-        {
-            duplicator = new ExpressionDuplicatorEx();
-        }
-
-        [Test]
+        [TestMethod]
         public void DuplicateAdd()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, int>> expression = (i, j) => i + j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(1, 2), duplicate.Compile()(1, 2));
+            Assert.AreEqual(expression.Compile().Invoke(1, 2), duplicate.Compile().Invoke(1, 2));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateAnd()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, bool, bool>> expression = (i, j) => i & j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true, false), duplicate.Compile()(true, false));
+            Assert.AreEqual(expression.Compile().Invoke(true, false), duplicate.Compile().Invoke(true, false));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateAndAlso()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, bool, bool>> expression = (i, j) => i && j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true, false), duplicate.Compile()(true, false));
+            Assert.AreEqual(expression.Compile().Invoke(true, false), duplicate.Compile().Invoke(true, false));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateArrayIndex()
         {
-            //Setup
+            // Arrange
             Expression<Func<float[], int, float>> expression = (arr, i) => arr[i];
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             float[] array = new float[] { 1f, 2f, 3f, 4f, 5f };
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(array, 2), duplicate.Compile()(array, 2));
+            Assert.AreEqual(expression.Compile().Invoke(array, 2), duplicate.Compile().Invoke(array, 2));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateArrayLength()
         {
-            //Setup
+            // Arrange
             Expression<Func<float[], int>> expression = (arr) => arr.Length;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             float[] array = new float[] { 1f, 2f, 3f, 4f, 5f };
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(array), duplicate.Compile()(array));
+            Assert.AreEqual(expression.Compile().Invoke(array), duplicate.Compile().Invoke(array));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateCall_NoArgs()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool>> expression = () => MethodWithNoArg();
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(), duplicate.Compile()());
+            Assert.AreEqual(expression.Compile().Invoke(), duplicate.Compile().Invoke());
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateCall_Args()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, bool>> expression = (b) => MethodWithArg(b);
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true), duplicate.Compile()(true));
+            Assert.AreEqual(expression.Compile().Invoke(true), duplicate.Compile().Invoke(true));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateCoalesce()
         {
-            //Setup
+            // Arrange
             Expression<Func<int?, int>> expression = (i) => i ?? 0;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(null), duplicate.Compile()(null));
+            Assert.AreEqual(expression.Compile().Invoke(null), duplicate.Compile().Invoke(null));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateConditional()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int>> expression = (i) => (i < 0) ? -1 : 1;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(2), duplicate.Compile()(2));
+            Assert.AreEqual(expression.Compile().Invoke(2), duplicate.Compile().Invoke(2));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateConstant()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool>> expression = () => true;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(), duplicate.Compile()());
+            Assert.AreEqual(expression.Compile().Invoke(), duplicate.Compile().Invoke());
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateConvert()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, object>> expression = (b) => (object)b;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true), duplicate.Compile()(true));
+            Assert.AreEqual(expression.Compile().Invoke(true), duplicate.Compile().Invoke(true));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateDivide()
         {
-            //Setup
+            // Arrange
             Expression<Func<float, float, float>> expression = (i, j) => i / j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(1f, 2f), duplicate.Compile()(1f, 2f));
+            Assert.AreEqual(expression.Compile().Invoke(1f, 2f), duplicate.Compile().Invoke(1f, 2f));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateEqual()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, bool>> expression = (i, j) => i == j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(1, 2), duplicate.Compile()(1, 2));
+            Assert.AreEqual(expression.Compile().Invoke(1, 2), duplicate.Compile().Invoke(1, 2));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateExclusiveOr()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, int>> expression = (i, j) => i ^ j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(7, 3), duplicate.Compile()(7, 3));
+            Assert.AreEqual(expression.Compile().Invoke(7, 3), duplicate.Compile().Invoke(7, 3));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateGreaterThan()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, bool>> expression = (i, j) => i > j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(7, 3), duplicate.Compile()(7, 3));
+            Assert.AreEqual(expression.Compile().Invoke(7, 3), duplicate.Compile().Invoke(7, 3));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateGreaterThanOrEqual()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, bool>> expression = (i, j) => i >= j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(7, 3), duplicate.Compile()(7, 3));
+            Assert.AreEqual(expression.Compile().Invoke(7, 3), duplicate.Compile().Invoke(7, 3));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateInvoke()
         {
-            //Setup
+            // Arrange
             Func<bool> @delegate = MethodWithNoArg;
             Expression<Func<bool>> expression = () => @delegate();
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(), duplicate.Compile()());
+            Assert.AreEqual(expression.Compile().Invoke(), duplicate.Compile().Invoke());
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateLeftShift()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int>> expression = (i) => i << 2;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(5), duplicate.Compile()(5));
+            Assert.AreEqual(expression.Compile().Invoke(5), duplicate.Compile().Invoke(5));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateLessThan()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, bool>> expression = (i, j) => i < j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(7, 3), duplicate.Compile()(7, 3));
+            Assert.AreEqual(expression.Compile().Invoke(7, 3), duplicate.Compile().Invoke(7, 3));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateLessThanOrEqual()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, bool>> expression = (i, j) => i <= j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(7, 3), duplicate.Compile()(7, 3));
+            Assert.AreEqual(expression.Compile().Invoke(7, 3), duplicate.Compile().Invoke(7, 3));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateListInit()
         {
-            //Setup
+            // Arrange
             Expression<Func<List<string>>> expression = () => new List<string> {"Harry", "Fred"};
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(), duplicate.Compile()());
+            AssertListsAreEqual(expression.Compile().Invoke(), duplicate.Compile().Invoke());
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateMemberAccess()
         {
-            //Setup
+            // Arrange
             Expression<Func<DateTime, int>> expression = (dt) => dt.Year;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             DateTime date = new DateTime(2009, 01, 01);
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(date), duplicate.Compile()(date));
+            Assert.AreEqual(expression.Compile().Invoke(date), duplicate.Compile().Invoke(date));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateMemberInit()
         {
-            //Setup
+            // Arrange
             Expression<Func<Class>> expression = () => new Class() {Field = 2};
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()().Field, duplicate.Compile()().Field);
+            Assert.AreEqual(expression.Compile().Invoke().Field, duplicate.Compile().Invoke().Field);
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateModulo()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, int>> expression = (i, j) => i % j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(23, 5), duplicate.Compile()(23, 5));
+            Assert.AreEqual(expression.Compile().Invoke(23, 5), duplicate.Compile().Invoke(23, 5));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateMultiply()
         {
-            //Setup
+            // Arrange
             Expression<Func<float, float, float>> expression = (i, j) => i * j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(2f, 5f), duplicate.Compile()(2f, 5f));
+            Assert.AreEqual(expression.Compile().Invoke(2f, 5f), duplicate.Compile().Invoke(2f, 5f));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateNegate()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int>> expression = (i) => -i;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(2), duplicate.Compile()(2));
+            Assert.AreEqual(expression.Compile().Invoke(2), duplicate.Compile().Invoke(2));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateNew()
         {
-            //Setup
+            // Arrange
             Expression<Func<Class>> expression = () => new Class();
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateNewArrayInit()
         {
-            //Setup
+            // Arrange
             Expression<Func<int[]>> expression = () => new int[] {1, 2, 3, 4};
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(), duplicate.Compile()());
+            AssertListsAreEqual(expression.Compile().Invoke(), duplicate.Compile().Invoke());
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateNot()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, bool>> expression = (i) => !i;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true), duplicate.Compile()(true));
+            Assert.AreEqual(expression.Compile().Invoke(true), duplicate.Compile().Invoke(true));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateNotEqual()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, bool>> expression = (i, j) => i != j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(1, 3), duplicate.Compile()(1, 3));
+            Assert.AreEqual(expression.Compile().Invoke(1, 3), duplicate.Compile().Invoke(1, 3));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateOr()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, bool, bool>> expression = (i, j) => i | j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true, false), duplicate.Compile()(true, false));
+            Assert.AreEqual(expression.Compile().Invoke(true, false), duplicate.Compile().Invoke(true, false));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateOrElse()
         {
-            //Setup
+            // Arrange
             Expression<Func<bool, bool, bool>> expression = (i, j) => i || j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(true, false), duplicate.Compile()(true, false));
+            Assert.AreEqual(expression.Compile().Invoke(true, false), duplicate.Compile().Invoke(true, false));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateRightShift()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int>> expression = (i) => i >> 2;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(5), duplicate.Compile()(5));
+            Assert.AreEqual(expression.Compile().Invoke(5), duplicate.Compile().Invoke(5));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateSubtract()
         {
-            //Setup
+            // Arrange
             Expression<Func<int, int, int>> expression = (i, j) => i - j;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(1, 2), duplicate.Compile()(1, 2));
+            Assert.AreEqual(expression.Compile().Invoke(1, 2), duplicate.Compile().Invoke(1, 2));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateTypeAs()
         {
-            //Setup
+            // Arrange
             Expression<Func<IInterface, Class>> expression = (@interface) => @interface as Class;
 
-            //Execute
+            // Action
             var duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             IInterface interf = new Class();
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(interf), duplicate.Compile()(interf));
+            Assert.AreEqual(expression.Compile().Invoke(interf), duplicate.Compile().Invoke(interf));
         }
 
-        [Test]
+        [TestMethod]
         public void DuplicateTypeIs()
         {
-            //Setup
+            // Arrange
             Expression<Func<IInterface, bool>> expression = (@interface) => @interface is Class;
 
-            //Execute
+            // Action
             Expression<Func<IInterface, bool>> duplicate = duplicator.Duplicate(expression);
 
-            //Test
+            // Assert
             IInterface interf = new Class();
             Assert.AreNotSame(expression, duplicate);
             Assert.AreEqual(expression.ToString(), duplicate.ToString());
-            Assert.AreEqual(expression.Compile()(interf), duplicate.Compile()(interf));
+            Assert.AreEqual(expression.Compile().Invoke(interf), duplicate.Compile().Invoke(interf));
         }
 
 
         #region Private Methods
+
+        private static void AssertListsAreEqual<T>(IList<T> expected, IList<T> actual)
+        {
+            Assert.AreEqual(expected.Count, actual.Count);
+
+            for (int i = 0; i < expected.Count; i++)
+            {
+                Assert.AreEqual(expected[i], actual[i]);
+            }
+        }
 
         private static bool MethodWithNoArg()
         {

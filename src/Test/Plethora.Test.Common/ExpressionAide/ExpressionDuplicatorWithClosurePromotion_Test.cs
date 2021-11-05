@@ -1,59 +1,53 @@
 using System;
 using System.Linq.Expressions;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Test.ExtensionClasses;
 
 namespace Plethora.Test.ExpressionAide
 {
-    [TestFixture]
+    [TestClass]
     public class ExpressionDuplicatorWithClosurePromotion_Test
     {
-        private ExpressionDuplicatorWithClosurePromotionEx duplicator;
+        private ExpressionDuplicatorWithClosurePromotionEx duplicator = new ExpressionDuplicatorWithClosurePromotionEx();
 
-        [SetUp]
-        public void SetUp()
-        {
-            duplicator = new ExpressionDuplicatorWithClosurePromotionEx();
-        }
-
-        [Test]
+        [TestMethod]
         public void PromoteClosuresWithOutClosure()
         {
-            //Setup
+            // Arrange
             Expression<Func<int>> expression = () => 9;
 
-            //Execute
+            // Action
             var executor = duplicator.PromoteClosures(expression);
 
-            //Test
+            // Assert
             Assert.AreEqual(expression.Compile()(), executor.Execute(expression));
         }
 
-        [Test]
+        [TestMethod]
         public void PromoteClosuresWithClosure()
         {
-            //Setup
+            // Arrange
             int i = 9;
             Expression<Func<int>> expression = () => i;
 
-            //Execute
+            // Action
             var executor = duplicator.PromoteClosures(expression);
 
-            //Test
+            // Assert
             Assert.AreEqual(expression.Compile()(), executor.Execute(expression));
         }
 
-        [Test]
+        [TestMethod]
         public void PromoteClosuresWithClosure_DataChange()
         {
-            //Setup
+            // Arrange
             Expression<Func<int>> origExpression = GetFunc(2009);
             Expression<Func<int>> otherExpression = GetFunc(2008);
 
-            //Execute
+            // Action
             var executor = duplicator.PromoteClosures(origExpression);
 
-            //Test
+            // Assert
             var origFunc = origExpression.Compile();
             int origResult = origFunc();
 

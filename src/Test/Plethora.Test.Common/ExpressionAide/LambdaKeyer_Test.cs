@@ -1,14 +1,14 @@
 using System;
 using System.Linq.Expressions;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Test.ExtensionClasses;
 
 namespace Plethora.Test.ExpressionAide
 {
-    [TestFixture]
+    [TestClass]
     public class LambdaKeyerTest
     {
-        [Test]
+        [TestMethod]
         public void SameInstanceMatch()
         {
             Expression<Func<bool>> expression = () => true;
@@ -19,7 +19,7 @@ namespace Plethora.Test.ExpressionAide
             Assert.AreEqual(key1, key2);
         }
 
-        [Test]
+        [TestMethod]
         public void EqualExpressionsMatch()
         {
             Expression<Func<bool>> expression1 = () => true;
@@ -31,7 +31,7 @@ namespace Plethora.Test.ExpressionAide
             Assert.AreEqual(key1, key2);
         }
 
-        [Test]
+        [TestMethod]
         public void DifferentExpressionsDontMatch()
         {
             Expression<Func<bool>> expression1 = () => true;
@@ -43,7 +43,7 @@ namespace Plethora.Test.ExpressionAide
             Assert.AreNotEqual(key1, key2);
         }
 
-        [Test]
+        [TestMethod]
         public void ComplexExpressions()
         {
             Expression<Func<DateTime, int, long>> expression1 = (dt, i) => (long)(dt.Year + i);

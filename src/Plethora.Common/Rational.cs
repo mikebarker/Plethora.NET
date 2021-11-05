@@ -237,12 +237,12 @@ namespace Plethora
 
         public static Rational operator +(int x, Rational y)
         {
-            return new Rational(x, 1) + y;
+            return new Rational(x, 1, false) + y;
         }
 
         public static Rational operator +(Rational x, int y)
         {
-            return x + new Rational(y, 1);
+            return x + new Rational(y, 1, false);
         }
 
         public static Rational operator -(Rational x, Rational y)
@@ -259,12 +259,12 @@ namespace Plethora
 
         public static Rational operator -(int x, Rational y)
         {
-            return new Rational(x, 1) - y;
+            return new Rational(x, 1, false) - y;
         }
 
         public static Rational operator -(Rational x, int y)
         {
-            return x - new Rational(y, 1);
+            return x - new Rational(y, 1, false);
         }
 
         #endregion
@@ -318,12 +318,12 @@ namespace Plethora
 
         public static Rational operator /(Rational x, int y)
         {
-            return x * new Rational(1, y);
+            return x * new Rational(1, y, false);
         }
 
         public static Rational operator /(int x, Rational y)
         {
-            return new Rational(x, 1) / y;
+            return new Rational(x, 1, false) / y;
         }
 
         public static int operator %(Rational x, Rational y)
@@ -341,12 +341,12 @@ namespace Plethora
 
         public static int operator %(int x, Rational y)
         {
-            return new Rational(x, 1) % y;
+            return new Rational(x, 1, false) % y;
         }
 
         public static int operator %(Rational x, int y)
         {
-            return x % new Rational(y, 1);
+            return x % new Rational(y, 1, false);
         }
 
         #endregion

@@ -27,12 +27,6 @@ namespace Plethora.Logging
             }
         }
 
-        public static ILogger GetLogger()
-        {
-            var frame = new StackFrame(1, false);
-            return GetLogger(frame.GetMethod().DeclaringType);
-        }
-
         public static ILogger GetLogger(string name)
         {
             return loggerProvider.GetLogger(name);

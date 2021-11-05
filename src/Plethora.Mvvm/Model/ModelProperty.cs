@@ -69,7 +69,7 @@ namespace Plethora.Mvvm.Model
             if (propertyMetadata != null && !(propertyMetadata is ModelPropertyMetadata<T>))
             {
                 throw new ArgumentException(
-                    string.Format(nameof(propertyMetadata) + " is not of the expected type {0}", typeof(ModelPropertyMetadata<T>)),
+                    $"{nameof(propertyMetadata)} is not of the expected type {typeof(ModelPropertyMetadata<T>)}",
                     nameof(propertyMetadata));
             }
 

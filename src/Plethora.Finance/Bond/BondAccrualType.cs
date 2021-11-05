@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Plethora.Finance.Bond
+﻿namespace Plethora.Finance.Bond
 {
     /// <summary>
     /// The ISDA accrual types.
@@ -8,7 +6,6 @@ namespace Plethora.Finance.Bond
     /// <remarks>
     /// <seealso cref="https://www.rbs.com/content/dam/natwestmarkets_com/pdf/Disclosures/2006-isda-defs.pdf"/>
     /// </remarks>
-    [CLSCompliant(false)]
     public enum BondAccrualType
     {
         _1,

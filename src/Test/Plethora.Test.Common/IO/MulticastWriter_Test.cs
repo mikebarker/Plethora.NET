@@ -1,5 +1,5 @@
 using System.Text;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.IO;
 using Plethora.Test.MockClasses;
 
@@ -8,15 +8,14 @@ namespace Plethora.Test.IO
     /// <summary>
     /// Unit test class for the <see cref="MulticastWriter"/> class.
     /// </summary>
-    [TestFixture]
+    [TestClass]
     public class MulticastWriter_Test
     {
-        MulticastWriter mw;
-        MockTextWriter writer1;
-        MockTextWriter writer2;
+        private readonly MockTextWriter writer1;
+        private readonly MockTextWriter writer2;
+        private MulticastWriter mw;
 
-        [SetUp]
-        public void Setup()
+        public MulticastWriter_Test()
         {
             mw = new MulticastWriter();
             writer1 = new MockTextWriter();
@@ -26,78 +25,78 @@ namespace Plethora.Test.IO
             mw.RegisterWriter(writer2);
         }
 
-        [Test]
+        [TestMethod]
         public void Encoding_Empty()
         {
-            //init
+            // Arrange
             mw = new MulticastWriter();
 
-            //exec
+            // Action
             Encoding encoding = mw.Encoding;
 
-            //test
+            // Assert
             Assert.IsNotNull(encoding);
         }
 
-        [Test]
+        [TestMethod]
         public void Encoding()
         {
-            //exec
+            // Action
             Encoding encoding = mw.Encoding;
 
-            //test
+            // Assert
             Assert.AreEqual(writer1.Encoding, encoding);
         }
 
-        [Test]
+        [TestMethod]
         public void Write_Char()
         {
-            //init
+            // Arrange
             char charac = 'c';
 
-            //exec
+            // Action
             mw.Write(charac);
 
-            //test
+            // Assert
             Assert.AreEqual(charac.ToString(), writer1.CurrentText);
             Assert.AreEqual(charac.ToString(), writer2.CurrentText);
         }
 
-        [Test]
+        [TestMethod]
         public void Write_String()
         {
-            //init
+            // Arrange
             string text = "This is a test.";
 
-            //exec
+            // Action
             mw.Write(text);
 
-            //test
+            // Assert
             Assert.AreEqual(text, writer1.CurrentText);
             Assert.AreEqual(text, writer2.CurrentText);
         }
 
-        [Test]
+        [TestMethod]
         public void Write_String_Null()
         {
-            //init
+            // Arrange
             string nullText = null;
 
-            //exec
+            // Action
             mw.Write(nullText);
 
-            //test
+            // Assert
             Assert.AreEqual("", writer1.CurrentText);
             Assert.AreEqual("", writer2.CurrentText);
         }
 
-        [Test]
+        [TestMethod]
         public void DeregisterWriter()
         {
-            //exec
+            // Action
             mw.DeregisterWriter(writer2);
 
-            //test
+            // Assert
             string text = "This is a test.";
             mw.Write(text);
             Assert.AreEqual(text, writer1.CurrentText);

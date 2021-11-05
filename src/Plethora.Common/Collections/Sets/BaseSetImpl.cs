@@ -22,8 +22,70 @@ namespace Plethora.Collections.Sets
     ///   methods as this can result in a recursive loop.
     ///  </para>
     /// </remarks>
-    public abstract class BaseSetImpl<T> : ISetCore<T>
+    public abstract class BaseSetImpl<T> : ISetCore<T>, ISetCore
     {
+        #region Implementation of ISetCore
+
+        /// <summary>
+        /// Gets a flag indicating whether an element is included in the set.
+        /// </summary>
+        /// <param name="element">The element to be tested.</param>
+        /// <returns>True if the element is represented; else false.</returns>
+        bool ISetCore.Contains(object element)
+        {
+            if (!(element is T elementT))
+                return false;
+
+            return this.Contains(elementT);
+        }
+
+        /// <summary>
+        /// Returns a set representing the union of this and another set.
+        /// </summary>
+        ISetCore ISetCore.Union(ISetCore other)
+        {
+            //Validation
+            if (!(other is ISetCore<T> otherT))
+                throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(other), typeof(ISetCore<T>)), nameof(other));
+
+            return this.Union(otherT);
+        }
+
+        /// <summary>
+        /// Returns a set representing the intersection of this and another set.
+        /// </summary>
+        ISetCore ISetCore.Intersect(ISetCore other)
+        {
+            //Validation
+            if (!(other is ISetCore<T> otherT))
+                throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(other), typeof(ISetCore<T>)), nameof(other));
+
+            return this.Intersect(otherT);
+
+        }
+
+        /// <summary>
+        /// Returns a set representing the set difference of this and another set.
+        /// </summary>
+        ISetCore ISetCore.Subtract(ISetCore other)
+        {
+            //Validation
+            if (!(other is ISetCore<T> otherT))
+                throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(other), typeof(ISetCore<T>)), nameof(other));
+
+            return this.Subtract(otherT);
+        }
+
+        /// <summary>
+        /// Returns the inverse set of this set.
+        /// </summary>
+        ISetCore ISetCore.Inverse()
+        {
+            return this.Inverse();
+        }
+
+        #endregion
+
         #region Implementation of ISetCore<T>
 
         /// <summary>

@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Plethora.Xaml</RootNamespace>
+    <UseWPF>true</UseWPF>
+    <Version>0.20.0</Version>
+    <Authors>The Plethora .NET Project</Authors>
+    <Company></Company>
+    <Copyright>Copyright © The Plethora Project. All rights reserved.</Copyright>
+    <Product>The Plethora .NET Project</Product>
+    <PackageLicenseFile>license.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/mikebarker/Plethora.NET</PackageProjectUrl>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj" />
+  </ItemGroup>
+
+</Project>

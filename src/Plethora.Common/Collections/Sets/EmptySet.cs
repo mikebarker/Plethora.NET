@@ -2,7 +2,7 @@
 
 namespace Plethora.Collections.Sets
 {
-    public sealed class EmptySet<T> : BaseSetImpl<T>, ISetCore<T>
+    public sealed class EmptySet<T> : BaseSetImpl<T>
     {
         public static readonly EmptySet<T> Instance = new EmptySet<T>();
 
@@ -76,6 +76,5 @@ namespace Plethora.Collections.Sets
         }
 
         #endregion
-
     }
 }

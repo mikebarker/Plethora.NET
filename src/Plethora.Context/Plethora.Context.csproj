@@ -1,140 +1,25 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7952A3CF-39D9-4CF2-9EB8-A0FF82781F6C}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plethora.Context</RootNamespace>
-    <AssemblyName>Plethora.Context</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Version>0.20.0</Version>
+    <Authors>The Plethora .NET Project</Authors>
+    <Copyright>Copyright © The Plethora Project. All rights reserved.</Copyright>
+    <Product>The Plethora .NET Project</Product>
+    <PackageLicenseFile>license.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/mikebarker/Plethora.NET</PackageProjectUrl>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.Common.cs">
-      <Link>Properties\AssemblyInfo.Common.cs</Link>
-    </Compile>
-    <Compile Include="..\JetBrains.Annotations.cs">
-      <Link>Properties\JetBrains.Annotations.cs</Link>
-    </Compile>
-    <Compile Include="Action\ActionHelper.cs" />
-    <Compile Include="Action\ActionManager.cs" />
-    <Compile Include="Action\ActionTemplate.cs" />
-    <Compile Include="Action\ActionTemplate.Multi.cs" />
-    <Compile Include="Action\ActionTemplate.Ui.cs" />
-    <Compile Include="Action\ActionTemplate.UiMulti.cs" />
-    <Compile Include="Action\IAction.cs" />
-    <Compile Include="Action\IActionFactory.cs" />
-    <Compile Include="Action\IActionsAdapter.cs" />
-    <Compile Include="Action\IActionTemplate.cs" />
-    <Compile Include="Action\IUiAction.cs" />
-    <Compile Include="Action\IUiActionTemplate.cs" />
-    <Compile Include="Action\TemplateActionFactory.cs" />
-    <Compile Include="ActivityItemRegister.cs" />
-    <Compile Include="CachedContextProvider.cs" />
-    <Compile Include="ContextAugmentor.cs" />
-    <Compile Include="ContextInfo.cs" />
-    <Compile Include="ContextInfoComparer.cs" />
-    <Compile Include="ContextManager.cs" />
-    <Compile Include="ContextProviderBase.cs" />
-    <Compile Include="Help\Factory\IHelpDocumentCreator.cs" />
-    <Compile Include="Help\Factory\IHelpAccessor.cs" />
-    <Compile Include="Help\HelpDocuments\RtfHelpDocument.cs" />
-    <Compile Include="Help\Factory\IHelpKeyer.cs" />
-    <Compile Include="Help\HelpManager.cs" />
-    <Compile Include="Help\Factory\HelpFactory.cs" />
-    <Compile Include="Help\IHelpFactory.cs" />
-    <Compile Include="Help\IHelpDocument.cs" />
-    <Compile Include="Help\LocalFileSystem\LocalFileSystemHelpAccessor.cs" />
-    <Compile Include="Help\LocalFileSystem\LocalFileSystemHelpKeyer.cs" />
-    <Compile Include="Help\Streaming\TextStreamCapture.cs" />
-    <Compile Include="Help\Streaming\IDataStreamCapture.cs" />
-    <Compile Include="IContextAugmentor.cs" />
-    <Compile Include="IContextProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj" />
   </ItemGroup>
+
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <Folder Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
-      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
-      <Name>Plethora.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  -->
-  <Target Name="AfterBuild">
-    <CallTarget Targets="CopyToSolutionOutput" Condition=" '$(Configuration)' == 'Release'" />
-  </Target>
-  <Import Project="$(ProjectDir)..\Plethora.PostBuild.Targets" />
+
 </Project>

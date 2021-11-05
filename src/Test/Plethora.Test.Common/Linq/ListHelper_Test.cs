@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Linq;
 
 namespace Plethora.Test.Linq
 {
-    [TestFixture]
+    [TestClass]
     public class ListHelper_Test
     {
         private readonly IList<Tuple<int, string>> orderedList = new List<Tuple<int, string>>
@@ -22,34 +22,34 @@ namespace Plethora.Test.Linq
                 new Tuple<int, string>(29, "Twenty Nine"),
             };
 
-        [Test]
+        [TestMethod]
         public void BinarySearch_Found()
         {
-            //exec
+            // Action
             int index = orderedList.BinarySearch(tuple => tuple.Item1, 24);
 
-            //test
+            // Assert
             Assert.AreEqual(3, index);
         }
 
-        [Test]
+        [TestMethod]
         public void BinarySearch_NotFound()
         {
-            //exec
+            // Action
             int index = orderedList.BinarySearch(tuple => tuple.Item1, 25);
 
-            //test
+            // Assert
             Assert.IsTrue(index < 0);
             Assert.AreEqual(4, ~index);
         }
 
-        [Test]
+        [TestMethod]
         public void SubList_Index()
         {
-            //exec
+            // Action
             List<Tuple<int, string>> subList = orderedList.SubList(2).ToList();
 
-            //test
+            // Assert
             Assert.AreEqual(5, subList.Count);
             Assert.AreEqual(23, subList[0].Item1);
             Assert.AreEqual("Twenty Three", subList[0].Item2);
@@ -63,13 +63,13 @@ namespace Plethora.Test.Linq
             Assert.AreEqual("Twenty Nine", subList[4].Item2);
         }
 
-        [Test]
+        [TestMethod]
         public void SubList_Index_Count()
         {
-            //exec
+            // Action
             List<Tuple<int, string>> subList = orderedList.SubList(2, 3).ToList();
 
-            //test
+            // Assert
             Assert.AreEqual(3, subList.Count);
             Assert.AreEqual(23, subList[0].Item1);
             Assert.AreEqual("Twenty Three", subList[0].Item2);
@@ -79,47 +79,45 @@ namespace Plethora.Test.Linq
             Assert.AreEqual("Twenty Seven", subList[2].Item2);
         }
 
-        [Test]
+        [TestMethod]
         public void SubList_Error_IndexPastEnd()
         {
             try
             {
-                //exec
+                // Action
                 orderedList.SubList(7);
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.NotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void SubList_Error_CountPastEnd()
         {
             try
             {
-                //exec
+                // Action
                 orderedList.SubList(3, 7);
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.NotNull(ex);
             }
         }
 
 
 
-        [Test]
+        [TestMethod]
         public void SubListOrEmpty_Index()
         {
-            //exec
+            // Action
             List<Tuple<int, string>> subList = orderedList.SubListOrEmpty(2).ToList();
 
-            //test
+            // Assert
             Assert.AreEqual(5, subList.Count);
             Assert.AreEqual(23, subList[0].Item1);
             Assert.AreEqual("Twenty Three", subList[0].Item2);
@@ -133,23 +131,23 @@ namespace Plethora.Test.Linq
             Assert.AreEqual("Twenty Nine", subList[4].Item2);
         }
 
-        [Test]
+        [TestMethod]
         public void SubListOrEmpty_IndexPastEnd()
         {
-            //exec
+            // Action
             List<Tuple<int, string>> subList = orderedList.SubListOrEmpty(7).ToList();
 
-            //test
+            // Assert
             Assert.AreEqual(0, subList.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void SubListOrEmpty_Index_Count()
         {
-            //exec
+            // Action
             List<Tuple<int, string>> subList = orderedList.SubListOrEmpty(2, 3).ToList();
 
-            //test
+            // Assert
             Assert.AreEqual(3, subList.Count);
             Assert.AreEqual(23, subList[0].Item1);
             Assert.AreEqual("Twenty Three", subList[0].Item2);
@@ -159,13 +157,13 @@ namespace Plethora.Test.Linq
             Assert.AreEqual("Twenty Seven", subList[2].Item2);
         }
 
-        [Test]
+        [TestMethod]
         public void SubListOrEmpty_CountPastEnd()
         {
-            //exec
+            // Action
             List<Tuple<int, string>> subList = orderedList.SubListOrEmpty(2, 7).ToList();
 
-            //test
+            // Assert
             Assert.AreEqual(5, subList.Count);
             Assert.AreEqual(23, subList[0].Item1);
             Assert.AreEqual("Twenty Three", subList[0].Item2);

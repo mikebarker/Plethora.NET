@@ -1,89 +1,88 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Test.ExtensionClasses;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class Heirarchy_Test
     {
-        private HierarchyEx hierarchy;
         private readonly Style styleA = new Style("Times New Roman", null, FontProperty.None);
         private readonly Style styleB = new Style("Arial", 9, FontProperty.None);
         private readonly Style styleC = new Style(null, 16, FontProperty.Bold | FontProperty.Italic);
+        private HierarchyEx hierarchy;
 
-        [SetUp]
-        public void SetUp()
+        public Heirarchy_Test()
         {
             hierarchy = new HierarchyEx(styleA, styleB, styleC);
         }
 
-        [Test]
+        [TestMethod]
         public void ClassBasedLookup()
         {
-            //exec
+            // Action
             string fontName = hierarchy.FontName;
 
-            //test
+            // Assert
             Assert.AreEqual(styleA.FontName, fontName);
         }
 
-        [Test]
+        [TestMethod]
         public void ClassBasedLookup_AllEmpty()
         {
-            //setup
+            // Arrange
             hierarchy = new HierarchyEx(styleC, styleC, styleC);
 
-            //exec
+            // Action
             string fontName = hierarchy.FontName;
 
-            //test
+            // Assert
             Assert.IsNull(fontName);
         }
 
-        [Test]
+        [TestMethod]
         public void NullableStructBasedLookup()
         {
-            //exec
+            // Action
             int? fontSize = hierarchy.FontSize;
 
-            //test
+            // Assert
             Assert.AreEqual(styleB.FontSize, fontSize);
         }
 
-        [Test]
+        [TestMethod]
         public void NullableStructBasedLookup_AllEmpty()
         {
-            //setup
+            // Arrange
             hierarchy = new HierarchyEx(styleA, styleA, styleA);
 
-            //exec
+            // Action
             int? fontSize = hierarchy.FontSize;
 
-            //test
+            // Assert
             Assert.IsTrue(fontSize == null);
         }
 
-        [Test]
+        [TestMethod]
         public void StructBasedLookup()
         {
-            //exec
+            // Action
             FontProperty fontProperty = hierarchy.FontProperty;
 
-            //test
+            // Assert
             Assert.AreEqual(styleC.FontProperty, fontProperty);
         }
 
-        [Test]
+        [TestMethod]
         public void StructBasedLookup_AllEmpty()
         {
-            //setup
+            // Arrange
             hierarchy = new HierarchyEx(styleA, styleB, styleA);
 
-            //exec
+            // Action
             FontProperty fontProperty = hierarchy.FontProperty;
 
-            //test
+            // Assert
             Assert.AreEqual(FontProperty.None, fontProperty);
         }
 

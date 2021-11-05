@@ -37,7 +37,7 @@ namespace Plethora.Mvvm.Model
     ///             }
     ///         }
     ///
-    ///         [DependsOn("DateOfBirth")]
+    ///         [DependsOn(nameof(DateOfBirth))]
     ///         public DateSpan Age
     ///         {
     ///             get
@@ -47,7 +47,7 @@ namespace Plethora.Mvvm.Model
     ///             }
     ///         }
     ///
-    ///         [DependsOn("Age")]
+    ///         [DependsOn(nameof(Age))]
     ///         public int YearsToCentenary
     ///         {
     ///             get
@@ -192,7 +192,7 @@ namespace Plethora.Mvvm.Model
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
             if (propertyInfo == null)
-                throw new ArgumentException(string.Format("The property '{0}' is not an instance property of the type {1}.", propertyName, type.Name));
+                throw new ArgumentException($"The property '{propertyName}' is not an instance property of the type {type.Name}.");
         }
 
         #endregion

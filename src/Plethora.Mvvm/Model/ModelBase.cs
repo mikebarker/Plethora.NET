@@ -142,7 +142,7 @@ namespace Plethora.Mvvm.Model
         {
             if (defaultValue == null)
             {
-                if (!TypeIsNullable(propertyInfo.PropertyType))
+                if (!propertyInfo.PropertyType.IsNullable())
                 {
                     throw new ArgumentException(ResourceProvider.DefaultPropertyValueNotOfType(
                         propertyInfo.Name,
@@ -157,17 +157,6 @@ namespace Plethora.Mvvm.Model
                     propertyInfo.PropertyType,
                     defaultValue));
             }
-        }
-
-        private static bool TypeIsNullable(Type type)
-        {
-            if (type.IsClass)
-                return true;
-            
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof (Nullable<>))
-                return true;
-            
-            return false;
         }
 
         public static object CreateDefaultValueOfType(Type type)

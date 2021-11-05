@@ -1,38 +1,31 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections.Sets;
 
 namespace Plethora.Test.Collections.Sets
 {
-    [TestFixture]
+    [TestClass]
     public class EmptySet_Test
     {
-        private EmptySet<int> A;
-        private InclusiveSet<int> B;
+        private readonly EmptySet<int> A = EmptySet<int>.Instance;
+        private readonly InclusiveSet<int> B = new InclusiveSet<int>(3, 4, 5);
 
-        [SetUp]
-        public void SetUp()
-        {
-            A = EmptySet<int>.Instance;
-            B = new InclusiveSet<int>(3, 4, 5);
-        }
-
-        [Test]
+        [TestMethod]
         public void Contains_NotInSet()
         {
-            //exec
+            // Action
             var result = A.Contains(1);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Subtract()
         {
-            //exec
+            // Action
             var A_minus_B = A.Subtract(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_minus_B.Contains(0));
             Assert.IsFalse(A_minus_B.Contains(1));
             Assert.IsFalse(A_minus_B.Contains(2));
@@ -45,13 +38,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_minus_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Intersect()
         {
-            //exec
+            // Action
             var A_n_B = A.Intersect(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_n_B.Contains(0));
             Assert.IsFalse(A_n_B.Contains(1));
             Assert.IsFalse(A_n_B.Contains(2));
@@ -64,13 +57,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_n_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Union()
         {
-            //exec
+            // Action
             var A_u_B = A.Union(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_u_B.Contains(0));
             Assert.IsFalse(A_u_B.Contains(1));
             Assert.IsFalse(A_u_B.Contains(2));
@@ -83,13 +76,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_u_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Inverse()
         {
-            //exec
+            // Action
             var notA = A.Inverse();
 
-            //test
+            // Assert
             Assert.IsTrue(notA.Contains(0));
             Assert.IsTrue(notA.Contains(1));
             Assert.IsTrue(notA.Contains(2));
@@ -102,10 +95,10 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsTrue(notA.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void IsEmpty()
         {
-            //test
+            // Assert
             Assert.IsTrue(A.IsEmpty);
         }
     }

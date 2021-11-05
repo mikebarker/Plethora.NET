@@ -29,7 +29,7 @@ namespace Plethora.ExpressionAide
             string strNode = strBranch + "+-";
             strBranch += "|     ";
 
-            sb.AppendLine(string.Format("{0} {1}: {2} - {3} [{4}]", strNode, relationDescription, expression.NodeType, expression.GetType().Name, expression.GetHashCode()));
+            sb.AppendLine($"{strNode} {relationDescription}: {expression.NodeType} - {expression.GetType().Name} [{expression.GetHashCode()}]");
 
 
             sb.Append(strBranch);

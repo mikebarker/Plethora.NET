@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Mvvm.Model;
 
 namespace Plethora.Test.Mvvm.Model
 {
-    [TestFixture]
+    [TestClass]
     public class NotifyPropertyChanged_Tests
     {
-        [Test]
+        [TestMethod]
         public void IsNotINotifyPropertyChanging()
         {
             // setup
@@ -24,7 +24,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.IsFalse(isINotifyPropertyChanging);
         }
 
-        [Test]
+        [TestMethod]
         public void PropertyNotifyByExpression()
         {
             // setup
@@ -40,7 +40,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual("PropertyNotifyByExpression", changedPropertyNames[0]);
         }
 
-        [Test]
+        [TestMethod]
         public void PropertyNotifyByName()
         {
             // setup
@@ -56,7 +56,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual("PropertyNotifyByName", changedPropertyNames[0]);
         }
 
-        [Test]
+        [TestMethod]
         public void NotifyingDisabled()
         {
             // setup
@@ -72,7 +72,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, changedPropertyNames.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void PropertyChanging()
         {
             // setup

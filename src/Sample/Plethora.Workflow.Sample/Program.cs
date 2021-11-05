@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using Plethora.Logging;
-using Plethora.Logging.log4net;
 using Plethora.Workflow.DAL;
 
 namespace Plethora.Workflow.Sample
@@ -15,10 +12,7 @@ namespace Plethora.Workflow.Sample
         [STAThread]
         static void Main()
         {
-            Logger.LoggerProvider = new log4netLoggerProvider();
-
             const string connectionString = @"Server=VAIO\SQLEXPRESS;Database=Workflow;Trusted_Connection=True;";
-
 
             ITrigger trigger = new TimerTrigger(5000);
             IWorkAccessor workAccessor = new SqlWorkAccessor(connectionString);
