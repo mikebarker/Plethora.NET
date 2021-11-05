@@ -96,5 +96,16 @@ namespace Plethora.Linq
             return new ListIndexIterator<TSource>(source, index, count);
         }
         #endregion
+
+        public static int IndexOfType<TSource>(this IList<TSource> source, Type type)
+        {
+            for (int i = 0; i < source.Count; i++)
+            {
+                if (type.IsInstanceOfType(source[i]))
+                    return i;
+            }
+
+            return -1;
+        }
     }
 }

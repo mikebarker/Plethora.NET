@@ -19,13 +19,14 @@ namespace Plethora
         /// </summary>
         /// <param name="input">The input string to be tested.</param>
         /// <param name="pattern">The pattern to be matched. May contain wildcards [*].</param>
+        /// <param name="comparisonType">One of the enumeration values that specifies the rules for the search.</param>
         /// <returns>
         /// True if the input string matches the pattern provided; otherwise false.
         /// </returns>
         /// <remarks>
         /// This method is more efficient than using <see cref="System.Text.RegularExpressions.Regex.IsMatch(string, string)"/>.
         /// </remarks>
-        public static bool IsMatch(string input, string pattern)
+        public static bool IsMatch(string input, string pattern, StringComparison comparisonType = StringComparison.Ordinal)
         {
             //Validation
             if (input == null)
@@ -47,7 +48,7 @@ namespace Plethora
             //Special case - no wildcards
             if (patternElements.Length == 1)
             {
-                return (input == pattern);
+                return string.Equals(input, pattern, comparisonType);
             }
 
 
@@ -58,7 +59,7 @@ namespace Plethora
             element = patternElements[0];
             if (element != string.Empty)
             {
-                if (!input.StartsWith(element, StringComparison.Ordinal))
+                if (!input.StartsWith(element, comparisonType))
                     return false;
 
                 nextStartIndex = element.Length;
@@ -68,7 +69,7 @@ namespace Plethora
             for (int i = 1; i < patternElements.Length - 1; i++)
             {
                 element = patternElements[i];
-                int elementIndex = input.IndexOf(element, nextStartIndex, StringComparison.Ordinal);
+                int elementIndex = input.IndexOf(element, nextStartIndex, comparisonType);
 
                 if (elementIndex == -1)
                     return false;
@@ -81,7 +82,7 @@ namespace Plethora
             element = patternElements[patternElements.Length - 1];
             if (element != string.Empty)
             {
-                int elementIndex = input.IndexOf(element, nextStartIndex, StringComparison.Ordinal);
+                int elementIndex = input.IndexOf(element, nextStartIndex, comparisonType);
 
                 if (elementIndex == -1)
                     return false;

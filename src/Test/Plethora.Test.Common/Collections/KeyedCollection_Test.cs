@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class KeyedCollection_Test
     {
         private KeyedCollection<long, Person> keyedCollection;
 
-        [SetUp]
-        public void SetUp()
+        public KeyedCollection_Test()
         {
             keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
             keyedCollection.Add(Person.Bob_Jameson);
@@ -23,188 +22,182 @@ namespace Plethora.Test.Collections
 
         #region Constructors
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelector()
         {
-            //exec
+            // Action
             keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
 
-            //test
+            // Assert
             Assert.IsNotNull(keyedCollection);
             Assert.AreEqual(0, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelector_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 keyedCollection = new KeyedCollection<long, Person>(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorEnumerable()
         {
-            //setup
+            // Arrange
             Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
 
-            //exec
+            // Action
             keyedCollection = new KeyedCollection<long, Person>(person => person.ID, array);
 
-            //test
+            // Assert
             Assert.IsNotNull(keyedCollection);
             Assert.AreEqual(3, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorEnumerable_Fail_NullSelector()
         {
-            //setup
+            // Arrange
             Person[] array = new[] {Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson};
 
             try
             {
-                //exec
+                // Action
                 keyedCollection = new KeyedCollection<long, Person>(null, array);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorEnumerable_Fail_NullEnumerable()
         {
             try
             {
-                //exec
+                // Action
                 keyedCollection = new KeyedCollection<long, Person>(person => person.ID, (IEnumerable<Person>)null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorEnumerableComparer()
         {
-            //setup
+            // Arrange
             Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
             EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
 
-            //exec
+            // Action
             keyedCollection = new KeyedCollection<long, Person>(person => person.ID, array, equalityComparer);
 
-            //test
+            // Assert
             Assert.IsNotNull(keyedCollection);
             Assert.AreEqual(3, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorEnumerableComparer_Fail_NullSelector()
         {
-            //setup
+            // Arrange
             Person[] array = new[] { Person.Bob_Jameson, Person.Fred_Carlile, Person.Amy_Cathson };
             EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
 
             try
             {
-                //exec
+                // Action
                 keyedCollection = new KeyedCollection<long, Person>(null, array, equalityComparer);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorEnumerableComparer_Fail_NullEnumerable()
         {
-            //setup
+            // Arrange
             EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
 
             try
             {
-                //exec
+                // Action
                 keyedCollection = new KeyedCollection<long, Person>(person => person.ID, null, equalityComparer);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorComparer()
         {
-            //setup
+            // Arrange
             EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
 
-            //exec
+            // Action
             keyedCollection = new KeyedCollection<long, Person>(person => person.ID, equalityComparer);
 
-            //test
+            // Assert
             Assert.IsNotNull(keyedCollection);
             Assert.AreEqual(0, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_KeySelectorComparer_Fail_NullSelector()
         {
-            //setup
+            // Arrange
             EqualityComparer<long> equalityComparer = EqualityComparer<long>.Default;
 
             try
             {
-                //exec
+                // Action
                 keyedCollection = new KeyedCollection<long, Person>(null, equalityComparer);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region Add
 
-        [Test]
+        [TestMethod]
         public void Add()
         {
-            //setup
+            // Arrange
             int preAddCount = keyedCollection.Count;
             long id = Person.Jill_Dorrman.ID;
 
-            //exec
+            // Action
             keyedCollection.Add(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.AreEqual(preAddCount + 1, keyedCollection.Count);
             Assert.AreEqual(Person.Jill_Dorrman, keyedCollection[id]);
         }
 
-        [Test]
+        [TestMethod]
         public void Add_Fail_Null()
         {
             try
@@ -213,13 +206,12 @@ namespace Plethora.Test.Collections
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Add_Fail_Duplicate()
         {
             try
@@ -228,142 +220,139 @@ namespace Plethora.Test.Collections
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Add_Fail_DifferentObjectSameKey()
         {
-            //setup
+            // Arrange
             long bobId = Person.Bob_Jameson.ID;
             Person Jane_Doe = new Person(bobId, "Doe", "Jane", new DateTime(1976, 03, 15));
 
             try
             {
-                //exec
+                // Action
                 keyedCollection.Add(Jane_Doe);
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region Clear
 
-        [Test]
+        [TestMethod]
         public void Clear()
         {
-            //exec
+            // Action
             keyedCollection.Clear();
 
-            //test
+            // Assert
             Assert.AreEqual(0, keyedCollection.Count);
         }
         #endregion
 
         #region Contains
 
-        [Test]
+        [TestMethod]
         public void Contains_True()
         {
-            //exec
+            // Action
             bool result = keyedCollection.Contains(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_False()
         {
-            //exec
+            // Action
             bool result = keyedCollection.Contains(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 keyedCollection.Contains(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region ContainsKey
 
-        [Test]
+        [TestMethod]
         public void ContainsKey_True()
         {
-            //setup
+            // Arrange
             long id = Person.Bob_Jameson.ID;
 
-            //exec
+            // Action
             bool result = keyedCollection.ContainsKey(id);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void ContainsKey_False()
         {
-            //setup
+            // Arrange
             long id = Person.Jill_Dorrman.ID;
 
-            //exec
+            // Action
             bool result = keyedCollection.ContainsKey(id);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
         #endregion
 
         #region CopyTo
 
-        [Test]
+        [TestMethod]
         public void CopyTo()
         {
-            //setup
+            // Arrange
             Person[] array = new Person[3];
 
-            //exec
+            // Action
             keyedCollection.CopyTo(array, 0);
 
-            //test
+            // Assert
             Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 0);
             Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 0);
             Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 0);
             Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 0);
         }
 
-        [Test]
+        [TestMethod]
         public void CopyTo_NonZero()
         {
-            //setup
+            // Arrange
             Person[] array = new Person[5];
 
-            //exec
+            // Action
             keyedCollection.CopyTo(array, 2);
 
-            //test
+            // Assert
             Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 2);
             Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 2);
             Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 2);
@@ -373,26 +362,26 @@ namespace Plethora.Test.Collections
 
         #region Count
 
-        [Test]
+        [TestMethod]
         public void Count()
         {
-            //exec
+            // Action
             int count = keyedCollection.Count;
 
-            //test
+            // Assert
             Assert.AreEqual(3, count);
         }
         #endregion
 
         #region GetEnumerator
 
-        [Test]
+        [TestMethod]
         public void GetEnumerator()
         {
-            //exec
+            // Action
             var enumerator = keyedCollection.GetEnumerator();
 
-            //test
+            // Assert
             Assert.IsNotNull(enumerator);
 
             int i = 0;
@@ -412,32 +401,32 @@ namespace Plethora.Test.Collections
 
         #region IsReadOnly
 
-        [Test]
+        [TestMethod]
         public void IsReadOnly()
         {
-            //exec
+            // Action
             bool isReadonly = keyedCollection.IsReadOnly;
 
-            //test
+            // Assert
             Assert.IsFalse(isReadonly);
         }
         #endregion
 
         #region Keys
 
-        [Test]
+        [TestMethod]
         public void Keys()
         {
-            //setup
+            // Arrange
             var ids = new List<long>();
             ids.Add(Person.Bob_Jameson.ID);
             ids.Add(Person.Fred_Carlile.ID);
             ids.Add(Person.Amy_Cathson.ID);
 
-            //exec
+            // Action
             var keys = keyedCollection.Keys;
 
-            //test
+            // Assert
             int i = 0;
             foreach (var key in keys)
             {
@@ -453,65 +442,64 @@ namespace Plethora.Test.Collections
 
         #region Remove
 
-        [Test]
+        [TestMethod]
         public void Remove_InCollection()
         {
-            //exec
+            // Action
             bool result = keyedCollection.Remove(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(2, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_NotInCollection()
         {
-            //exec
+            // Action
             bool result = keyedCollection.Remove(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(3, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 keyedCollection.Remove(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region RemoveKey
 
-        [Test]
+        [TestMethod]
         public void RemoveKey_InCollection()
         {
-            //exec
+            // Action
             bool result = keyedCollection.RemoveKey(Person.Bob_Jameson.ID);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(2, keyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void RemoveKey_NotInCollection()
         {
-            //exec
+            // Action
             bool result = keyedCollection.RemoveKey(Person.Jill_Dorrman.ID);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(3, keyedCollection.Count);
         }
@@ -519,33 +507,33 @@ namespace Plethora.Test.Collections
 
         #region TryGetValue
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_InCollection()
         {
-            //setup
+            // Arrange
             long bob_ID = Person.Bob_Jameson.ID;
 
-            //exec
+            // Action
             Person person;
             bool result = keyedCollection.TryGetValue(bob_ID, out person);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.IsNotNull(person);
             Assert.AreEqual(Person.Bob_Jameson, person);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_NotInCollection()
         {
-            //setup
+            // Arrange
             long jill_ID = Person.Jill_Dorrman.ID;
 
-            //exec
+            // Action
             Person person;
             bool result = keyedCollection.TryGetValue(jill_ID, out person);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.IsNull(person);
         }
@@ -553,38 +541,38 @@ namespace Plethora.Test.Collections
 
         #region Upsert
 
-        [Test]
+        [TestMethod]
         public void Upsert_NotInCollection()
         {
-            //exec
+            // Action
             keyedCollection.Upsert(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.AreEqual(4, keyedCollection.Count);
             Assert.IsTrue(keyedCollection.Contains(Person.Jill_Dorrman));
         }
 
-        [Test]
+        [TestMethod]
         public void Upsert_InCollection()
         {
-            //exec
+            // Action
             keyedCollection.Upsert(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.AreEqual(3, keyedCollection.Count);
         }
         #endregion
 
         #region AsReadOnly
 
-        [Test]
+        [TestMethod]
         public void AsReadOnly()
         {
-            //exec
+            // Action
             IKeyedCollection<long, Person> readonlyCollection =
                 keyedCollection.AsReadOnly();
 
-            //test
+            // Assert
             Assert.IsNotNull(readonlyCollection);
             Assert.IsTrue(readonlyCollection.IsReadOnly);
         }
@@ -592,14 +580,14 @@ namespace Plethora.Test.Collections
 
         #region AsReadOnlyDictionary
 
-        [Test]
+        [TestMethod]
         public void AsReadOnlyDictionary()
         {
-            //exec
+            // Action
             IDictionary<long, Person> readonlyDictionary =
                 keyedCollection.AsReadOnlyDictionary();
 
-            //test
+            // Assert
             Assert.IsNotNull(readonlyDictionary);
             Assert.IsTrue(readonlyDictionary.IsReadOnly);
         }
@@ -607,10 +595,10 @@ namespace Plethora.Test.Collections
 
         #region ToKeyedCollection Extension Method
 
-        [Test]
+        [TestMethod]
         public void ToKeyedCollection()
         {
-            //setup
+            // Arrange
             IEnumerable<Person> people = new List<Person>
                 {
                     Person.Bob_Jameson,
@@ -618,18 +606,18 @@ namespace Plethora.Test.Collections
                     Person.Amy_Cathson
                 };
 
-            //exec
+            // Action
             KeyedCollection<long, Person> collection = people.ToKeyedCollection(person => person.ID);
 
-            //test
+            // Assert
             Assert.IsNotNull(collection);
             Assert.AreEqual(3, collection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ToKeyedCollection_Fail_Duplicate()
         {
-            //setup
+            // Arrange
             IEnumerable<Person> people = new List<Person>
                 {
                     Person.Bob_Jameson,
@@ -639,14 +627,13 @@ namespace Plethora.Test.Collections
 
             try
             {
-                //exec
+                // Action
                 people.ToKeyedCollection(person => person.ID);
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion

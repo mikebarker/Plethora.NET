@@ -54,7 +54,7 @@ namespace Plethora.ExpressionAide
                     }
                     else
                     {
-                        throw new ArgumentException(string.Format("Unknown ArrayIndex expression type {0}", expression.GetType()), nameof(expression));
+                        throw new ArgumentException($"Unknown ArrayIndex expression type {expression.GetType()}", nameof(expression));
                     }
                     break;
                 case ExpressionType.ArrayLength:
@@ -183,7 +183,7 @@ namespace Plethora.ExpressionAide
 
                 default:
                     throw new ArgumentException(
-                        string.Format("Expression NodeType {0} not known. ", expression.NodeType),
+                        $"Expression NodeType {expression.NodeType} not known.",
                         nameof(expression));
             }
 
@@ -313,7 +313,7 @@ namespace Plethora.ExpressionAide
                 return dupes;
             }
 
-            throw new ArgumentException(string.Format("Direction {0} not recognised for Expression type {1}", direction, parent.GetType().Name));
+            throw new ArgumentException($"Direction {direction} not recognised for Expression type {parent.GetType().Name}");
         }
 
         #region Duplicate Methods

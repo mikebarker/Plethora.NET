@@ -253,7 +253,7 @@ namespace Plethora.Collections.Trees
 
             //public override string ToString()
             //{
-            //    return string.Format("{0} {{ {1}, {2} }}", this.GetType().Name, this.Key, this.Value);
+            //    return $"{this.GetType().Name} {{ {this.Key}, {this.Value} }}";
             //}
         }
 
@@ -832,7 +832,7 @@ namespace Plethora.Collections.Trees
 
             //Duplicate key found.
             if (result)
-                throw new ArgumentException(string.Format("Item already exists with key {0}", key));
+                throw new ArgumentException($"Item already exists with key {key}");
 
 
             return this.AddNode(key, value, parentNode, edge);

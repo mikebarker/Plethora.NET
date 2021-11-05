@@ -15,9 +15,9 @@ namespace Plethora.Threading
             this.waitHandles = waitHandles;
         }
 
-        public override bool WaitOne(int millisecondsTimeout, bool exitContext)
+        public override bool WaitOne(TimeSpan timeout, bool exitContext)
         {
-            OperationTimeout timeout = new OperationTimeout(millisecondsTimeout);
+            OperationTimeout operationTimeout = new OperationTimeout(timeout);
 
             WaitHandle[] currentHandles = null;
             for (int i = 0; i < this.waitHandles.Length; i += MaxWaitHandles)
@@ -30,17 +30,12 @@ namespace Plethora.Threading
 
                 Array.Copy(this.waitHandles, i, currentHandles, 0, count);
 
-                bool result = WaitAll(currentHandles, timeout.Remaining);
+                bool result = WaitAll(currentHandles, operationTimeout.Remaining);
                 if (!result)
                     return false;
             }
 
             return true;
-        }
-
-        public override bool WaitOne(TimeSpan timeout, bool exitContext)
-        {
-            return this.WaitOne((int)timeout.TotalMilliseconds, exitContext);
         }
     }
 }

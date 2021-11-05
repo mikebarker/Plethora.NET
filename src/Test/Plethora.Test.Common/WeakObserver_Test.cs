@@ -1,16 +1,16 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class WeakObserver_Test
     {
-        [Test]
+        [TestMethod]
         public void WeakObserver_OnNext()
         {
-            //setup
+            // Arrange
             int onNextCount = 0;
             int onErrorCount = 0;
             int onCompleteCount = 0;
@@ -24,20 +24,20 @@ namespace Plethora.Test
 
             var subscription = publisher.WeakSubscribe(subscriber);
 
-            //exec
+            // Action
             publisher.OnNext(123);
 
-            //test
+            // Assert
             Assert.AreEqual(1, onNextCount);
             Assert.IsTrue(publisher.HasObservers);
 
             GC.KeepAlive(subscriber);
         }
 
-        [Test]
+        [TestMethod]
         public void WeakObserver_OnError()
         {
-            //setup
+            // Arrange
             int onNextCount = 0;
             int onErrorCount = 0;
             int onCompleteCount = 0;
@@ -51,20 +51,20 @@ namespace Plethora.Test
 
             var subscription = publisher.WeakSubscribe(subscriber);
 
-            //exec
+            // Action
             publisher.OnError(new Exception());
 
-            //test
+            // Assert
             Assert.AreEqual(1, onErrorCount);
             Assert.IsTrue(publisher.HasObservers);
 
             GC.KeepAlive(subscriber);
         }
 
-        [Test]
+        [TestMethod]
         public void WeakObserver_OnCompleted()
         {
-            //setup
+            // Arrange
             int onNextCount = 0;
             int onErrorCount = 0;
             int onCompleteCount = 0;
@@ -78,10 +78,10 @@ namespace Plethora.Test
 
             var subscription = publisher.WeakSubscribe(subscriber);
 
-            //exec
+            // Action
             publisher.OnCompleted();
 
-            //test
+            // Assert
             Assert.AreEqual(1, onCompleteCount);
             Assert.IsTrue(publisher.HasObservers);
 
@@ -89,10 +89,10 @@ namespace Plethora.Test
         }
 
 
-        [Test]
+        [TestMethod]
         public void WeakObserver_KeptAlive()
         {
-            //setup
+            // Arrange
             int onNextCount = 0;
             int onErrorCount = 0;
             int onCompleteCount = 0;
@@ -106,20 +106,20 @@ namespace Plethora.Test
 
             var subscription = publisher.WeakSubscribe(subscriber);
 
-            //exec
+            // Action
             GC.Collect(2, GCCollectionMode.Forced); // Force a full GC
             publisher.OnNext(123);
 
-            //test
+            // Assert
             Assert.IsTrue(publisher.HasObservers);
 
             GC.KeepAlive(subscriber);
         }
 
-        [Test]
+        [TestMethod]
         public void WeakObserver_Unsubscribe()
         {
-            //setup
+            // Arrange
             int onNextCount = 0;
             int onErrorCount = 0;
             int onCompleteCount = 0;
@@ -133,7 +133,7 @@ namespace Plethora.Test
 
             var subscription = publisher.WeakSubscribe(subscriber);
 
-            //test
+            // Assert
             Assert.IsTrue(publisher.HasObservers);
 
             subscription.Dispose();
@@ -141,29 +141,36 @@ namespace Plethora.Test
             Assert.IsFalse(publisher.HasObservers);
         }
 
-        [Test]
+        [TestMethod]
         public void WeakObserver_Collected()
         {
-            //setup
+            // Arrange
             int onNextCount = 0;
             int onErrorCount = 0;
             int onCompleteCount = 0;
 
             Subject<int> publisher = new Subject<int>();
-            Observer<int> subscriber = new Observer<int>(
-                delegate { onNextCount++; },
-                delegate { onErrorCount++; },
-                delegate { onCompleteCount++; });
+
+            Action setup = delegate () // .NET Core GC requires the value be out of scope, to be eligable for collection
+            {
+                Observer<int> subscriber = new Observer<int>(
+                    delegate { onNextCount++; },
+                    delegate { onErrorCount++; },
+                    delegate { onCompleteCount++; });
 
 
-            var subscription = publisher.WeakSubscribe(subscriber);
+                var subscription = publisher.WeakSubscribe(subscriber);
 
-            //exec
-            subscriber = null;  // Do not reference
+                // Action
+                subscriber = null;
+            };
+            setup();
+
+            // Action
             GC.Collect(2, GCCollectionMode.Forced); // Force a full GC
             publisher.OnNext(123);
 
-            //test
+            // Assert
             Assert.IsFalse(publisher.HasObservers);
         }
 

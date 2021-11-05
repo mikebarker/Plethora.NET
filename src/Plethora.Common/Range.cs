@@ -22,7 +22,7 @@ namespace Plethora
         /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
         public Range(T min, T max)
-            : this(min, max, true, true, Comparer<T>.Default)
+            : this(min, true, max, true, Comparer<T>.Default)
         {
         }
 
@@ -30,22 +30,22 @@ namespace Plethora
         /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
         public Range(T min, T max, IComparer<T> comparer)
-            : this(min, max, true, true, comparer)
+            : this(min, true, max, true, comparer)
         {
         }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
-        public Range(T min, T max, bool minInclusive, bool maxInclusive)
-            : this(min, max, minInclusive,maxInclusive, Comparer<T>.Default)
+        public Range(T min, bool minInclusive, T max, bool maxInclusive)
+            : this(min, minInclusive, max, maxInclusive, Comparer<T>.Default)
         {
         }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="Range{T}"/> struct.
         /// </summary>
-        public Range(T min, T max, bool minInclusive, bool maxInclusive, IComparer<T> comparer)
+        public Range(T min, bool minInclusive, T max, bool maxInclusive, IComparer<T> comparer)
         {
             if (comparer == null)
                 throw new ArgumentNullException(nameof(comparer));
@@ -143,8 +143,10 @@ namespace Plethora
         public bool Equals(Range<T> other)
         {
             return
+                this.minInclusive == other.minInclusive &&
+                this.maxInclusive == other.maxInclusive &&
                 EqualityComparer<T>.Default.Equals(this.min, other.min) &&
-                EqualityComparer<T>.Default.Equals(this.max, other.max) && this.minInclusive == other.minInclusive && this.maxInclusive == other.maxInclusive;
+                EqualityComparer<T>.Default.Equals(this.max, other.max);
         }
 
         #endregion
@@ -169,7 +171,7 @@ namespace Plethora
 
     public static class RangeHelper
     {
-        public static IList<Range<T>> Subtract<T>(this Range<T> rangeA, Range<T> rangeB)
+        public static IReadOnlyCollection<Range<T>> Subtract<T>(this Range<T> rangeA, Range<T> rangeB)
         {
             List<Range<T>> list = new List<Range<T>>(2);
 
@@ -207,12 +209,12 @@ namespace Plethora
             int minCompare = comparer.Compare(rangeA.Min, rangeB.Min);
             if (minCompare < 0)  // rangeA.Min < rangeB.Min
             {
-                var remainder = new Range<T>(rangeA.Min, rangeA.Min, rangeA.MinInclusive, !rangeB.MinInclusive, comparer);
+                var remainder = new Range<T>(rangeA.Min, rangeA.MinInclusive, rangeB.Min, !rangeB.MinInclusive, comparer);
                 list.Add(remainder);
             }
             else if ((minCompare == 0) && (rangeA.MinInclusive) && (!rangeB.MinInclusive))
             {
-                var remainder = new Range<T>(rangeA.Min, rangeA.Min, true, true, comparer);
+                var remainder = new Range<T>(rangeA.Min, true, rangeA.Min, true, comparer);
                 list.Add(remainder);
             }
 
@@ -220,12 +222,12 @@ namespace Plethora
             int maxCompare = comparer.Compare(rangeA.Max, rangeB.Max);
             if (maxCompare > 0)  // rangeA.Max > rangeB.Max
             {
-                var remainder = new Range<T>(rangeB.Max, rangeA.Max, !rangeB.MaxInclusive, rangeA.MaxInclusive, comparer);
+                var remainder = new Range<T>(rangeB.Max, !rangeB.MaxInclusive, rangeA.Max, rangeA.MaxInclusive, comparer);
                 list.Add(remainder);
             }
             else if ((maxCompare == 0) && (rangeA.MaxInclusive) && (!rangeB.MaxInclusive))
             {
-                var remainder = new Range<T>(rangeA.Max, rangeA.Max, true, true, comparer);
+                var remainder = new Range<T>(rangeA.Max, true, rangeA.Max, true, comparer);
                 list.Add(remainder);
             }
 

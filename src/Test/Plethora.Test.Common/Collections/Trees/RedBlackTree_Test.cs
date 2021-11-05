@@ -3,55 +3,55 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Collections.Trees;
 
 namespace Plethora.Test.Collections.Trees
 {
-    [TestFixture]
+    [TestClass]
     public class RedBlackTree_Test
     {
-        [Test]
+        [TestMethod]
         public void Add()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             const string key = "Harry";
             const int value = 7;
 
-            // exec
+            // Action
             tree.Add(key, value);
 
-            // test
+            // Assert
             Assert.AreEqual(tree.Count, 1);
             Assert.AreEqual(tree[key], value);
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void Add_Multiple()
         {
-            // setup
+            // Arrange
             RedBlackTree<int, int> tree = new RedBlackTree<int, int>();
 
             IEnumerable<int> values = Enumerable.Range(1, 100);
             foreach (int value in values)
             {
-                // exec
+                // Action
                 tree.Add(value, value);
 
-                // test
+                // Assert
                 AssertRedBlackTreeRules(tree);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Add_MultipleReverse()
         {
-            // setup
+            // Arrange
             RedBlackTree<int, int> tree = new RedBlackTree<int, int>();
 
             IEnumerable<int> values = Enumerable.Range(1, 100);
@@ -59,18 +59,18 @@ namespace Plethora.Test.Collections.Trees
 
             foreach (int value in values)
             {
-                // exec
+                // Action
                 tree.Add(value, value);
 
-                // test
+                // Assert
                 AssertRedBlackTreeRules(tree);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Add_MultipleRandomOrder()
         {
-            // setup
+            // Arrange
             Random rand = new Random(1778); // has no real-world value but makes tests repeatable.
             RedBlackTree<int, int> tree = new RedBlackTree<int, int>();
 
@@ -79,18 +79,18 @@ namespace Plethora.Test.Collections.Trees
 
             foreach (int value in values)
             {
-                // exec
+                // Action
                 tree.Add(value, value);
 
-                // test
+                // Assert
                 AssertRedBlackTreeRules(tree);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void AddDuplicate()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             const string key = "Harry";
@@ -98,7 +98,7 @@ namespace Plethora.Test.Collections.Trees
 
             tree.Add(key, value);
 
-            // exec
+            // Action
             try
             {
                 tree.Add(key, value + 1);
@@ -110,10 +110,10 @@ namespace Plethora.Test.Collections.Trees
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Itterate()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -123,7 +123,7 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // test
+            // Assert
             Assert.AreEqual(tree.Count, 3);
             foreach (KeyValuePair<string, int> pair in tree)
             {
@@ -134,10 +134,10 @@ namespace Plethora.Test.Collections.Trees
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void Clear()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -149,19 +149,19 @@ namespace Plethora.Test.Collections.Trees
 
             Assert.AreEqual(tree.Count, 3);
 
-            // exec
+            // Action
             tree.Clear();
 
-            // test
+            // Assert
             Assert.AreEqual(tree.Count, 0);
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void ContainsKey()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -171,16 +171,16 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // test
+            // Assert
             Assert.IsTrue(tree.ContainsKey("Mark"));
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -190,7 +190,7 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // test
+            // Assert
             bool result = tree.Remove("Mark");
             Assert.IsTrue(result);
             Assert.AreEqual(tree.Count, 2);
@@ -198,10 +198,10 @@ namespace Plethora.Test.Collections.Trees
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_DoesNotExist()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -211,7 +211,7 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // test
+            // Assert
             bool result = tree.Remove("Fred");
             Assert.IsFalse(result);
             Assert.AreEqual(tree.Count, 3);
@@ -219,10 +219,10 @@ namespace Plethora.Test.Collections.Trees
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_Multiple()
         {
-            // setup
+            // Arrange
             const int count = 100;
 
             IEnumerable<int> values = Enumerable.Range(1, count);
@@ -243,10 +243,10 @@ namespace Plethora.Test.Collections.Trees
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_MultipleRandomOrder()
         {
-            // setup
+            // Arrange
             const int count = 100;
             Random rand = new Random(1778); // has no real-world value but makes tests repeatable.
 
@@ -265,10 +265,10 @@ namespace Plethora.Test.Collections.Trees
             }
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_Exists()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -278,21 +278,21 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // exec
+            // Action
             int value;
             bool result = tree.TryGetValue("Mark", out value);
 
-            // test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(value, 12);
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_NotExists()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -302,21 +302,21 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // exec
+            // Action
             int value;
             bool result = tree.TryGetValue("Xylophone", out value);
 
-            // test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(value, default(int));
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValueEx_Exists()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -326,12 +326,12 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // exec
+            // Action
             int value;
             object locationInfo;
             bool result = tree.TryGetValueEx("Mark", out value, out locationInfo);
 
-            // test
+            // Assert
             Assert.IsTrue(result);
             Assert.IsNotNull(locationInfo);
             Assert.AreEqual(value, 12);
@@ -339,10 +339,10 @@ namespace Plethora.Test.Collections.Trees
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValueEx_NotExists()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -352,12 +352,12 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // exec
+            // Action
             int value;
             object locationInfo;
             bool result = tree.TryGetValueEx("Xylophone", out value, out locationInfo);
 
-            // test
+            // Assert
             Assert.IsFalse(result);
             Assert.IsNotNull(locationInfo);
             Assert.AreEqual(value, default(int));
@@ -365,10 +365,10 @@ namespace Plethora.Test.Collections.Trees
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValueEx_AddEx()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -378,7 +378,7 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // exec
+            // Action
             const string key = "Xylophone";
             int value;
             object locationInfo;
@@ -389,16 +389,16 @@ namespace Plethora.Test.Collections.Trees
 
             tree.AddEx(key, 42, locationInfo);
 
-            // test
+            // Assert
             Assert.AreEqual(tree[key], 42);
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void GetPairEnumerator()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
             IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
@@ -408,22 +408,22 @@ namespace Plethora.Test.Collections.Trees
             tree.Add(keys[1], values[1]);
             tree.Add(keys[2], values[2]);
 
-            // exec
+            // Action
             IKeyLimitedEnumerator<string, KeyValuePair<string, int>> enumerator = tree.GetPairEnumerator();
 
-            // test
+            // Assert
             Assert.IsNotNull(enumerator);
 
             AssertRedBlackTreeRules(tree);
         }
 
-        [Test]
+        [TestMethod]
         public void AreDuplicatesAllowed()
         {
-            // setup
+            // Arrange
             RedBlackTree<string, int> tree = new RedBlackTree<string, int>();
 
-            // test
+            // Assert
             Assert.IsFalse(tree.AreDuplicatesAllowed);
         }
 

@@ -1,29 +1,22 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections.Sets;
 using Plethora.Test.MockClasses;
 
 namespace Plethora.Test.Collections.Sets
 {
-    [TestFixture]
+    [TestClass]
     public class BaseSetImpl_Test
     {
-        private BaseSetImpl<int> A;
-        private BaseSetImpl<int> B;
-            
-        [SetUp]
-        public void SetUp()
-        {
-            A = new MockSetCore<int>(1, 2, 3, 6);
-            B = new MockSetCore<int>(3, 4, 5);
-        }
+        private readonly BaseSetImpl<int> A = new MockSetCore<int>(1, 2, 3, 6);
+        private readonly BaseSetImpl<int> B = new MockSetCore<int>(3, 4, 5);
 
-        [Test]
+        [TestMethod]
         public void Union()
         {
-            //exec
+            // Action
             var A_u_B = A.Union(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_u_B.Contains(0));
             Assert.IsTrue(A_u_B.Contains(1));
             Assert.IsTrue(A_u_B.Contains(2));
@@ -36,13 +29,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_u_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Intersect()
         {
-            //exec
+            // Action
             var A_n_B = A.Intersect(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_n_B.Contains(0));
             Assert.IsFalse(A_n_B.Contains(1));
             Assert.IsFalse(A_n_B.Contains(2));
@@ -55,13 +48,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_n_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Subtract()
         {
-            //exec
+            // Action
             var A_minus_B = A.Subtract(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_minus_B.Contains(0));
             Assert.IsTrue(A_minus_B.Contains(1));
             Assert.IsTrue(A_minus_B.Contains(2));
@@ -74,13 +67,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_minus_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Inverse()
         {
-            //exec
+            // Action
             var notA = A.Inverse();
 
-            //test
+            // Assert
             Assert.IsTrue(notA.Contains(0));
             Assert.IsFalse(notA.Contains(1));
             Assert.IsFalse(notA.Contains(2));

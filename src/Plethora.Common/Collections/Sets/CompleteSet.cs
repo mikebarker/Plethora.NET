@@ -2,7 +2,7 @@
 
 namespace Plethora.Collections.Sets
 {
-    public sealed class CompleteSet<T> : BaseSetImpl<T>, ISetCore<T>
+    public sealed class CompleteSet<T> : BaseSetImpl<T>
     {
         public static readonly CompleteSet<T> Instance = new CompleteSet<T>();
 

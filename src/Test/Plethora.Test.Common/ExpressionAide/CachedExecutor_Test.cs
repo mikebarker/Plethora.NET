@@ -1,71 +1,71 @@
 using System;
 using System.Linq.Expressions;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.ExpressionAide;
 
 namespace Plethora.Test.ExpressionAide
 {
-    [TestFixture]
+    [TestClass]
     public class CachedExecutor_Test
     {
-        [Test]
+        [TestMethod]
         public void Execute()
         {
-            //Setup
+            // Arrange
             Expression<Func<int>> expression = () => 9;
 
-            //Execute
+            // Action
             int result1 = expression.Compile()();
             int result2 = CachedExecutor.Execute(expression);
 
-            //Test
+            // Assert
             Assert.AreEqual(result1, result2);
         }
 
-        [Test]
+        [TestMethod]
         public void Execute_Repeated()
         {
-            //Setup
+            // Arrange
             Expression<Func<int>> expression = () => 9;
 
-            //Execute
+            // Action
             int result1 = CachedExecutor.Execute(expression);
             int result2 = CachedExecutor.Execute(expression);
 
-            //Test
+            // Assert
             Assert.AreEqual(result1, result2);
         }
 
-        [Test]
+        [TestMethod]
         public void Execute_SameExpressions()
         {
-            //Setup
+            // Arrange
             Expression<Func<int>> expression1 = () => 9;
             Expression<Func<int>> expression2 = () => 9;
 
-            //Execute
+            // Action
             int result1 = CachedExecutor.Execute(expression1);
             int result2 = CachedExecutor.Execute(expression2);
 
-            //Test
+            // Assert
             Assert.AreEqual(result1, result2);
         }
 
-        [Test]
+        [TestMethod]
         public void Execute_WithDataChange()
         {
-            //Setup
+            // Arrange
             Expression<Func<int>> origExpression = GetFunc(2009);
             Expression<Func<int>> otherExpression = GetFunc(2008);
 
-            //Execute
+            // Action
             int origResultCompile = origExpression.Compile()();
             int origResultExecute = CachedExecutor.Execute(origExpression);
 
             int otherResultCompile = otherExpression.Compile()();
             int otherResultExecute = CachedExecutor.Execute(otherExpression);
 
-            //Test
+            // Assert
             Assert.AreEqual(origResultCompile, origResultExecute);
             Assert.AreEqual(otherResultCompile, otherResultExecute);
             Assert.AreNotEqual(origResultExecute, otherResultExecute);

@@ -1,19 +1,17 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class SortedByKeyList_Test
     {
-        private SortedByKeyList<DateTime, Person> sortedList;
+        private SortedByKeyList<DateTime, Person> sortedList = new SortedByKeyList<DateTime, Person>(person => person.DateOfBirth, DuplicatesPolicy.Allow);
 
-        [SetUp]
-        public void SetUp()
+        public SortedByKeyList_Test()
         {
-            sortedList = new SortedByKeyList<DateTime, Person>(person => person.DateOfBirth, DuplicatesPolicy.Allow);
             sortedList.Add(Person.Bob_Jameson);
             sortedList.Add(Person.Bob_Jameson2);
             sortedList.Add(Person.Fred_Carlile);
@@ -21,27 +19,27 @@ namespace Plethora.Test.Collections
             sortedList.Add(Person.Jill_Dorrman);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove_SingleElement()
         {
-            //Setup
+            // Arrange
             sortedList = new SortedByKeyList<DateTime, Person>(person => person.DateOfBirth, DuplicatesPolicy.Allow);
             sortedList.Add(Person.Bob_Jameson);
 
             //Exec
             sortedList.Remove(Person.Bob_Jameson);
 
-            //Test
+            // Assert
             Assert.AreEqual(0, sortedList.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove()
         {
             //Exec
             sortedList.Remove(Person.Bob_Jameson);
 
-            //Test
+            // Assert
             Assert.AreEqual(4, sortedList.Count);
         }
     }

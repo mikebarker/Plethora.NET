@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.Serialization;
-using Plethora.Logging;
 
 namespace Plethora.Threading
 {
@@ -8,7 +7,7 @@ namespace Plethora.Threading
     /// Exception thrown during asynchronous execution.
     /// </summary>
     [Serializable]
-    public class AsyncException : IsLoggedException
+    public class AsyncException : Exception
     {
         #region Constructors
 

@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class MergeJoin_Test
     {
-        private List<Person> unorderedListA;
-        private List<Person> unorderedListB;
+        private readonly List<Person> unorderedListA = new List<Person>();
+        private readonly List<Person> unorderedListB = new List<Person>();
 
-        [SetUp]
-        public void SetUp()
+        public MergeJoin_Test()
         {
-            unorderedListA = new List<Person>();
-            unorderedListB = new List<Person>();
-
             unorderedListA.Add(Person.Bob_Jameson);
             unorderedListA.Add(Person.Amy_Cathson);
             unorderedListA.Add(Person.Jill_Dorrman);
@@ -30,41 +26,41 @@ namespace Plethora.Test.Collections
             unorderedListB.Add(Person.Harry_Porker);
         }
 
-        [Test]
+        [TestMethod]
         public void FindMergeSet()
         {
-            //exec
+            // Action
             List<MergeItem<long, Person>> mergeSet = MergeJoin.FindMergeSet(
                 unorderedListA,
                 unorderedListB,
                 person => person.ID);
 
-            //test
+            // Assert
             Assert.IsNotNull(mergeSet);
             TestMergeSet(mergeSet);
         }
 
-        [Test]
+        [TestMethod]
         public void FindMergeSetPreOrdered()
         {
             var orderedA = unorderedListA.OrderBy(person => person.ID);
             var orderedB = unorderedListB.OrderBy(person => person.ID);
 
-            //exec
+            // Action
             List<MergeItem<long, Person>> mergeSet = MergeJoin.FindMergeSetPreOrdered(
                 orderedA,
                 orderedB,
                 person => person.ID);
 
-            //test
+            // Assert
             Assert.IsNotNull(mergeSet);
             TestMergeSet(mergeSet);
         }
 
-        [Test]
+        [TestMethod]
         public void Merge()
         {
-            //setup
+            // Arrange
             int matchCount = 0;
             int differentCount = 0;
             int leftOnlyCount = 0;
@@ -75,7 +71,7 @@ namespace Plethora.Test.Collections
             Action<long, Person> onLeftOnly = delegate { leftOnlyCount++; };
             Action<long, Person> onRightOnly = delegate { rightOnlyCount++; };
 
-            //exec
+            // Action
             MergeJoin.Merge(
                 unorderedListA,
                 unorderedListB,
@@ -86,17 +82,17 @@ namespace Plethora.Test.Collections
                 onLeftOnly,
                 onRightOnly);
 
-            //test
+            // Assert
             Assert.AreEqual(1, matchCount);
             Assert.AreEqual(1, differentCount);
             Assert.AreEqual(1, leftOnlyCount);
             Assert.AreEqual(3, rightOnlyCount);
         }
 
-        [Test]
+        [TestMethod]
         public void MergePreOrdered()
         {
-            //setup
+            // Arrange
             int matchCount = 0;
             int differentCount = 0;
             int leftOnlyCount = 0;
@@ -110,7 +106,7 @@ namespace Plethora.Test.Collections
             var orderedA = unorderedListA.OrderBy(person => person.ID);
             var orderedB = unorderedListB.OrderBy(person => person.ID);
 
-            //exec
+            // Action
             MergeJoin.MergePreOrdered(
                 orderedA,
                 orderedB,
@@ -121,7 +117,7 @@ namespace Plethora.Test.Collections
                 onLeftOnly,
                 onRightOnly);
 
-            //test
+            // Assert
             Assert.AreEqual(1, matchCount);
             Assert.AreEqual(1, differentCount);
             Assert.AreEqual(1, leftOnlyCount);

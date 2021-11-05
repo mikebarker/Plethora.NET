@@ -1,28 +1,21 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections.Sets;
 
 namespace Plethora.Test.Collections.Sets
 {
-    [TestFixture]
+    [TestClass]
     public class InclusiveExclusiveInteraction_Test
     {
-        private InclusiveSet<int> A;
-        private ExclusiveSet<int> B;
+        private readonly InclusiveSet<int> A = new InclusiveSet<int>(1, 2, 3, 6);
+        private readonly ExclusiveSet<int> B = new ExclusiveSet<int>(3, 4, 5);
 
-        [SetUp]
-        public void SetUp()
-        {
-            A = new InclusiveSet<int>(1, 2, 3, 6);
-            B = new ExclusiveSet<int>(3, 4, 5);
-        }
-
-        [Test]
+        [TestMethod]
         public void Inc_Subtract_Exc()
         {
-            //exec
+            // Action
             var A_minus_B = A.Subtract(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_minus_B.Contains(0));
             Assert.IsFalse(A_minus_B.Contains(1));
             Assert.IsFalse(A_minus_B.Contains(2));
@@ -35,13 +28,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_minus_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Exc_Subtract_Inc()
         {
-            //exec
+            // Action
             var B_minus_A = B.Subtract(A);
 
-            //test
+            // Assert
             Assert.IsTrue(B_minus_A.Contains(0));
             Assert.IsFalse(B_minus_A.Contains(1));
             Assert.IsFalse(B_minus_A.Contains(2));
@@ -55,13 +48,13 @@ namespace Plethora.Test.Collections.Sets
         }
 
 
-        [Test]
+        [TestMethod]
         public void Inc_Intersect_Exc()
         {
-            //exec
+            // Action
             var A_n_B = A.Intersect(B);
 
-            //test
+            // Assert
             Assert.IsFalse(A_n_B.Contains(0));
             Assert.IsTrue(A_n_B.Contains(1));
             Assert.IsTrue(A_n_B.Contains(2));
@@ -74,13 +67,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsFalse(A_n_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Exc_Intersect_Inc()
         {
-            //exec
+            // Action
             var B_n_A = B.Intersect(A);
 
-            //test
+            // Assert
             Assert.IsFalse(B_n_A.Contains(0));
             Assert.IsTrue(B_n_A.Contains(1));
             Assert.IsTrue(B_n_A.Contains(2));
@@ -94,13 +87,13 @@ namespace Plethora.Test.Collections.Sets
         }
 
 
-        [Test]
+        [TestMethod]
         public void Inc_Union_Exc()
         {
-            //exec
+            // Action
             var A_u_B = A.Union(B);
 
-            //test
+            // Assert
             Assert.IsTrue(A_u_B.Contains(0));
             Assert.IsTrue(A_u_B.Contains(1));
             Assert.IsTrue(A_u_B.Contains(2));
@@ -113,13 +106,13 @@ namespace Plethora.Test.Collections.Sets
             Assert.IsTrue(A_u_B.Contains(9));
         }
 
-        [Test]
+        [TestMethod]
         public void Exc_Union_Inc()
         {
-            //exec
+            // Action
             var B_u_A = B.Union(A);
 
-            //test
+            // Assert
             Assert.IsTrue(B_u_A.Contains(0));
             Assert.IsTrue(B_u_A.Contains(1));
             Assert.IsTrue(B_u_A.Contains(2));

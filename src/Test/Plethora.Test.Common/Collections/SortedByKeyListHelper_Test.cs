@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class SortedByKeyListHelper_Test
     {
-        [Test]
+        [TestMethod]
         public void GetByKey_EmptyList()
         {
-            //Setup
+            // Arrange
             var list = CreateEmptyList();
             var date = new DateTime(2000, 01, 04);
 
@@ -20,14 +20,14 @@ namespace Plethora.Test.Collections
             IEnumerable<Price> subList = list.GetByKey(date);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByKey_UniqueList()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
             var date = new DateTime(2000, 01, 04);
 
@@ -35,16 +35,16 @@ namespace Plethora.Test.Collections
             IEnumerable<Price> subList = list.GetByKey(date);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(1, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByKey_UniqueList_NotInRange()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
             var date = new DateTime(2100, 01, 04);
 
@@ -52,14 +52,14 @@ namespace Plethora.Test.Collections
             IEnumerable<Price> subList = list.GetByKey(date);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByKey_DuplicateList_MultipleResults()
         {
-            //Setup
+            // Arrange
             var list = CreateDuplicateList();
             var date = new DateTime(2000, 01, 04);
 
@@ -67,7 +67,7 @@ namespace Plethora.Test.Collections
             IEnumerable<Price> subList = list.GetByKey(date);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(2, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
@@ -75,48 +75,48 @@ namespace Plethora.Test.Collections
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetByRange_EmptyList_Inclusive()
         {
-            //Setup
+            // Arrange
             var list = CreateEmptyList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 07), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), true, new DateTime(2000, 01, 07), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_EmptyList_Exclusive()
         {
-            //Setup
+            // Arrange
             var list = CreateEmptyList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 07), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), false, new DateTime(2000, 01, 07), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_UniqueList_Inclusive()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 07), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), true, new DateTime(2000, 01, 07), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(3, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
@@ -124,34 +124,34 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 07), subList.ElementAt(2).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_UniqueList_Exclusive()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 07), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), false, new DateTime(2000, 01, 07), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
-            //Test
+            // Assert
             Assert.AreEqual(1, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(0).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_DuplicateList_Inclusive()
         {
-            //Setup
+            // Arrange
             var list = CreateDuplicateList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 07), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), true, new DateTime(2000, 01, 07), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(5, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
@@ -161,17 +161,17 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 07), subList.ElementAt(4).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_DuplicateList_Exclusive()
         {
-            //Setup
+            // Arrange
             var list = CreateDuplicateList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 07), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), false, new DateTime(2000, 01, 07), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
-            //Test
+            // Assert
             Assert.AreEqual(2, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(0).DateTime);
@@ -179,53 +179,53 @@ namespace Plethora.Test.Collections
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MinUnavailable()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 05), new DateTime(2000, 01, 07), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 05), true, new DateTime(2000, 01, 07), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(2, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(0).DateTime);
             Assert.AreEqual(new DateTime(2000, 01, 07), subList.ElementAt(1).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MaxUnavailable()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 05), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), true, new DateTime(2000, 01, 05), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(1, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MinBeforeStart()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(1900, 01, 01), new DateTime(2000, 01, 07), true, true);
+            var range = new Range<DateTime>(new DateTime(1900, 01, 01), true, new DateTime(2000, 01, 07), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(6, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 01), subList.ElementAt(0).DateTime);
@@ -236,48 +236,48 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 07), subList.ElementAt(5).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MaxBeforeStart()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(1900, 01, 01), new DateTime(1990, 12, 30), true, true);
+            var range = new Range<DateTime>(new DateTime(1900, 01, 01), true, new DateTime(1990, 12, 30), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MinPastEnd()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2010, 01, 04), new DateTime(2100, 01, 01), true, true);
+            var range = new Range<DateTime>(new DateTime(2010, 01, 04), true, new DateTime(2100, 01, 01), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MaxPastEnd()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2100, 01, 01), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), true, new DateTime(2100, 01, 01), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(4, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
@@ -286,18 +286,18 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 08), subList.ElementAt(3).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MaxAtEnd()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 08), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), true, new DateTime(2000, 01, 08), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(4, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 04), subList.ElementAt(0).DateTime);
@@ -306,18 +306,18 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 08), subList.ElementAt(3).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Inclusive_MinAtStart()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 01), new DateTime(2000, 01, 08), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 01), true, new DateTime(2000, 01, 08), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(7, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 01), subList.ElementAt(0).DateTime);
@@ -330,50 +330,50 @@ namespace Plethora.Test.Collections
         }
 
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MinUnavailable()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 05), new DateTime(2000, 01, 07), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 05), false, new DateTime(2000, 01, 07), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(1, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(0).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MaxUnavailable()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 05), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), false, new DateTime(2000, 01, 05), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MinBeforeStart()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(1900, 01, 01), new DateTime(2000, 01, 07), false, false);
+            var range = new Range<DateTime>(new DateTime(1900, 01, 01), false, new DateTime(2000, 01, 07), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(5, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 01), subList.ElementAt(0).DateTime);
@@ -383,48 +383,48 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(4).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MaxBeforeStart()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(1900, 01, 01), new DateTime(1990, 12, 30), false, false);
+            var range = new Range<DateTime>(new DateTime(1900, 01, 01), false, new DateTime(1990, 12, 30), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MinPastEnd()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2010, 01, 04), new DateTime(2100, 01, 01), false, false);
+            var range = new Range<DateTime>(new DateTime(2010, 01, 04), false, new DateTime(2100, 01, 01), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(0, subList.Count());
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MaxPastEnd()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2100, 01, 01), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), false, new DateTime(2100, 01, 01), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(3, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(0).DateTime);
@@ -432,36 +432,36 @@ namespace Plethora.Test.Collections
             Assert.AreEqual(new DateTime(2000, 01, 08), subList.ElementAt(2).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MaxAtEnd()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 04), new DateTime(2000, 01, 08), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 04), false, new DateTime(2000, 01, 08), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(2, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 06), subList.ElementAt(0).DateTime);
             Assert.AreEqual(new DateTime(2000, 01, 07), subList.ElementAt(1).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_Exclusive_MinAtStart()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 01), new DateTime(2000, 01, 08), false, false);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 01), false, new DateTime(2000, 01, 08), false);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(5, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 02), subList.ElementAt(0).DateTime);
@@ -473,35 +473,35 @@ namespace Plethora.Test.Collections
 
 
         
-        [Test]
+        [TestMethod]
         public void GetByRange_FirstElement()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 01), new DateTime(2000, 01, 01), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 01), true, new DateTime(2000, 01, 01), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(1, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 01), subList.ElementAt(0).DateTime);
         }
 
-        [Test]
+        [TestMethod]
         public void GetByRange_LastElement()
         {
-            //Setup
+            // Arrange
             var list = CreateUniqueList();
-            var range = new Range<DateTime>(new DateTime(2000, 01, 08), new DateTime(2000, 01, 08), true, true);
+            var range = new Range<DateTime>(new DateTime(2000, 01, 08), true, new DateTime(2000, 01, 08), true);
 
             //Exec
             IEnumerable<Price> subList = list.GetByRange(range);
 
 
-            //Test
+            // Assert
             Assert.AreEqual(1, subList.Count());
 
             Assert.AreEqual(new DateTime(2000, 01, 08), subList.ElementAt(0).DateTime);

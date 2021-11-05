@@ -1,16 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Plethora.Cache.Sample.SimpleExample
 {
-    class SimpleCache : CacheBase<Foo, FooArg>
+    class SimpleCache : CacheBase<Person, PersonArg>
     {
-        private readonly FooSource fooSource = new FooSource();
+        private readonly PersonSource fooSource = new PersonSource();
 
-        public Foo GetFoo(int id)
+        public async Task<Person> GetPersonAsync(int id)
         {
-            List<FooArg> fooArgs = new List<FooArg> {new FooArg(id)};
-            var foos = base.GetData(fooArgs, 5000);
+            List<PersonArg> fooArgs = new List<PersonArg> {new PersonArg(id)};
+            var foos = await base.GetDataAsync(fooArgs).ConfigureAwait(false);
             return foos.SingleOrDefault();
         }
 
@@ -19,13 +22,13 @@ namespace Plethora.Cache.Sample.SimpleExample
             base.Clear();
         }
 
-        #region Overrides of CacheBase<Foo,FooArg>
+        #region Overrides of CacheBase<Person,PersonArg>
 
-        protected override IEnumerable<Foo> GetDataFromSource(
-            IEnumerable<FooArg> arguments, int millisecondsTimeout)
+        protected override async Task<IEnumerable<Person>> GetDataFromSourceAsync(
+            IEnumerable<PersonArg> arguments, CancellationToken cancellationToken = default)
         {
             return arguments
-                .Select(arg => this.fooSource.GetFoo(arg.Id))
+                .Select(arg => this.fooSource.GetPerson(arg.Id))
                 .Where(foo => foo != null)
                 .ToList();
         }

@@ -2,9 +2,9 @@
 
 namespace Plethora.Finance.Bond
 {
-    public class BondInterestCalculatorActual_Actual_ICMA : IBondInterestCalculator
+    public class BondInterestCalculatorActual_Actual_ICMA
     {
-        Rational IBondInterestCalculator.CalculateDayCountFraction(
+        public Rational CalculateDayCountFraction(
             DateTime accrualStartDate,
             DateTime accrualEndDate,
             DateTime nextPaymentDate,

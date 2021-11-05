@@ -21,7 +21,7 @@ namespace Plethora.Calendar
                 weekendDays,
                 holidays);
 
-            //Date rolling can cuase dates to occur outside the requested range. Therefore re-filter.
+            //Date rolling can cause dates to occur outside the requested range. Therefore re-filter.
             DateTime[] result = calendar
                 .SkipWhile(date => date >= startDate)
                 .TakeWhile(date => date <= endDate)
@@ -45,7 +45,7 @@ namespace Plethora.Calendar
                 weekendDays,
                 holidays);
 
-            //Date rolling can cuase dates to occur outside the requested range. Therefore re-filter.
+            //Date rolling can cause dates to occur outside the requested range. Therefore re-filter.
             DateTime[] result = calendar
                 .SkipWhile(date => date >= startDate)
                 .Take(numberOfEntries)

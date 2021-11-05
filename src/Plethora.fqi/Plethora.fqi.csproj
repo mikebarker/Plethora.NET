@@ -1,137 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{96CC92ED-DDC2-439E-8888-06E2506970E1}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Plethora.fqi</RootNamespace>
-    <AssemblyName>Plethora.fqi</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
-    <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\fqiKeyPair.snk</AssemblyOriginatorKeyFile>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation />
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	  <Version>0.20.0</Version>
+	  <Authors>The Plethora .NET Project</Authors>
+	  <Copyright>Copyright © The Plethora Project. All rights reserved.</Copyright>
+	  <Product>The Plethora .NET Project</Product>
+	  <PackageLicenseFile>license.md</PackageLicenseFile>
+	  <PackageProjectUrl>https://github.com/mikebarker/Plethora.NET</PackageProjectUrl>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="IIndexSpecification.cs" />
-    <Compile Include="SingleIndexSpecification.cs" />
-    <Compile Include="Trees\AvlMultiTree.cs" />
-    <Compile Include="Trees\Helpers\TreeGrapher.cs" />
-    <Compile Include="Trees\MultiTree.cs" />
-    <Compile Include="Trees\MultiTree.Enumerators.cs">
-      <DependentUpon>MultiTree.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Trees\MultiTree.Wrappers.cs">
-      <DependentUpon>MultiTree.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Trees\DeepTree.cs" />
-    <Compile Include="Trees\DeepTree.LeafLayer.cs">
-      <DependentUpon>DeepTree.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Trees\DeepTree.MidLayer.cs">
-      <DependentUpon>DeepTree.cs</DependentUpon>
-    </Compile>
-    <Compile Include="LateRange.cs" />
-    <Compile Include="MultiIndexedCollection.cs" />
-    <Compile Include="EnumerableExtensions.cs" />
-    <Compile Include="ExpressionAnalyser.cs" />
-    <Compile Include="IIndexedEnumerable.cs" />
-    <Compile Include="IndexedEnumerable.cs" />
-    <Compile Include="PredicateExtensions.cs" />
-    <Compile Include="IIndexedEnumerableExtension.cs" />
-    <Compile Include="MultiIndexSpecification.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="IndexedCollection.cs" />
+    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj">
-      <Project>{0D8A2D17-6D05-4C8D-8BE9-628F3BAF0D07}</Project>
-      <Name>Plethora.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  -->
-  <Target Name="AfterBuild">
-    <CallTarget Targets="CopyToSolutionOutput" Condition=" '$(Configuration)' == 'Release'" />
-  </Target>
-  <Import Project="$(ProjectDir)..\Plethora.PostBuild.Targets" />
+
 </Project>

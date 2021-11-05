@@ -8,7 +8,7 @@ namespace Plethora.Collections
     {
         public static IEnumerable<T> GetByKey<TKey, T>(this SortedByKeyList<TKey, T> list, TKey key)
         {
-            return GetByRange(list, new Range<TKey>(key, key, true, true, list.Comparer));
+            return GetByRange(list, new Range<TKey>(key, true, key, true, list.Comparer));
         }
 
         public static IEnumerable<T> GetByRange<TKey, T>(this SortedByKeyList<TKey, T> list, Range<TKey> range)

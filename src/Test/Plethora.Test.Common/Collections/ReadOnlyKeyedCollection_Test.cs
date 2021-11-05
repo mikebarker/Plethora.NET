@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Collections
 {
-    [TestFixture]
+    [TestClass]
     public class ReadOnlyKeyedCollection_Test
     {
         private ReadOnlyKeyedCollection<long, Person> readonlyKeyedCollection;
 
-        [SetUp]
-        public void SetUp()
+        public ReadOnlyKeyedCollection_Test()
         {
             var keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
             keyedCollection.Add(Person.Bob_Jameson);
@@ -25,7 +24,7 @@ namespace Plethora.Test.Collections
 
         #region Constructors
 
-        [Test]
+        [TestMethod]
         public void ctor()
         {
             var keyedCollection = new KeyedCollection<long, Person>(person => person.ID);
@@ -35,125 +34,123 @@ namespace Plethora.Test.Collections
 
             readonlyKeyedCollection = new ReadOnlyKeyedCollection<long, Person>(keyedCollection);
 
-            //test
+            // Assert
             Assert.IsNotNull(readonlyKeyedCollection);
             Assert.IsTrue(readonlyKeyedCollection.IsReadOnly);
             Assert.AreEqual(keyedCollection.Count, readonlyKeyedCollection.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void ctor_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 readonlyKeyedCollection = new ReadOnlyKeyedCollection<long, Person>(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region Contains
 
-        [Test]
+        [TestMethod]
         public void Contains_True()
         {
-            //exec
+            // Action
             bool result = readonlyKeyedCollection.Contains(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_False()
         {
-            //exec
+            // Action
             bool result = readonlyKeyedCollection.Contains(Person.Jill_Dorrman);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Contains_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 readonlyKeyedCollection.Contains(null);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region ContainsKey
 
-        [Test]
+        [TestMethod]
         public void ContainsKey_True()
         {
-            //setup
+            // Arrange
             long id = Person.Bob_Jameson.ID;
 
-            //exec
+            // Action
             bool result = readonlyKeyedCollection.ContainsKey(id);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void ContainsKey_False()
         {
-            //setup
+            // Arrange
             long id = Person.Jill_Dorrman.ID;
 
-            //exec
+            // Action
             bool result = readonlyKeyedCollection.ContainsKey(id);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
         #endregion
 
         #region CopyTo
 
-        [Test]
+        [TestMethod]
         public void CopyTo()
         {
-            //setup
+            // Arrange
             Person[] array = new Person[3];
 
-            //exec
+            // Action
             readonlyKeyedCollection.CopyTo(array, 0);
 
-            //test
+            // Assert
             Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 0);
             Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 0);
             Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 0);
             Assert.IsFalse(Array.IndexOf(array, Person.Jill_Dorrman) >= 0);
         }
 
-        [Test]
+        [TestMethod]
         public void CopyTo_NonZero()
         {
-            //setup
+            // Arrange
             Person[] array = new Person[5];
 
-            //exec
+            // Action
             readonlyKeyedCollection.CopyTo(array, 2);
 
-            //test
+            // Assert
             Assert.IsTrue(Array.IndexOf(array, Person.Bob_Jameson) >= 2);
             Assert.IsTrue(Array.IndexOf(array, Person.Fred_Carlile) >= 2);
             Assert.IsTrue(Array.IndexOf(array, Person.Amy_Cathson) >= 2);
@@ -163,26 +160,26 @@ namespace Plethora.Test.Collections
 
         #region Count
 
-        [Test]
+        [TestMethod]
         public void Count()
         {
-            //exec
+            // Action
             int count = readonlyKeyedCollection.Count;
 
-            //test
+            // Assert
             Assert.AreEqual(3, count);
         }
         #endregion
 
         #region GetEnumerator
 
-        [Test]
+        [TestMethod]
         public void GetEnumerator()
         {
-            //exec
+            // Action
             var enumerator = readonlyKeyedCollection.GetEnumerator();
 
-            //test
+            // Assert
             Assert.IsNotNull(enumerator);
 
             int i = 0;
@@ -202,32 +199,32 @@ namespace Plethora.Test.Collections
 
         #region IsReadOnly
 
-        [Test]
+        [TestMethod]
         public void IsReadOnly()
         {
-            //exec
+            // Action
             bool isReadonly = readonlyKeyedCollection.IsReadOnly;
 
-            //test
+            // Assert
             Assert.IsTrue(isReadonly);
         }
         #endregion
 
         #region Keys
 
-        [Test]
+        [TestMethod]
         public void Keys()
         {
-            //setup
+            // Arrange
             var ids = new List<long>();
             ids.Add(Person.Bob_Jameson.ID);
             ids.Add(Person.Fred_Carlile.ID);
             ids.Add(Person.Amy_Cathson.ID);
 
-            //exec
+            // Action
             var keys = readonlyKeyedCollection.Keys;
 
-            //test
+            // Assert
             int i = 0;
             foreach (var key in keys)
             {
@@ -243,33 +240,33 @@ namespace Plethora.Test.Collections
 
         #region TryGetValue
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_InCollection()
         {
-            //setup
+            // Arrange
             long bob_ID = Person.Bob_Jameson.ID;
 
-            //exec
+            // Action
             Person person;
             bool result = readonlyKeyedCollection.TryGetValue(bob_ID, out person);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.IsNotNull(person);
             Assert.AreEqual(Person.Bob_Jameson, person);
         }
 
-        [Test]
+        [TestMethod]
         public void TryGetValue_NotInCollection()
         {
-            //setup
+            // Arrange
             long jill_ID = Person.Jill_Dorrman.ID;
 
-            //exec
+            // Action
             Person person;
             bool result = readonlyKeyedCollection.TryGetValue(jill_ID, out person);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.IsNull(person);
         }
@@ -277,35 +274,34 @@ namespace Plethora.Test.Collections
 
         #region Indexor
 
-        [Test]
+        [TestMethod]
         public void Indexor_InCollection()
         {
-            //setup
+            // Arrange
             long fred_ID = Person.Fred_Carlile.ID;
 
-            //exec
+            // Action
             Person person = readonlyKeyedCollection[fred_ID];
 
-            //test
+            // Assert
             Assert.IsNotNull(person);
             Assert.AreEqual(Person.Fred_Carlile, person);
         }
 
-        [Test]
+        [TestMethod]
         public void Indexor_NotInCollection()
         {
-            //setup
+            // Arrange
             long jill_ID = Person.Jill_Dorrman.ID;
             try
             {
-                //exec
+                // Action
                 Person person = readonlyKeyedCollection[jill_ID];
 
                 Assert.Fail();
             }
-            catch (KeyNotFoundException ex)
+            catch (KeyNotFoundException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 

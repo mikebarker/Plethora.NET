@@ -152,7 +152,7 @@ namespace Plethora.Collections
                         i++;
                     }
                 }
-                catch (ArrayTypeMismatchException ex)
+                catch (ArrayTypeMismatchException)
                 {
                     throw new ArgumentException(ResourceProvider.ArgArrayInvalidType());
                 }

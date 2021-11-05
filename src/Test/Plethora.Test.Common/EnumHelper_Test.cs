@@ -1,65 +1,65 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
 #pragma warning disable 618  // Obselete members
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class EnumHelper_Test
     {
         #region NoFlags
 
-        [Test]
+        [TestMethod]
         public void NoFlags_Zero()
         {
-            //Setup
+            // Arrange
             var enumValue = NoFlagsEnum.Zero;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Zero", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void NoFlags_KnownElement()
         {
-            //Setup
+            // Arrange
             var enumValue = NoFlagsEnum.Four;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Four", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void NoFlags_KnownElementIsNotFlagged()
         {
-            //Setup
+            // Arrange
             var enumValue = NoFlagsEnum.Five;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Five", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void NoFlags_UnknownElement()
         {
-            //Setup
+            // Arrange
             var enumValue = (NoFlagsEnum)87;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("87", descrip);
         }
         
@@ -67,55 +67,55 @@ namespace Plethora.Test
         
         #region NoFlagsWithDescription
 
-        [Test]
+        [TestMethod]
         public void NoFlagsWithDescription_Zero()
         {
-            //Setup
+            // Arrange
             var enumValue = NoFlagsWithDescriptionEnum.Zero;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Zéro", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void NoFlagsWithDescription_KnownElement()
         {
-            //Setup
+            // Arrange
             var enumValue = NoFlagsWithDescriptionEnum.Four;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Quatre", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void NoFlagsWithDescription_KnownElementIsNotFlagged()
         {
-            //Setup
+            // Arrange
             var enumValue = NoFlagsWithDescriptionEnum.Five;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Cinq", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void NoFlagsWithDescription_UnknownElement()
         {
-            //Setup
+            // Arrange
             var enumValue = (NoFlagsWithDescriptionEnum)87;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("87", descrip);
         }
 
@@ -123,68 +123,68 @@ namespace Plethora.Test
 
         #region Flags
 
-        [Test]
+        [TestMethod]
         public void Flags_Zero()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsEnum.Nothing;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Nothing", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void Flags_SingleFlag()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsEnum.Setting1;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Setting1", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void Flags_MultipleFlags()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsEnum.Setting1 | FlagsEnum.Setting2;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("Setting1, Setting2", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void Flags_CoveringFlags()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsEnum.AllSettings;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("AllSettings", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void Flags_Unknown()
         {
-            //Setup
+            // Arrange
             var enumValue = ((FlagsEnum) 16);
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("16", descrip);
         }
 
@@ -192,68 +192,68 @@ namespace Plethora.Test
 
         #region FlagsWithDescription
 
-        [Test]
+        [TestMethod]
         public void FlagsWithDescription_Zero()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsWithDescriptionEnum.Nothing;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("All Off", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void FlagsWithDescription_SingleFlag()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsWithDescriptionEnum.Setting1;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("First On", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void FlagsWithDescription_MultipleFlags()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsWithDescriptionEnum.Setting1 | FlagsWithDescriptionEnum.Setting2;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("First On, Second On", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void FlagsWithDescription_CoveringFlags()
         {
-            //Setup
+            // Arrange
             var enumValue = FlagsWithDescriptionEnum.AllSettings;
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("All On", descrip);
         }
 
-        [Test]
+        [TestMethod]
         public void FlagsWithDescription_Unknown()
         {
-            //Setup
+            // Arrange
             var enumValue = ((FlagsWithDescriptionEnum)16);
 
             //Exec
             string descrip = enumValue.Description();
 
-            //Test
+            // Assert
             Assert.AreEqual("16", descrip);
         }
 

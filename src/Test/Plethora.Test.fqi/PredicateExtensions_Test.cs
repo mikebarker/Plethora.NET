@@ -1,31 +1,31 @@
 using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.fqi;
 
 namespace Plethora.Test.fqi
 {
-    [TestFixture]
+    [TestClass]
     public class PredicateExtensions_Test
     {
         private Func<int, bool> predicate0 = null;
         private Func<int, bool> predicate1 = null;
 
-        [SetUp]
+        [TestInitialize]
         public void SetUp()
         {
             predicate0 = i => (i >= 5);
             predicate1 = i => (i < 10);
         }
 
-        [Test]
+        [TestMethod]
         public void And()
         {
-            //Setup
+            // Arrange
 
-            //Execute
+            // Action
             var predicateTotal = PredicateExtensions.And(predicate0, predicate1);
 
-            //Test
+            // Assert
             const int arg = 8;
             var result0 = predicate0(arg);
             var result1 = predicate1(arg);
@@ -34,15 +34,15 @@ namespace Plethora.Test.fqi
             Assert.AreEqual(result0 && result1, resultTotal);
         }
 
-        [Test]
+        [TestMethod]
         public void Or()
         {
-            //Setup
+            // Arrange
 
-            //Execute
+            // Action
             var predicateTotal = PredicateExtensions.Or(predicate0, predicate1);
 
-            //Test
+            // Assert
             const int arg = 8;
             var result0 = predicate0(arg);
             var result1 = predicate1(arg);
@@ -51,15 +51,15 @@ namespace Plethora.Test.fqi
             Assert.AreEqual(result0 || result1, resultTotal);
         }
 
-        [Test]
+        [TestMethod]
         public void XOr()
         {
-            //Setup
+            // Arrange
 
-            //Execute
+            // Action
             var predicateTotal = PredicateExtensions.XOr(predicate0, predicate1);
 
-            //Test
+            // Assert
             const int arg = 8;
             var result0 = predicate0(arg);
             var result1 = predicate1(arg);
@@ -67,15 +67,15 @@ namespace Plethora.Test.fqi
 
             Assert.AreEqual(result0 ^ result1, resultTotal);
         }
-        [Test]
+        [TestMethod]
         public void Not()
         {
-            //Setup
+            // Arrange
 
-            //Execute
+            // Action
             var predicateTotal = PredicateExtensions.Not(predicate0);
 
-            //Test
+            // Assert
             const int arg = 8;
             var result0 = predicate0(arg);
             var resultTotal = predicateTotal(arg);

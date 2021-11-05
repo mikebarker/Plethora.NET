@@ -34,7 +34,7 @@ namespace Plethora.Mvvm.Model
     ///     }
     /// 
     ///     SomeClass someClass = new SomeClass();
-    ///     bool isNotifyPropertyChanging = someClass is INotifyPropertyChanged;  //should return false if 'SomeClass' does not make use of the INotifyPropertyChanged property
+    ///     bool isNotifyPropertyChanging = someClass is INotifyPropertyChanging;  //should return false if 'SomeClass' does not implement the INotifyPropertyChanging interface
     /// ]]></code>
     /// </para>
     /// </remarks>

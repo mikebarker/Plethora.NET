@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Plethora.Collections.Sets
 {
-    public sealed class InclusiveSet<T> : BaseSetImpl<T>, ISetCore<T>
+    public sealed class InclusiveSet<T> : BaseSetImpl<T>
     {
         #region Fields
 
@@ -71,8 +71,7 @@ namespace Plethora.Collections.Sets
             // is the case, nothing is to be gained by making the call commutative.
             // An infinite loop can result from calling base.Union if IsNativeUnion
             // is set.
-            var otherInclusive = other as InclusiveSet<T>;
-            if (otherInclusive != null)
+            if (other is InclusiveSet<T> otherInclusive)
             {
                 var newElements = this.includedElements
                     .Concat(otherInclusive.includedElements);
@@ -85,6 +84,20 @@ namespace Plethora.Collections.Sets
                     return this;
 
                 return new InclusiveSet<T>(newHashSet);
+            }
+            else if (other is ExclusiveSet<T> otherExclusive)
+            {
+                var newElements = otherExclusive.excludedElements
+                    .Except(this.includedElements);
+
+                HashSet<T> newHashSet = new HashSet<T>(newElements);
+                if (newHashSet.Count == 0)
+                    return CompleteSet<T>.Instance;
+
+                if (newHashSet.Count == otherExclusive.excludedElements.Count)
+                    return otherExclusive;
+
+                return new ExclusiveSet<T>(newHashSet);
             }
 
             return base.Union(other);

@@ -394,14 +394,7 @@ namespace Plethora.Threading
                     }
 
                     //Execute the workItem
-                    try
-                    {
-                        workItem.Execute();
-                    }
-                    catch (Exception ex)
-                    {
-                        // Swallow the exception
-                    }
+                    workItem.Execute();
                 }
 
                 if (workComplete)

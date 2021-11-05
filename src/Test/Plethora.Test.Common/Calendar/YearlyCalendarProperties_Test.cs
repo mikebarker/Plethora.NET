@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Calendar;
 
 namespace Plethora.Test.Calendar
 {
-    [TestFixture]
+    [TestClass]
     public class YearlyCalendarProperties_Test
     {
-        [Test]
+        [TestMethod]
         public void Generate_Yearly_1st()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new YearlyCalendarProperties(1);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 01), calendarArray[0]);
             Assert.AreEqual(new DateTime(2001, 01, 01), calendarArray[1]);
             Assert.AreEqual(new DateTime(2002, 01, 01), calendarArray[2]);
@@ -34,17 +34,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2009, 01, 01), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Yearly_28th()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new YearlyCalendarProperties(1);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 28), new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 28), calendarArray[0]);
             Assert.AreEqual(new DateTime(2001, 01, 28), calendarArray[1]);
             Assert.AreEqual(new DateTime(2002, 01, 28), calendarArray[2]);
@@ -57,17 +57,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(new DateTime(2009, 01, 28), calendarArray[9]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_BiYearly()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new YearlyCalendarProperties(2);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2000, 01, 01), calendarArray[0]);
             Assert.AreEqual(new DateTime(2002, 01, 01), calendarArray[1]);
             Assert.AreEqual(new DateTime(2004, 01, 01), calendarArray[2]);

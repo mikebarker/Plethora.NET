@@ -1,0 +1,131 @@
+﻿<Window x:Class="Plethora.Context.Xaml.Sample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:system="clr-namespace:System;assembly=mscorlib"
+        xmlns:context="clr-namespace:Plethora.Context;assembly=Plethora.Context.Xaml.Wpf"
+        DataContext="{Binding RelativeSource={RelativeSource Self}}"
+        Title="MainWindow" Height="350" Width="525"
+        Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+        KeyDown="MainWindow_OnKeyDown"
+        >
+
+    <Window.Resources>
+        <context:ContextCommandListConverter x:Key="contextCommandListConverter" />
+
+        <context:XamlContextSource x:Key="textboxContext" ContextName="Textbox" />
+        <context:XamlContextSource x:Key="textboxContextLowRank" Rank="-5" BasedOn="{StaticResource textboxContext}" />
+
+        <context:ActionsPrecedenceAdapter x:Key="itemsPrecedenceAdapter">
+            <context:ActionsPrecedenceAdapter.PrecedenceLists>
+                <x:Array Type="system:String">
+                    <system:String>Edit Contract</system:String>
+                    <system:String>View Signed Contract</system:String>
+                    <system:String>View Contract</system:String>
+                </x:Array>
+                <x:Array Type="system:String">
+                    <system:String>Paste</system:String>
+                    <system:String>Copy</system:String>
+                    <system:String>Cut</system:String>
+                </x:Array>
+            </context:ActionsPrecedenceAdapter.PrecedenceLists>
+        </context:ActionsPrecedenceAdapter>
+
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="14*"/>
+            <ColumnDefinition Width="11*"/>
+        </Grid.ColumnDefinitions>
+
+        <GroupBox Grid.Column="0" Grid.Row="0" Header="Context Boxes" >
+            <context:XamlContext.Source>
+                <context:XamlContextSource ContextName="Parent" Rank="-10"  Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=GroupBox}}" />
+            </context:XamlContext.Source>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+
+                <TextBlock Grid.Column="0" Grid.Row="0" VerticalAlignment="Center">Contract:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Contract}" Margin="5" >
+                    <context:XamlContext.Source>
+                        <context:XamlContextSource ContextName="Contract" Data="{Binding Path=Contract}"/>
+                        <context:XamlContextSource ContextName="SignedContract" Data="{Binding Path=Contract}"/>
+                        <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
+                    </context:XamlContext.Source>
+
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <context:XamlContextMenuItem DisableGrouping="True" ActionsAdapter="{StaticResource itemsPrecedenceAdapter}" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+
+                <TextBlock Grid.Column="0" Grid.Row="1" VerticalAlignment="Center">Instrument:</TextBlock>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Instrument}" Margin="5" >
+                    <context:XamlContext.Source>
+                        <context:XamlContextSource ContextName="Instrument" Data="{Binding Text, RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}"/>
+                        <context:XamlContextSource Data="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=TextBox}}" BasedOn="{StaticResource textboxContextLowRank}"/>
+                    </context:XamlContext.Source>
+
+                    <TextBox.ContextMenu>
+                        <ContextMenu>
+                            <MenuItem Header="Alpha" />
+                            <context:XamlContextMenuItem />
+                            <MenuItem Header="Omega" />
+                        </ContextMenu>
+                    </TextBox.ContextMenu>
+                </TextBox>
+            </Grid>
+        </GroupBox>
+
+        <TextBox Grid.Column="0" Grid.Row="1"
+                 Text="{Binding ContextText}"
+                 context:XamlContext.IsActivityItem="True"
+                 IsReadOnly="True"
+                 BorderThickness="0"
+                 Background="Transparent"
+                 />
+
+        <GroupBox Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Header="Actions">
+            <ItemsControl context:XamlContext.IsActivityItem="True"
+                          ItemsSource="{Binding Actions, Converter={StaticResource contextCommandListConverter}}"
+                          IsTabStop="False"
+                          >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Height="48"
+                                Margin="5"
+                                HorizontalAlignment="Stretch"
+                                Content="{Binding Path=ActionName}"
+                                Command="{Binding}"
+                                />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </GroupBox>
+        
+        <RichTextBox Grid.Column="0" Grid.ColumnSpan="2" Grid.Row="2"
+                     IsTabStop="False"
+                     IsReadOnly="True"
+                     Name="HelpRichTextBox"
+                     Height="48"
+                     Margin="5"
+                     />
+    </Grid>
+</Window>

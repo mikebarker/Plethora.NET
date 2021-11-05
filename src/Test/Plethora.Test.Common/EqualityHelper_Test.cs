@@ -1,108 +1,125 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class EqualityHelper_Test
     {
-        private EqualityHelper<Person> equalityHelper;
+        private static readonly Person Henry_Baker = new Person(46, "Baker", "Henry", new DateTime(1964, 03, 14));
+        private static readonly Person Henry_Baker2 = new Person(72, "Baker", "Henry", new DateTime(1964, 03, 14));
 
-        public static readonly Person Henry_Baker = new Person(46, "Baker", "Henry", new DateTime(1964, 03, 14));
-        public static readonly Person Henry_Baker2 = new Person(72, "Baker", "Henry", new DateTime(1964, 03, 14));
-
-
-        [SetUp]
-        public void SetUp()
+        [TestMethod]
+        public void Equals_TrueIdentical()
         {
-            //Equality is treated on only first name, surname, and date of birth... and not ID
-            this.equalityHelper = EqualityHelper<Person>.Create(
+            // Arrange
+            var equalityHelper = EqualityHelper<Person>.Create(
                 person => person.FamilyName,
                 person => person.GivenName,
                 person => person.DateOfBirth);
-        }
 
-        [Test]
-        public void Equals_TrueIdentical()
-        {
-            //exec
+            // Action
             var result = equalityHelper.Equals(Henry_Baker, Henry_Baker);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_True()
         {
-            //exec
+            // Arrange
+            var equalityHelper = EqualityHelper<Person>.Create(
+                person => person.FamilyName,
+                person => person.GivenName,
+                person => person.DateOfBirth);
+
+            // Action
             var result = equalityHelper.Equals(Henry_Baker, Henry_Baker2);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_False()
         {
-            //exec
+            // Arrange
+            var equalityHelper = EqualityHelper<Person>.Create(
+                person => person.FamilyName,
+                person => person.GivenName,
+                person => person.DateOfBirth);
+
+            // Action
             var result = equalityHelper.Equals(Henry_Baker, Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_()
         {
-            //exec
+            // Arrange
+            var equalityHelper = EqualityHelper<Person>.Create(
+                person => person.FamilyName,
+                person => person.GivenName,
+                person => person.DateOfBirth);
+
+            // Action
             var resultBob = equalityHelper.GetHashCode(Person.Bob_Jameson);
             var resultFred = equalityHelper.GetHashCode(Person.Fred_Carlile);
 
-            //test
+            // Assert
             Assert.AreNotEqual(0, resultBob);
             Assert.AreNotEqual(0, resultFred);
             Assert.AreNotEqual(resultBob, resultFred);
         }
 
-        [Test]
+        [TestMethod]
         public void GetToString()
         {
-            //exec
+            // Arrange
+            var equalityHelper = EqualityHelper<Person>.Create(
+                person => person.FamilyName,
+                person => person.GivenName,
+                person => person.DateOfBirth);
+
+            // Action
             var result = equalityHelper.GetToString(Person.Bob_Jameson);
 
-            //test
+            // Assert
             string dob = Person.Bob_Jameson.DateOfBirth.ToString("u"); //utilises sortable format
             Assert.AreEqual("Person {FamilyName=Jameson; GivenName=Bob; DateOfBirth=" + dob + "}", result);
         }
 
-        [Test]
+        [TestMethod]
         public void TwoPropertiesOnly()
         {
-            //setup
-            this.equalityHelper = EqualityHelper<Person>.Create(
+            // Arrange
+            var equalityHelper = EqualityHelper<Person>.Create(
                 person => person.FamilyName,
                 person => person.GivenName);
             
-            //exec
+            // Action
             var result = equalityHelper.Equals(Person.Bob_Jameson, Person.Bob_Jameson2);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
 
 
-            //exec
+            // Action
             var hashCode = equalityHelper.GetHashCode(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.AreNotEqual(0, hashCode);
 
 
-            //exec
+            // Action
             var toString = equalityHelper.GetToString(Person.Bob_Jameson);
 
-            //test
+            // Assert
             Assert.AreNotEqual("Person {FamilyName=Jameson; GivenName=Bob }", toString);
         }
     }

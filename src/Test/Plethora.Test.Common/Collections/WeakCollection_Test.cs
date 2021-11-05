@@ -1,67 +1,77 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Collections;
 
 namespace Plethora.Test.Collections
 {
-    //TODO: These test cases must be cleaned-up
-
-    [TestFixture]
-#if DEBUG
-    [Ignore("These tests will only run reliably under Release mode.")]
-#endif
+    [TestClass]
     public class WeakCollection_Test
     {
-        [Test]
-        public void Test1()
-        { 
-            WeakCollection<object> weakCollection = new WeakCollection<object>();
+        [TestMethod]
+        public void SomeItemsRemainAfterCollection()
+        {
+            // Arrange
+            WeakCollection<StringContainer> weakCollection = new WeakCollection<StringContainer>();
+            var alpha = new StringContainer("alpha");
+            var zeta = new StringContainer("zeta");
+            var eta = new StringContainer("eta");
 
-            object o1 = new object();
-            object o2 = new object();
-            object o3 = new object();
+            PopulateCollection(weakCollection);
+            weakCollection.Add(zeta);
+            weakCollection.Add(eta);
 
-            weakCollection.Add(o1);
-            weakCollection.Add(o2);
-            weakCollection.Add(o3);
-            weakCollection.Add(new object());
-            weakCollection.Add(new object());
+            // Assert
+            Assert.AreEqual(7, weakCollection.Count);
+            Assert.IsTrue(weakCollection.Contains(alpha));
+            Assert.IsTrue(weakCollection.Contains(zeta));
+            Assert.IsTrue(weakCollection.Contains(eta));
 
+            // Action
             GC.Collect(2, GCCollectionMode.Forced);
 
-            int count = 0;
-            foreach (object o in weakCollection)
-            {
-                count++;
-            }
+            // Assert
+            Assert.AreEqual(2, weakCollection.Count);
+            Assert.IsFalse(weakCollection.Contains(alpha));
+            Assert.IsTrue(weakCollection.Contains(zeta));
+            Assert.IsTrue(weakCollection.Contains(eta));
 
-            Assert.AreEqual(3, count);
 
-            GC.KeepAlive(o1);
-            GC.KeepAlive(o2);
-            GC.KeepAlive(o3);
+            GC.KeepAlive(zeta);
+            GC.KeepAlive(eta);
         }
 
-        [Test]
-        public void Test2()
-        { 
-            WeakCollection<object> weakCollection = new WeakCollection<object>();
-
-            weakCollection.Add(new object());
-            weakCollection.Add(new object());
-            weakCollection.Add(new object());
-
-            GC.Collect(2, GCCollectionMode.Forced);
-
-            int count = 0;
-            foreach (object o in weakCollection)
-            {
-                count++;
-            }
-
-            Assert.AreEqual(0, count);
+        private static void PopulateCollection(WeakCollection<StringContainer> collection)
+        {
+            collection.Add(new StringContainer("alpha"));
+            collection.Add(new StringContainer("beta"));
+            collection.Add(new StringContainer("gamma"));
+            collection.Add(new StringContainer("delta"));
+            collection.Add(new StringContainer("epsilon"));
         }
 
+        #region Private classes
 
+        private class StringContainer
+        {
+            private readonly string text;
+
+            public StringContainer(string text)
+            {
+                this.text = text;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is StringContainer other &&
+                       text.Equals(other.text);
+            }
+
+            public override int GetHashCode()
+            {
+                return text.GetHashCode();
+            }
+        }
+
+        #endregion
     }
 }

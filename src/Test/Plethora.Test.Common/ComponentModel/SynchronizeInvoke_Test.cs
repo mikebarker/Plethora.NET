@@ -3,65 +3,58 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.ComponentModel;
 using Plethora.Test.UtilityClasses;
 using Plethora.Threading;
 
 namespace Plethora.Test.ComponentModel
 {
-    [TestFixture]
+    [TestClass]
     public class SynchronizeInvoke_Test
     {
-        private SynchronizeInvoke synchronizeInvoke;
-
-        [SetUp]
-        public void SetUp()
-        {
-            this.synchronizeInvoke = new SynchronizeInvoke();
-        }
+        private readonly SynchronizeInvoke synchronizeInvoke = new SynchronizeInvoke();
 
         #region BeginInvoke
 
-        [Test]
+        [TestMethod]
         public void BeginInvoke()
         {
-            //exec
+            // Action
             var asyncResult = synchronizeInvoke.BeginInvoke(
                 new Func<int>(GetNextInt),
                 null);
 
-            //test
+            // Assert
             Assert.IsNotNull(asyncResult);
         }
 
-        [Test]
+        [TestMethod]
         public void BeginInvoke_Arguments()
         {
-            //setup
+            // Arrange
             var o = new object();
 
-            //exec
+            // Action
             var asyncResult = synchronizeInvoke.BeginInvoke(
                 new Func<object, object>(ReturnInstance),
                 new[] {o});
 
-            //test
+            // Assert
             Assert.IsNotNull(asyncResult);
         }
 
-        [Test]
+        [TestMethod]
         public void BeginInvoke_Fail_NullMethod()
         {
             try
             {
-                //exec
+                // Action
                 synchronizeInvoke.BeginInvoke(null, null);
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
@@ -69,32 +62,32 @@ namespace Plethora.Test.ComponentModel
 
         #region EndInvoke
 
-        [Test]
+        [TestMethod]
         public void EndInvoke()
         {
-            //setup
+            // Arrange
             var o = new object();
             var asyncResult = synchronizeInvoke.BeginInvoke(
                 new Func<object, object>(ReturnInstance),
                 new[] {o});
 
-            //exec
+            // Action
             object result = synchronizeInvoke.EndInvoke(asyncResult);
 
-            //test
+            // Assert
             Assert.IsNotNull(result);
             Assert.AreEqual(o, result);
         }
 
-        [Test]
+        [TestMethod]
         public void EndInvoke_OnException()
         {
-            //setup
+            // Arrange
             var asyncResult = synchronizeInvoke.BeginInvoke(
                 new Action(ThrowException),
                 null);
 
-            //exec
+            // Action
             Exception exception = null;
             try
             {
@@ -106,63 +99,62 @@ namespace Plethora.Test.ComponentModel
                 exception = ex;
             }
 
-            //test
+            // Assert
             Assert.IsNotNull(exception);
             Assert.IsNotNull(exception.InnerException);
         }
 
-        [Test]
+        [TestMethod]
         public void EndInvoke_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 synchronizeInvoke.EndInvoke(null);
                 Assert.Fail();
             }
-            catch(ArgumentNullException ex)
+            catch(ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void EndInvoke_Fail_InvalidAsyncResult()
         {
             try
             {
-                //exec
+                // Action
                 synchronizeInvoke.EndInvoke(new EmptyAsyncResult());
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
-        [Test]
+        [TestMethod]
         public void Invoke()
         {
-            //exec
+            // Action
             object result = synchronizeInvoke.Invoke(new Func<int>(GetNextInt), null);
 
-            //test
+            // Assert
             Assert.IsNotNull(result);
             Assert.IsTrue(result is int);
         }
 
-        [Test]
+        [TestMethod]
+        [Ignore("Test takes too long to run, and relies on unreliable timings.")]
         public void MultipleExecutions()
         {
-            //setup
+            // Arrange
             const int ITTERATIONS = 16;
             var stopwatch = new Stopwatch();
 
             var asyncResultList = new List<IAsyncResult>(ITTERATIONS);
 
-            //exec
+            // Action
             stopwatch.Reset();
             stopwatch.Start();
             for (int j = 0; j < ITTERATIONS; j++)

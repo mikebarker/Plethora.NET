@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Calendar;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Calendar
 {
-    [TestFixture]
+    [TestClass]
     public class MonthlyCalendarProperties_Test
     {
-        [Test]
+        [TestMethod]
         public void Generate_Monthly_1st()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new[] {1});
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(13).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(Dates.Jan01, calendarArray[0]);
             Assert.AreEqual(Dates.Feb01, calendarArray[1]);
             Assert.AreEqual(Dates.Mar01, calendarArray[2]);
@@ -38,17 +38,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(Dates.Jan01.AddYears(1), calendarArray[12]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Monthly_28th()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new[] {28});
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(12).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(Dates.Jan28, calendarArray[0]);
             Assert.AreEqual(Dates.Feb28, calendarArray[1]);
             Assert.AreEqual(Dates.Mar28, calendarArray[2]);
@@ -63,17 +63,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(Dates.Dec28, calendarArray[11]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Monthly_15th_28th()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new[] {15, 28});
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(24).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(Dates.Jan15, calendarArray[0]);
             Assert.AreEqual(Dates.Jan28, calendarArray[1]);
             Assert.AreEqual(Dates.Feb15, calendarArray[2]);
@@ -100,13 +100,13 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(Dates.Dec28, calendarArray[23]);
         }
 
-        [Test]
+        [TestMethod]
         public void Error_Generate_Monthly_31st()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new[] {31});
 
-            //exec
+            // Action
             try
             {
                 // Attempting to generate "31 February" should fail
@@ -115,22 +115,22 @@ namespace Plethora.Test.Calendar
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_BiMonthly_28th()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(2, new[] {28});
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(6).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(Dates.Jan28, calendarArray[0]);
             Assert.AreEqual(Dates.Mar28, calendarArray[1]);
             Assert.AreEqual(Dates.May28, calendarArray[2]);
@@ -139,17 +139,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(Dates.Nov28, calendarArray[5]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Monthly_EndOfMonth()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new int[0], true);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(12).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(Dates.Jan31, calendarArray[0]);
             Assert.AreEqual(Dates.Feb29, calendarArray[1]);
             Assert.AreEqual(Dates.Mar31, calendarArray[2]);
@@ -164,17 +164,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(Dates.Dec31, calendarArray[11]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Monthly_15th_EndOfMonth()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new[] {15}, true);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(24).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(Dates.Jan15, calendarArray[0]);
             Assert.AreEqual(Dates.Jan31, calendarArray[1]);
             Assert.AreEqual(Dates.Feb15, calendarArray[2]);
@@ -201,17 +201,17 @@ namespace Plethora.Test.Calendar
             Assert.AreEqual(Dates.Dec31, calendarArray[23]);
         }
 
-        [Test]
+        [TestMethod]
         public void Generate_Monthly_28th_EndOfMonth()
         {
-            //setup
+            // Arrange
             ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, new[] {28}, true);
 
-            //exec
+            // Action
             IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2001, 01, 01), new DayOfWeek[0], new DateTime[0]);
             DateTime[] calendarArray = calendar.Take(24).ToArray();
 
-            //test
+            // Assert
             Assert.AreEqual(new DateTime(2001, 01, 28), calendarArray[0]);
             Assert.AreEqual(new DateTime(2001, 01, 31), calendarArray[1]);
             Assert.AreEqual(new DateTime(2001, 02, 28), calendarArray[2]);

@@ -4,7 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Mvvm.Model;
 using Plethora.Test.Mvvm._UtilityClasses;
@@ -13,22 +13,22 @@ using Plethora.Test.Mvvm._UtilityClasses;
 
 namespace Plethora.Test.Mvvm.Model
 {
-    [TestFixture]
+    [TestClass]
     public class TrackChangesObservableCollection_Tests
     {
         private Person JohnSmith;
         private Person JaneDoe;
         private Person FredBrown;
 
-        [SetUp]
-        public void SetUp()
+        [TestInitialize]
+        public void Initialize()
         {
             JohnSmith = new Person(Guid.NewGuid(), "John", "Smith", new DateTime(2000, 01, 01));
             JaneDoe = new Person(Guid.NewGuid(), "Jane", "Doe", new DateTime(1994, 12, 23));
             FredBrown = new Person(Guid.NewGuid(), "Fred", "Brown", new DateTime(1990, 07, 14));
         }
 
-        [Test]
+        [TestMethod]
         public void NoItems()
         {
             //setup
@@ -43,7 +43,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Add()
         {
             //setup
@@ -73,7 +73,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void AddAndUpdate()
         {
             //setup
@@ -104,7 +104,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void AddAndRemove()
         {
             //setup
@@ -138,7 +138,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void AddAndClear()
         {
             //setup
@@ -173,7 +173,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Remove()
         {
             //setup
@@ -204,7 +204,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreSame(JohnSmith, people.Removed.First());
         }
 
-        [Test]
+        [TestMethod]
         public void RemoveAndAdd()
         {
             //setup
@@ -239,7 +239,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void RemoveAndUpdate()
         {
             //setup
@@ -271,7 +271,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreSame(JohnSmith, people.Removed.First());
         }
 
-        [Test]
+        [TestMethod]
         public void RemoveUpdateAndAdd()
         {
             //setup
@@ -307,7 +307,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void SetItem()
         {
             //setup
@@ -339,7 +339,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreSame(JohnSmith, people.Removed.First());
         }
 
-        [Test]
+        [TestMethod]
         public void Update()
         {
             //setup
@@ -367,7 +367,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void UpdateAndRevert_OrginalValue()
         {
             //setup
@@ -396,7 +396,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void UpdateAndRevert_Rollback()
         {
             //setup
@@ -425,7 +425,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void UpdateAndRemove()
         {
             //setup
@@ -457,7 +457,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreSame(JohnSmith, people.Removed.First());
         }
 
-        [Test]
+        [TestMethod]
         public void UpdateRemoveAndAdd()
         {
             //setup
@@ -493,7 +493,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void UpdateAndClear()
         {
             //setup
@@ -528,7 +528,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreSame(FredBrown, people.Removed.ElementAt(2));
         }
 
-        [Test]
+        [TestMethod]
         public void Clear()
         {
             //setup
@@ -562,7 +562,7 @@ namespace Plethora.Test.Mvvm.Model
         }
 
 
-        [Test]
+        [TestMethod]
         public void RollBack_Add()
         {
             //setup
@@ -596,7 +596,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void RollBack_Clear()
         {
             //setup
@@ -630,7 +630,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void RollBack_Remove()
         {
             //setup
@@ -664,7 +664,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void RollBack_Update()
         {
             //setup
@@ -698,7 +698,7 @@ namespace Plethora.Test.Mvvm.Model
         }
 
 
-        [Test]
+        [TestMethod]
         public void Commit_Add()
         {
             //setup
@@ -729,7 +729,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Commit_Clear()
         {
             //setup
@@ -760,7 +760,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Commit_Remove()
         {
             //setup
@@ -791,7 +791,7 @@ namespace Plethora.Test.Mvvm.Model
             Assert.AreEqual(0, people.Removed.Count);
         }
 
-        [Test]
+        [TestMethod]
         public void Commit_Update()
         {
             //setup

@@ -1,95 +1,95 @@
 ﻿using System;
 
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class Rational_Test
     {
         #region Constructor
 
-        [Test]
+        [TestMethod]
         public void Constructor()
         {
-            //exec
+            // Action
             Rational rational = new Rational(1, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(1, rational.Numerator);
             Assert.AreEqual(2, rational.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_CanonicalFormCommonDivisor()
         {
-            //exec
+            // Action
             Rational rational = new Rational(2, 4);
 
-            //test
+            // Assert
             Assert.AreEqual(1, rational.Numerator);
             Assert.AreEqual(2, rational.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_CanonicalFormNumeratorNegative()
         {
-            //exec
+            // Action
             Rational rational = new Rational(-1, 2);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, rational.Numerator);
             Assert.AreEqual(2, rational.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_CanonicalFormDenominatorNegative()
         {
-            //exec
+            // Action
             Rational rational = new Rational(1, -2);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, rational.Numerator);
             Assert.AreEqual(2, rational.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_NumeratorZero()
         {
-            //exec
+            // Action
             Rational rational = new Rational(0, 12);
 
-            //test
+            // Assert
             Assert.AreEqual(0, rational.Numerator);
             Assert.AreEqual(1, rational.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_Error_DenominatorZero()
         {
-            //exec
+            // Action
             try
             {
                 Rational rational = new Rational(1, 0);
 
                 Assert.Fail();
             }
-            catch (DivideByZeroException ex)
+            catch (DivideByZeroException)
             {
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Constructor_Error_DenominatorNegativeMaximum()
         {
-            //exec
+            // Action
             try
             {
                 Rational rational = new Rational(1, int.MinValue);
 
                 Assert.Fail();
             }
-            catch (OverflowException ex)
+            catch (OverflowException)
             {
             }
         }
@@ -98,189 +98,189 @@ namespace Plethora.Test
 
         #region Equality
 
-        [Test]
+        [TestMethod]
         public void Equals_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = x.Equals(y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_CanonicalAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(2, 4);
 
-            //exec
+            // Action
             bool result = x.Equals(y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_CanonicalNegativeAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, -2);
 
-            //exec
+            // Action
             bool result = x.Equals(y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_NumeratorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = x.Equals(y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_DenominatorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 3);
 
-            //exec
+            // Action
             bool result = x.Equals(y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_Null()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = x.Equals(null);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Equals_String()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = x.Equals("test");
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             int xHash = x.GetHashCode();
             int yHash = y.GetHashCode();
 
-            //test
+            // Assert
             Assert.AreEqual(true, xHash == yHash);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_CanonicalAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(2, 4);
 
-            //exec
+            // Action
             int xHash = x.GetHashCode();
             int yHash = y.GetHashCode();
 
-            //test
+            // Assert
             Assert.AreEqual(true, xHash == yHash);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_CanonicalNegativeAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, -2);
 
-            //exec
+            // Action
             int xHash = x.GetHashCode();
             int yHash = y.GetHashCode();
 
-            //test
+            // Assert
             Assert.AreEqual(true, xHash == yHash);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_NumeratorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             int xHash = x.GetHashCode();
             int yHash = y.GetHashCode();
 
-            //test
+            // Assert
             Assert.AreEqual(false, xHash == yHash);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_DenominatorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 3);
 
-            //exec
+            // Action
             int xHash = x.GetHashCode();
             int yHash = y.GetHashCode();
 
-            //test
+            // Assert
             Assert.AreEqual(false, xHash == yHash);
         }
 
-        [Test]
+        [TestMethod]
         public void GetHashCode_Inverse()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(2, 1);
 
-            //exec
+            // Action
             int xHash = x.GetHashCode();
             int yHash = y.GetHashCode();
 
-            //test
+            // Assert
             Assert.AreEqual(false, xHash == yHash);
         }
 
@@ -288,117 +288,117 @@ namespace Plethora.Test
 
         #region CompareTo
 
-        [Test]
+        [TestMethod]
         public void CompareTo_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             int result = x.CompareTo(y);
 
-            //test
+            // Assert
             Assert.AreEqual(0, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_AreEqual_Negative()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             int result = x.CompareTo(y);
 
-            //test
+            // Assert
             Assert.AreEqual(0, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             int result = x.CompareTo(y);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(3, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             int result = x.CompareTo(y);
 
-            //test
+            // Assert
             Assert.AreEqual(1, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_Negative_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             int result = x.CompareTo(y);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_Negative_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             int result = x.CompareTo(y);
 
-            //test
+            // Assert
             Assert.AreEqual(1, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_Null()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             int result = ((IComparable)x).CompareTo(null);
 
-            //test
+            // Assert
             Assert.AreEqual(1, result);
         }
 
-        [Test]
+        [TestMethod]
         public void CompareTo_String()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             try
             {
                 int result = ((IComparable)x).CompareTo("test");
 
                 Assert.Fail();
             }
-            catch (ArgumentException ex)
+            catch (ArgumentException)
             {
             }
         }
@@ -407,55 +407,55 @@ namespace Plethora.Test
 
         #region Convertion
 
-        [Test]
+        [TestMethod]
         public void ToDouble()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             double result = x.ToDouble();
 
-            //test
+            // Assert
             Assert.AreEqual(0.5, result);
         }
 
-        [Test]
+        [TestMethod]
         public void ToDecimal()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             decimal result = x.ToDecimal();
 
-            //test
+            // Assert
             Assert.AreEqual(0.5m, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Cast_Double()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             double result = (double)x;
 
-            //test
+            // Assert
             Assert.AreEqual(0.5, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Cast_Decimal()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             decimal result = (decimal)x;
 
-            //test
+            // Assert
             Assert.AreEqual(0.5m, result);
         }
 
@@ -467,73 +467,73 @@ namespace Plethora.Test
 
         #region == operator
 
-        [Test]
+        [TestMethod]
         public void Op_Equality_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x == y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Equality_CanonicalAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(2, 4);
 
-            //exec
+            // Action
             bool result = (x == y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Equality_CanonicalNegativeAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, -2);
 
-            //exec
+            // Action
             bool result = (x == y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Equality_NumeratorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = (x == y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Equality_DenominatorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 3);
 
-            //exec
+            // Action
             bool result = (x == y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
@@ -541,73 +541,73 @@ namespace Plethora.Test
 
         #region != operator
 
-        [Test]
+        [TestMethod]
         public void Op_Inequality_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x != y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Inequality_CanonicalAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(2, 4);
 
-            //exec
+            // Action
             bool result = (x != y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Inequality_CanonicalNegativeAreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, -2);
 
-            //exec
+            // Action
             bool result = (x != y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Inequality_NumeratorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = (x != y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Inequality_DenominatorAreNotEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 3);
 
-            //exec
+            // Action
             bool result = (x != y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
@@ -615,87 +615,87 @@ namespace Plethora.Test
 
         #region < operator
 
-        [Test]
+        [TestMethod]
         public void Op_LessThan_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x < y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThan_AreEqual_Negative()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x < y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThan_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = (x < y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThan_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(3, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x < y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThan_Negative_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x < y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThan_Negative_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x < y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
@@ -703,87 +703,87 @@ namespace Plethora.Test
 
         #region > operator
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThan_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x > y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThan_AreEqual_Negative()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x > y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThan_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = (x > y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThan_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(3, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x > y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThan_Negative_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x > y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThan_Negative_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x > y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
@@ -791,87 +791,87 @@ namespace Plethora.Test
 
         #region <= operator
 
-        [Test]
+        [TestMethod]
         public void Op_LessThanEqual_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x <= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThanEqual_AreEqual_Negative()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x <= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThanEqual_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = (x <= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThanEqual_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(3, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x <= y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThanEqual_Negative_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x <= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_LessThanEqual_Negative_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x <= y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
@@ -879,87 +879,87 @@ namespace Plethora.Test
 
         #region >= operator
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThanEqual_AreEqual()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x >= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThanEqual_AreEqual_Negative()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x >= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThanEqual_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 2);
 
-            //exec
+            // Action
             bool result = (x >= y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThanEqual_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(3, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x >= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThanEqual_Negative_LessThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(-1, 2);
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             bool result = (x >= y);
 
-            //test
+            // Assert
             Assert.AreEqual(false, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_GreaterThanEqual_Negative_GreaterThan()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(-1, 2);
 
-            //exec
+            // Action
             bool result = (x >= y);
 
-            //test
+            // Assert
             Assert.AreEqual(true, result);
         }
 
@@ -971,93 +971,93 @@ namespace Plethora.Test
 
         #region Additive operators
 
-        [Test]
+        [TestMethod]
         public void Op_Addition_Rationals()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 5);
 
-            //exec
+            // Action
             Rational result = (x + y);
 
-            //test
+            // Assert
             Assert.AreEqual(11, result.Numerator);
             Assert.AreEqual(10, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Addition_Rational_Int32()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             int y = 5;
 
-            //exec
+            // Action
             Rational result = (x + y);
 
-            //test
+            // Assert
             Assert.AreEqual(11, result.Numerator);
             Assert.AreEqual(2, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Addition_Int32_Rational()
         {
-            //setup
+            // Arrange
             int x = 5;
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             Rational result = (x + y);
 
-            //test
+            // Assert
             Assert.AreEqual(11, result.Numerator);
             Assert.AreEqual(2, result.Denominator);
         }
 
 
-        [Test]
+        [TestMethod]
         public void Op_Subtraction_Rationals()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 5);
 
-            //exec
+            // Action
             Rational result = (x - y);
 
-            //test
+            // Assert
             Assert.AreEqual(-1, result.Numerator);
             Assert.AreEqual(10, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Subtraction_Rational_Int32()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             int y = 5;
 
-            //exec
+            // Action
             Rational result = (x - y);
 
-            //test
+            // Assert
             Assert.AreEqual(-9, result.Numerator);
             Assert.AreEqual(2, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Subtraction_Int32_Rational()
         {
-            //setup
+            // Arrange
             int x = 5;
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             Rational result = (x - y);
 
-            //test
+            // Assert
             Assert.AreEqual(9, result.Numerator);
             Assert.AreEqual(2, result.Denominator);
         }
@@ -1066,139 +1066,139 @@ namespace Plethora.Test
 
         #region Multiplicative operators
 
-        [Test]
+        [TestMethod]
         public void Op_Multiply_Rationals()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 5);
 
-            //exec
+            // Action
             Rational result = (x * y);
 
-            //test
+            // Assert
             Assert.AreEqual(3, result.Numerator);
             Assert.AreEqual(10, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Multiply_Rational_Int32()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             int y = 5;
 
-            //exec
+            // Action
             Rational result = (x * y);
 
-            //test
+            // Assert
             Assert.AreEqual(5, result.Numerator);
             Assert.AreEqual(2, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Multiply_Int32_Rational()
         {
-            //setup
+            // Arrange
             int x = 5;
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             Rational result = (x * y);
 
-            //test
+            // Assert
             Assert.AreEqual(5, result.Numerator);
             Assert.AreEqual(2, result.Denominator);
         }
 
 
-        [Test]
+        [TestMethod]
         public void Op_Division_Rationals()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 5);
 
-            //exec
+            // Action
             Rational result = (x / y);
 
-            //test
+            // Assert
             Assert.AreEqual(5, result.Numerator);
             Assert.AreEqual(6, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Division_Rational_Int32()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             int y = 5;
 
-            //exec
+            // Action
             Rational result = (x / y);
 
-            //test
+            // Assert
             Assert.AreEqual(1, result.Numerator);
             Assert.AreEqual(10, result.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Division_Int32_Rational()
         {
-            //setup
+            // Arrange
             int x = 5;
             Rational y = new Rational(1, 2);
 
-            //exec
+            // Action
             Rational result = (x / y);
 
-            //test
+            // Assert
             Assert.AreEqual(10, result.Numerator);
             Assert.AreEqual(1, result.Denominator);
         }
 
 
-        [Test]
+        [TestMethod]
         public void Op_Modulus_Rationals()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
             Rational y = new Rational(3, 5);
 
-            //exec
+            // Action
             int result = (x % y);
 
-            //test
+            // Assert
             // 5 % 6 = 5
             Assert.AreEqual(5, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Modulus_Rational_Int32()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(43, 4);
             int y = 5;
 
-            //exec
+            // Action
             int result = (x % y);
 
-            //test
+            // Assert
             // 43 % 20 = 3
             Assert.AreEqual(3, result);
         }
 
-        [Test]
+        [TestMethod]
         public void Op_Modulus_Int32_Rational()
         {
-            //setup
+            // Arrange
             int x = 5;
             Rational y = new Rational(3, 4);
 
-            //exec
+            // Action
             int result = (x % y);
 
-            //test
+            // Assert
             // 15 % 4 = 2
             Assert.AreEqual(2, result);
         }
@@ -1211,34 +1211,34 @@ namespace Plethora.Test
 
         #region Invert
 
-        [Test]
+        [TestMethod]
         public void Invert()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(1, 2);
 
-            //exec
+            // Action
             Rational y = x.Invert();
 
-            //test
+            // Assert
             Assert.AreEqual(2, y.Numerator);
             Assert.AreEqual(1, y.Denominator);
         }
 
-        [Test]
+        [TestMethod]
         public void Invert_Error_NumeratorZero()
         {
-            //setup
+            // Arrange
             Rational x = new Rational(0, 2);
 
-            //exec
+            // Action
             try
             {
                 Rational y = x.Invert();
 
                 Assert.Fail();
             }
-            catch (DivideByZeroException ex)
+            catch (DivideByZeroException)
             {
             }
         }

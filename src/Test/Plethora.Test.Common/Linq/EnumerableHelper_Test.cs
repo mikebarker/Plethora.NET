@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.Linq;
 using Plethora.Test.UtilityClasses;
 
 namespace Plethora.Test.Linq
 {
-    [TestFixture]
+    [TestClass]
     public class EnumerableHelper_Test
     {
         private const int COUNT = 5;
-        private IEnumerable<object> enumerable;
+        private readonly IEnumerable<object> enumerable;
         private int enumerableAccessCount;
 
-        [SetUp]
-        public void SetUp()
+        public EnumerableHelper_Test()
         {
             enumerable = GetEnumerable();
             enumerableAccessCount = 0;
@@ -23,24 +22,24 @@ namespace Plethora.Test.Linq
 
         #region CacheResult
 
-        [Test]
+        [TestMethod]
         public void CacheResult_Access2()
         {
-            //exec
+            // Action
             var cacheResult = enumerable.CacheResult();
 
             var enumerator = cacheResult.GetEnumerator();
             enumerator.MoveNext();
             enumerator.MoveNext();
 
-            //test
+            // Assert
             Assert.AreEqual(2, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void CacheResult_Access2_Repeat()
         {
-            //exec
+            // Action
             var cacheResult = enumerable.CacheResult();
 
             var enumeratorA = cacheResult.GetEnumerator();
@@ -51,28 +50,28 @@ namespace Plethora.Test.Linq
             enumeratorB.MoveNext();
             enumeratorB.MoveNext();
 
-            //test
+            // Assert
             Assert.AreEqual(2, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void CacheResult_ReturnsAll()
         {
-            //exec
+            // Action
             var cacheResult = enumerable.CacheResult();
 
-            //test
+            // Assert
             var count = cacheResult.Count();
             Assert.AreEqual(COUNT, count);
         }
 
-        [Test]
 #if DEBUG
         [Ignore("This test will only run reliably under Release mode.")]
 #endif
+        [TestMethod]
         public void CacheResult_ReleaseResource()
         {
-            //exec
+            // Action
             var weakEnum = new WeakReference(GetEnumerable());
             IEnumerable<object> cacheResult;
             try
@@ -81,11 +80,11 @@ namespace Plethora.Test.Linq
             }
             catch (ArgumentNullException)
             {
-                Assert.Ignore("Enumerable was garbage-collected before test could complete.");
+                Assert.Inconclusive("Enumerable was garbage-collected before test could complete.");
                 return;
             }
 
-            //test
+            // Assert
             //GC before before full read
             GC.Collect(2);
             Assert.IsTrue(weakEnum.IsAlive);
@@ -98,19 +97,18 @@ namespace Plethora.Test.Linq
             Assert.IsFalse(weakEnum.IsAlive);
         }
 
-        [Test]
+        [TestMethod]
         public void CacheResult_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).CacheResult();
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
@@ -119,405 +117,395 @@ namespace Plethora.Test.Linq
 
         #region IsCount
 
-        [Test]
+        [TestMethod]
         public void IsCount_True()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCount(COUNT);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCount_False_Zero()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCount(0);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCount_False_LessThanSize()
         {
-            //exec
+            // Action
             const int count = 3;
             bool result = enumerable.IsCount(count);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(count + 1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCount_False_MoreThanSize()
         {
-            //exec
+            // Action
             const int count = 15;
             bool result = enumerable.IsCount(count);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCount_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).IsCount(1);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IsCount_Fail_Negative()
         {
             try
             {
-                //exec
+                // Action
                 enumerable.IsCount(-1);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IsCountGreaterThan
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThan_False_Equal()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountGreaterThan(COUNT);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThan_True_Zero()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountGreaterThan(0);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThan_True_LessThanSize()
         {
-            //exec
+            // Action
             const int count = 3;
             bool result = enumerable.IsCountGreaterThan(count);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(count + 1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThan_False_MoreThanSize()
         {
-            //exec
+            // Action
             const int count = 15;
             bool result = enumerable.IsCountGreaterThan(count);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThan_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).IsCountGreaterThan(1);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThan_Fail_Negative()
         {
             try
             {
-                //exec
+                // Action
                 enumerable.IsCountGreaterThan(-1);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IsCountGreaterThanOrEqualTo
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThanOrEqualTo_True_Equal()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountGreaterThanOrEqualTo(COUNT);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThanOrEqualTo_True_Zero()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountGreaterThanOrEqualTo(0);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThanOrEqualTo_True_LessThanSize()
         {
-            //exec
+            // Action
             const int count = 3;
             bool result = enumerable.IsCountGreaterThanOrEqualTo(count);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(count + 1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThanOrEqualTo_False_MoreThanSize()
         {
-            //exec
+            // Action
             const int count = 15;
             bool result = enumerable.IsCountGreaterThanOrEqualTo(count);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThanOrEqualTo_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).IsCountGreaterThanOrEqualTo(1);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountGreaterThanOrEqualTo_Fail_Negative()
         {
             try
             {
-                //exec
+                // Action
                 enumerable.IsCountGreaterThanOrEqualTo(-1);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IsCountLessThan
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThan_False_Equal()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountLessThan(COUNT);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThan_False_Zero()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountLessThan(0);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThan_False_LessThanSize()
         {
-            //exec
+            // Action
             const int count = 3;
             bool result = enumerable.IsCountLessThan(count);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(count + 1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThan_True_MoreThanSize()
         {
-            //exec
+            // Action
             const int count = 15;
             bool result = enumerable.IsCountLessThan(count);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThan_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).IsCountLessThan(1);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThan_Fail_Negative()
         {
             try
             {
-                //exec
+                // Action
                 enumerable.IsCountLessThan(-1);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region IsCountLessThanOrEqualTo
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThanOrEqualTo_True_Equal()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountLessThanOrEqualTo(COUNT);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThanOrEqualTo_False_Zero()
         {
-            //exec
+            // Action
             bool result = enumerable.IsCountLessThanOrEqualTo(0);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThanOrEqualTo_False_LessThanSize()
         {
-            //exec
+            // Action
             const int count = 3;
             bool result = enumerable.IsCountLessThanOrEqualTo(count);
 
-            //test
+            // Assert
             Assert.IsFalse(result);
             Assert.AreEqual(count + 1, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThanOrEqualTo_True_MoreThanSize()
         {
-            //exec
+            // Action
             const int count = 15;
             bool result = enumerable.IsCountLessThanOrEqualTo(count);
 
-            //test
+            // Assert
             Assert.IsTrue(result);
             Assert.AreEqual(COUNT, enumerableAccessCount);
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThanOrEqualTo_Fail_Null()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).IsCountLessThanOrEqualTo(1);
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void IsCountLessThanOrEqualTo_Fail_Negative()
         {
             try
             {
-                //exec
+                // Action
                 enumerable.IsCountLessThanOrEqualTo(-1);
 
                 Assert.Fail();
             }
-            catch (ArgumentOutOfRangeException ex)
+            catch (ArgumentOutOfRangeException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
@@ -525,10 +513,10 @@ namespace Plethora.Test.Linq
 
         #region ForEach
 
-        [Test]
+        [TestMethod]
         public void ForEach()
         {
-            //exec
+            // Action
             object prevO = null;
             int count = 0;
             enumerable.ForEach(o =>
@@ -539,14 +527,14 @@ namespace Plethora.Test.Linq
                                        count++;
                                    });
 
-            //test
+            // Assert
             Assert.AreEqual(COUNT, count);
         }
 
-        [Test]
+        [TestMethod]
         public void ForEach_WithIndex()
         {
-            //exec
+            // Action
             object prevO = null;
             int count = 0;
             int maxI = 0;
@@ -559,50 +547,48 @@ namespace Plethora.Test.Linq
                                        count++;
                                    });
 
-            //test
+            // Assert
             Assert.AreEqual(COUNT, count);
             Assert.AreEqual(count - 1, maxI);
         }
 
-        [Test]
+        [TestMethod]
         public void ForEach_Fail_EumNull()
         {
             try
             {
-                //exec
+                // Action
                 ((IEnumerable<object>)null).ForEach(o => { });
                 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
 
-        [Test]
+        [TestMethod]
         public void ForEach_Fail_ActionNull()
         {
             try
             {
-                //exec
+                // Action
                 enumerable.ForEach(((Action<object>)null));
 
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion
 
         #region Flattern
 
-        [Test]
+        [TestMethod]
         public void Flatten()
         {
-            //Setup
+            // Arrange
             TreeElement root = new TreeElement();
             TreeElement childA = new TreeElement();
             TreeElement childB = new TreeElement();
@@ -622,10 +608,10 @@ namespace Plethora.Test.Linq
 
             Tree tree = new Tree(root);
 
-            //exec
+            // Action
             var allElements = tree.Flatten(treeElement => treeElement.Children);
 
-            //test
+            // Assert
             Assert.AreEqual(7, allElements.Count());
 
             TreeElement[] mustMatch = new[]  //Order in which elements are returned
@@ -646,10 +632,10 @@ namespace Plethora.Test.Linq
             }
         }
 
-        [Test]
+        [TestMethod]
         public void Flatten_NullElement()
         {
-            //Setup
+            // Arrange
             TreeElement root = new TreeElement();
             TreeElement childA = new TreeElement();
             TreeElement childB = new TreeElement();
@@ -669,10 +655,10 @@ namespace Plethora.Test.Linq
 
             Tree tree = new Tree(root);
 
-            //exec
+            // Action
             var allElements = tree.Flatten(treeElement => treeElement.Children);
 
-            //test
+            // Assert
             Assert.AreEqual(7, allElements.Count());
 
             TreeElement[] mustMatch = new[]  //Order in which elements are returned
@@ -696,30 +682,30 @@ namespace Plethora.Test.Linq
 
         #region Singularity
 
-        [Test]
+        [TestMethod]
         public void Singularity()
         {
-            //setup
+            // Arrange
             var o = new object();
 
-            //exec
+            // Action
             var enumO = o.Singularity();
 
-            //test
+            // Assert
             Assert.AreEqual(1, enumO.Count());
             Assert.AreEqual(o, enumO.First());
         }
 
-        [Test]
+        [TestMethod]
         public void Singularity_Null()
         {
-            //setup
+            // Arrange
             object o = null;
 
-            //exec
+            // Action
             var enumO = o.Singularity();
 
-            //test
+            // Assert
             Assert.AreEqual(1, enumO.Count());
             Assert.AreEqual(o, enumO.First());
         }
@@ -727,21 +713,21 @@ namespace Plethora.Test.Linq
 
         #region AsEnumerable
 
-        [Test]
+        [TestMethod]
         public void AsEnumerable()
         {
-            //Setup
+            // Arrange
             IEnumerable<int> enumerable = Enumerable.Range(0, 10);
             IEnumerator<int> enumerator = enumerable.GetEnumerator();
 
-            //Execute
+            // Action
             IEnumerable<int> wrappedEnumerator = enumerator.AsEnumerable();
 
-            //Test
+            // Assert
             Assert.IsTrue(wrappedEnumerator.SequenceEqual(enumerable));
         }
 
-        [Test]
+        [TestMethod]
         public void AsEnumerable_Fail_Null()
         {
             IEnumerator<int> enumerator = null;
@@ -751,9 +737,8 @@ namespace Plethora.Test.Linq
                 enumerator.AsEnumerable();
                 Assert.Fail();
             }
-            catch (ArgumentNullException ex)
+            catch (ArgumentNullException)
             {
-                Assert.IsNotNull(ex);
             }
         }
         #endregion

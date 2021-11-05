@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Plethora.Finance.Bond
 {
-    [CLSCompliant(false)]
     public class BondInterestCalculator
     {
         private static readonly IDictionary<BondAccrualType, IBondInterestCalculator> bondInterestCalculatorRegister =

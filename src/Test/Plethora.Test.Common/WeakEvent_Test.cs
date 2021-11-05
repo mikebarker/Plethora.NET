@@ -1,40 +1,40 @@
 ﻿using System;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test
 {
-    [TestFixture]
+    [TestClass]
     public class WeakEvent_Test
     {
-        [Test]
+        [TestMethod]
         public void SubscribeFromEvent()
         {
-            //setup
+            // Arrange
             Publisher publisher = new Publisher();
 
             int callbackCount = 0;
             Subscriber subscriber = new Subscriber(() => callbackCount++);
 
-            //exec
+            // Action
             publisher.Event += subscriber.Callback;
 
-            //test
+            // Assert
             Assert.AreEqual(false, publisher.EventIsEmpty);
         }
 
-        [Test]
+        [TestMethod]
         public void UnsubscribeFromEvent()
         {
-            //setup
+            // Arrange
             Publisher publisher = new Publisher();
 
             int callbackCount = 0;
             Subscriber subscriber = new Subscriber(() => callbackCount++);
 
-            //exec
+            // Action
             publisher.Event += subscriber.Callback;
 
-            //test
+            // Assert
             Assert.AreEqual(false, publisher.EventIsEmpty);
 
             publisher.Event -= subscriber.Callback;
@@ -42,54 +42,62 @@ namespace Plethora.Test
             Assert.AreEqual(true, publisher.EventIsEmpty);
         }
 
-        [Test]
+        [TestMethod]
         public void TargetKeptAlive()
         {
-            //setup
+            // Arrange
             Publisher publisher = new Publisher();
 
             int callbackCount = 0;
             Subscriber subscriber = new Subscriber(() => callbackCount++);
 
-            //exec
+            // Action
             publisher.Event += subscriber.Callback;
 
             publisher.TriggerEvent();
             publisher.TriggerEvent();
 
-            //test
+            // Assert
             Assert.AreEqual(2, callbackCount);
             Assert.AreEqual(false, publisher.EventIsEmpty);
             GC.KeepAlive(subscriber);
         }
 
-        [Test]
+        [TestMethod]
         public void TargetCollected()
         {
-            //setup
+            // Arrange
             Publisher publisher = new Publisher();
 
             int callbackCount = 0;
-            Subscriber subscriber = new Subscriber(() => callbackCount++);
 
-            //exec
-            publisher.Event += subscriber.Callback;
+            Action setup = delegate () // .NET Core GC requires the value be out of scope, to be eligable for collection
+            {
+                Subscriber subscriber = new Subscriber(() => callbackCount++);
+
+                // Action
+                publisher.Event += subscriber.Callback;
+
+                // Assert
+                publisher.TriggerEvent();
+                publisher.TriggerEvent();
+
+                Assert.AreEqual(2, callbackCount);
+                Assert.AreEqual(false, publisher.EventIsEmpty);
+                GC.KeepAlive(subscriber);
+
+                subscriber = null;
+            };
+            setup();
 
 
-            //test
-            publisher.TriggerEvent();
-            publisher.TriggerEvent();
-
-            Assert.AreEqual(2, callbackCount);
-            Assert.AreEqual(false, publisher.EventIsEmpty);
-            GC.KeepAlive(subscriber);
-
-            subscriber = null;
+            // Action
             GC.Collect(2);
 
+            // Assert
             publisher.TriggerEvent();
 
-            Assert.AreEqual(2, callbackCount);
+            Assert.AreEqual(2, callbackCount); // unchanged from above
             Assert.AreEqual(true, publisher.EventIsEmpty);
         }
 

@@ -4,7 +4,6 @@ using System.Reflection;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Plethora.Logging;
 
 namespace Plethora
 {
@@ -213,7 +212,7 @@ namespace Plethora
                 {
                     method = GetMirroredMethodGenericDefinition(type, callingMethod);
                     if (method == null)
-                        throw new MethodNotFoundException(ResourceProvider.MethodNotFound());
+                        throw new MemberNotFoundException(ResourceProvider.MethodNotFound());
 
                     methodPool.Add(hCallingMethod, method);
                 }
@@ -328,21 +327,21 @@ namespace Plethora
     }
 
     [Serializable]
-    public class MethodNotFoundException : IsLoggedException
+    public class MemberNotFoundException : Exception
     {
         #region Constructors
 
-        public MethodNotFoundException(string message)
+        public MemberNotFoundException(string message)
             : base(message)
         {
         }
 
-        public MethodNotFoundException(string message, Exception innerException)
+        public MemberNotFoundException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
-        protected MethodNotFoundException(SerializationInfo info, StreamingContext context)
+        protected MemberNotFoundException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

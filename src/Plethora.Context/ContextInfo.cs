@@ -133,10 +133,7 @@ namespace Plethora.Context
         /// </returns>
         public override int GetHashCode()
         {
-            unchecked
-            {
-                return (this.rank * 397) ^ (this.name != null ? this.name.GetHashCode() : 0);
-            }
+            return HashCodeHelper.GetHashCode(this.name, this.rank, this.data);
         }
 
         /// <summary>
@@ -148,9 +145,15 @@ namespace Plethora.Context
         /// <returns>
         /// The <see cref="bool"/>.
         /// </returns>
-        protected bool Equals([NotNull] ContextInfo other)
+        protected bool Equals([CanBeNull] ContextInfo other)
         {
-            return this.rank == other.rank && string.Equals(this.name, other.name);
+            if (ReferenceEquals(other, null))
+                return false;
+
+            return 
+                string.Equals(this.name, other.name) &&
+                this.rank == other.rank &&
+                object.Equals(this.data, other.data);
         }
     }
 }

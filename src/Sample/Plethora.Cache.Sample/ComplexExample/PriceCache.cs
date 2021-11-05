@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Plethora.Cache.Sample.ComplexExample
 {
@@ -8,12 +10,12 @@ namespace Plethora.Cache.Sample.ComplexExample
     {
         private readonly PriceSource source = new PriceSource();
 
-        public IEnumerable<Price> GetStockPrices(int stockId, DateTime from, DateTime to)
+        public async Task<IEnumerable<Price>> GetStockPricesAsync(string tickerSymbol, DateTime from, DateTime to)
         {
-            PriceArg arg = new PriceArg(stockId, from, to);
+            PriceArg arg = new PriceArg(tickerSymbol, from, to);
 
             List<PriceArg> arguments = new List<PriceArg> { arg };
-            IEnumerable<Price> prices = this.GetData(arguments, 5000);
+            IEnumerable<Price> prices = await this.GetDataAsync(arguments).ConfigureAwait(false);
             return prices;
         }
 
@@ -22,14 +24,14 @@ namespace Plethora.Cache.Sample.ComplexExample
         /// <summary>
         /// Fetches the required data from the data source.
         /// </summary>
-        protected override IEnumerable<Price> GetDataFromSource(IEnumerable<PriceArg> arguments, int millisecondsTimeout)
+        protected override async Task<IEnumerable<Price>> GetDataFromSourceAsync(IEnumerable<PriceArg> arguments, CancellationToken cancellationToken = default)
         {
             IEnumerable<Price> prices = Enumerable.Empty<Price>();
             foreach (PriceArg argument in arguments)
             {
-                foreach (long stockId in argument.StockIds)
+                foreach (string tickerSymbol in argument.TickerSymbols)
                 {
-                    prices = prices.Concat(this.source.GetPrices(stockId, argument.MinDate, argument.MaxDate));
+                    prices = prices.Concat(this.source.GetPrices(tickerSymbol, argument.MinDate, argument.MaxDate));
                 }
             }
             return prices;
