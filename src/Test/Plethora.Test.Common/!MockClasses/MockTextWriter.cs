@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Plethora.Test.MockClasses
 {
@@ -15,6 +16,12 @@ namespace Plethora.Test.MockClasses
         public override void Write(char value)
         {
             sb.Append(value);
+        }
+
+        public override Task WriteAsync(char value)
+        {
+            sb.Append(value);
+            return Task.CompletedTask;
         }
 
 

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Plethora.Test.MockClasses
 {
@@ -33,6 +34,11 @@ namespace Plethora.Test.MockClasses
             }
 
             return actualCount;
+        }
+
+        public override Task<int> ReadAsync(char[] buffer, int index, int count)
+        {
+            return Task.Run(() => this.Read(buffer, index, count));
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Plethora.IO
 {
@@ -13,18 +14,10 @@ namespace Plethora.IO
     {
         #region Fields
 
-        private readonly HashSet<TextWriter> writers;
+        private readonly TextWriter[] writers;
         #endregion
 
         #region Constructors
-
-        /// <summary>
-        /// Initialises a new instance of the <see cref="MulticastWriter"/> class.
-        /// </summary>
-        public MulticastWriter()
-        {
-            this.writers = new HashSet<TextWriter>();
-        }
 
         /// <summary>
         /// Initialises a new instance of the <see cref="MulticastWriter"/> class.
@@ -44,7 +37,7 @@ namespace Plethora.IO
                 throw new ArgumentNullException(nameof(textWriters));
 
 
-            this.writers = new HashSet<TextWriter>(textWriters);
+            this.writers = textWriters.ToArray();
         }
         #endregion
 
@@ -57,7 +50,7 @@ namespace Plethora.IO
         {
             get
             {
-                if (this.writers.Count > 0)
+                if (this.writers.Length > 0)
                     return this.writers.First().Encoding;
 
                 return Encoding.Unicode;
@@ -72,10 +65,7 @@ namespace Plethora.IO
         /// </param>
         public override void Write(char value)
         {
-            foreach (TextWriter writer in this.writers)
-            {
-                writer.Write(value);
-            }
+            this.Execute(writer => writer.Write(value));
         }
 
         /// <summary>
@@ -89,10 +79,7 @@ namespace Plethora.IO
             if (buffer == null)
                 return;
 
-            foreach (TextWriter writer in this.writers)
-            {
-                writer.Write(buffer);
-            }
+            this.Execute(writer => writer.Write(buffer));
         }
 
         /// <summary>
@@ -112,10 +99,7 @@ namespace Plethora.IO
             if (buffer == null)
                 return;
 
-            foreach (TextWriter writer in this.writers)
-            {
-                writer.Write(buffer, index, count);
-            }
+            this.Execute(writer => writer.Write(buffer, index, count));
         }
 
         /// <summary>
@@ -129,45 +113,74 @@ namespace Plethora.IO
             if (value == null)
                 return;
 
-            foreach (TextWriter writer in this.writers)
+            this.Execute(writer => writer.Write(value));
+        }
+
+        /// <summary>
+        /// Writes a character to the text string or stream asynchronously.
+        /// </summary>
+        /// <param name="value">The character to write to the text stream.</param>
+        /// <returns>
+        /// A task that represents the asynchronous write operation.
+        /// </returns>
+        public override Task WriteAsync(char value)
+        {
+            return this.ExecuteAsync(writer => writer.WriteAsync(value));
+        }
+
+        /// <summary>
+        /// Writes a subarray of characters to the text string or stream asynchronously.
+        /// </summary>
+        /// <param name="buffer">The character array to write data from.</param>
+        /// <param name="index">The character position in the buffer at which to start retrieving data.</param>
+        /// <param name="count">The number of characters to write.</param>
+        /// <returns>
+        /// A task that represents the asynchronous write operation.
+        /// </returns>
+        public override Task WriteAsync(char[] buffer, int index, int count)
+        {
+            if (buffer == null)
+                return Task.CompletedTask;
+
+            return this.ExecuteAsync(writer => writer.WriteAsync(buffer, index, count));
+        }
+
+        /// <summary>
+        /// Writes a string to the text string or stream asynchronously.
+        /// </summary>
+        /// <param name="value">The string to write. If value is null, nothing is written to the text stream.</param>
+        /// <returns>
+        /// A task that represents the asynchronous write operation.
+        /// </returns>
+        public override Task WriteAsync(string value)
+        {
+            if (value == null)
+                return Task.CompletedTask;
+
+            return this.ExecuteAsync(writer => writer.WriteAsync(value));
+        }
+
+        #endregion
+
+        private void Execute(Action<TextWriter> action)
+        {
+            for (int i = 0; i < writers.Length; i++)
             {
-                writer.Write(value);
+                TextWriter writer = this.writers[i];
+                action(writer);
             }
         }
-        #endregion
 
-        #region Public Methods
-
-        /// <summary>
-        /// Register a TextWriter with the <see cref="MulticastWriter"/> class.
-        /// </summary>
-        /// <param name="writer">
-        /// The TextWriter instance to be registered.
-        /// </param>
-        /// <remarks>
-        /// Registered TextWriters will be written to when this
-        /// <see cref="MulticastWriter"/> is written to.
-        /// </remarks>
-        public void RegisterWriter(TextWriter writer)
+        private Task ExecuteAsync(Func<TextWriter, Task> func)
         {
-            if (!this.writers.Contains(writer))
-                this.writers.Add(writer);
-        }
+            Task[] tasks = new Task[this.writers.Length];
+            for (int i = 0; i < writers.Length; i++)
+            {
+                TextWriter writer = this.writers[i];
+                tasks[i] = func(writer);
+            }
 
-        /// <summary>
-        /// Deregister a TextWriter from the <see cref="MulticastWriter"/> class.
-        /// </summary>
-        /// <param name="writer">
-        /// The TextWriter instance to be deregistered.
-        /// </param>
-        /// <remarks>
-        /// Deregistered TextWriters will no longer be written to when this
-        /// <see cref="MulticastWriter"/> is written to.
-        /// </remarks>
-        public void DeregisterWriter(TextWriter writer)
-        {
-            this.writers.Remove(writer);
+            return Task.WhenAll(tasks);
         }
-        #endregion
     }
 }

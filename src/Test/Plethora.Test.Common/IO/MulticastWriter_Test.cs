@@ -1,4 +1,5 @@
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Plethora.IO;
 using Plethora.Test.MockClasses;
@@ -17,12 +18,12 @@ namespace Plethora.Test.IO
 
         public MulticastWriter_Test()
         {
-            mw = new MulticastWriter();
             writer1 = new MockTextWriter();
             writer2 = new MockTextWriter();
 
-            mw.RegisterWriter(writer1);
-            mw.RegisterWriter(writer2);
+            mw = new MulticastWriter(
+                writer1,
+                writer2);
         }
 
         [TestMethod]
@@ -58,8 +59,8 @@ namespace Plethora.Test.IO
             mw.Write(charac);
 
             // Assert
-            Assert.AreEqual(charac.ToString(), writer1.CurrentText);
-            Assert.AreEqual(charac.ToString(), writer2.CurrentText);
+            Assert.AreEqual("c", writer1.CurrentText);
+            Assert.AreEqual("c", writer2.CurrentText);
         }
 
         [TestMethod]
@@ -72,8 +73,8 @@ namespace Plethora.Test.IO
             mw.Write(text);
 
             // Assert
-            Assert.AreEqual(text, writer1.CurrentText);
-            Assert.AreEqual(text, writer2.CurrentText);
+            Assert.AreEqual("This is a test.", writer1.CurrentText);
+            Assert.AreEqual("This is a test.", writer2.CurrentText);
         }
 
         [TestMethod]
@@ -90,18 +91,47 @@ namespace Plethora.Test.IO
             Assert.AreEqual("", writer2.CurrentText);
         }
 
+
         [TestMethod]
-        public void DeregisterWriter()
+        public async Task WriteAsync_Char()
         {
+            // Arrange
+            char charac = 'c';
+
             // Action
-            mw.DeregisterWriter(writer2);
+            await mw.WriteAsync(charac).ConfigureAwait(false);
 
             // Assert
-            string text = "This is a test.";
-            mw.Write(text);
-            Assert.AreEqual(text, writer1.CurrentText);
-            Assert.AreEqual("", writer2.CurrentText);
+            Assert.AreEqual("c", writer1.CurrentText);
+            Assert.AreEqual("c", writer2.CurrentText);
         }
 
+        [TestMethod]
+        public async Task WriteAsync_String()
+        {
+            // Arrange
+            string text = "This is a test.";
+
+            // Action
+            await mw.WriteAsync(text).ConfigureAwait(false);
+
+            // Assert
+            Assert.AreEqual("This is a test.", writer1.CurrentText);
+            Assert.AreEqual("This is a test.", writer2.CurrentText);
+        }
+
+        [TestMethod]
+        public async Task WriteAsync_String_Null()
+        {
+            // Arrange
+            string nullText = null;
+
+            // Action
+            await mw.WriteAsync(nullText).ConfigureAwait(false);
+
+            // Assert
+            Assert.AreEqual("", writer1.CurrentText);
+            Assert.AreEqual("", writer2.CurrentText);
+        }
     }
 }
