@@ -555,12 +555,21 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Returns the resource string 'StaticOnlyMirror' with substitutions made.
+        /// Returns the resource string 'StaticOnlyMirror'.
         /// </summary>
         [NotNull]
         public static string StaticOnlyMirror()
         {
             return Resources.StaticOnlyMirror;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'TimeoutInvalid'.
+        /// </summary>
+        [NotNull]
+        public static string TimeoutInvalid()
+        {
+            return Resources.TimeoutInvalid;
         }
 
         /// <summary>

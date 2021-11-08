@@ -213,4 +213,7 @@
   <data name="AtLeastOneDayOfWeek" xml:space="preserve">
     <value>At least one day of the week must be specified.</value>
   </data>
+  <data name="TimeoutInvalid" xml:space="preserve">
+    <value>The timout needs to translate in milliseconds to -1 (signifying an infinite timeout), 0 or a positive integer less than or equal to Int32.MaxValue.</value>
+  </data>
 </root>
