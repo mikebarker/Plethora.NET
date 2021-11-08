@@ -66,8 +66,8 @@ namespace Plethora.Threading
         /// <param name="sourceFilePath">The caller source file path.</param>
         /// <param name="sourceLineNumber">The caller source file number.</param>
         /// <remarks>
-        /// If the <see cref="LockRegister.DefaultInstance"/> is set this lock will participate in long-wait
-        /// detection; otherwise it will not.
+        /// If the <see cref="LockRegister.DefaultInstance"/> has been set this lock will participate in long-wait
+        /// detection using the default instance; otherwise it will not.
         /// </remarks>
         public AsyncLock(
             [CallerMemberName] string memberName = "",
@@ -80,7 +80,10 @@ namespace Plethora.Threading
         /// <summary>
         /// Initialise a new instance of the <see cref="AsyncLock"/> class.
         /// </summary>
-        /// <param name="register">The <see cref="LockRegister"/> with which this instance will participate in long-wait detection.</param>
+        /// <param name="register">
+        /// The <see cref="LockRegister"/> with which this instance will participate in long-wait detection.
+        /// Specifing null will prevent this instance from participating in long-wait detection.
+        /// </param>
         /// <param name="memberName">The caller member name.</param>
         /// <param name="sourceFilePath">The caller source file path.</param>
         /// <param name="sourceLineNumber">The caller source file number.</param>
@@ -98,8 +101,8 @@ namespace Plethora.Threading
         /// </summary>
         /// <param name="name">The name of the <see cref="AsyncLock"/>.</param>
         /// <remarks>
-        /// If the <see cref="LockRegister.DefaultInstance"/> is set this lock will participate in long-wait
-        /// detection; otherwise it will not.
+        /// If the <see cref="LockRegister.DefaultInstance"/> has been set this lock will participate in long-wait
+        /// detection using the default instance; otherwise it will not.
         /// </remarks>
         public AsyncLock(
             [NotNull] string name)
@@ -111,7 +114,10 @@ namespace Plethora.Threading
         /// Initialise a new instance of the <see cref="AsyncLock"/> class.
         /// </summary>
         /// <param name="name">The name of the <see cref="AsyncLock"/>.</param>
-        /// <param name="register">The <see cref="LockRegister"/> with which this instance will participate in long-wait detection.</param>
+        /// <param name="register">
+        /// Optional. The <see cref="LockRegister"/> with which this instance will participate in long-wait detection.
+        /// Specifing null will prevent this instance from participating in long-wait detection.
+        /// </param>
         public AsyncLock(
             [NotNull] string name,
             [CanBeNull] LockRegister register)
@@ -331,9 +337,14 @@ namespace Plethora.Threading
             CancellationToken cancellationToken,
             CallerData callerData)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var disposedToken = this.disposedCancellationTokenSource.Token;
+            disposedToken.ThrowIfCancellationRequested();
+
             bool isLockAcquired;
 
-            using (var combinedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.disposedCancellationTokenSource.Token))
+            using (var combinedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, disposedToken))
             using (this.RegisterAwait(callerData))
             {
                 isLockAcquired = this.semaphore.Wait(timeout, combinedTokenSource.Token);
@@ -347,14 +358,14 @@ namespace Plethora.Threading
             CancellationToken cancellationToken,
             CallerData callerData)
         {
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return this.CreateLockResult(false, callerData);
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+
+            var disposedToken = this.disposedCancellationTokenSource.Token;
+            disposedToken.ThrowIfCancellationRequested();
 
             bool isLockAcquired;
 
-            using (var combinedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, this.disposedCancellationTokenSource.Token))
+            using (var combinedTokenSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, disposedToken))
             using (this.RegisterAwait(callerData))
             {
                 isLockAcquired = await this.semaphore.WaitAsync(timeout, combinedTokenSource.Token).ConfigureAwait(false);
@@ -384,7 +395,7 @@ namespace Plethora.Threading
         private void ReleaseLock()
         {
             if (this.disposed)
-                throw new ObjectDisposedException(nameof(AsyncLock));
+                return;
 
             this.semaphore.Release();
         }
