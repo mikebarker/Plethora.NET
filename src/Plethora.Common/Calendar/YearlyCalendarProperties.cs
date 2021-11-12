@@ -3,10 +3,17 @@ using System.Collections.Generic;
 
 namespace Plethora.Calendar
 {
+    /// <summary>
+    /// Represents a calendar which specifies dates which occur every n years.
+    /// </summary>
     public sealed class YearlyCalendarProperties : ICalendarProperties
     {
         private readonly int nYearly;
 
+        /// <summary>
+        /// Initialises a new instance of the <see cref="YearlyCalendarProperties"/> class.
+        /// </summary>
+        /// <param name="nYearly">The number of years between occurances in this calendar.</param>
         public YearlyCalendarProperties(int nYearly)
         {
             if (nYearly <= 0)
@@ -16,6 +23,7 @@ namespace Plethora.Calendar
             this.nYearly = nYearly;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<DateTime> GenerateCalendar(
             DateTime startDate,
             IEnumerable<DayOfWeek> weekendDays,
@@ -36,7 +44,5 @@ namespace Plethora.Calendar
                 year += this.nYearly;
             }
         }
-
-
     }
 }

@@ -4,17 +4,34 @@ using System.Linq;
 
 namespace Plethora.Calendar
 {
+    /// <summary>
+    /// Represents a calendar which specifies dates which occur every n months.
+    /// </summary>
     public sealed class MonthlyCalendarProperties : ICalendarProperties
     {
         private readonly int nMonthly;
         private readonly bool lastDayOfMonth;
         private readonly int[] daysOfMonth;
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="MonthlyCalendarProperties"/> class.
+        /// </summary>
+        /// <param name="nMonthly">The number of months between occurances in this calendar.</param>
+        /// <param name="daysOfMonth">The days of the month which are included in this calendar.</param>
         public MonthlyCalendarProperties(int nMonthly, IEnumerable<int> daysOfMonth)
             : this(nMonthly, daysOfMonth, false)
         {
         }
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="MonthlyCalendarProperties"/> class.
+        /// </summary>
+        /// <param name="nMonthly">The number of months between occurances in this calendar.</param>
+        /// <param name="daysOfMonth">The days of the month which are included in this calendar.</param>
+        /// <param name="lastDayOfMonth">True if the last day of the month is included in the calendar; otherwise false.</param>
+        /// <remarks>
+        /// <paramref name="lastDayOfMonth"/> is considered in addition to <see cref="daysOfMonth"/>.
+        /// </remarks>
         public MonthlyCalendarProperties(int nMonthly, IEnumerable<int> daysOfMonth, bool lastDayOfMonth)
         {
             if (nMonthly <= 0)
@@ -32,6 +49,7 @@ namespace Plethora.Calendar
                 throw new ArgumentException(ResourceProvider.AtLeastOneDateOrEom());
         }
 
+        /// <inheritdoc/>
         public IEnumerable<DateTime> GenerateCalendar(
             DateTime startDate,
             IEnumerable<DayOfWeek> weekendDays,

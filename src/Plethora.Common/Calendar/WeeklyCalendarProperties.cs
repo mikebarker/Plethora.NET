@@ -4,12 +4,19 @@ using System.Linq;
 
 namespace Plethora.Calendar
 {
+    /// <summary>
+    /// Represents a calendar which specifies dates which occur every n months.
+    /// </summary>
     public sealed class WeeklyCalendarProperties : ICalendarProperties
     {
         private readonly int nWeekly;
         private readonly DayOfWeek[] daysOfWeek;
 
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="WeeklyCalendarProperties"/> class.
+        /// </summary>
+        /// <param name="nWeekly">The number of weeks between occurances in this calendar.</param>
         public WeeklyCalendarProperties(int nWeekly, IEnumerable<DayOfWeek> daysOfWeek)
         {
             if (nWeekly <= 0)
@@ -26,6 +33,7 @@ namespace Plethora.Calendar
                 throw new ArgumentException(ResourceProvider.AtLeastOneDayOfWeek(), nameof(daysOfWeek));
         }
 
+        /// <inheritdoc/>
         public IEnumerable<DateTime> GenerateCalendar(
             DateTime startDate,
             IEnumerable<DayOfWeek> weekendDays,

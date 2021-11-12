@@ -23,7 +23,7 @@ namespace Plethora.Calendar
 
             //Date rolling can cause dates to occur outside the requested range. Therefore re-filter.
             DateTime[] result = calendar
-                .SkipWhile(date => date >= startDate)
+                .SkipWhile(date => date < startDate)
                 .TakeWhile(date => date <= endDate)
                 .ToArray();
 
@@ -47,7 +47,7 @@ namespace Plethora.Calendar
 
             //Date rolling can cause dates to occur outside the requested range. Therefore re-filter.
             DateTime[] result = calendar
-                .SkipWhile(date => date >= startDate)
+                .SkipWhile(date => date < startDate)
                 .Take(numberOfEntries)
                 .ToArray();
 

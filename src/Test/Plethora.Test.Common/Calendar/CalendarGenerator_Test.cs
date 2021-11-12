@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Calendar;
@@ -10,6 +10,118 @@ namespace Plethora.Test.Calendar
     [TestClass]
     public class CalendarGenerator_Test
     {
+        #region Generate
+
+        [TestMethod]
+        public void Generate_Daily_SpecifyEndDate()
+        {
+            // Arrange
+            ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.Day);
+            IEnumerable<DayOfWeek> weekDays = new HashSet<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday };
+            IEnumerable<DateTime> holidays = Dates.EnglishHolidays;
+
+
+            // Action
+            DateTime[] calendar = CalendarGenerator.Generate(Dates.Jan01, Dates.Jan31, calendarProperties, DateRollType.Actual, weekDays, holidays);
+
+            // Assert
+            Assert.AreEqual(31, calendar.Length);
+            Assert.AreEqual(Dates.Jan01, calendar[0]);
+            Assert.AreEqual(Dates.Jan31, calendar[30]);
+        }
+
+        [TestMethod]
+        public void Generate_Daily_SpecifyEndDate_Weekdays()
+        {
+            // Arrange
+            ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.WeekDay);
+            IEnumerable<DayOfWeek> weekDays = new HashSet<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday };
+            IEnumerable<DateTime> holidays = Dates.EnglishHolidays;
+
+
+            // Action
+            DateTime[] calendar = CalendarGenerator.Generate(Dates.Jan01, Dates.Jan31, calendarProperties, DateRollType.Actual, weekDays, holidays);
+
+            // Assert
+            Assert.AreEqual(21, calendar.Length);
+            Assert.AreEqual(Dates.Jan03, calendar[0]); // Jan 1= Sat, Jan 2= Sun
+            Assert.AreEqual(Dates.Jan31, calendar[20]);
+        }
+
+        [TestMethod]
+        public void Generate_Daily_SpecifyEndDate_BusinessDay()
+        {
+            // Arrange
+            ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.BusinessDay);
+            IEnumerable<DayOfWeek> weekDays = new HashSet<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday };
+            IEnumerable<DateTime> holidays = Dates.EnglishHolidays;
+
+
+            // Action
+            DateTime[] calendar = CalendarGenerator.Generate(Dates.Jan01, Dates.Jan31, calendarProperties, DateRollType.Actual, weekDays, holidays);
+
+            // Assert
+            Assert.AreEqual(20, calendar.Length);
+            Assert.AreEqual(Dates.Jan04, calendar[0]); // Jan 1= Sat, Jan 2= Sun, Jan 3= New Year's Day
+            Assert.AreEqual(Dates.Jan31, calendar[19]);
+        }
+
+        [TestMethod]
+        public void Generate_Daily_SpecifyOccurences()
+        {
+            // Arrange
+            ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.Day);
+            IEnumerable<DayOfWeek> weekDays = new HashSet<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday };
+            IEnumerable<DateTime> holidays = Dates.EnglishHolidays;
+
+
+            // Action
+            DateTime[] calendar = CalendarGenerator.Generate(Dates.Jan01, 12, calendarProperties, DateRollType.Actual, weekDays, holidays);
+
+            // Assert
+            Assert.AreEqual(12, calendar.Length);
+            Assert.AreEqual(Dates.Jan01, calendar[0]);
+            Assert.AreEqual(Dates.Jan12, calendar[11]);
+        }
+
+        [TestMethod]
+        public void Generate_Daily_SpecifyOccurences_WeekDay()
+        {
+            // Arrange
+            ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.WeekDay);
+            IEnumerable<DayOfWeek> weekDays = new HashSet<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday };
+            IEnumerable<DateTime> holidays = Dates.EnglishHolidays;
+
+
+            // Action
+            DateTime[] calendar = CalendarGenerator.Generate(Dates.Jan01, 12, calendarProperties, DateRollType.Actual, weekDays, holidays);
+
+            // Assert
+            Assert.AreEqual(12, calendar.Length);
+            Assert.AreEqual(Dates.Jan03, calendar[0]); // Jan 1= Sat, Jan 2= Sun
+            Assert.AreEqual(Dates.Jan18, calendar[11]);
+        }
+
+        [TestMethod]
+        public void Generate_Daily_SpecifyOccurences_BusinessDay()
+        {
+            // Arrange
+            ICalendarProperties calendarProperties = new DailyCalendarProperties(1, DailyType.BusinessDay);
+            IEnumerable<DayOfWeek> weekDays = new HashSet<DayOfWeek> { DayOfWeek.Sunday, DayOfWeek.Saturday };
+            IEnumerable<DateTime> holidays = Dates.EnglishHolidays;
+
+
+            // Action
+            DateTime[] calendar = CalendarGenerator.Generate(Dates.Jan01, 12, calendarProperties, DateRollType.Actual, weekDays, holidays);
+
+            // Assert
+            Assert.AreEqual(12, calendar.Length);
+            Assert.AreEqual(Dates.Jan04, calendar[0]); // Jan 1= Sat, Jan 2= Sun, Jan 3= New Year's Day
+            Assert.AreEqual(Dates.Jan19, calendar[11]);
+        }
+
+        #endregion
+
         #region RollDate
 
         #region Actual

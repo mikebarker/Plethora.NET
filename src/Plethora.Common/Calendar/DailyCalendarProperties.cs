@@ -4,11 +4,19 @@ using System.Linq;
 
 namespace Plethora.Calendar
 {
+    /// <summary>
+    /// Represents a calendar which specifies dates which occur every n days.
+    /// </summary>
     public sealed class DailyCalendarProperties : ICalendarProperties
     {
         private readonly int nDaily;
         private readonly DailyType dailyType;
 
+        /// <summary>
+        /// Initialise a new instance of the <see cref="DailyCalendarProperties"/> class.
+        /// </summary>
+        /// <param name="nDaily">The number of days between occurances in this calendar.</param>
+        /// <param name="dailyType">The type of days to be represented in the calendar.</param>
         public DailyCalendarProperties(int nDaily, DailyType dailyType)
         {
             if (nDaily <= 0)
@@ -36,6 +44,7 @@ namespace Plethora.Calendar
             this.dailyType = dailyType;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<DateTime> GenerateCalendar(
             DateTime startDate,
             IEnumerable<DayOfWeek> weekendDays,
@@ -100,12 +109,34 @@ namespace Plethora.Calendar
         }
     }
 
+    /// <summary>
+    /// The type of days to be represented in the daily calendar.
+    /// </summary>
     public enum DailyType
     {
+        /// <summary>
+        /// Every day is represented in the daily calendar.
+        /// </summary>
         Day,
+
+        /// <summary>
+        /// Only week days are represented in the daily calendar.
+        /// </summary>
         WeekDay,
+
+        /// <summary>
+        /// Only weekend days are represented in the daily calendar.
+        /// </summary>
         WeekendDay,
+
+        /// <summary>
+        /// Only business days are represented in the daily calendar.
+        /// </summary>
         BusinessDay,
+
+        /// <summary>
+        /// Only non-business days are represented in the daily calendar.
+        /// </summary>
         NonBusinessDay,
     }
 }
