@@ -214,6 +214,24 @@
     <value>At least one day of the week must be specified.</value>
   </data>
   <data name="TimeoutInvalid" xml:space="preserve">
-    <value>The timout needs to translate in milliseconds to -1 (signifying an infinite timeout), 0 or a positive integer less than or equal to Int32.MaxValue.</value>
+    <value>The timout must translate in milliseconds to -1 (signifying an infinite timeout), 0 or a positive integer less than or equal to Int32.MaxValue.</value>
+  </data>
+  <data name="ExpressionMustBeField" xml:space="preserve">
+    <value>Invalid expression. Expression must represent a field.</value>
+  </data>
+  <data name="ExpressionMustBeProperty" xml:space="preserve">
+    <value>Invalid expression. Expression must represent a property.</value>
+  </data>
+  <data name="ExpressionMustBePropertyOrField" xml:space="preserve">
+    <value>Invalid expression. Expression must represent a property or field.</value>
+  </data>
+  <data name="ElementWithSameKeyExists" xml:space="preserve">
+    <value>An element with the same key already exists in the {0}.</value>
+  </data>
+  <data name="KeysDoNotMatch" xml:space="preserve">
+    <value>Keys do not match in the {0}.</value>
+  </data>
+  <data name="EnumeratorOpCantHappen" xml:space="preserve">
+    <value>Enumeration has either not started or has already finished.</value>
   </data>
 </root>

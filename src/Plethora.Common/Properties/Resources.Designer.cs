@@ -259,6 +259,51 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An element with the same key already exists in the {0}..
+        /// </summary>
+        internal static string ElementWithSameKeyExists {
+            get {
+                return ResourceManager.GetString("ElementWithSameKeyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enumeration has either not started or has already finished..
+        /// </summary>
+        internal static string EnumeratorOpCantHappen {
+            get {
+                return ResourceManager.GetString("EnumeratorOpCantHappen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid expression. Expression must represent a field..
+        /// </summary>
+        internal static string ExpressionMustBeField {
+            get {
+                return ResourceManager.GetString("ExpressionMustBeField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid expression. Expression must represent a property..
+        /// </summary>
+        internal static string ExpressionMustBeProperty {
+            get {
+                return ResourceManager.GetString("ExpressionMustBeProperty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid expression. Expression must represent a property or field..
+        /// </summary>
+        internal static string ExpressionMustBePropertyOrField {
+            get {
+                return ResourceManager.GetString("ExpressionMustBePropertyOrField", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Generic argument must must be a subclass of Delegate..
         /// </summary>
         internal static string GenericArgMustBeDelegate {
@@ -304,6 +349,15 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Keys do not match in the {0}..
+        /// </summary>
+        internal static string KeysDoNotMatch {
+            get {
+                return ResourceManager.GetString("KeysDoNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The method was not found in the reflected type..
         /// </summary>
         internal static string MethodNotFound {
@@ -331,7 +385,7 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The timout needs to translate in milliseconds to -1 (signifying an infinite timeout), 0 or a positive integer less than or equal to Int32.MaxValue..
+        ///   Looks up a localized string similar to The timout must translate in milliseconds to -1 (signifying an infinite timeout), 0 or a positive integer less than or equal to Int32.MaxValue..
         /// </summary>
         internal static string TimeoutInvalid {
             get {

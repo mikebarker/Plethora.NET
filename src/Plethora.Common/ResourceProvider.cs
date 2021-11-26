@@ -492,6 +492,52 @@ namespace Plethora
         }
 
         /// <summary>
+        /// Returns the resource string 'EnumeratorOpCantHappen'.
+        /// </summary>
+        [NotNull]
+        public static string EnumeratorOpCantHappen()
+        {
+            return Resources.EnumeratorOpCantHappen;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ElementWithSameKeyExists' with substitutions made.
+        /// </summary>
+        /// <param name="type">The type of the collection.</param>
+        [NotNull]
+        public static string ElementWithSameKeyExists(Type type)
+        {
+            return StringFormat(Resources.ElementWithSameKeyExists, type.Name);
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ExpressionMustBeField'.
+        /// </summary>
+        [NotNull]
+        public static string ExpressionMustBeField()
+        {
+            return Resources.ExpressionMustBeField;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ExpressionMustBeProperty'.
+        /// </summary>
+        [NotNull]
+        public static string ExpressionMustBeProperty()
+        {
+            return Resources.ExpressionMustBeProperty;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'ExpressionMustBePropertyOrField'.
+        /// </summary>
+        [NotNull]
+        public static string ExpressionMustBePropertyOrField()
+        {
+            return Resources.ExpressionMustBePropertyOrField;
+        }
+
+        /// <summary>
         /// Returns the resource string 'GenericArgumentsMismatch' with substitutions made.
         /// </summary>
         [NotNull]
@@ -534,6 +580,16 @@ namespace Plethora
         public static string InvalidState()
         {
             return Resources.InvalidState;
+        }
+
+        /// <summary>
+        /// Returns the resource string 'KeysDoNotMatch' with substitutions made.
+        /// </summary>
+        /// <param name="type">The type of the collection.</param>
+        [NotNull]
+        public static string KeysDoNotMatch(Type type)
+        {
+            return StringFormat(Resources.KeysDoNotMatch, type.Name);
         }
 
         /// <summary>

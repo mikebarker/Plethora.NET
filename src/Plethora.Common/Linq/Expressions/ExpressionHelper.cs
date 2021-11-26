@@ -35,28 +35,94 @@ namespace Plethora.Linq.Expressions
         /// <exception cref="ArgumentNullException">
         /// <paramref name="propertyExpression"/> is null.
         /// </exception>
-        /// <exception cref="InvalidCastException">
+        /// <exception cref="ArgumentException">
         /// <paramref name="propertyExpression"/> is not an expression to get the value of a property.
         /// </exception>
         public static string GetPropertyName<TResult>(Expression<Func<TResult>> propertyExpression)
         {
-            if (propertyExpression == null)
-                throw new ArgumentNullException(nameof(propertyExpression));
-
-            MemberExpression memberExpression = (MemberExpression)propertyExpression.Body;
-            PropertyInfo propertyInfo = (PropertyInfo)memberExpression.Member;
-            return propertyInfo.Name;
+            return GetPropertyOrFieldName(propertyExpression, true, false, ResourceProvider.ExpressionMustBeProperty);
         }
 
         /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
         public static string GetPropertyName<T, TResult>(Expression<Func<T, TResult>> propertyExpression)
         {
-            if (propertyExpression == null)
-                throw new ArgumentNullException(nameof(propertyExpression));
+            return GetPropertyOrFieldName(propertyExpression, true, false, ResourceProvider.ExpressionMustBeProperty);
+        }
 
-            MemberExpression memberExpression = (MemberExpression)propertyExpression.Body;
-            PropertyInfo propertyInfo = (PropertyInfo)memberExpression.Member;
-            return propertyInfo.Name;
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetPropertyName(LambdaExpression expression)
+        {
+            return GetPropertyOrFieldName(expression, true, false, ResourceProvider.ExpressionMustBeProperty);
+        }
+
+
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetFieldName<TResult>(Expression<Func<TResult>> fieldExpression)
+        {
+            return GetPropertyOrFieldName(fieldExpression, false, true, ResourceProvider.ExpressionMustBeField);
+        }
+
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetFieldName<T, TResult>(Expression<Func<T, TResult>> fieldExpression)
+        {
+            return GetPropertyOrFieldName(fieldExpression, false, true, ResourceProvider.ExpressionMustBeField);
+        }
+
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetFieldName(LambdaExpression expression)
+        {
+            return GetPropertyOrFieldName(expression, false, true, ResourceProvider.ExpressionMustBeField);
+        }
+
+
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetPropertyOrFieldName<TResult>(Expression<Func<TResult>> expression)
+        {
+            return GetPropertyOrFieldName(expression, true, true, ResourceProvider.ExpressionMustBePropertyOrField);
+        }
+
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetPropertyOrFieldName<T, TResult>(Expression<Func<T, TResult>> expression)
+        {
+            return GetPropertyOrFieldName(expression, true, true, ResourceProvider.ExpressionMustBePropertyOrField);
+        }
+
+        /// <see cref="GetPropertyName{T}(Expression{Func{T}})"/>
+        public static string GetPropertyOrFieldName(LambdaExpression expression)
+        {
+            return GetPropertyOrFieldName(expression, true, true, ResourceProvider.ExpressionMustBePropertyOrField);
+        }
+
+
+
+        private static string GetPropertyOrFieldName(
+            LambdaExpression expression,
+            bool canBeProperty,
+            bool canBeField,
+            Func<string> errorTextFunc)
+        {
+            if (expression == null)
+                throw new ArgumentNullException(nameof(expression));
+
+            var body = expression.Body as MemberExpression;
+            if (body == null)
+                throw new ArgumentException(errorTextFunc());
+
+            if (canBeProperty)
+            {
+                var property = body.Member as PropertyInfo;
+                if (property != null)
+                    return property.Name;
+            }
+
+            if (canBeField)
+            {
+                var field = body.Member as FieldInfo;
+                if (field != null)
+                    return field.Name;
+            }
+
+            throw new ArgumentException(errorTextFunc());
         }
     }
 }

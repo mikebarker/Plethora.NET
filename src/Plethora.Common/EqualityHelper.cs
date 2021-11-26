@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Plethora.Linq.Expressions;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -87,7 +88,7 @@ namespace Plethora
             int i = 0;
             foreach (LambdaExpression expression in expressions)
             {
-                string propertyName = GetPropertyOrFieldName(expression);
+                string propertyName = ExpressionHelper.GetPropertyOrFieldName(expression);
 
                 if (i != 0)
                     sb.Append("; ");
@@ -102,27 +103,6 @@ namespace Plethora
             }
 
             return sb.ToString();
-        }
-
-        private static string GetPropertyOrFieldName(LambdaExpression expression)
-        {
-            if (expression == null)
-                throw new ArgumentNullException(nameof(expression));
-
-            var body = expression.Body as MemberExpression;
-            if (body == null)
-                throw new ArgumentException("Invalid expression. Expression must represent a property or field.");
-
-            var property = body.Member as PropertyInfo;
-            if (property != null)
-                return property.Name;
-
-            var field = body.Member as FieldInfo;
-            if (field != null)
-                return field.Name;
-
-
-            throw new ArgumentException("Invalid expression. Expression must represent a property or field.");
         }
 
         private string ToStringFormat(T t, params object[] values)
