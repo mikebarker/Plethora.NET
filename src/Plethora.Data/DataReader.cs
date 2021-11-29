@@ -82,7 +82,6 @@ namespace Plethora.Data
         private DataRecordDescriptor<T> descriptor;
         private IEnumerable<T> collection;
         private IEnumerator<T> enumerator;
-        private bool isClosed = false;
 
         /// <summary>
         /// Initialise a new instance of the <see cref="DataReader"/> class.
@@ -109,10 +108,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         void IDisposable.Dispose()
         {
-            if (!this.isClosed)
-            {
-                this.Close();
-            }
+            this.Close();
         }
 
         #endregion
@@ -124,8 +120,7 @@ namespace Plethora.Data
         {
             get
             {
-                if (this.isClosed)
-                    throw new InvalidOperationException("IDataRecord is closed.");
+                this.ThrowIfClosed();
 
                 object value = this.GetValue(i);
                 return value;
@@ -137,8 +132,7 @@ namespace Plethora.Data
         {
             get
             {
-                if (this.isClosed)
-                    throw new InvalidOperationException("IDataRecord is closed.");
+                this.ThrowIfClosed();
 
                 int i = this.GetOrdinal(name);
                 object value = this.GetValue(i);
@@ -147,13 +141,20 @@ namespace Plethora.Data
         }
 
         /// <inheritdoc/>
-        public int FieldCount => this.descriptor.FieldCount;
+        public int FieldCount
+        {
+            get
+            {
+                this.ThrowIfClosed();
+
+                return this.descriptor.FieldCount;
+            }
+        }
 
         /// <inheritdoc/>
         public string GetName(int i)
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            this.ThrowIfClosed();
 
             return this.descriptor.GetName(i);
         }
@@ -161,17 +162,22 @@ namespace Plethora.Data
         /// <inheritdoc/>
         public int GetOrdinal(string name)
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            this.ThrowIfClosed();
 
-            return this.descriptor.GetOrdinal(name);
+            try
+            {
+                return this.descriptor.GetOrdinal(name);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(name)), nameof(name), ex);
+            }
         }
 
         /// <inheritdoc/>
         public object GetValue(int i)
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            this.ThrowIfClosed();
 
             if (i > this.FieldCount - 1)
                 throw new ArgumentOutOfRangeException(nameof(i), i, ResourceProvider.ArgMustBeBetween(nameof(i), "0", $"{nameof(FieldCount)}-1"));
@@ -187,8 +193,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         int IDataRecord.GetValues(object[] values)
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            this.ThrowIfClosed();
 
             if (values.Length < this.descriptor.FieldCount)
                 throw new ArgumentException("The array must be at least as long as the number of fields.", nameof(values));
@@ -209,6 +214,8 @@ namespace Plethora.Data
         /// <inheritdoc/>
         Type IDataRecord.GetFieldType(int i)
         {
+            this.ThrowIfClosed();
+
             Type fieldType = this.descriptor.GetType(i);
             return fieldType;
         }
@@ -216,6 +223,8 @@ namespace Plethora.Data
         /// <inheritdoc/>
         string IDataRecord.GetDataTypeName(int i)
         {
+            this.ThrowIfClosed();
+
             Type fieldType = this.descriptor.GetType(i);
             string name = fieldType.Name;
             return name;
@@ -224,7 +233,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         bool IDataRecord.IsDBNull(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             return (obj == null);
         }
 
@@ -232,7 +241,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         bool IDataRecord.GetBoolean(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (bool)obj;
             return result;
         }
@@ -240,7 +249,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         byte IDataRecord.GetByte(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (byte)obj;
             return result;
         }
@@ -248,7 +257,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         char IDataRecord.GetChar(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (char)obj;
             return result;
         }
@@ -256,7 +265,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         DateTime IDataRecord.GetDateTime(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (DateTime)obj;
             return result;
         }
@@ -264,7 +273,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         decimal IDataRecord.GetDecimal(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (decimal)obj;
             return result;
         }
@@ -272,7 +281,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         double IDataRecord.GetDouble(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (double)obj;
             return result;
         }
@@ -280,7 +289,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         float IDataRecord.GetFloat(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (float)obj;
             return result;
         }
@@ -288,7 +297,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         Guid IDataRecord.GetGuid(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (Guid)obj;
             return result;
         }
@@ -296,7 +305,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         short IDataRecord.GetInt16(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (short)obj;
             return result;
         }
@@ -304,7 +313,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         int IDataRecord.GetInt32(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (int)obj;
             return result;
         }
@@ -312,7 +321,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         long IDataRecord.GetInt64(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (long)obj;
             return result;
         }
@@ -320,7 +329,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         string IDataRecord.GetString(int i)
         {
-            var obj = ((IDataRecord)this).GetValue(i);
+            var obj = this.GetValue(i);
             var result = (string)obj;
             return result;
         }
@@ -341,7 +350,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         IDataReader IDataRecord.GetData(int i)
         {
-            throw new NotSupportedException();
+            throw new InvalidCastException();
         }
 
         #endregion
@@ -349,25 +358,35 @@ namespace Plethora.Data
         #region Implementation of IDataReader
 
         /// <inheritdoc/>
-        int IDataReader.Depth => 1;
+        int IDataReader.Depth => 0;
 
         /// <inheritdoc/>
-        public bool IsClosed => this.isClosed;
+        public bool IsClosed => (this.descriptor == null);
 
         /// <inheritdoc/>
-        int IDataReader.RecordsAffected => this.collection.Count();
+        /// <remarks>
+        /// Returns the number of items in the underlying collection.
+        /// </remarks>
+        int IDataReader.RecordsAffected
+        {
+            get
+            {
+                this.ThrowIfClosed();
+
+                return this.collection.Count();
+            }
+        }
 
         /// <inheritdoc/>
         public void Close()
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            if (this.IsClosed)
+                return;
 
             this.descriptor = null;
             this.collection = null;
             this.enumerator?.Dispose();
             this.enumerator = null;
-            this.isClosed = true;
         }
 
         /// <inheritdoc/>
@@ -379,8 +398,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         bool IDataReader.NextResult()
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            this.ThrowIfClosed();
 
             this.enumerator?.Dispose();
             this.enumerator = null;
@@ -390,8 +408,7 @@ namespace Plethora.Data
         /// <inheritdoc/>
         public bool Read()
         {
-            if (this.isClosed)
-                throw new InvalidOperationException("IDataRecord is closed.");
+            this.ThrowIfClosed();
 
             if (this.enumerator == null)
             {
@@ -403,5 +420,11 @@ namespace Plethora.Data
         }
 
         #endregion
+
+        private void ThrowIfClosed()
+        {
+            if (this.IsClosed)
+                throw new InvalidOperationException("IDataRecord is closed.");
+        }
     }
 }
