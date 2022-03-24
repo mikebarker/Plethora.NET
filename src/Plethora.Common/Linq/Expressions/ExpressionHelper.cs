@@ -25,7 +25,7 @@ namespace Plethora.Linq.Expressions
         ///     ExpressionHelper.GetPropertyName(() => this.GetType().Name);        // returns "Name"
         ///     ExpressionHelper.GetPropertyName<Person, string>((person) => person.Name);  // returns "Name"
         /// 
-        ///     ExpressionHelper.GetPropertyName(() => this.GetType());             // throws an exception
+        ///     ExpressionHelper.GetPropertyName(() => this.GetType());             // throws an exception. GetType() is not a property
         /// ]]></code>
         /// </example>
         /// <para>

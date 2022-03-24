@@ -79,7 +79,7 @@ namespace Plethora.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Target array type is not compatible with the type of items in the collection.
+        ///   Looks up a localized string similar to Target array type is not compatible with the type of items in the collection..
         /// </summary>
         internal static string ArgArrayInvalidType {
             get {

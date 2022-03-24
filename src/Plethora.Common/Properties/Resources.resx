@@ -199,7 +199,7 @@
     <value>The lower bound of target array must be zero.</value>
   </data>
   <data name="ArgArrayInvalidType" xml:space="preserve">
-    <value>Target array type is not compatible with the type of items in the collection</value>
+    <value>Target array type is not compatible with the type of items in the collection.</value>
   </data>
   <data name="GenericArgMustBeDelegate" xml:space="preserve">
     <value>Generic argument must must be a subclass of Delegate.</value>
