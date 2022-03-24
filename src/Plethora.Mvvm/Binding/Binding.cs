@@ -38,7 +38,7 @@ namespace Plethora.Mvvm.Binding
 
         public static IEnumerable<BindingElement> Parse(string bindingPath)
         {
-            // TODO: Only supports properties. Enhance to support indexers.
+            // TODO: Only supports single-argument indexers. Should also support types and multi-argument indexers
             // See: https://docs.microsoft.com/en-us/dotnet/desktop/wpf/data/binding-declarations-overview?view=netdesktop-6.0#binding-path-syntax
 
             StringBuilder sb = new StringBuilder();
@@ -69,6 +69,7 @@ namespace Plethora.Mvvm.Binding
                 {
                     if (stateStack.Pop() != ParsingState.InIndexer)
                     {
+                        // TODO: Better error message
                         throw new Exception("Bad juju");
                     }
 
