@@ -78,5 +78,22 @@ namespace Plethora.Mvvm.Binding
 
         protected abstract void AddChangeListener();
         protected abstract void RemoveChangeListener();
+
+        void IBindingObserverElement.SetParent(IBindingObserver parent)
+        {
+            this.SetParent((IBindingObserver<T>)parent);
+        }
+
+        void IBindingSetter.SetObserved(object observed)
+        {
+            this.SetObserved((T)observed);
+        }
+
+        bool IBindingObserver.TryGetValue(out object value)
+        {
+            var result = this.TryGetValue(out TValue tvalue);
+            value = tvalue;
+            return result;
+        }
     }
 }

@@ -41,60 +41,79 @@ namespace Plethora.Mvvm.Binding
 
         public IndexerArgument[] Arguments { get; }
 
-        public override IBindingObserverElement<object, object> CreateObserver()
+        /// <summary>
+        /// Creates a <see cref="CollectionChangedObserver{T, TProperty}"/> which represents the observer
+        /// for this BindingElement.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="CollectionChangedObserver{T, TProperty}"/>.
+        /// </returns>
+        public override IBindingObserverElement CreateObserver(Type observedType)
         {
-            Func<object, object> getter = (obj) =>
-            {
-                var type = obj.GetType();
-                var tuple = TryGetIndexerProperty(type, this.Arguments);
-                if (tuple != null)
-                {
-                    var indexerProperty = tuple.Item1;
-                    var argumentValues = tuple.Item2;
-                    var result = indexerProperty.GetValue(obj, argumentValues);
-                    return result;
-                }
+            var getter = CreateGetter(observedType, this.Arguments);
 
-                throw new InvalidOperationException();
-            };
+            string[] indexerArguments = this.Arguments
+                .Select(arg => arg.Value)
+                .ToArray();
 
-
-            return new CollectionChangedObserver<object, object>(getter);
+            var propertyChangedObserver = CreateCollectionChangedObserver(indexerArguments, getter);
+            var result = (IBindingObserverElement)propertyChangedObserver;
+            return result;
         }
 
-        public IBindingObserverElement<T, object> CreateObserver<T>()
+        /// <summary>
+        /// Creates a <see cref="Func{T, TResult}"/> which will retrieve the value from an observed object.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Func{T, TResult}"/>.
+        /// </returns>
+        private static object CreateGetter(Type observedType, IndexerArgument[] arguments)
         {
-            var type = typeof(T);
-            var tuple = TryGetIndexerProperty(type, this.Arguments);
-            if (tuple != null)
-            {
-                var indexerProperty = tuple.Item1;
-                var argumentValues = tuple.Item2;
-    
-                // Compile the getter
-                var parameterExp = Expression.Parameter(type);
+            var tuple = TryGetIndexerProperty(observedType, arguments);
 
-                var argumentExps = argumentValues
-                    .Select(value => Expression.Constant(value))
-                    .ToArray();
+            var indexerProperty = tuple.Item1;
+            var argumentValues = tuple.Item2;
 
-                var propertyExp = Expression.Property(parameterExp, indexerProperty, argumentExps);
-                Expression bodyExp = propertyExp;
-    
-                if (indexerProperty.PropertyType != typeof(object))
+            Func<ParameterExpression, Expression> getIndexerPropertyExpressionFactory = (parameterExp) =>
                 {
-                    var conversionExp = Expression.Convert(propertyExp, typeof(object));
-                    bodyExp = conversionExp;
-                }
+                    var argumentExps = argumentValues
+                        .Select(value => Expression.Constant(value))
+                        .ToArray();
 
-                var lambda = Expression.Lambda<Func<T, object>>(propertyExp, parameterExp);
+                    var propertyExp = Expression.Property(parameterExp, indexerProperty, argumentExps);
+                    return propertyExp;
+                };
 
-                Func<T, object> getter = getter = lambda.Compile();
+            var getter = BindingElement.CreateGetter(
+                observedType,
+                indexerProperty.PropertyType,
+                getIndexerPropertyExpressionFactory);
 
-                return new CollectionChangedObserver<T, object>(getter);
-            }
+            return getter;
+        }
 
-            throw new InvalidOperationException();
+        /// <summary>
+        /// Creates a <see cref="CollectionChangedObserver{T, TProperty}"/> which represents the observer
+        /// for this BindingElement.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="CollectionChangedObserver{T, TProperty}"/>.
+        /// </returns>
+        private static object CreateCollectionChangedObserver(string[] indexerArguments, object getter)
+        {
+            // Call the ctor of CollectionChangedObserver<T, TValue>
+            var genericArguments = getter.GetType().GetGenericArguments();
+
+            var observedType = genericArguments[0];
+            var propertyType = genericArguments[1];
+
+            var ctor = typeof(CollectionChangedObserver<,>)
+                .MakeGenericType(observedType, propertyType)
+                .GetConstructors()
+                .Single();
+
+            var propertyChangedObserver = ctor.Invoke(new object[] { indexerArguments, getter });
+            return propertyChangedObserver;
         }
 
         private static Tuple<PropertyInfo, object[]> TryGetIndexerProperty(Type type, IndexerArgument[] arguments)
@@ -167,6 +186,5 @@ namespace Plethora.Mvvm.Binding
                 }
             }
         }
-
     }
 }

@@ -6,27 +6,35 @@ namespace Plethora.Mvvm.Binding
 {
     public static class Binding
     {
-        public static IBindingObserver<object> CreateObserver<T>(T item, string bindingPath)
+        public static IBindingObserver CreateObserver<T>(T item, string bindingPath)
         {
             var elements = Parse(bindingPath);
 
-            IBindingSetter<object> root = null;
-            IBindingObserver<object> leaf = null;
+            IBindingSetter<T> root = null;
+            IBindingObserver leaf = null;
+
+            Type valueType = null;
             foreach (var element in elements)
             {
-                var observer = element.CreateObserver();
+                Type observedType = (root == null)
+                    ? typeof(T)
+                    : valueType;
+
+                var observer = element.CreateObserver(observedType);
 
                 if (root == null)
                 {
-                    root = observer;
+                    root = (IBindingSetter<T>)observer;
                 }
 
                 observer.SetParent(leaf);
                 leaf = observer;
+
+                valueType = observer.GetType().GetGenericArguments()[1];
             }
 
-            var bindingObserver = new BindingObserver<object, object>(root, leaf);
-            bindingObserver.SetObserved(item);
+            var bindingObserver = BindingObserver.Create(root, leaf);
+            ((IBindingSetter)bindingObserver).SetObserved(item);
             return bindingObserver;
         }
 

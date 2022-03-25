@@ -112,14 +112,51 @@ namespace Plethora.Test.Mvvm.Binding
         [TestMethod]
         public void CreateObserver_PropertiesChanged()
         {
+            // Arrange
+            Person person = new Person();
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, "DateOfBirth");
+
+            bool isValueChanged = false;
+            observer.ValueChanged += (sender, e) => { isValueChanged = true; };
+
+            // Action
+            person.DateOfBirth = System.DateTime.Now;
+
+            // Assert
+            Assert.IsTrue(isValueChanged);
+        }
+
+        [TestMethod]
+        public void CreateObserver_PropertiesChanged_OtherProperty()
+        {
+            // Arrange
+            Person person = new Person();
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, "DateOfBirth");
+
+            bool isValueChanged = false;
+            observer.ValueChanged += (sender, e) => { isValueChanged = true; };
+
+            // Action
+            person.FamilyName = "Wooly";
+
+            // Assert
+            Assert.IsFalse(isValueChanged);
+        }
+
+        [TestMethod]
+        public void CreateObserver_PropertiesChanged_Multiple()
+        {
+            // Arrange
             Person person = new Person();
             var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, "DateOfBirth.TimeOfDay.TotalSeconds");
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
 
+            // Action
             person.DateOfBirth = System.DateTime.Now;
 
+            // Assert
             Assert.IsTrue(isValueChanged);
         }
 
@@ -159,6 +196,40 @@ namespace Plethora.Test.Mvvm.Binding
             result = observer.TryGetValue(out location);
             Assert.IsTrue(result);
             Assert.AreEqual("Quad", location);
+        }
+
+        [TestMethod]
+        public void CreateObserver_CollectionChanged_OtherIndex()
+        {
+            // Arrange
+            Person professor = new Person();
+
+            Lesson lesson1 = new Lesson("East wing", TimeSpan.FromHours(1.5));
+            Lesson lesson2 = new Lesson("East wing", TimeSpan.FromHours(1));
+            Lesson lesson3 = new Lesson("West wing", TimeSpan.FromHours(2));
+
+            Module module = new Module(professor, new[] { lesson1, lesson2, lesson3 });
+
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, "Lessons[0].Location");
+
+            bool isValueChanged = false;
+            observer.ValueChanged += (sender, e) => { isValueChanged = true; };
+
+            bool result;
+            object location;
+
+            // Assert
+            Assert.IsFalse(isValueChanged);
+
+            result = observer.TryGetValue(out location);
+            Assert.IsTrue(result);
+            Assert.AreEqual("East wing", location);
+
+            // Action
+            module.Lessons[1] = new Lesson("Quad", TimeSpan.FromMinutes(45));
+
+            // Assert
+            Assert.IsFalse(isValueChanged);
         }
 
 

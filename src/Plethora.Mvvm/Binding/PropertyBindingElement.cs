@@ -1,5 +1,6 @@
 ﻿using JetBrains.Annotations;
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Plethora.Mvvm.Binding
@@ -18,41 +19,68 @@ namespace Plethora.Mvvm.Binding
         [NotNull]
         public string PropertyName { get; }
 
-        public override IBindingObserverElement<object, object> CreateObserver()
+        /// <summary>
+        /// Creates a <see cref="PropertyChangedObserver{T, TProperty}"/> which represents the observer
+        /// for this BindingElement.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="PropertyChangedObserver{T, TProperty}"/>.
+        /// </returns>
+        public override IBindingObserverElement CreateObserver(Type observedType)
         {
-            Func<object, object> getter = (obj) =>
-            {
-                var type = obj.GetType();
-                var property = type.GetProperty(this.PropertyName);
-                var value = property.GetValue(obj);
+            var getter = CreateGetter(observedType, this.PropertyName);
 
-                return value;
-            };
-
-            return new PropertyChangedObserver<object, object>(this.PropertyName, getter);
+            var propertyChangedObserver = CreatePropertyChangedObserver(this.PropertyName, getter);
+            var result = (IBindingObserverElement)propertyChangedObserver;
+            return result;
         }
 
-        public IBindingObserverElement<T, object> CreateObserver<T>()
+        /// <summary>
+        /// Creates a <see cref="Func{T, TResult}"/> which will retrieve the value from an observed object.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="Func{T, TResult}"/>.
+        /// </returns>
+        private static object CreateGetter(Type observedType, string propertyName)
         {
-            var type = typeof(T);
-            var property = type.GetProperty(this.PropertyName);
+            var property = observedType.GetProperty(propertyName);
 
-            // Compile the getter
-            var parameterExp = Expression.Parameter(type);
-            var propertyExp = Expression.Property(parameterExp, property);
+            Func<ParameterExpression, Expression> getPropertyExpressionFactory = (parameterExp) =>
+                {
+                    var propertyExp = Expression.Property(parameterExp, property);
+                    return propertyExp;
+                };
 
-            Expression bodyExp = propertyExp;
-            if (property.PropertyType != typeof(object))
-            {
-                var conversionExp = Expression.Convert(propertyExp, typeof(object));
-                bodyExp = conversionExp;
-            }
+            var getter = CreateGetter(
+                observedType,
+                property.PropertyType,
+                getPropertyExpressionFactory);
 
-            var lambda = Expression.Lambda<Func<T, object>>(propertyExp, parameterExp);
+            return getter;
+        }
 
-            Func<T, object> getter = getter = lambda.Compile();
+        /// <summary>
+        /// Creates a <see cref="PropertyChangedObserver{T, TProperty}"/> which represents the observer
+        /// for this BindingElement.
+        /// </summary>
+        /// <returns>
+        /// A <see cref="PropertyChangedObserver{T, TProperty}"/>.
+        /// </returns>
+        private static object CreatePropertyChangedObserver(string propertyName, object getter)
+        {
+            // Call the ctor of PropertyChangedObserver<T, TValue>
+            var genericArguments = getter.GetType().GetGenericArguments();
 
-            return new PropertyChangedObserver<T, object>(this.PropertyName, getter);
+            var observedType = genericArguments[0];
+            var propertyType = genericArguments[1];
+
+            var ctor = typeof(PropertyChangedObserver<,>)
+                .MakeGenericType(observedType, propertyType)
+                .GetConstructors()
+                .Single();
+
+            var propertyChangedObserver = ctor.Invoke(new object[] { propertyName, getter });
+            return propertyChangedObserver;
         }
     }
 }
