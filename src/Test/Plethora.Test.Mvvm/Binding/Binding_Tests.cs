@@ -23,8 +23,8 @@ namespace Plethora.Test.Mvvm.Binding
             // Assert
             Assert.AreEqual(1, list.Count);
 
-            Assert.IsTrue(list[0] is PropertyBindingElement);
-            Assert.AreEqual("DateOfBirth", ((PropertyBindingElement)list[0]).PropertyName);
+            Assert.IsTrue(list[0] is PropertyBindingElementDefinition);
+            Assert.AreEqual("DateOfBirth", ((PropertyBindingElementDefinition)list[0]).PropertyName);
         }
 
         [TestMethod]
@@ -37,14 +37,14 @@ namespace Plethora.Test.Mvvm.Binding
             // Assert
             Assert.AreEqual(3, list.Count);
 
-            Assert.IsTrue(list[0] is PropertyBindingElement);
-            Assert.AreEqual("DateOfBirth", ((PropertyBindingElement)list[0]).PropertyName);
+            Assert.IsTrue(list[0] is PropertyBindingElementDefinition);
+            Assert.AreEqual("DateOfBirth", ((PropertyBindingElementDefinition)list[0]).PropertyName);
 
-            Assert.IsTrue(list[1] is PropertyBindingElement);
-            Assert.AreEqual("Date", ((PropertyBindingElement)list[1]).PropertyName);
+            Assert.IsTrue(list[1] is PropertyBindingElementDefinition);
+            Assert.AreEqual("Date", ((PropertyBindingElementDefinition)list[1]).PropertyName);
 
-            Assert.IsTrue(list[2] is PropertyBindingElement);
-            Assert.AreEqual("Year", ((PropertyBindingElement)list[2]).PropertyName);
+            Assert.IsTrue(list[2] is PropertyBindingElementDefinition);
+            Assert.AreEqual("Year", ((PropertyBindingElementDefinition)list[2]).PropertyName);
         }
 
         [TestMethod]
@@ -57,10 +57,10 @@ namespace Plethora.Test.Mvvm.Binding
             // Assert
             Assert.AreEqual(1, list.Count);
 
-            Assert.IsTrue(list[0] is IndexerBindingElement);
-            Assert.AreEqual(1, ((IndexerBindingElement)list[0]).Arguments.Length);
-            Assert.AreEqual("0", ((IndexerBindingElement)list[0]).Arguments[0].Value);
-            Assert.AreEqual(null, ((IndexerBindingElement)list[0]).Arguments[0].Type);
+            Assert.IsTrue(list[0] is IndexerBindingElementDefinition);
+            Assert.AreEqual(1, ((IndexerBindingElementDefinition)list[0]).Arguments.Length);
+            Assert.AreEqual("0", ((IndexerBindingElementDefinition)list[0]).Arguments[0].Value);
+            Assert.AreEqual(null, ((IndexerBindingElementDefinition)list[0]).Arguments[0].Type);
         }
 
         [TestMethod]
@@ -73,15 +73,15 @@ namespace Plethora.Test.Mvvm.Binding
             // Assert
             Assert.AreEqual(2, list.Count);
 
-            Assert.IsTrue(list[0] is IndexerBindingElement);
-            Assert.AreEqual(1, ((IndexerBindingElement)list[0]).Arguments.Length);
-            Assert.AreEqual("0", ((IndexerBindingElement)list[0]).Arguments[0].Value);
-            Assert.AreEqual(null, ((IndexerBindingElement)list[0]).Arguments[0].Type);
+            Assert.IsTrue(list[0] is IndexerBindingElementDefinition);
+            Assert.AreEqual(1, ((IndexerBindingElementDefinition)list[0]).Arguments.Length);
+            Assert.AreEqual("0", ((IndexerBindingElementDefinition)list[0]).Arguments[0].Value);
+            Assert.AreEqual(null, ((IndexerBindingElementDefinition)list[0]).Arguments[0].Type);
 
-            Assert.IsTrue(list[1] is IndexerBindingElement);
-            Assert.AreEqual(1, ((IndexerBindingElement)list[1]).Arguments.Length);
-            Assert.AreEqual("Sheep", ((IndexerBindingElement)list[1]).Arguments[0].Value);
-            Assert.AreEqual(null, ((IndexerBindingElement)list[1]).Arguments[0].Type);
+            Assert.IsTrue(list[1] is IndexerBindingElementDefinition);
+            Assert.AreEqual(1, ((IndexerBindingElementDefinition)list[1]).Arguments.Length);
+            Assert.AreEqual("Sheep", ((IndexerBindingElementDefinition)list[1]).Arguments[0].Value);
+            Assert.AreEqual(null, ((IndexerBindingElementDefinition)list[1]).Arguments[0].Type);
         }
 
         [TestMethod]
@@ -94,16 +94,16 @@ namespace Plethora.Test.Mvvm.Binding
             // Assert
             Assert.AreEqual(3, list.Count);
 
-            Assert.IsTrue(list[0] is PropertyBindingElement);
-            Assert.AreEqual("Children", ((PropertyBindingElement)list[0]).PropertyName);
+            Assert.IsTrue(list[0] is PropertyBindingElementDefinition);
+            Assert.AreEqual("Children", ((PropertyBindingElementDefinition)list[0]).PropertyName);
 
-            Assert.IsTrue(list[1] is IndexerBindingElement);
-            Assert.AreEqual(1, ((IndexerBindingElement)list[1]).Arguments.Length);
-            Assert.AreEqual("0", ((IndexerBindingElement)list[1]).Arguments[0].Value);
-            Assert.AreEqual(null, ((IndexerBindingElement)list[1]).Arguments[0].Type);
+            Assert.IsTrue(list[1] is IndexerBindingElementDefinition);
+            Assert.AreEqual(1, ((IndexerBindingElementDefinition)list[1]).Arguments.Length);
+            Assert.AreEqual("0", ((IndexerBindingElementDefinition)list[1]).Arguments[0].Value);
+            Assert.AreEqual(null, ((IndexerBindingElementDefinition)list[1]).Arguments[0].Type);
 
-            Assert.IsTrue(list[2] is PropertyBindingElement);
-            Assert.AreEqual("Age", ((PropertyBindingElement)list[2]).PropertyName);
+            Assert.IsTrue(list[2] is PropertyBindingElementDefinition);
+            Assert.AreEqual("Age", ((PropertyBindingElementDefinition)list[2]).PropertyName);
         }
 
         // ============================================
@@ -114,7 +114,8 @@ namespace Plethora.Test.Mvvm.Binding
         {
             // Arrange
             Person person = new Person();
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, "DateOfBirth");
+            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth");
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -131,7 +132,8 @@ namespace Plethora.Test.Mvvm.Binding
         {
             // Arrange
             Person person = new Person();
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, "DateOfBirth");
+            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth");
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -148,7 +150,8 @@ namespace Plethora.Test.Mvvm.Binding
         {
             // Arrange
             Person person = new Person();
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, "DateOfBirth.TimeOfDay.TotalSeconds");
+            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth.TimeOfDay.TotalSeconds");
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -172,7 +175,8 @@ namespace Plethora.Test.Mvvm.Binding
 
             Module module = new Module(professor, new[] { lesson1, lesson2, lesson3 });
 
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, "Lessons[0].Location");
+            var elements = Plethora.Mvvm.Binding.Binding.Parse("Lessons[0].Location");
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -210,7 +214,8 @@ namespace Plethora.Test.Mvvm.Binding
 
             Module module = new Module(professor, new[] { lesson1, lesson2, lesson3 });
 
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, "Lessons[0].Location");
+            var elements = Plethora.Mvvm.Binding.Binding.Parse("Lessons[0].Location");
+            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };

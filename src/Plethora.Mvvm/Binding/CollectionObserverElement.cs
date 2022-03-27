@@ -4,47 +4,35 @@ using System.Collections.Specialized;
 
 namespace Plethora.Mvvm.Binding
 {
-    public class CollectionChangedObserver<T, TValue> : BindingObserverElementBase<T, TValue>
+    /// <summary>
+    /// A collection observer in a binding expression.
+    /// </summary>
+    public class CollectionObserverElement : BindingObserverElementBase
     {
         private readonly int? index;
-        private readonly Func<T, TValue> getFunc;
 
-        public CollectionChangedObserver(
-            [NotNull] string[] indexerArguments,
-            [NotNull] Func<T, TValue> getFunc)
+        public CollectionObserverElement(
+            [NotNull] IndexerBindingElementDefinition indexerDefinition,
+            [NotNull] IGetterProvider getterProvider)
+            : base(indexerDefinition, getterProvider)
         {
-            if (getFunc == null)
-                throw new ArgumentNullException(nameof(getFunc));
+            if (indexerDefinition == null)
+                throw new ArgumentNullException(nameof(indexerDefinition));
 
-            this.getFunc = getFunc;
-
-            if (indexerArguments.Length == 1)
+            if (indexerDefinition.Arguments.Length == 1)
             {
-                if (int.TryParse(indexerArguments[0], out int index))
+                if (int.TryParse(indexerDefinition.Arguments[0].Value, out int index))
                 {
                     this.index = index;
                 }
             }
         }
 
-
-        public override bool TryGetValue(out TValue value)
-        {
-            if (this.Observed == null)
-            {
-                value = default(TValue);
-                return false;
-            }
-
-            value = getFunc(this.Observed);
-            return true;
-        }
-
         protected override void AddChangeListener()
         {
             if (this.Observed is INotifyCollectionChanged notifyCollectionChanged)
             {
-                notifyCollectionChanged.CollectionChanged += ObservedCollectionChanged;
+                notifyCollectionChanged.CollectionChanged += HandleObservedCollectionChanged;
             }
         }
 
@@ -52,11 +40,11 @@ namespace Plethora.Mvvm.Binding
         {
             if (this.Observed is INotifyCollectionChanged notifyCollectionChanged)
             {
-                notifyCollectionChanged.CollectionChanged -= ObservedCollectionChanged;
+                notifyCollectionChanged.CollectionChanged -= HandleObservedCollectionChanged;
             }
         }
 
-        private void ObservedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void HandleObservedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             bool invokeValueChanged = false;
             if (this.index.HasValue)

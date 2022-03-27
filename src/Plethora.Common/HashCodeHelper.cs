@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
 namespace Plethora
 {
@@ -120,7 +121,6 @@ namespace Plethora
         {
             unchecked
             {
-
                 int num = HASHCODE_INITIAL;
                 num = (HASHCODE_ELEMENT*num) + EqualityComparer<T1>.Default.GetHashCode(item1);
                 num = (HASHCODE_ELEMENT*num) + EqualityComparer<T2>.Default.GetHashCode(item2);
@@ -133,6 +133,59 @@ namespace Plethora
                 return num;
             }
         }
+        #endregion
+
+        #region GetEnumerableHashCode
+
+        public static int GetEnumerableHashCode(IEnumerable enumerable)
+        {
+            unchecked
+            {
+                int num = HASHCODE_INITIAL;
+                foreach (var item in enumerable)
+                {
+                    num = (HASHCODE_ELEMENT * num) + item.GetHashCode();
+                }
+                return num;
+            }
+        }
+        #endregion
+
+        #region Generate
+
+        public struct HashCodeElement
+        {
+            private readonly int num;
+
+            internal HashCodeElement(int num)
+            {
+                this.num = num;
+            }
+
+            public int Num => this.num;
+
+            public HashCodeElement Then<T>(T value)
+            {
+                unchecked
+                {
+                    int nextNum = (HASHCODE_ELEMENT * this.num) + EqualityComparer<T>.Default.GetHashCode(value);
+                    return new HashCodeElement(nextNum);
+                }
+            }
+
+            public static implicit operator int(HashCodeElement element) => element.num;
+        }
+
+        public static HashCodeElement Generate<T>(T value)
+        {
+            unchecked
+            {
+                int num = HASHCODE_INITIAL;
+                num = (HASHCODE_ELEMENT * num) + EqualityComparer<T>.Default.GetHashCode(value);
+                return new HashCodeElement(num);
+            }
+        }
+
         #endregion
     }
 }

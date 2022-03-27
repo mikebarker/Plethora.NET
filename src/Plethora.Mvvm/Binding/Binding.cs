@@ -6,35 +6,36 @@ namespace Plethora.Mvvm.Binding
 {
     public static class Binding
     {
-        public static IBindingObserver CreateObserver<T>(T item, string bindingPath)
-        {
-            var elements = Parse(bindingPath);
+        private static IGetterProvider getterProvider = new CachedGetterProvider(new GetterProvider());
 
-            IBindingSetter<T> root = null;
+        public static IBindingObserver CreateObserver<T>(T item, IEnumerable<BindingElementDefinition> elements)
+        {
+            IBindingObserver root = null;
             IBindingObserver leaf = null;
 
-            Type valueType = null;
             foreach (var element in elements)
             {
-                Type observedType = (root == null)
-                    ? typeof(T)
-                    : valueType;
-
-                var observer = element.CreateObserver(observedType);
+                var observer = element.CreateObserver(getterProvider);
 
                 if (root == null)
                 {
-                    root = (IBindingSetter<T>)observer;
+                    root = observer;
                 }
 
                 observer.SetParent(leaf);
                 leaf = observer;
-
-                valueType = observer.GetType().GetGenericArguments()[1];
             }
 
-            var bindingObserver = BindingObserver.Create(root, leaf);
-            ((IBindingSetter)bindingObserver).SetObserved(item);
+            IBindingObserver bindingObserver;
+            if (ReferenceEquals(root, leaf))
+            {
+                bindingObserver = root;
+            }
+            else
+            {
+                bindingObserver = new BindingObserver(root, leaf);
+            }
+            bindingObserver.SetObserved(item);
             return bindingObserver;
         }
 
@@ -44,7 +45,7 @@ namespace Plethora.Mvvm.Binding
             InIndexer,
         }
 
-        public static IEnumerable<BindingElement> Parse(string bindingPath)
+        public static IEnumerable<BindingElementDefinition> Parse(string bindingPath)
         {
             // TODO: Only supports single-argument indexers. Should also support types and multi-argument indexers
             // See: https://docs.microsoft.com/en-us/dotnet/desktop/wpf/data/binding-declarations-overview?view=netdesktop-6.0#binding-path-syntax
@@ -59,7 +60,7 @@ namespace Plethora.Mvvm.Binding
                     {
                         var propertyName = sb.ToString();
                         sb.Clear();
-                        yield return new PropertyBindingElement(propertyName);
+                        yield return new PropertyBindingElementDefinition(propertyName);
                     }
                 }
                 else if (c == '[')
@@ -68,7 +69,7 @@ namespace Plethora.Mvvm.Binding
                     {
                         var propertyName = sb.ToString();
                         sb.Clear();
-                        yield return new PropertyBindingElement(propertyName);
+                        yield return new PropertyBindingElementDefinition(propertyName);
                     }
 
                     stateStack.Push(ParsingState.InIndexer);
@@ -84,8 +85,8 @@ namespace Plethora.Mvvm.Binding
                     var indexerValue = sb.ToString();
                     sb.Clear();
 
-                    var indexerArgument = new IndexerArgument(indexerValue);
-                    yield return new IndexerBindingElement(new[] { indexerArgument });
+                    var indexerArgument = new IndexerBindingElementDefinition.Argument(indexerValue);
+                    yield return new IndexerBindingElementDefinition(new[] { indexerArgument });
                 }
                 else
                 {
@@ -97,7 +98,7 @@ namespace Plethora.Mvvm.Binding
             {
                 var propertyName = sb.ToString();
                 sb.Clear();
-                yield return new PropertyBindingElement(propertyName);
+                yield return new PropertyBindingElementDefinition(propertyName);
             }
         }
     }

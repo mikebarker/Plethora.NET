@@ -3,10 +3,45 @@ using System;
 
 namespace Plethora.Mvvm.Binding
 {
-    public abstract class BindingObserverElementBase<T, TValue> : IBindingObserverElement<T, TValue>
+    /// <summary>
+    /// A single element in a binding expression, which can be chained to a parent to form complex bindings.
+    /// </summary>
+    public abstract class BindingObserverElementBase : IBindingObserverElement
     {
-        private IBindingObserver<T> parent;
-        private T observed;
+        private readonly BindingElementDefinition bindingElementDefinition;
+        private readonly IGetterProvider getterProvider;
+        private IBindingObserver parent;
+        private object observed;
+        private Func<object, object> getter;
+
+        protected BindingObserverElementBase(
+            [NotNull] BindingElementDefinition bindingElementDefinition,
+            [NotNull] IGetterProvider getterProvider)
+        {
+            if (bindingElementDefinition == null)
+                throw new ArgumentNullException(nameof(bindingElementDefinition));
+
+            if (getterProvider == null)
+                throw new ArgumentNullException(nameof(getterProvider));
+
+            this.bindingElementDefinition = bindingElementDefinition;
+            this.getterProvider = getterProvider;
+        }
+
+        protected object Observed => this.observed;
+
+        private Func<object, object> Getter
+        {
+            get
+            {
+                if (this.getter == null)
+                {
+                    this.getter = this.getterProvider.AcquireGetter(this.Observed.GetType(), this.bindingElementDefinition);
+                }
+
+                return this.getter;
+            }
+        }
 
         #region PropertyChanged Event
 
@@ -19,9 +54,19 @@ namespace Plethora.Mvvm.Binding
 
         #endregion
 
-        public abstract bool TryGetValue(out TValue value);
+        public bool TryGetValue(out object value)
+        {
+            if (ReferenceEquals(this.Observed, null))
+            {
+                value = null;
+                return false;
+            }
 
-        public void SetParent(IBindingObserver<T> parent)
+            value = this.Getter(this.Observed);
+            return true;
+        }
+
+        public void SetParent(IBindingObserver parent)
         {
             if (ReferenceEquals(this.parent, parent))
             {
@@ -30,35 +75,41 @@ namespace Plethora.Mvvm.Binding
 
             if (this.parent != null)
             {
-                this.parent.ValueChanged -= ParentValueChanged;
+                this.parent.ValueChanged -= HandleParentValueChanged;
             }
 
             this.parent = parent;
 
             if (this.parent != null)
             {
-                this.parent.ValueChanged += ParentValueChanged;
+                this.parent.ValueChanged += HandleParentValueChanged;
 
-                if (this.parent.TryGetValue(out T value))
-                {
-                    this.SetObserved(value);
-                }
+                this.HandleParentValueChanged();
+            }
+            else
+            {
+                this.SetObserved(null);
             }
         }
 
-        private void ParentValueChanged(object sender, EventArgs e)
+        private void HandleParentValueChanged(object sender, EventArgs e)
         {
-            if (this.parent.TryGetValue(out T parentProperty))
+            this.HandleParentValueChanged();
+        }
+
+        private void HandleParentValueChanged()
+        {
+            if (this.parent.TryGetValue(out object parentProperty))
             {
                 this.SetObserved(parentProperty);
             }
             else
             {
-                this.SetObserved(default(T));
+                this.SetObserved(null);
             }
         }
 
-        public void SetObserved([CanBeNull] T observed)
+        public void SetObserved([CanBeNull] object observed)
         {
             if (ReferenceEquals(this.observed, observed))
             {
@@ -68,32 +119,14 @@ namespace Plethora.Mvvm.Binding
             this.RemoveChangeListener();
 
             this.observed = observed;
+            this.getter = null;
 
             this.AddChangeListener();
 
             this.OnValueChanged();
         }
 
-        protected T Observed => this.observed;
-
         protected abstract void AddChangeListener();
         protected abstract void RemoveChangeListener();
-
-        void IBindingObserverElement.SetParent(IBindingObserver parent)
-        {
-            this.SetParent((IBindingObserver<T>)parent);
-        }
-
-        void IBindingSetter.SetObserved(object observed)
-        {
-            this.SetObserved((T)observed);
-        }
-
-        bool IBindingObserver.TryGetValue(out object value)
-        {
-            var result = this.TryGetValue(out TValue tvalue);
-            value = tvalue;
-            return result;
-        }
     }
 }
