@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     /// <summary>
     /// Defines a single indexer element in a binding.

@@ -1,8 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System;
-using System.Linq;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     /// <summary>
     /// A binding observer.

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     /// <summary>
     /// Defines a single element in a binding.

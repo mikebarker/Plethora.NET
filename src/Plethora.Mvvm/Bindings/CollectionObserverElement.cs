@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Specialized;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     /// <summary>
     /// A collection observer in a binding expression.

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     public static class Binding
     {

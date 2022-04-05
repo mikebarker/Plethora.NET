@@ -8,6 +8,7 @@ using System.Threading;
 using JetBrains.Annotations;
 
 using Plethora.Collections;
+using Plethora.Mvvm.Bindings;
 
 namespace Plethora.Mvvm.Model
 {
@@ -66,7 +67,7 @@ namespace Plethora.Mvvm.Model
         private class BindingDefinition
         {
             public BindingDefinition(
-                [NotNull, ItemNotNull] IEnumerable<Binding.BindingElementDefinition> elements)
+                [NotNull, ItemNotNull] IEnumerable<BindingElementDefinition> elements)
             {
                 if (elements == null)
                     throw new ArgumentNullException(nameof(elements));
@@ -74,7 +75,7 @@ namespace Plethora.Mvvm.Model
                 this.Elements = elements.ToList();
             }
 
-            public IReadOnlyList<Binding.BindingElementDefinition> Elements { get; }
+            public IReadOnlyList<BindingElementDefinition> Elements { get; }
         }
 
         private static readonly ReaderWriterLockSlim dependencyMapLock = new ReaderWriterLockSlim();
@@ -149,7 +150,7 @@ namespace Plethora.Mvvm.Model
                 {
                     string dependsOnPath = dependsOnAttribute.Path;
 
-                    var bindingElementDefinitions = Binding.Binding.Parse(dependsOnPath);
+                    var bindingElementDefinitions = Binding.Parse(dependsOnPath);
 
                     if (!bindingDefinitionsMap.TryGetValue(propertyName, out var list))
                     {
@@ -165,7 +166,7 @@ namespace Plethora.Mvvm.Model
 
         #endregion
 
-        private readonly List<Binding.IBindingObserver> bindingObservers;
+        private readonly List<IBindingObserver> bindingObservers;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="DependentNotifyPropertyChanged"/> class.
@@ -180,14 +181,14 @@ namespace Plethora.Mvvm.Model
 
                 foreach (var bindingDefinition in bindingDefinitions)
                 {
-                    var observer = Binding.Binding.CreateObserver(this, bindingDefinition.Elements);
+                    var observer = Binding.CreateObserver(this, bindingDefinition.Elements);
 
                     observer.ValueChanging += (sender, e) => { this.OnPropertyChanging(new DependentPropertyChangingEventArgs(propertyName, null)); };
                     observer.ValueChanged += (sender, e) => { this.OnPropertyChanged(new DependentPropertyChangedEventArgs(propertyName, null)); };
 
                     if (this.bindingObservers == null)
                     {
-                        this.bindingObservers = new List<Binding.IBindingObserver>();
+                        this.bindingObservers = new List<IBindingObserver>();
                     }
                     this.bindingObservers.Add(observer);
                 }

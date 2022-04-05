@@ -1,7 +1,7 @@
 ﻿using Plethora.Collections;
 using System;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     public interface IGetterProvider
     {

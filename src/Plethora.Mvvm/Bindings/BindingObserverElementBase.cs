@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using System;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     /// <summary>
     /// A single element in a binding expression, which can be chained to a parent to form complex bindings.

@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Plethora.Mvvm.Binding;
+using Plethora.Mvvm.Bindings;
 using Plethora.Test.Mvvm._UtilityClasses;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Plethora.Test.Mvvm.Binding
+namespace Plethora.Test.Mvvm.Bindings
 {
     [TestClass]
     public class Binding_Tests
@@ -17,7 +17,7 @@ namespace Plethora.Test.Mvvm.Binding
         public void Parse_OneProperty()
         {
             // Action
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth");
+            var elements = Binding.Parse("DateOfBirth");
             var list = elements.ToList();
 
             // Assert
@@ -31,7 +31,7 @@ namespace Plethora.Test.Mvvm.Binding
         public void Parse_MultipleProperties()
         {
             // Action
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth.Date.Year");
+            var elements = Binding.Parse("DateOfBirth.Date.Year");
             var list = elements.ToList();
 
             // Assert
@@ -51,7 +51,7 @@ namespace Plethora.Test.Mvvm.Binding
         public void Parse_OneIndexer()
         {
             // Action
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("[0]");
+            var elements = Binding.Parse("[0]");
             var list = elements.ToList();
 
             // Assert
@@ -67,7 +67,7 @@ namespace Plethora.Test.Mvvm.Binding
         public void Parse_MultipleIndexer()
         {
             // Action
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("[0][Sheep]");
+            var elements = Binding.Parse("[0][Sheep]");
             var list = elements.ToList();
 
             // Assert
@@ -88,7 +88,7 @@ namespace Plethora.Test.Mvvm.Binding
         public void Parse_PropertyAndIndexer()
         {
             // Action
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("Children[0].Age");
+            var elements = Binding.Parse("Children[0].Age");
             var list = elements.ToList();
 
             // Assert
@@ -114,8 +114,8 @@ namespace Plethora.Test.Mvvm.Binding
         {
             // Arrange
             Person person = new Person();
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth");
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, elements);
+            var elements = Binding.Parse("DateOfBirth");
+            var observer = Binding.CreateObserver(person, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -132,8 +132,8 @@ namespace Plethora.Test.Mvvm.Binding
         {
             // Arrange
             Person person = new Person();
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth");
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, elements);
+            var elements = Binding.Parse("DateOfBirth");
+            var observer = Binding.CreateObserver(person, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -150,8 +150,8 @@ namespace Plethora.Test.Mvvm.Binding
         {
             // Arrange
             Person person = new Person();
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("DateOfBirth.TimeOfDay.TotalSeconds");
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(person, elements);
+            var elements = Binding.Parse("DateOfBirth.TimeOfDay.TotalSeconds");
+            var observer = Binding.CreateObserver(person, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -175,8 +175,8 @@ namespace Plethora.Test.Mvvm.Binding
 
             Module module = new Module(professor, new[] { lesson1, lesson2, lesson3 });
 
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("Lessons[0].Location");
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, elements);
+            var elements = Binding.Parse("Lessons[0].Location");
+            var observer = Binding.CreateObserver(module, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };
@@ -214,8 +214,8 @@ namespace Plethora.Test.Mvvm.Binding
 
             Module module = new Module(professor, new[] { lesson1, lesson2, lesson3 });
 
-            var elements = Plethora.Mvvm.Binding.Binding.Parse("Lessons[0].Location");
-            var observer = Plethora.Mvvm.Binding.Binding.CreateObserver(module, elements);
+            var elements = Binding.Parse("Lessons[0].Location");
+            var observer = Binding.CreateObserver(module, elements);
 
             bool isValueChanged = false;
             observer.ValueChanged += (sender, e) => { isValueChanged = true; };

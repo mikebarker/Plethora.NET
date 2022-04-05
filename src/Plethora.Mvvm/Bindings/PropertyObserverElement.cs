@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace Plethora.Mvvm.Binding
+namespace Plethora.Mvvm.Bindings
 {
     /// <summary>
     /// A property observer in a binding expression.
