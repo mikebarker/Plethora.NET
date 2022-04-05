@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -64,9 +63,23 @@ namespace Plethora.Mvvm.Model
     {
         #region Static Members
 
+        private class BindingDefinition
+        {
+            public BindingDefinition(
+                [NotNull, ItemNotNull] IEnumerable<Binding.BindingElementDefinition> elements)
+            {
+                if (elements == null)
+                    throw new ArgumentNullException(nameof(elements));
+
+                this.Elements = elements.ToList();
+            }
+
+            public IReadOnlyList<Binding.BindingElementDefinition> Elements { get; }
+        }
+
         private static readonly ReaderWriterLockSlim dependencyMapLock = new ReaderWriterLockSlim();
-        private static readonly MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<string>>> dependencyMapByType =
-            new MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<string>>>(maxEntries: 1024);
+        private static readonly MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>>> dependencyMapByType =
+            new MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>>>(maxEntries: 1024);
 
         /// <summary>
         /// Gets and sets a tuning parameter which determines the maximum number of types for which the dependency map
@@ -83,9 +96,9 @@ namespace Plethora.Mvvm.Model
         }
 
         [CanBeNull]
-        private static IReadOnlyDictionary<string, IReadOnlyCollection<string>> GetDependencyMapForType([NotNull] Type type)
+        private static IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> GetDependencyMapForType([NotNull] Type type)
         {
-            IReadOnlyDictionary<string, IReadOnlyCollection<string>> map;
+            IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> map;
             bool result;
 
             dependencyMapLock.EnterReadLock();
@@ -120,11 +133,11 @@ namespace Plethora.Mvvm.Model
         }
 
         [NotNull]
-        private static IReadOnlyDictionary<string, IReadOnlyCollection<string>> CreateDependencyMapForType([NotNull] Type type)
+        private static IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> CreateDependencyMapForType([NotNull] Type type)
         {
-            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            var bindingDefinitionsMap = new Dictionary<string, IReadOnlyCollection<BindingDefinition>>();
 
-            Dictionary<string, List<string>> forwardMap = new Dictionary<string, List<string>>();
+            PropertyInfo[] propertyInfos = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
             foreach (PropertyInfo propertyInfo in propertyInfos)
             {
@@ -134,132 +147,49 @@ namespace Plethora.Mvvm.Model
                 string propertyName = propertyInfo.Name;
                 foreach (DependsOnAttribute dependsOnAttribute in dependsOnAttributes)
                 {
-                    string dependsOnPropertyName = dependsOnAttribute.DependsOnPropertyName;
+                    string dependsOnPath = dependsOnAttribute.Path;
 
-                    if (!dependsOnAttribute.SkipValidation)
-                    {
-                        ValidateProperty(type, dependsOnPropertyName);
-                    }
+                    var bindingElementDefinitions = Binding.Binding.Parse(dependsOnPath);
 
-                    List<string> list;
-                    if (!forwardMap.TryGetValue(dependsOnPropertyName, out list))
+                    if (!bindingDefinitionsMap.TryGetValue(propertyName, out var list))
                     {
-                        list = new List<string>();
-                        forwardMap[dependsOnPropertyName] = list;
+                        list = new List<BindingDefinition>();
+                        bindingDefinitionsMap.Add(propertyName, list);
                     }
-                    list.Add(propertyName);
+                    ((List<BindingDefinition>)list).Add(new BindingDefinition(bindingElementDefinitions));
                 }
             }
 
-
-            Dictionary<string, IReadOnlyCollection<string>> dependencyMap = new Dictionary<string, IReadOnlyCollection<string>>();
-
-            foreach (string propertyName in forwardMap.Keys)
-            {
-                HashSet<string> set = new HashSet<string>();
-                PopulateDependencySet(set, forwardMap, propertyName);
-
-                dependencyMap.Add(propertyName, new ReadOnlyCollectionWrapper<string>(set));
-            }
-
-            return dependencyMap;
-        }
-
-        private static void PopulateDependencySet(
-            [NotNull] HashSet<string> set,
-            [NotNull] Dictionary<string, List<string>> forwardMap,
-            [NotNull] string propertyName)
-        {
-            List<string> list;
-            if (forwardMap.TryGetValue(propertyName, out list))
-            {
-                foreach (string name in list)
-                {
-                    bool added = set.Add(name);
-                    if (added)
-                    {
-                        PopulateDependencySet(set, forwardMap, name);
-                    }
-                }
-            }
-        }
-
-        [Conditional("DEBUG")]
-        private static void ValidateProperty(Type type, string propertyName)
-        {
-            PropertyInfo propertyInfo = type.GetProperty(
-                propertyName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            if (propertyInfo == null)
-                throw new ArgumentException($"The property '{propertyName}' is not an instance property of the type {type.Name}.");
+            return bindingDefinitionsMap;
         }
 
         #endregion
 
-        [CanBeNull]
-        private readonly IReadOnlyDictionary<string, IReadOnlyCollection<string>> dependencyMap;
+        private readonly List<Binding.IBindingObserver> bindingObservers;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="DependentNotifyPropertyChanged"/> class.
         /// </summary>
         protected DependentNotifyPropertyChanged()
         {
-            this.dependencyMap = GetDependencyMapForType(this.GetType());
-        }
-
-        /// <summary>
-        /// Raises the <see cref="NotifyPropertyChanged.InternalPropertyChanging"/> event.
-        /// </summary>
-        /// <remarks>
-        /// If other properties have the <see cref="DependsOnAttribute"/> defined, specifying <paramref name="e.PropertyName"/>
-        /// as their dependent property name then the <see cref="NotifyPropertyChanged.InternalPropertyChanging"/> event is
-        /// also raised for these properties.
-        /// </remarks>
-        protected override void OnPropertyChanging(PropertyChangingEventArgs e)
-        {
-            base.OnPropertyChanging(e);
-
-            if (this.IsNotifying)
+            var map = GetDependencyMapForType(this.GetType());
+            foreach (var pair in map)
             {
-                if (this.dependencyMap != null)
-                {
-                    IReadOnlyCollection<string> list;
-                    if (this.dependencyMap.TryGetValue(e.PropertyName, out list))
-                    {
-                        foreach (string propertyName in list)
-                        {
-                            base.OnPropertyChanging(new DependentPropertyChangingEventArgs(propertyName, e.PropertyName));
-                        }
-                    }
-                }
-            }
-        }
+                var propertyName = pair.Key;
+                var bindingDefinitions = pair.Value;
 
-        /// <summary>
-        /// Raises the <see cref="INotifyPropertyChanged.PropertyChanged"/> event.
-        /// </summary>
-        /// <remarks>
-        /// If other properties have the <see cref="DependsOnAttribute"/> defined, specifying <paramref name="e.PropertyName"/>
-        /// as their dependent property name then the <see cref="INotifyPropertyChanged.PropertyChanged"/> event is
-        /// also raised for these properties.
-        /// </remarks>
-        protected override void OnPropertyChanged(PropertyChangedEventArgs e)
-        {
-            base.OnPropertyChanged(e);
-
-            if (this.IsNotifying)
-            { 
-                if (this.dependencyMap != null)
+                foreach (var bindingDefinition in bindingDefinitions)
                 {
-                    IReadOnlyCollection<string> list;
-                    if (this.dependencyMap.TryGetValue(e.PropertyName, out list))
+                    var observer = Binding.Binding.CreateObserver(this, bindingDefinition.Elements);
+
+                    observer.ValueChanging += (sender, e) => { this.OnPropertyChanging(new DependentPropertyChangingEventArgs(propertyName, null)); };
+                    observer.ValueChanged += (sender, e) => { this.OnPropertyChanged(new DependentPropertyChangedEventArgs(propertyName, null)); };
+
+                    if (this.bindingObservers == null)
                     {
-                        foreach (string propertyName in list)
-                        {
-                            base.OnPropertyChanged(new DependentPropertyChangedEventArgs(propertyName, e.PropertyName));
-                        }
+                        this.bindingObservers = new List<Binding.IBindingObserver>();
                     }
+                    this.bindingObservers.Add(observer);
                 }
             }
         }

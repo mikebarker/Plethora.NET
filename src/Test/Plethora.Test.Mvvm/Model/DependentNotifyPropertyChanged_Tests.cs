@@ -12,42 +12,66 @@ namespace Plethora.Test.Mvvm.Model
     public class DependentNotifyPropertyChanged_Tests
     {
         [TestMethod]
-        public void PropertyChangedPropegation()
+        public void PropertyChangedPropegation_PropertyChanged()
         {
             // setup
             DependentNotifyPropertyChangedImpl npc = new DependentNotifyPropertyChangedImpl();
             
-            List<PropertyChangingEventArgs> changingProperties = new List<PropertyChangingEventArgs>();
-            npc.PropertyChanging += (sender, e) => { changingProperties.Add(e); };
+            List<string> changingProperties = new();
+            npc.PropertyChanging += (sender, e) => { changingProperties.Add(e.PropertyName); };
 
-            List<PropertyChangedEventArgs> changedProperties = new List<PropertyChangedEventArgs>();
-            npc.PropertyChanged += (sender, e) => { changedProperties.Add(e); };
+            List<string> changedProperties = new();
+            npc.PropertyChanged += (sender, e) => { changedProperties.Add(e.PropertyName); };
+
+            var inner = new Inner();
+            inner.Value = "blah";
 
             // test
-            npc.Name = "blah";
+            npc.Inner = inner;
+
+            // exec
+            Assert.AreEqual(3, changingProperties.Count);
+            Assert.IsTrue(changingProperties.Contains("Inner"));
+            Assert.IsTrue(changingProperties.Contains("Name"));
+            Assert.IsTrue(changingProperties.Contains("ReversedName"));
+
+            Assert.AreEqual(3, changedProperties.Count);
+            Assert.IsTrue(changedProperties.Contains("Inner"));
+            Assert.IsTrue(changedProperties.Contains("Name"));
+            Assert.IsTrue(changedProperties.Contains("ReversedName"));
+        }
+
+        [TestMethod]
+        public void PropertyChangedPropegation_InnerPropertyChanged()
+        {
+            // setup
+            DependentNotifyPropertyChangedImpl npc = new DependentNotifyPropertyChangedImpl();
+            
+            List<string> changingProperties = new();
+            npc.PropertyChanging += (sender, e) => { changingProperties.Add(e.PropertyName); };
+
+            List<string> changedProperties = new();
+            npc.PropertyChanged += (sender, e) => { changedProperties.Add(e.PropertyName); };
+
+            // test
+            npc.Inner.Value = "blah";
 
             // exec
             Assert.AreEqual(2, changingProperties.Count);
-            Assert.AreEqual("Name", changingProperties[0].PropertyName);
-            Assert.AreEqual("ReversedName", changingProperties[1].PropertyName);
-            Assert.AreEqual(true, changingProperties[1] is DependentPropertyChangingEventArgs);
-            Assert.AreEqual("Name", ((DependentPropertyChangingEventArgs)changingProperties[1]).OriginPropertyName);
+            Assert.IsTrue(changingProperties.Contains("Name"));
+            Assert.IsTrue(changingProperties.Contains("ReversedName"));
 
             Assert.AreEqual(2, changedProperties.Count);
-            Assert.AreEqual("Name", changedProperties[0].PropertyName);
-            Assert.AreEqual("ReversedName", changedProperties[1].PropertyName);
-            Assert.AreEqual(true, changedProperties[1] is DependentPropertyChangedEventArgs);
-            Assert.AreEqual("Name", ((DependentPropertyChangedEventArgs)changedProperties[1]).OriginPropertyName);
+            Assert.IsTrue(changedProperties.Contains("Name"));
+            Assert.IsTrue(changedProperties.Contains("ReversedName"));
         }
-
-
     }
 
-    #region
+    #region Test classes
 
-    public class DependentNotifyPropertyChangedImpl : DependentNotifyPropertyChanged, INotifyPropertyChanging
+    public class Inner : NotifyPropertyChanged, INotifyPropertyChanging
     {
-        private string name;
+        private string value;
 
         public event PropertyChangingEventHandler PropertyChanging
         {
@@ -55,15 +79,43 @@ namespace Plethora.Test.Mvvm.Model
             remove { base.InternalPropertyChanging -= value; }
         }
 
-        public string Name
+        public string Value
         {
-            get { return this.name; }
+            get { return this.value; }
             set
             {
-                this.OnPropertyChanging(nameof(this.Name));
-                this.name = value;
-                this.OnPropertyChanged(nameof(this.Name));
+                this.OnPropertyChanging();
+                this.value = value;
+                this.OnPropertyChanged();
             }
+        }
+    }
+
+    public class DependentNotifyPropertyChangedImpl : DependentNotifyPropertyChanged, INotifyPropertyChanging
+    {
+        private Inner inner = new Inner();
+
+        public event PropertyChangingEventHandler PropertyChanging
+        {
+            add { base.InternalPropertyChanging += value; }
+            remove { base.InternalPropertyChanging -= value; }
+        }
+
+        public Inner Inner
+        {
+            get { return this.inner; }
+            set
+            {
+                this.OnPropertyChanging();
+                this.inner = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        [DependsOn("Inner.Value")]
+        public string Name
+        {
+            get { return this.Inner.Value; }
         }
 
         [DependsOn("Name")]
@@ -71,7 +123,7 @@ namespace Plethora.Test.Mvvm.Model
         {
             get
             {
-                char[] nameArray = this.name.ToCharArray();
+                char[] nameArray = this.Name.ToCharArray();
                 Array.Reverse(nameArray);
                 string reversedName = new string(nameArray);
                 return reversedName;

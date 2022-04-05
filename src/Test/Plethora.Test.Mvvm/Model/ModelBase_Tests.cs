@@ -17,8 +17,8 @@ namespace Plethora.Test.Mvvm.Model
             // setup
             Person person = new Person();
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
 
@@ -42,8 +42,8 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
 
@@ -66,8 +66,8 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
             person.FamilyName = "Brown";
@@ -75,8 +75,8 @@ namespace Plethora.Test.Mvvm.Model
             //test
             Assert.AreEqual(true, person.HasChanged);
             Assert.AreEqual(2, propertiesChanged.Count);
-            Assert.AreEqual("FamilyName", propertiesChanged[0].PropertyName);
-            Assert.AreEqual("HasChanged", propertiesChanged[1].PropertyName);
+            Assert.IsTrue(propertiesChanged.Contains("FamilyName"));
+            Assert.IsTrue(propertiesChanged.Contains("HasChanged"));
             Assert.AreEqual("Brown", person.FamilyName);
         }
 
@@ -90,8 +90,8 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
             person.FamilyName = "Smith";
@@ -112,8 +112,8 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
             person.FamilyName = "Brown";
@@ -122,10 +122,10 @@ namespace Plethora.Test.Mvvm.Model
             //test
             Assert.AreEqual(false, person.HasChanged);
             Assert.AreEqual(4, propertiesChanged.Count);
-            Assert.AreEqual("FamilyName", propertiesChanged[0].PropertyName);
-            Assert.AreEqual("HasChanged", propertiesChanged[1].PropertyName);
-            Assert.AreEqual("FamilyName", propertiesChanged[2].PropertyName);
-            Assert.AreEqual("HasChanged", propertiesChanged[3].PropertyName);
+            Assert.IsTrue(propertiesChanged.Contains("FamilyName"));
+            Assert.IsTrue(propertiesChanged.Contains("HasChanged"));
+            Assert.IsTrue(propertiesChanged.Contains("FamilyName"));
+            Assert.IsTrue(propertiesChanged.Contains("HasChanged"));
             Assert.AreEqual("Smith", person.FamilyName);
         }
 
@@ -139,8 +139,8 @@ namespace Plethora.Test.Mvvm.Model
                 "Smith",
                 new DateTime(2000, 01, 01));
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
             person.DateOfBirth = new DateTime(1990, 07, 14);
@@ -148,10 +148,10 @@ namespace Plethora.Test.Mvvm.Model
             //test
             Assert.AreEqual(true, person.HasChanged);
             Assert.AreEqual(4, propertiesChanged.Count);
-            Assert.AreEqual("DateOfBirth", propertiesChanged[0].PropertyName);
-            Assert.AreEqual("Age", propertiesChanged[1].PropertyName);
-            Assert.AreEqual("YearsToCentenary", propertiesChanged[2].PropertyName);
-            Assert.AreEqual("HasChanged", propertiesChanged[3].PropertyName);
+            Assert.IsTrue(propertiesChanged.Contains("DateOfBirth"));
+            Assert.IsTrue(propertiesChanged.Contains("Age"));
+            Assert.IsTrue(propertiesChanged.Contains("YearsToCentenary"));
+            Assert.IsTrue(propertiesChanged.Contains("HasChanged"));
             Assert.AreEqual(new DateTime(1990, 07, 14), person.DateOfBirth);
         }
 
@@ -169,8 +169,8 @@ namespace Plethora.Test.Mvvm.Model
             person.FamilyName = "Brown";
             person.DateOfBirth = new DateTime(1900, 07, 14);
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
             person.Rollback();
@@ -178,12 +178,12 @@ namespace Plethora.Test.Mvvm.Model
             //test
             Assert.AreEqual(false, person.HasChanged);
             Assert.AreEqual(6, propertiesChanged.Count);
-            Assert.AreEqual("GivenName", propertiesChanged[0].PropertyName);
-            Assert.AreEqual("FamilyName", propertiesChanged[1].PropertyName);
-            Assert.AreEqual("DateOfBirth", propertiesChanged[2].PropertyName);
-            Assert.AreEqual("Age", propertiesChanged[3].PropertyName);
-            Assert.AreEqual("YearsToCentenary", propertiesChanged[4].PropertyName);
-            Assert.AreEqual("HasChanged", propertiesChanged[5].PropertyName);
+            Assert.IsTrue(propertiesChanged.Contains("GivenName"));
+            Assert.IsTrue(propertiesChanged.Contains("FamilyName"));
+            Assert.IsTrue(propertiesChanged.Contains("DateOfBirth"));
+            Assert.IsTrue(propertiesChanged.Contains("Age"));
+            Assert.IsTrue(propertiesChanged.Contains("YearsToCentenary"));
+            Assert.IsTrue(propertiesChanged.Contains("HasChanged"));
 
             Assert.AreEqual("John", person.GivenName);
             Assert.AreEqual("Smith", person.FamilyName);
@@ -204,8 +204,8 @@ namespace Plethora.Test.Mvvm.Model
             person.FamilyName = "Brown";
             person.DateOfBirth = new DateTime(1900, 07, 14);
 
-            List<PropertyChangedEventArgs> propertiesChanged = new List<PropertyChangedEventArgs>();
-            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e); };
+            List<string> propertiesChanged = new List<string>();
+            person.PropertyChanged += (sender, e) => { propertiesChanged.Add(e.PropertyName); };
 
             //exec
             person.Commit();
@@ -213,7 +213,7 @@ namespace Plethora.Test.Mvvm.Model
             //test
             Assert.AreEqual(false, person.HasChanged);
             Assert.AreEqual(1, propertiesChanged.Count);
-            Assert.AreEqual("HasChanged", propertiesChanged[0].PropertyName);
+            Assert.IsTrue(propertiesChanged.Contains("HasChanged"));
 
             Assert.AreEqual("Fred", person.GivenName);
             Assert.AreEqual("Brown", person.FamilyName);

@@ -25,6 +25,11 @@ namespace Plethora.Mvvm.Binding
 
         protected override void AddChangeListener()
         {
+            if (this.Observed is INotifyPropertyChanging notifyPropertyChanging)
+            {
+                notifyPropertyChanging.PropertyChanging += HandleObservedPropertyChanging;
+            }
+
             if (this.Observed is INotifyPropertyChanged notifyPropertyChanged)
             {
                 notifyPropertyChanged.PropertyChanged += HandleObservedPropertyChanged;
@@ -37,6 +42,11 @@ namespace Plethora.Mvvm.Binding
             {
                 notifyPropertyChanged.PropertyChanged -= HandleObservedPropertyChanged;
             }
+
+            if (this.Observed is INotifyPropertyChanging notifyPropertyChanging)
+            {
+                notifyPropertyChanging.PropertyChanging -= HandleObservedPropertyChanging;
+            }
         }
 
         private void HandleObservedPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -44,6 +54,14 @@ namespace Plethora.Mvvm.Binding
             if (string.Equals(e.PropertyName, this.propertyDefinition.PropertyName))
             {
                 this.OnValueChanged();
+            }
+        }
+
+        private void HandleObservedPropertyChanging(object sender, PropertyChangingEventArgs e)
+        {
+            if (string.Equals(e.PropertyName, this.propertyDefinition.PropertyName))
+            {
+                this.OnValueChanging();
             }
         }
     }

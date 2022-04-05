@@ -11,7 +11,7 @@ namespace Plethora.Mvvm.Binding
     public class CachedGetterProvider : IGetterProvider
     {
         private readonly MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>> gettersMap =
-            new MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>>();
+            new MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>>(maxEntries: 1024);
         private readonly IGetterProvider innerProvider;
 
         public CachedGetterProvider(

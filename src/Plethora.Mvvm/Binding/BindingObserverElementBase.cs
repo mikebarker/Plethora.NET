@@ -43,7 +43,18 @@ namespace Plethora.Mvvm.Binding
             }
         }
 
-        #region PropertyChanged Event
+        #region ValueChanging Event
+
+        public event EventHandler ValueChanging;
+
+        protected virtual void OnValueChanging()
+        {
+            this.ValueChanging?.Invoke(this, EventArgs.Empty);
+        }
+
+        #endregion
+
+        #region ValueChanged Event
 
         public event EventHandler ValueChanged;
 
@@ -92,6 +103,16 @@ namespace Plethora.Mvvm.Binding
             }
         }
 
+        private void HandleParentValueChanging(object sender, EventArgs e)
+        {
+            this.HandleParentValueChanging();
+        }
+
+        private void HandleParentValueChanging()
+        {
+            this.OnValueChanging();
+        }
+
         private void HandleParentValueChanged(object sender, EventArgs e)
         {
             this.HandleParentValueChanged();
@@ -117,6 +138,8 @@ namespace Plethora.Mvvm.Binding
             }
 
             this.RemoveChangeListener();
+
+            this.OnValueChanging();
 
             this.observed = observed;
             this.getter = null;

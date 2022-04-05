@@ -4,6 +4,8 @@ namespace Plethora.Mvvm.Binding
 {
     public interface IBindingObserver
     {
+        event EventHandler ValueChanging;
+
         event EventHandler ValueChanged;
 
         void SetObserved(object observed);

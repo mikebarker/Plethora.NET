@@ -46,6 +46,15 @@ namespace Plethora.Mvvm.Binding
         }
 
         /// <summary>
+        /// Raised when the value of the evaluated binding is changing.
+        /// </summary>
+        public event EventHandler ValueChanging
+        {
+            add { this.leaf.ValueChanging += value; }
+            remove { this.leaf.ValueChanging += value; }
+        }
+
+        /// <summary>
         /// Raised when the value of the evaluated binding changes.
         /// </summary>
         public event EventHandler ValueChanged
