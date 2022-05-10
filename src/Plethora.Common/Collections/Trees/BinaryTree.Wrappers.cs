@@ -66,7 +66,7 @@ namespace Plethora.Collections.Trees
                 get { return this.innerTree.Count; }
             }
 
-            public bool IsReadOnly
+            bool ICollection<T>.IsReadOnly
             {
                 get { return true; }
             }

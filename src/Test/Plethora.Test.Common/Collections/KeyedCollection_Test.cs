@@ -405,7 +405,7 @@ namespace Plethora.Test.Collections
         public void IsReadOnly()
         {
             // Action
-            bool isReadonly = keyedCollection.IsReadOnly;
+            bool isReadonly = ((ICollection<Person>)keyedCollection).IsReadOnly;
 
             // Assert
             Assert.IsFalse(isReadonly);

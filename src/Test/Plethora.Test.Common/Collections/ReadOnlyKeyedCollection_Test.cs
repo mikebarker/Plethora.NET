@@ -36,7 +36,7 @@ namespace Plethora.Test.Collections
 
             // Assert
             Assert.IsNotNull(readonlyKeyedCollection);
-            Assert.IsTrue(readonlyKeyedCollection.IsReadOnly);
+            Assert.IsTrue(((ICollection<Person>)readonlyKeyedCollection).IsReadOnly);
             Assert.AreEqual(keyedCollection.Count, readonlyKeyedCollection.Count);
         }
 
@@ -203,7 +203,7 @@ namespace Plethora.Test.Collections
         public void IsReadOnly()
         {
             // Action
-            bool isReadonly = readonlyKeyedCollection.IsReadOnly;
+            bool isReadonly = ((ICollection<Person>)readonlyKeyedCollection).IsReadOnly;
 
             // Assert
             Assert.IsTrue(isReadonly);

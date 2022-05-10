@@ -371,7 +371,7 @@ namespace Plethora.Collections
         /// <returns>
         /// true if the <see cref="ICollection{T}"/> is read-only; otherwise, false.
         /// </returns>
-        public bool IsReadOnly
+        bool ICollection<T>.IsReadOnly
         {
             get { return false; }
         }

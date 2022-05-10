@@ -310,7 +310,7 @@ namespace Plethora.Test.Collections
         public void IsReadOnly()
         {
             // Action
-            bool isReadonly = autoKeyedCollection.IsReadOnly;
+            bool isReadonly = ((ICollection<Person>)autoKeyedCollection).IsReadOnly;
 
             // Assert
             Assert.IsFalse(isReadonly);

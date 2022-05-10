@@ -89,7 +89,7 @@ namespace Plethora.Collections
             get { return this.innerDictionary.Count; }
         }
 
-        public bool IsReadOnly
+        bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
         {
             get { return true; }
         }
