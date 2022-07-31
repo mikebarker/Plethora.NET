@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj" />
+    <ProjectReference Include="..\Plethora.Xaml.Common\Plethora.Xaml.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

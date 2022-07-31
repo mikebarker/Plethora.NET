@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
 
-namespace Plethora.Mvvm.Model
+namespace Plethora.Mvvm
 {
     /// <summary>
     /// Base class which implements the <see cref="INotifyPropertyChanged"/> interface.
@@ -76,7 +76,6 @@ namespace Plethora.Mvvm.Model
         /// <summary>
         /// Raises the <see cref="InternalPropertyChanging"/> event.
         /// </summary>
-        [NotifyPropertyChangedInvocator]
         protected void OnPropertyChanging([CanBeNull][CallerMemberName] string propertyName = null)
         {
             this.OnPropertyChanging(new PropertyChangingEventArgs(propertyName));

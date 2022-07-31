@@ -137,7 +137,9 @@
     <Compile Include="Converters\Comparison\IsNullConverter.cs" />
     <Compile Include="Converters\Logic\BooleanNotConverter.cs" />
     <Compile Include="Converters\PrependListConverter.cs" />
+    <Compile Include="Converters\UnsetValueProvider.cs" />
     <Compile Include="Converters\ValueConversionAttribute.cs" />
+    <Compile Include="Converters\ViewConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Plethora.Xaml.Uwp.rd.xml" />
   </ItemGroup>
@@ -147,6 +149,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Plethora.Mvvm\Plethora.Mvvm.csproj">
+      <Project>{1E27AB8D-6865-403F-80AE-A4C19E95A0FA}</Project>
+      <Name>Plethora.Mvvm</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Plethora.Xaml.Common\Plethora.Xaml.Common.csproj">
       <Project>{525c755f-c43a-4048-b84e-e061b4f16315}</Project>
       <Name>Plethora.Xaml.Common</Name>
