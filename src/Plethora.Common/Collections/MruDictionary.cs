@@ -100,11 +100,12 @@ namespace Plethora.Collections
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
 
-            if (arrayIndex < 0)
-                throw new ArgumentOutOfRangeException(nameof(arrayIndex), arrayIndex, ResourceProvider.ArgMustBeGreaterThanZero(nameof(arrayIndex)));
+            if (array.Rank != 1)
+                throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
 
             if ((array.Length - arrayIndex) < this.Count)
-                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(arrayIndex), "count"));
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(arrayIndex), nameof(this.Count)));
+
 
             int i = 0;
             foreach (var pair in this.innerDictionary)

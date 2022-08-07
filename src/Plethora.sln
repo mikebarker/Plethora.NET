@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plethora.Test.fqi", "Test\P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plethora.Logging.log4net", "Plethora.Logging.log4net\Plethora.Logging.log4net.csproj", "{A003AE53-E0AD-4F9A-A784-3F0B6D433085}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plethora.fqi.Sample", "Sample\Plethora.fqi.Sample\Plethora.fqi.Sample.csproj", "{6BD76D8C-0DA6-43D4-B55C-BA607D78720A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plethora.fqi.Sample", "Sample\Plethora.fqi.Sample\Plethora.fqi.Sample.csproj", "{6BD76D8C-0DA6-43D4-B55C-BA607D78720A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -254,8 +254,16 @@ namespace Plethora.Collections
         /// </param>
         public void CopyTo(T[] array, int arrayIndex)
         {
+            // Validation
             if (array == null)
                 throw new ArgumentNullException(nameof(array));
+
+            if (array.Rank != 1)
+                throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
+
+            if ((arrayIndex < 0) || ((array.Length - arrayIndex) < this.Count))
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(arrayIndex), nameof(this.Count)));
+
 
             foreach (var item in this)
             {

@@ -88,10 +88,10 @@ namespace Plethora.fqi.Trees
                 throw new ArgumentNullException(nameof(array));
 
             if (array.Rank != 1)
-                throw new ArgumentException("Only single dimensional arrays are supported for the requested action.");
+                throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
 
             if ((arrayIndex < 0) || ((array.Length - arrayIndex) < this.Count))
-                throw new ArgumentException("Offset and length were out of bounds for the array or count is greater than the number of elements from index to the end of the source collection.");
+                throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(arrayIndex), nameof(this.Count)));
 
 
             int i = arrayIndex;

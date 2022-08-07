@@ -253,5 +253,30 @@ namespace Plethora.Test.Collections
             Assert.AreEqual("six", peeked);
             Assert.AreEqual(5, stack.Count);
         }
+
+        [TestMethod]
+        public void CopyTo()
+        {
+            // Arrange
+            var stack = new DropoutStack<string>(5);
+            stack.Push("one");
+            stack.Push("two");
+            stack.Push("three");
+            stack.Push("four");
+            stack.Push("five");
+            stack.Push("six");
+
+            string[] array = new string[5];
+
+            // Action
+            stack.CopyTo(array, 0);
+
+            // Assert
+            Assert.AreEqual("six", array[0]);
+            Assert.AreEqual("five", array[1]);
+            Assert.AreEqual("four", array[2]);
+            Assert.AreEqual("three", array[3]);
+            Assert.AreEqual("two", array[4]);
+        }
     }
 }
