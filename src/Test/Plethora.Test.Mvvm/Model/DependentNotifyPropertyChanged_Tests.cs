@@ -4,6 +4,7 @@ using System.ComponentModel;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+using Plethora.Mvvm;
 using Plethora.Mvvm.Model;
 
 namespace Plethora.Test.Mvvm.Model

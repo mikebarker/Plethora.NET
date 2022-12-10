@@ -3,9 +3,9 @@ using System.ComponentModel;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-using Plethora.Mvvm.Model;
+using Plethora.Mvvm;
 
-namespace Plethora.Test.Mvvm.Model
+namespace Plethora.Test.Mvvm
 {
     [TestClass]
     public class NotifyPropertyChanged_Tests
