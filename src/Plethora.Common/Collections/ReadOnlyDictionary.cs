@@ -173,6 +173,9 @@ namespace Plethora.Collections
 
         #region Implementation of ISerializable, IDeserializationCallback
 
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
+#endif
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
             this.innerDictionary.GetObjectData(info, context);

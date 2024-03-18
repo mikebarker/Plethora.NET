@@ -35,8 +35,7 @@ namespace Plethora.Mvvm.Bindings
 
             public override bool Equals(object obj)
             {
-                if (ReferenceEquals(null, obj)) return false;
-                if (ReferenceEquals(this, obj)) return true;
+                if (obj is null) return false;
 
                 if (!(obj is Argument other))
                     return false;
@@ -46,9 +45,6 @@ namespace Plethora.Mvvm.Bindings
 
             public bool Equals(Argument other)
             {
-                if (ReferenceEquals(null, other)) return false;
-                if (ReferenceEquals(this, other)) return true;
-
                 return
                     string.Equals(this.Value, other.Value) &&
                     Type.Equals(this.Type, other.Type);

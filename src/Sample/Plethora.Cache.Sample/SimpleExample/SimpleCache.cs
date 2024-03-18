@@ -24,7 +24,9 @@ namespace Plethora.Cache.Sample.SimpleExample
 
         #region Overrides of CacheBase<Person,PersonArg>
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected override async Task<IEnumerable<Person>> GetDataFromSourceAsync(
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
             IEnumerable<PersonArg> arguments, CancellationToken cancellationToken = default)
         {
             return arguments

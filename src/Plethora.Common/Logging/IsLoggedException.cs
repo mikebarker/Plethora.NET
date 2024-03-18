@@ -58,6 +58,9 @@ namespace Plethora.Logging
         /// <summary>
         /// Initialises a new instance of the <see cref="IsLoggedException"/> class.
         /// </summary>
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
+#endif
         protected IsLoggedException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

@@ -21,6 +21,9 @@ namespace Plethora.Threading
         {
         }
 
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
+#endif
         protected AsyncException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {

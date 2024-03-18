@@ -114,7 +114,9 @@ namespace Plethora.Test.Linq.Expressions
 
         private class Record
         {
-            public int Name;
+#pragma warning disable CS0649 // Field 'ExpressionHelper_Test.Record.Name' is never assigned to, and will always have its default value null
+            public string Name;
+#pragma warning restore CS0649 // Field 'ExpressionHelper_Test.Record.Name' is never assigned to, and will always have its default value null
         }
     }
 }

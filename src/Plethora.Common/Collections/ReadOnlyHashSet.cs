@@ -137,11 +137,14 @@ namespace Plethora.Collections
         {
             return innerHashSet.SetEquals(other);
         }
-        
+
         #endregion
 
         #region Implementation of ISerializable and IDeserializationCallback
 
+#if NET8_0_OR_GREATER
+        [Obsolete(DiagnosticId = "SYSLIB0051")] // add this attribute to the serialization ctor
+#endif
         void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
         {
             innerHashSet.GetObjectData(info, context);

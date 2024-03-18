@@ -24,7 +24,9 @@ namespace Plethora.Cache.Sample.ComplexExample
         /// <summary>
         /// Fetches the required data from the data source.
         /// </summary>
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         protected override async Task<IEnumerable<Price>> GetDataFromSourceAsync(IEnumerable<PriceArg> arguments, CancellationToken cancellationToken = default)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             IEnumerable<Price> prices = Enumerable.Empty<Price>();
             foreach (PriceArg argument in arguments)

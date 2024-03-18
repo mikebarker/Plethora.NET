@@ -5,6 +5,8 @@ using System.Xml.Serialization;
 
 namespace Plethora.Data
 {
+#pragma warning disable CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+#pragma warning disable IDE1006 // Naming Styles
     [Serializable]
     public sealed class DbExecutorConfig
     {
@@ -47,6 +49,8 @@ namespace Plethora.Data
         [XmlAttribute]
         public int retryCount { get; set; }
     }
+#pragma warning restore CS8981 // The type name only contains lower-cased ascii characters. Such names may become reserved for the language.
+#pragma warning restore IDE1006 // Naming Styles
 
     public static class DbExecutorConfigHelper
     {

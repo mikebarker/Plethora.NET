@@ -16,7 +16,9 @@ namespace Plethora.Test.IO
             MockTextWriter writer = new MockTextWriter();
 
             // Action
+#pragma warning disable CS0618 // Type or member is obsolete
             TextReaderHelper.CopyTo(reader, writer);
+#pragma warning restore CS0618 // Type or member is obsolete
 
             // Assert
             Assert.AreEqual("", writer.CurrentText);
