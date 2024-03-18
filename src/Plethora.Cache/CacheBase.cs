@@ -401,15 +401,15 @@ namespace Plethora.Cache
             //Ensure that each element of the data is retrieved once only.
             returnedData = returnedData.CacheResult();
 
-            //More data may be returned than was required. Filter the data to enure
+            //More data may be returned than was required. Filter the data to ensure
             // only the data requested is returned.
-            IEnumerable<TData> dataforRequests = FilterDataSetByArgument(
+            IEnumerable<TData> dataForRequests = FilterDataSetByArgument(
                 returnedData,
                 requests.Select(request => request.Argument));
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return dataforRequests;
+            return dataForRequests;
         }
         
         private void GetRequests(
