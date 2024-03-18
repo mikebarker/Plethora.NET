@@ -9,8 +9,8 @@ namespace Plethora
     /// <seealso cref="WeakSubscriptionHelper.WeakSubscribe{T}(IObservable{T}, IObserver{T})"/>
     public class WeakObserver<T> : IObserver<T>
     {
-        private WeakReference<IObserver<T>> innerObserver;
-        private Action onObserverCollected;
+        private WeakReference<IObserver<T>>? innerObserver;
+        private Action? onObserverCollected;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="WeakObserver{T}"/> class.
@@ -20,11 +20,8 @@ namespace Plethora
         public WeakObserver(IObserver<T> observer, Action onObserverCollected)
         {
             //Validation
-            if (observer == null)
-                throw new ArgumentNullException(nameof(observer));
-
-            if (onObserverCollected == null)
-                throw new ArgumentNullException(nameof(onObserverCollected));
+            ArgumentNullException.ThrowIfNull(observer);
+            ArgumentNullException.ThrowIfNull(onObserverCollected);
 
             this.innerObserver = new WeakReference<IObserver<T>>(observer);
             this.onObserverCollected = onObserverCollected;
@@ -37,8 +34,8 @@ namespace Plethora
         /// <param name="value">The current notification information.</param>
         public void OnNext(T value)
         {
-            IObserver<T> observer = this.GetObserver();
-            if (observer == null)
+            IObserver<T>? observer = this.GetObserver();
+            if (observer is null)
                 return;
 
             observer.OnNext(value);
@@ -50,8 +47,8 @@ namespace Plethora
         /// <param name="error">An object that provides additional information about the error.</param>
         public void OnError(Exception error)
         {
-            IObserver<T> observer = this.GetObserver();
-            if (observer == null)
+            IObserver<T>? observer = this.GetObserver();
+            if (observer is null)
                 return;
 
             observer.OnError(error);
@@ -62,8 +59,8 @@ namespace Plethora
         /// </summary>
         public void OnCompleted()
         {
-            IObserver<T> observer = this.GetObserver();
-            if (observer == null)
+            IObserver<T>? observer = this.GetObserver();
+            if (observer is null)
                 return;
 
             observer.OnCompleted();
@@ -75,17 +72,16 @@ namespace Plethora
         /// inner observer has been collected.
         /// </summary>
         /// <returns>
-        /// The internal obsever; or null if it has been collected.
+        /// The internal observer; or null if it has been collected.
         /// </returns>
-        private IObserver<T> GetObserver()
+        private IObserver<T>? GetObserver()
         {
             if (this.innerObserver == null)
                 return null;
 
-            if (!this.innerObserver.TryGetTarget(out IObserver<T> target))
+            if (!this.innerObserver.TryGetTarget(out var target))
             {
-                if (this.onObserverCollected != null)
-                    this.onObserverCollected();
+                this.onObserverCollected?.Invoke();
 
                 this.innerObserver = null;
                 this.onObserverCollected = null;
@@ -117,9 +113,9 @@ namespace Plethora
             // the reference to the IDisposable to be set after construction, but also allows its Dispose method to be
             // utilised before the inner IDisposable has been set.
 
-            DisposableContainer disposableContainer = new DisposableContainer();
+            DisposableContainer disposableContainer = new();
 
-            WeakObserver<T> weakObserver = new WeakObserver<T>(
+            WeakObserver<T> weakObserver = new(
                 observer,
                 () => disposableContainer.Dispose());
 
@@ -134,7 +130,7 @@ namespace Plethora
         /// </summary>
         private sealed class DisposableContainer : IDisposable
         {
-            private IDisposable disposable;
+            private IDisposable? disposable;
 
             public void SetDisposable(IDisposable innerDisposable)
             {

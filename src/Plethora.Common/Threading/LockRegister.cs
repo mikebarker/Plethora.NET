@@ -20,9 +20,9 @@ namespace Plethora.Threading
         /// prior to creating locks will allow all instances to participate in long-wait
         /// detection.
         /// </remarks>
-        public static LockRegister DefaultInstance { get; set; } = null;
+        public static LockRegister? DefaultInstance { get; set; } = null;
 
-        private readonly HashSet<LockContext> lockContexts = new HashSet<LockContext>();
+        private readonly HashSet<LockContext> lockContexts = new();
         private readonly TimeSpan longWaitDetectionTimeout;
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace Plethora.Threading
         /// A long-wait is a defined by the value of the longWaitDetectionTimeout
         /// parameter during construction.
         /// </remarks>
-        public event EventHandler<LongWaitDetectedEventArgs> LongWaitDetected;
+        public event EventHandler<LongWaitDetectedEventArgs>? LongWaitDetected;
 
         /// <summary>
         /// Triggers the <see cref="LongWaitDetected"/> event.
@@ -84,7 +84,7 @@ namespace Plethora.Threading
         /// <summary>
         /// Register an await on a lock.
         /// </summary>
-        /// <param name="lock">The lock being awited.</param>
+        /// <param name="lock">The lock being awaited.</param>
         /// <param name="originMemberName">The caller member name of the original wait.</param>
         /// <param name="originSourceFilePath">The caller source file path of the original wait.</param>
         /// <param name="originSourceLineNumber">The caller source line number of the original wait.</param>

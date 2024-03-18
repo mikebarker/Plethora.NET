@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
 
-using JetBrains.Annotations;
-
 namespace Plethora.Collections.Sets
 {
     /// <summary>
@@ -37,25 +35,25 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Returns a set representing the union of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        ISetCore Union([NotNull] ISetCore other);
+        [Pure]
+        ISetCore Union(ISetCore other);
 
         /// <summary>
         /// Returns a set representing the intersection of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        ISetCore Intersect([NotNull] ISetCore other);
+        [Pure]
+        ISetCore Intersect(ISetCore other);
 
         /// <summary>
         /// Returns a set representing the set difference of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        ISetCore Subtract([NotNull] ISetCore other);
+        [Pure]
+        ISetCore Subtract(ISetCore other);
 
         /// <summary>
         /// Returns the inverse set of this set.
         /// </summary>
-        [Pure, NotNull]
+        [Pure]
         ISetCore Inverse();
     }
 
@@ -80,25 +78,25 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Returns a set representing the union of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        ISetCore<T> Union([NotNull] ISetCore<T> other);
+        [Pure]
+        ISetCore<T> Union(ISetCore<T> other);
 
         /// <summary>
         /// Returns a set representing the intersection of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        ISetCore<T> Intersect([NotNull] ISetCore<T> other);
+        [Pure]
+        ISetCore<T> Intersect(ISetCore<T> other);
 
         /// <summary>
         /// Returns a set representing the set difference of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        ISetCore<T> Subtract([NotNull] ISetCore<T> other);
+        [Pure]
+        ISetCore<T> Subtract(ISetCore<T> other);
 
         /// <summary>
         /// Returns the inverse set of this set.
         /// </summary>
-        [Pure, NotNull]
+        [Pure]
         new ISetCore<T> Inverse();
     }
 }

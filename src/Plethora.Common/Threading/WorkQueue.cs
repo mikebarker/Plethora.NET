@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 
@@ -19,19 +20,18 @@ namespace Plethora.Threading
 
             private readonly EventWaitHandle waitHandle = new ManualResetEvent(false);
             private readonly Delegate method;
-            private readonly object[] args;
+            private readonly object?[]? args;
 
-            private object result;
-            private Exception exception;
+            private object? result;
+            private Exception? exception;
             #endregion
 
             #region Constructors
 
-            public WorkItem(Delegate method, object[] args)
+            public WorkItem(Delegate method, object?[]? args)
             {
                 //Validation
-                if (method == null)
-                    throw new ArgumentNullException(nameof(method));
+                ArgumentNullException.ThrowIfNull(method);
 
                 this.method = method;
                 this.args = args;
@@ -44,7 +44,7 @@ namespace Plethora.Threading
             {
                 try
                 {
-                    object invokeResult = this.method.DynamicInvoke(this.args);
+                    object? invokeResult = this.method.DynamicInvoke(this.args);
                     this.Success(invokeResult);
                 }
                 catch (Exception ex)
@@ -53,7 +53,7 @@ namespace Plethora.Threading
                 }
             }
 
-            public object GetResult()
+            public object? GetResult()
             {
                 this.waitHandle.WaitOne();
                 if (this.exception == null)
@@ -69,7 +69,7 @@ namespace Plethora.Threading
 
             #region Private Methods
 
-            private void Success(object invokeResult)
+            private void Success(object? invokeResult)
             {
                 this.result = invokeResult;
                 this.waitHandle.Set();
@@ -77,8 +77,7 @@ namespace Plethora.Threading
 
             private void Fail(Exception ex)
             {
-                if (ex == null)
-                    throw new ArgumentNullException(nameof(ex));
+                ArgumentNullException.ThrowIfNull(ex);
 
 
                 this.exception = ex;
@@ -116,7 +115,7 @@ namespace Plethora.Threading
             /// <returns>
             /// A user-defined object that qualifies or contains information about an asynchronous operation.
             /// </returns>
-            public object AsyncState
+            object? IAsyncResult.AsyncState
             {
                 get { return null; }
             }
@@ -137,8 +136,8 @@ namespace Plethora.Threading
         #region Fields
 
         private readonly List<Thread> threads;
-        private readonly Queue<WorkItem> workQueue = new Queue<WorkItem>();
-        private readonly ManualResetEventSlim workWaitHandle = new ManualResetEventSlim(false);
+        private readonly Queue<WorkItem> workQueue = new();
+        private readonly ManualResetEventSlim workWaitHandle = new(false);
         private bool exitDoLoop = false;
         private int availableThreadCount;
 
@@ -168,9 +167,11 @@ namespace Plethora.Threading
             this.threads = new List<Thread>(threadCount);
             for (int i = 0; i < threadCount; i++)
             {
-                Thread thread = new Thread(this.DoLoop);
-                thread.IsBackground = isBackground;
-                thread.Name = "WorkQueue_" + i.ToString(CultureInfo.InvariantCulture);
+                Thread thread = new(this.DoLoop)
+                {
+                    IsBackground = isBackground,
+                    Name = "WorkQueue_" + i.ToString(CultureInfo.InvariantCulture)
+                };
                 thread.Start();
 
                 this.threads.Add(thread);
@@ -236,7 +237,7 @@ namespace Plethora.Threading
         /// Similarly the <see cref="AvailableThreadCount"/> may show zero after this event has triggered.
         /// </remarks>
         /// <seealso cref="AvailableThreadCount"/>
-        public event EventHandler ThreadAvailable;
+        public event EventHandler? ThreadAvailable;
 
         #endregion
 
@@ -270,7 +271,7 @@ namespace Plethora.Threading
         /// An array of type <see cref="Object"/> to pass as arguments to the given method.
         /// This can be null if no arguments are needed.
         /// </param>
-        public IAsyncResult BeginInvoke(Delegate method, object[] args)
+        public IAsyncResult BeginInvoke(Delegate method, object?[]? args)
         {
             if (this.disposed)
                 throw new InvalidOperationException(ResourceProvider.AlreadyDisposed());
@@ -296,12 +297,11 @@ namespace Plethora.Threading
         /// An <see cref="IAsyncResult"/> interface that represents the asynchronous operation
         /// started by calling <see cref="BeginInvoke"/>. 
         /// </param>
-        public object EndInvoke(IAsyncResult result)
+        public object? EndInvoke(IAsyncResult result)
         {
-            if (result == null)
-                throw new ArgumentNullException(nameof(result));
+            ArgumentNullException.ThrowIfNull(result);
 
-            if (!(result is WorkItem))
+            if (result is not WorkItem)
                 throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(result)), nameof(result));
 
             var workItem = (WorkItem)result;
@@ -324,7 +324,7 @@ namespace Plethora.Threading
         /// An array of type <see cref="Object"/> that represents the arguments to pass
         /// to the given method. This can be null if no arguments are needed.
         /// </param>
-        public object Invoke(Delegate method, object[] args)
+        public object? Invoke(Delegate method, object?[]? args)
         {
             var asyncResult = this.BeginInvoke(method, args);
             return this.EndInvoke(asyncResult);
@@ -361,10 +361,10 @@ namespace Plethora.Threading
         {
             bool isThisThreadAvailable = true;
 
-            //Semi-inifinite loop
+            //Semi-infinite loop
             while (!this.exitDoLoop)
             {
-                WorkItem workItem = null;
+                WorkItem? workItem = null;
                 bool workComplete;
                 lock (this.workQueue)
                 {
@@ -404,7 +404,7 @@ namespace Plethora.Threading
                         Interlocked.Increment(ref this.availableThreadCount);
                         isThisThreadAvailable = true;
 
-                        EventHandler handler = this.ThreadAvailable;
+                        EventHandler? handler = this.ThreadAvailable;
                         if (handler != null)
                             ThreadPool.QueueUserWorkItem((o) => handler(this, EventArgs.Empty));
                     }

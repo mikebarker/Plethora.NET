@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 
 namespace Plethora.Collections
@@ -9,6 +10,7 @@ namespace Plethora.Collections
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [Serializable]
     public class ReadOnlyDictionary<TKey, TValue> : IDictionary<TKey, TValue>, IReadOnlyDictionary<TKey, TValue>, ISerializable, IDeserializationCallback
+        where TKey : notnull
     {
         private readonly Dictionary<TKey, TValue> innerDictionary;
 
@@ -26,8 +28,7 @@ namespace Plethora.Collections
 
         public ReadOnlyDictionary(IEnumerable<KeyValuePair<TKey, TValue>> enumerable, IEqualityComparer<TKey> comparer)
         {
-            var collection = enumerable as ICollection<KeyValuePair<TKey, TValue>>;
-            this.innerDictionary = (collection == null)
+            this.innerDictionary = (enumerable is not ICollection<KeyValuePair<TKey, TValue>> collection)
                 ? new Dictionary<TKey, TValue>(comparer)
                 : new Dictionary<TKey, TValue>(collection.Count, comparer);
 
@@ -60,17 +61,17 @@ namespace Plethora.Collections
 
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ICollection<KeyValuePair<TKey, TValue>>.Clear()
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
 
@@ -100,18 +101,18 @@ namespace Plethora.Collections
 
         void IDictionary<TKey, TValue>.Add(TKey key, TValue value)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         bool IDictionary<TKey, TValue>.Remove(TKey key)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         TValue IDictionary<TKey, TValue>.this[TKey key]
         {
             get { return this[key]; }
-            set { throw new InvalidOperationException(ResourceProvider.CollectionReadonly()); }
+            set { throw new InvalidOperationException(ResourceProvider.CollectionReadOnly()); }
         }
 
 
@@ -120,7 +121,7 @@ namespace Plethora.Collections
             return this.innerDictionary.ContainsKey(key);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             return this.innerDictionary.TryGetValue(key, out value);
         }
@@ -149,7 +150,7 @@ namespace Plethora.Collections
             return this.ContainsKey(key);
         }
 
-        bool IReadOnlyDictionary<TKey, TValue>.TryGetValue(TKey key, out TValue value)
+        bool IReadOnlyDictionary<TKey, TValue>.TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             return this.TryGetValue(key, out value);
         }
@@ -181,7 +182,7 @@ namespace Plethora.Collections
             this.innerDictionary.GetObjectData(info, context);
         }
 
-        void IDeserializationCallback.OnDeserialization(object sender)
+        void IDeserializationCallback.OnDeserialization(object? sender)
         {
             this.innerDictionary.OnDeserialization(sender);
         }
@@ -190,10 +191,9 @@ namespace Plethora.Collections
 
         #region Private Static Members
 
-        private static IEqualityComparer<TKey> ExtractKeyComparer(IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
+        private static IEqualityComparer<TKey>? ExtractKeyComparer(IEnumerable<KeyValuePair<TKey, TValue>> enumerable)
         {
-            Dictionary<TKey, TValue> dictionary = enumerable as Dictionary<TKey, TValue>;
-            if (dictionary == null)
+            if (enumerable is not Dictionary<TKey, TValue> dictionary)
                 return null;
 
             return dictionary.Comparer;
@@ -205,6 +205,7 @@ namespace Plethora.Collections
     public static class ReadOnlyDictionaryHelper
     {
         public static ReadOnlyDictionary<TKey, TValue> AsReadonly<TKey, TValue>(this IDictionary<TKey, TValue> dictionary)
+            where TKey : notnull
         {
             return new ReadOnlyDictionary<TKey, TValue>(dictionary);
         }

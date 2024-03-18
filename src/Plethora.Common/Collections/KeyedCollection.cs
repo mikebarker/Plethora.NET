@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Plethora.Collections
@@ -19,6 +20,7 @@ namespace Plethora.Collections
     [Serializable]
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     public class KeyedCollection<TKey, T> : IKeyedCollection<TKey, T>
+        where TKey : notnull
     {
         private class ReadOnlyDictionaryWrapper : IDictionary<TKey, T>
         {
@@ -38,8 +40,7 @@ namespace Plethora.Collections
             public ReadOnlyDictionaryWrapper(KeyedCollection<TKey, T> keyedCollection)
             {
                 //Validation
-                if (keyedCollection == null)
-                    throw new ArgumentNullException(nameof(keyedCollection));
+                ArgumentNullException.ThrowIfNull(keyedCollection);
 
 
                 this.keyedCollection = keyedCollection;
@@ -117,7 +118,7 @@ namespace Plethora.Collections
                 throw new NotSupportedException("Dictionary is readonly.");
             }
 
-            public bool TryGetValue(TKey key, out T value)
+            public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out T value)
             {
                 return this.keyedCollection.TryGetValue(key, out value);
             }
@@ -152,7 +153,7 @@ namespace Plethora.Collections
         /// Initialise a new instance of the <see cref="KeyedCollection{TKey,T}"/> class.
         /// </summary>
         public KeyedCollection(Func<T, TKey> keySelector)
-            : this(keySelector, new T[0], null)
+            : this(keySelector, Array.Empty<T>(), null)
         {
         }
 
@@ -160,7 +161,7 @@ namespace Plethora.Collections
         /// Initialise a new instance of the <see cref="KeyedCollection{TKey,T}"/> class.
         /// </summary>
         public KeyedCollection(Func<T, TKey> keySelector, IEqualityComparer<TKey> comparer)
-            : this(keySelector, new T[0], comparer)
+            : this(keySelector, Array.Empty<T>(), comparer)
         {
         }
 
@@ -175,14 +176,11 @@ namespace Plethora.Collections
         /// <summary>
         /// Initialise a new instance of the <see cref="KeyedCollection{TKey,T}"/> class.
         /// </summary>
-        public KeyedCollection(Func<T, TKey> keySelector, IEnumerable<T> enumerable, IEqualityComparer<TKey> comparer)
+        public KeyedCollection(Func<T, TKey> keySelector, IEnumerable<T> enumerable, IEqualityComparer<TKey>? comparer)
         {
             //Validation
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
+            ArgumentNullException.ThrowIfNull(keySelector);
+            ArgumentNullException.ThrowIfNull(enumerable);
 
 
             this.keySelector = keySelector;
@@ -339,7 +337,7 @@ namespace Plethora.Collections
             return this.innerDictionary.Remove(key);
         }
 
-        public bool TryGetValue(TKey key, out T item)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out T item)
         {
             return this.innerDictionary.TryGetValue(key, out item);
         }
@@ -372,8 +370,7 @@ namespace Plethora.Collections
 
         private TKey GetKey(T item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             return this.keySelector(item);
         }
@@ -383,11 +380,13 @@ namespace Plethora.Collections
     public static class KeyedCollection
     {
         public static KeyedCollection<TKey, T> Create<TKey, T>(Func<T, TKey> keySelector)
+            where TKey : notnull
         {
             return new KeyedCollection<TKey, T>(keySelector);
         }
 
         public static KeyedCollection<TKey, T> ToKeyedCollection<TKey, T>(this IEnumerable<T> enumerable, Func<T, TKey> keySelector)
+            where TKey : notnull
         {
             return new KeyedCollection<TKey, T>(keySelector, enumerable);
         }

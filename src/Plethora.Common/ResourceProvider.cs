@@ -1,9 +1,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-
-using JetBrains.Annotations;
-
 using Plethora.Properties;
 
 namespace Plethora
@@ -18,7 +15,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'AlreadyDisposed'.
         /// </summary>
-        [NotNull]
         public static string AlreadyDisposed()
         {
             return Resources.AlreadyDisposed;
@@ -27,7 +23,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ArgAddingDuplicate'.
         /// </summary>
-        [NotNull]
         public static string ArgAddingDuplicate()
         {
             return Resources.ArgAddingDuplicate;
@@ -36,7 +31,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ArgArrayInvalidType'.
         /// </summary>
-        [NotNull]
         public static string ArgArrayInvalidType()
         {
             return Resources.ArgArrayInvalidType;
@@ -45,7 +39,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ArgArrayMultiDimensionNotSupported'.
         /// </summary>
-        [NotNull]
         public static string ArgArrayMultiDimensionNotSupported()
         {
             return Resources.ArgArrayMultiDimensionNotSupported;
@@ -54,7 +47,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ArgArrayNonZeroLowerBound'.
         /// </summary>
-        [NotNull]
         public static string ArgArrayNonZeroLowerBound()
         {
             return Resources.ArgArrayNonZeroLowerBound;
@@ -64,8 +56,7 @@ namespace Plethora
         /// Returns the resource string 'ArgInvalid' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the invalid argument.</param>
-        [NotNull]
-        public static string ArgInvalid([InvokerParameterName, NotNull] string arg)
+        public static string ArgInvalid(string arg)
         {
             return StringFormat(Resources.ArgInvalid, arg);
         }
@@ -75,8 +66,7 @@ namespace Plethora
         /// </summary>
         /// <param name="offsetArg">The name of the offset argument.</param>
         /// <param name="lengthArg">The name of the length argument.</param>
-        [NotNull]
-        public static string ArgInvalidOffsetLength([InvokerParameterName, NotNull] string offsetArg, [InvokerParameterName, NotNull] string lengthArg)
+        public static string ArgInvalidOffsetLength(string offsetArg, string lengthArg)
         {
             return StringFormat(Resources.ArgInvalidOffsetLength, offsetArg, lengthArg);
         }
@@ -86,8 +76,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThan([InvokerParameterName, NotNull] string arg, int value)
+        public static string ArgMustBeGreaterThan(string arg, int value)
         {
             return ArgMustBeGreaterThan(
                 arg,
@@ -99,8 +88,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThan([InvokerParameterName, NotNull] string arg, double value)
+        public static string ArgMustBeGreaterThan(string arg, double value)
         {
             return ArgMustBeGreaterThan(
                 arg,
@@ -112,8 +100,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThan([InvokerParameterName, NotNull] string arg, decimal value)
+        public static string ArgMustBeGreaterThan(string arg, decimal value)
         {
             return ArgMustBeGreaterThan(
                 arg,
@@ -125,8 +112,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThan([InvokerParameterName, NotNull] string arg, [NotNull] string value)
+        public static string ArgMustBeGreaterThan(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeGreaterThan,
                                 arg,
@@ -138,8 +124,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than.</param>
-        [NotNull]
-        public static string ArgMustNotBe([InvokerParameterName, NotNull] string arg, [NotNull] string value)
+        public static string ArgMustNotBe(string arg, string value)
         {
             return StringFormat(Resources.ArgMustNotBe,
                                 arg,
@@ -151,8 +136,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThanEqualTo([InvokerParameterName, NotNull] string arg, int value)
+        public static string ArgMustBeGreaterThanEqualTo(string arg, int value)
         {
             return ArgMustBeGreaterThanEqualTo(
                 arg,
@@ -164,8 +148,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThanEqualTo([InvokerParameterName, NotNull] string arg, double value)
+        public static string ArgMustBeGreaterThanEqualTo(string arg, double value)
         {
             return ArgMustBeGreaterThanEqualTo(
                 arg,
@@ -177,8 +160,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThanEqualTo([InvokerParameterName, NotNull] string arg, decimal value)
+        public static string ArgMustBeGreaterThanEqualTo(string arg, decimal value)
         {
             return ArgMustBeGreaterThanEqualTo(
                 arg,
@@ -190,8 +172,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be greater than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThanEqualTo([InvokerParameterName, NotNull] string arg, [NotNull] string value)
+        public static string ArgMustBeGreaterThanEqualTo(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeGreaterThanEqualTo,
                                 arg,
@@ -203,8 +184,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than.</param>
-        [NotNull]
-        public static string ArgMustBeLessThan([InvokerParameterName, NotNull] string arg, int value)
+        public static string ArgMustBeLessThan(string arg, int value)
         {
             return ArgMustBeLessThan(
                 arg,
@@ -216,8 +196,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than.</param>
-        [NotNull]
-        public static string ArgMustBeLessThan([InvokerParameterName, NotNull] string arg, double value)
+        public static string ArgMustBeLessThan(string arg, double value)
         {
             return ArgMustBeLessThan(
                 arg,
@@ -229,8 +208,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than.</param>
-        [NotNull]
-        public static string ArgMustBeLessThan([InvokerParameterName, NotNull] string arg, decimal value)
+        public static string ArgMustBeLessThan(string arg, decimal value)
         {
             return ArgMustBeLessThan(
                 arg,
@@ -242,8 +220,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than.</param>
-        [NotNull]
-        public static string ArgMustBeLessThan([InvokerParameterName, NotNull] string arg, [NotNull] string value)
+        public static string ArgMustBeLessThan(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeLessThan,
                                 arg,
@@ -255,8 +232,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeLessThanEqualTo([InvokerParameterName, NotNull] string arg, int value)
+        public static string ArgMustBeLessThanEqualTo(string arg, int value)
         {
             return ArgMustBeLessThanEqualTo(
                 arg,
@@ -268,8 +244,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeLessThanEqualTo([InvokerParameterName, NotNull] string arg, double value)
+        public static string ArgMustBeLessThanEqualTo(string arg, double value)
         {
             return ArgMustBeLessThanEqualTo(
                 arg,
@@ -281,8 +256,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeLessThanEqualTo([InvokerParameterName, NotNull] string arg, decimal value)
+        public static string ArgMustBeLessThanEqualTo(string arg, decimal value)
         {
             return ArgMustBeLessThanEqualTo(
                 arg,
@@ -294,8 +268,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="value">The value which the argument must be less than, or equal to.</param>
-        [NotNull]
-        public static string ArgMustBeLessThanEqualTo([InvokerParameterName, NotNull] string arg, [NotNull] string value)
+        public static string ArgMustBeLessThanEqualTo(string arg, string value)
         {
             return StringFormat(Resources.ArgMustBeLessThanEqualTo,
                                 arg,
@@ -308,8 +281,7 @@ namespace Plethora
         /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeBetween([InvokerParameterName, NotNull] string arg, int min, int max)
+        public static string ArgMustBeBetween(string arg, int min, int max)
         {
             return ArgMustBeBetween(arg,
                                     min.ToString(CultureInfo.CurrentCulture),
@@ -322,8 +294,7 @@ namespace Plethora
         /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeBetween([InvokerParameterName, NotNull] string arg, double min, double max)
+        public static string ArgMustBeBetween(string arg, double min, double max)
         {
             return ArgMustBeBetween(arg,
                                     min.ToString(CultureInfo.CurrentCulture),
@@ -336,8 +307,7 @@ namespace Plethora
         /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeBetween([InvokerParameterName, NotNull] string arg, decimal min, decimal max)
+        public static string ArgMustBeBetween(string arg, decimal min, decimal max)
         {
             return ArgMustBeBetween(arg,
                                     min.ToString(CultureInfo.CurrentCulture),
@@ -350,8 +320,7 @@ namespace Plethora
         /// <param name="arg">The name of the argument.</param>
         /// <param name="min">The minimum value of the argument.</param>
         /// <param name="max">The maximum value of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeBetween([InvokerParameterName, NotNull] string arg, [NotNull] string min, [NotNull] string max)
+        public static string ArgMustBeBetween(string arg, string min, string max)
         {
             return StringFormat(Resources.ArgMustBeBetween, arg, min, max);
         }
@@ -360,8 +329,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeGreaterThan' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
-        [NotNull]
-        public static string ArgMustNotBeZero([InvokerParameterName, NotNull] string arg)
+        public static string ArgMustNotBeZero(string arg)
         {
             return ArgMustNotBe(arg, Resources.Zero);
         }
@@ -370,8 +338,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeGreaterThan' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThanZero([InvokerParameterName, NotNull] string arg)
+        public static string ArgMustBeGreaterThanZero(string arg)
         {
             return ArgMustBeGreaterThan(arg, Resources.Zero);
         }
@@ -380,8 +347,7 @@ namespace Plethora
         /// Returns the resource string 'ArgMustBeGreaterThan' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeGreaterThanEqualToZero([InvokerParameterName, NotNull] string arg)
+        public static string ArgMustBeGreaterThanEqualToZero(string arg)
         {
             return ArgMustBeGreaterThanEqualTo(arg, Resources.Zero);
         }
@@ -391,8 +357,7 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="type">The required type of the argument.</param>
-        [NotNull]
-        public static string ArgMustBeOfType([InvokerParameterName, NotNull] string arg, [NotNull] Type type)
+        public static string ArgMustBeOfType(string arg, Type type)
         {
             return StringFormat(Resources.ArgMustBeOfType, arg, type.Name);
         }
@@ -402,10 +367,9 @@ namespace Plethora
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
         /// <param name="values">The valid values allowed for the argument.</param>
-        [NotNull]
-        public static string ArgMustBeOneOf([InvokerParameterName, NotNull] string arg, [NotNull] params object[] values)
+        public static string ArgMustBeOneOf(string arg, params object[] values)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             bool isFirst = true;
             foreach (var value in values)
             {
@@ -427,8 +391,7 @@ namespace Plethora
         /// <param name="property">
         /// The name of the property of the argument which was invalid.
         /// </param>
-        [NotNull]
-        public static string ArgPropertyInvalid([InvokerParameterName, NotNull] string arg, [NotNull] string property)
+        public static string ArgPropertyInvalid(string arg, string property)
         {
             return StringFormat(Resources.ArgPropertyInvalid, arg, property);
         }
@@ -437,8 +400,7 @@ namespace Plethora
         /// Returns the resource string 'ArgStringEmpty' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
-        [NotNull]
-        public static string ArgStringEmpty([InvokerParameterName, NotNull] string arg)
+        public static string ArgStringEmpty(string arg)
         {
             return StringFormat(Resources.ArgStringEmpty, arg);
         }
@@ -447,8 +409,7 @@ namespace Plethora
         /// Returns the resource string 'ArgTimeout' with substitutions made.
         /// </summary>
         /// <param name="arg">The name of the argument.</param>
-        [NotNull]
-        public static string ArgTimeout([InvokerParameterName, NotNull] string arg)
+        public static string ArgTimeout(string arg)
         {
             return StringFormat(Resources.ArgTimeout, arg, Resources.Zero, "Timeout.Infinite");
         }
@@ -456,7 +417,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'AtLeastOneDayOfWeek' with substitutions made.
         /// </summary>
-        [NotNull]
         public static string AtLeastOneDayOfWeek()
         {
             return Resources.AtLeastOneDayOfWeek;
@@ -465,7 +425,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'AtLeastOneDateOrEom' with substitutions made.
         /// </summary>
-        [NotNull]
         public static string AtLeastOneDateOrEom()
         {
             return Resources.AtLeastOneDateOrEom;
@@ -476,25 +435,22 @@ namespace Plethora
         /// </summary>
         /// <typeparam name="T">The type of the enum.</typeparam>
         /// <param name="value">The invalid value for the enum.</param>
-        [NotNull]
         public static string BadEnum<T>(T value)
         {
             return StringFormat(Resources.BadEnum, typeof(T).FullName, value);
         }
 
         /// <summary>
-        /// Returns the resource string 'CollectionReadonly' with substitutions made.
+        /// Returns the resource string 'CollectionReadOnly' with substitutions made.
         /// </summary>
-        [NotNull]
-        public static string CollectionReadonly()
+        public static string CollectionReadOnly()
         {
-            return StringFormat(Resources.CollectionReadonly);
+            return StringFormat(Resources.CollectionReadOnly);
         }
 
         /// <summary>
         /// Returns the resource string 'EnumeratorOpCantHappen'.
         /// </summary>
-        [NotNull]
         public static string EnumeratorOpCantHappen()
         {
             return Resources.EnumeratorOpCantHappen;
@@ -504,7 +460,6 @@ namespace Plethora
         /// Returns the resource string 'ElementWithSameKeyExists' with substitutions made.
         /// </summary>
         /// <param name="type">The type of the collection.</param>
-        [NotNull]
         public static string ElementWithSameKeyExists(Type type)
         {
             return StringFormat(Resources.ElementWithSameKeyExists, type.Name);
@@ -513,7 +468,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ExpressionMustBeField'.
         /// </summary>
-        [NotNull]
         public static string ExpressionMustBeField()
         {
             return Resources.ExpressionMustBeField;
@@ -522,7 +476,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ExpressionMustBeProperty'.
         /// </summary>
-        [NotNull]
         public static string ExpressionMustBeProperty()
         {
             return Resources.ExpressionMustBeProperty;
@@ -531,7 +484,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ExpressionMustBePropertyOrField'.
         /// </summary>
-        [NotNull]
         public static string ExpressionMustBePropertyOrField()
         {
             return Resources.ExpressionMustBePropertyOrField;
@@ -540,7 +492,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'GenericArgumentsMismatch' with substitutions made.
         /// </summary>
-        [NotNull]
         public static string GenericArgumentsMismatch()
         {
             return Resources.GenericArgumentsMismatch;
@@ -549,7 +500,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'GenericArgMustBeDelegate' with substitutions made.
         /// </summary>
-        [NotNull]
         public static string GenericArgMustBeDelegate()
         {
             return Resources.GenericArgMustBeDelegate;
@@ -558,7 +508,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'GenericArgMustBeIComparable' with substitutions made.
         /// </summary>
-        [NotNull]
         public static string GenericArgMustBeIComparable()
         {
             return Resources.GenericArgMustBeIComparable;
@@ -567,7 +516,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'InvalidCast' with substitutions made.
         /// </summary>
-        [NotNull]
         public static string InvalidCast()
         {
             return Resources.InvalidCast;
@@ -576,7 +524,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'InvalidState'.
         /// </summary>
-        [NotNull]
         public static string InvalidState()
         {
             return Resources.InvalidState;
@@ -586,7 +533,6 @@ namespace Plethora
         /// Returns the resource string 'KeysDoNotMatch' with substitutions made.
         /// </summary>
         /// <param name="type">The type of the collection.</param>
-        [NotNull]
         public static string KeysDoNotMatch(Type type)
         {
             return StringFormat(Resources.KeysDoNotMatch, type.Name);
@@ -595,7 +541,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'MethodNotFound'.
         /// </summary>
-        [NotNull]
         public static string MethodNotFound()
         {
             return Resources.MethodNotFound;
@@ -604,7 +549,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'ParameterTypeNotInGenericList'.
         /// </summary>
-        [NotNull]
         public static string ParameterTypeNotInGenericList()
         {
             return Resources.ParameterTypeNotInGenericList;
@@ -613,7 +557,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'StaticOnlyMirror'.
         /// </summary>
-        [NotNull]
         public static string StaticOnlyMirror()
         {
             return Resources.StaticOnlyMirror;
@@ -622,7 +565,6 @@ namespace Plethora
         /// <summary>
         /// Returns the resource string 'TimeoutInvalid'.
         /// </summary>
-        [NotNull]
         public static string TimeoutInvalid()
         {
             return Resources.TimeoutInvalid;
@@ -633,8 +575,7 @@ namespace Plethora
         /// </summary>
         /// <param name="type">The type name not found.</param>
         /// <param name="assembly">The assembly name in which the type was not found.</param>
-        [NotNull]
-        public static string TypeNotFoundInAssembly([NotNull] string type, [NotNull] string assembly)
+        public static string TypeNotFoundInAssembly(string type, string? assembly)
         {
             return StringFormat(Resources.TypeNotFoundInAssembly, type, assembly);
         }
@@ -656,9 +597,7 @@ namespace Plethora
         /// The format string with substitutions made, according to the current UI
         /// culture.
         /// </returns>
-        [StringFormatMethod("format")]
-        [NotNull]
-        private static string StringFormat([NotNull] string format, [NotNull] params object[] args)
+        private static string StringFormat(string format, params object?[] args)
         {
             return string.Format(CultureInfo.CurrentCulture, format, args);
         }

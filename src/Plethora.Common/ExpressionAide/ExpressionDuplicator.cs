@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -10,18 +11,18 @@ namespace Plethora.ExpressionAide
     {
         #region Public Methods
 
-        public T Duplicate<T>(T expr)
+        public T? Duplicate<T>(T expr)
             where T : LambdaExpression
         {
-            ParamDictionary parameters = new ParamDictionary();
-            List<Step> path = new List<Step>();
-            return (T)this.Duplicate(expr, new Step(Direction.This), parameters, path);
+            ParamDictionary parameters = new();
+            List<Step> path = new();
+            return (T?)this.Duplicate(expr, new(Direction.This), parameters, path);
         }
         #endregion
 
         #region Protected Methods
 
-        protected Expression Duplicate(Expression expression, Step step, ParamDictionary parameters, IEnumerable<Step> path)
+        protected Expression? Duplicate(Expression? expression, Step step, ParamDictionary parameters, IEnumerable<Step> path)
         {
             if (expression == null)
                 return null;
@@ -44,13 +45,13 @@ namespace Plethora.ExpressionAide
                     rtn = this.DuplicateAndAlso((BinaryExpression)expression, parameters, path);
                     break;
                 case ExpressionType.ArrayIndex:
-                    if (expression is BinaryExpression)
+                    if (expression is BinaryExpression binaryExpression)
                     {
-                        rtn = this.DuplicateArrayIndex((BinaryExpression)expression, parameters, path);
+                        rtn = this.DuplicateArrayIndex(binaryExpression, parameters, path);
                     }
-                    else if (expression is MethodCallExpression)
+                    else if (expression is MethodCallExpression methodCallExpression)
                     {
-                        rtn = this.DuplicateArrayIndex((MethodCallExpression)expression, parameters, path);
+                        rtn = this.DuplicateArrayIndex(methodCallExpression, parameters, path);
                     }
                     else
                     {
@@ -193,7 +194,7 @@ namespace Plethora.ExpressionAide
         private IEnumerable<Expression> DuplicateChild(Expression parent, Direction direction, ParamDictionary parameters, IEnumerable<Step> path)
         {
             //Single return expressions
-            Expression expr = null;
+            Expression? expr = null;
             bool assigned = false;
             switch (direction)
             {
@@ -234,66 +235,66 @@ namespace Plethora.ExpressionAide
                     assigned = true;
                     break;
                 case Direction.Expression:
-                    if (parent is InvocationExpression)
+                    if (parent is InvocationExpression invocationExpression)
                     {
-                        expr = ((InvocationExpression)parent).Expression;
+                        expr = invocationExpression.Expression;
                         assigned = true;
                     }
-                    else if (parent is TypeBinaryExpression)
+                    else if (parent is TypeBinaryExpression typeBinaryExpression)
                     {
-                        expr = ((TypeBinaryExpression)parent).Expression;
+                        expr = typeBinaryExpression.Expression;
                         assigned = true;
                     }
-                    else if (parent is MemberExpression)
+                    else if (parent is MemberExpression memberExpression)
                     {
-                        expr = ((MemberExpression)parent).Expression;
+                        expr = memberExpression.Expression;
                         assigned = true;
                     }
                     break;
                 case Direction.NewExpression:
-                    if (parent is ListInitExpression)
+                    if (parent is ListInitExpression listInitExpression)
                     {
-                        expr = ((ListInitExpression)parent).NewExpression;
+                        expr = listInitExpression.NewExpression;
                         assigned = true;
                     }
-                    else if (parent is MemberInitExpression)
+                    else if (parent is MemberInitExpression memberInitExpression)
                     {
-                        expr = ((MemberInitExpression)parent).NewExpression;
+                        expr = memberInitExpression.NewExpression;
                         assigned = true;
                     }
                     break;
             }
             if (assigned)
             {
-                Expression dupe = this.Duplicate(expr, new Step(direction), parameters, path);
-                return Enumerable.Repeat(dupe, 1);
+                Expression? dupe = this.Duplicate(expr, new(direction), parameters, path);
+                return Enumerable.Repeat(dupe!, 1);
             }
 
             //Multi return expressions
-            IList<Expression> exprs = null;
+            IList<Expression>? exprs = null;
             switch (direction)
             {
                 case Direction.Arguments:
-                    if (parent is MethodCallExpression)
+                    if (parent is MethodCallExpression methodCallExpression)
                     {
-                        exprs = ((MethodCallExpression)parent).Arguments;
+                        exprs = methodCallExpression.Arguments;
                         assigned = true;
                     }
-                    else if (parent is NewExpression)
+                    else if (parent is NewExpression newExpression)
                     {
-                        exprs = ((NewExpression)parent).Arguments;
+                        exprs = newExpression.Arguments;
                         assigned = true;
                     }
-                    else if (parent is InvocationExpression)
+                    else if (parent is InvocationExpression invocationExpression)
                     {
-                        exprs = ((InvocationExpression)parent).Arguments;
+                        exprs = invocationExpression.Arguments;
                         assigned = true;
                     }
                     break;
                 case Direction.Expressions:
-                    if (parent is NewArrayExpression)
+                    if (parent is NewArrayExpression newArrayExpression)
                     {
-                        exprs = ((NewArrayExpression)parent).Expressions;
+                        exprs = newArrayExpression.Expressions;
                         assigned = true;
                     }
                     break;
@@ -301,14 +302,14 @@ namespace Plethora.ExpressionAide
             if (assigned)
             {
                 var dupes = new List<Expression>();
-                int count = exprs.Count();
+                int count = exprs.Count;
                 for (int i = 0; i < count; i++)
                 {
                     expr = exprs[i];
 
-                    var dupe = this.Duplicate(expr, new Step(direction, i), parameters, path);
+                    var dupe = this.Duplicate(expr, new(direction, i), parameters, path);
 
-                    dupes.Add(dupe);
+                    dupes.Add(dupe!);
                 }
                 return dupes;
             }
@@ -598,7 +599,7 @@ namespace Plethora.ExpressionAide
         protected virtual NewExpression DuplicateNew(NewExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
             var expArguments = this.DuplicateChild(expression, Direction.Arguments, parameters, path);
-            var rtn = Expression.New(expression.Constructor, expArguments, expression.Members);
+            var rtn = Expression.New(expression.Constructor!, expArguments, expression.Members);
             
             return rtn;
         }
@@ -606,7 +607,7 @@ namespace Plethora.ExpressionAide
         protected virtual NewArrayExpression DuplicateNewArrayBounds(NewArrayExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
             var expExpressions = this.DuplicateChild(expression, Direction.Expressions, parameters, path);
-            var rtn = Expression.NewArrayBounds(expression.Type.GetElementType(), expExpressions);
+            var rtn = Expression.NewArrayBounds(expression.Type.GetElementType()!, expExpressions);
             
             return rtn;
         }
@@ -614,7 +615,7 @@ namespace Plethora.ExpressionAide
         protected virtual NewArrayExpression DuplicateNewArrayInit(NewArrayExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
             var expExpressions = this.DuplicateChild(expression, Direction.Expressions, parameters, path);
-            var rtn = Expression.NewArrayInit(expression.Type.GetElementType(), expExpressions);
+            var rtn = Expression.NewArrayInit(expression.Type.GetElementType()!, expExpressions);
             
             return rtn;
         }
@@ -656,13 +657,13 @@ namespace Plethora.ExpressionAide
 
         protected virtual ParameterExpression DuplicateParameter(ParameterExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            ParameterExpression rtn = null;
+            ParameterExpression? rtn = null;
 
             //Test if the constant has been encountered before
-            string expressionName = expression.Name;
+            string? expressionName = expression.Name;
             foreach (ParameterExpression key in parameters.Keys)
             {
-                if (key.Name == expressionName)
+                if (string.Equals(key.Name, expressionName, StringComparison.Ordinal))
                 {
                     rtn = key;
                     break;
@@ -753,7 +754,7 @@ namespace Plethora.ExpressionAide
         {
             #region Fields
 
-            readonly Dictionary<string, KeyValuePair<ParameterExpression, Step[]>> innerDictionary = new Dictionary<string, KeyValuePair<ParameterExpression, Step[]>>();
+            readonly Dictionary<string, KeyValuePair<ParameterExpression, Step[]>> innerDictionary = new();
             #endregion
 
             #region Implementation of IEnumerable
@@ -773,7 +774,7 @@ namespace Plethora.ExpressionAide
 
             void ICollection<KeyValuePair<ParameterExpression, Step[]>>.Add(KeyValuePair<ParameterExpression, Step[]> item)
             {
-                this.innerDictionary.Add(item.Key.Name, item);
+                this.innerDictionary.Add(item.Key.Name!, item);
             }
 
             void ICollection<KeyValuePair<ParameterExpression, Step[]>>.Clear()
@@ -814,46 +815,45 @@ namespace Plethora.ExpressionAide
 
             public bool ContainsKey(ParameterExpression key)
             {
-                return this.innerDictionary.ContainsKey(key.Name);
+                return this.innerDictionary.ContainsKey(key.Name!);
             }
 
             public void Add(ParameterExpression key, Step[] value)
             {
-                KeyValuePair<ParameterExpression, Step[]> pair = new KeyValuePair<ParameterExpression, Step[]>(key, value);
-                this.innerDictionary.Add(key.Name, pair);
+                KeyValuePair<ParameterExpression, Step[]> pair = new(key, value);
+                this.innerDictionary.Add(key.Name!, pair);
             }
 
             public bool TryAdd(ParameterExpression key, Step[] value)
             {
-                if (this.innerDictionary.ContainsKey(key.Name))
+                if (this.innerDictionary.ContainsKey(key.Name!))
                     return false;
 
-                KeyValuePair<ParameterExpression, Step[]> pair = new KeyValuePair<ParameterExpression, Step[]>(key, value);
-                this.innerDictionary.Add(key.Name, pair);
+                KeyValuePair<ParameterExpression, Step[]> pair = new(key, value);
+                this.innerDictionary.Add(key.Name!, pair);
 
                 return true;
             }
 
             public bool Remove(ParameterExpression key)
             {
-                return this.innerDictionary.Remove(key.Name);
+                return this.innerDictionary.Remove(key.Name!);
             }
 
-            public bool TryGetValue(ParameterExpression key, out Step[] value)
+            public bool TryGetValue(ParameterExpression key, [NotNullWhen(true), MaybeNullWhen(false)] out Step[]? value)
             {
-                KeyValuePair<ParameterExpression, Step[]> pair;
-                bool result = this.innerDictionary.TryGetValue(key.Name, out pair);
+                bool result = this.innerDictionary.TryGetValue(key.Name!, out var pair);
                 value = result ? pair.Value : null;
                 return result;
             }
 
             public Step[] this[ParameterExpression key]
             {
-                get { return this.innerDictionary[key.Name].Value; }
+                get { return this.innerDictionary[key.Name!].Value; }
                 set
                 {
-                    KeyValuePair<ParameterExpression, Step[]> pair = new KeyValuePair<ParameterExpression, Step[]>(key, value);
-                    this.innerDictionary[key.Name] = pair;
+                    KeyValuePair<ParameterExpression, Step[]> pair = new(key, value);
+                    this.innerDictionary[key.Name!] = pair;
                 }
             }
 
@@ -872,7 +872,7 @@ namespace Plethora.ExpressionAide
 
             public KeyValuePair<ParameterExpression, Step[]> GetPair(ParameterExpression expression)
             {
-                return this.innerDictionary[expression.Name];
+                return this.innerDictionary[expression.Name!];
             }
 
             public void Combine(ParamDictionary dictionary)

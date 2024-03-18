@@ -12,7 +12,7 @@ namespace Plethora.Collections
         private readonly List<T> bufferedResults = new();
         private readonly SemaphoreSlim asyncLock = new(1, 1);
         private bool isEnumerationComplete = false;
-        private Task<bool> moveNextTask;
+        private Task<bool>? moveNextTask;
 
         public ReplayableAsyncEnumerable(
             IAsyncEnumerable<T> source)

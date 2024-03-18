@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 
 using Plethora.Collections.Sets;
 
@@ -10,7 +8,7 @@ namespace Plethora.Spacial
     {
         private readonly ISetCore[] dimensions;
 
-        public SpaceRegion([NotNull] params ISetCore[] dimensions)
+        public SpaceRegion(params ISetCore[] dimensions)
         {
             if (dimensions == null)
                 throw new ArgumentNullException(nameof(dimensions));
@@ -19,7 +17,7 @@ namespace Plethora.Spacial
             this.dimensions = (ISetCore[])dimensions.Clone();
         }
 
-        [NotNull] 
+        
         public ISetCore[] Dimensions => this.dimensions;
 
         public bool IsEmpty
@@ -42,12 +40,11 @@ namespace Plethora.Spacial
         /// <summary>
         /// Initializes a new instance of the <see cref="SpaceRegion{T1}"/> class.
         /// </summary>
-        public SpaceRegion([NotNull] ISetCore<T1> dimension1)
+        public SpaceRegion(ISetCore<T1> dimension1)
             : base (dimension1)
         {
         }
 
-        [NotNull]
         public ISetCore<T1> Dimension1 => (ISetCore<T1>)this.Dimensions[0];
     }
 
@@ -57,16 +54,14 @@ namespace Plethora.Spacial
         /// Initializes a new instance of the <see cref="SpaceRegion{T1,T2}"/> class.
         /// </summary>
         public SpaceRegion(
-            [NotNull] ISetCore<T1> dimension1,
-            [NotNull] ISetCore<T2> dimension2)
+            ISetCore<T1> dimension1,
+            ISetCore<T2> dimension2)
             : base(dimension1, dimension2)
         {
         }
 
-        [NotNull]
         public ISetCore<T1> Dimension1 => (ISetCore<T1>)this.Dimensions[0];
 
-        [NotNull]
         public ISetCore<T2> Dimension2 => (ISetCore<T2>)this.Dimensions[1];
     }
 
@@ -76,20 +71,17 @@ namespace Plethora.Spacial
         /// Initializes a new instance of the <see cref="SpaceRegion{T1,T2,T3}"/> class.
         /// </summary>
         public SpaceRegion(
-            [NotNull] ISetCore<T1> dimension1,
-            [NotNull] ISetCore<T2> dimension2,
-            [NotNull] ISetCore<T3> dimension3)
+            ISetCore<T1> dimension1,
+            ISetCore<T2> dimension2,
+            ISetCore<T3> dimension3)
             : base(dimension1, dimension2, dimension3)
         {
         }
 
-        [NotNull]
         public ISetCore<T1> Dimension1 => (ISetCore<T1>)this.Dimensions[0];
 
-        [NotNull]
         public ISetCore<T2> Dimension2 => (ISetCore<T2>)this.Dimensions[1];
 
-        [NotNull]
         public ISetCore<T3> Dimension3 => (ISetCore<T3>)this.Dimensions[2];
     }
 
@@ -99,24 +91,20 @@ namespace Plethora.Spacial
         /// Initializes a new instance of the <see cref="SpaceRegion{T1,T2,T3,T4}"/> class.
         /// </summary>
         public SpaceRegion(
-            [NotNull] ISetCore<T1> dimension1,
-            [NotNull] ISetCore<T2> dimension2,
-            [NotNull] ISetCore<T3> dimension3,
-            [NotNull] ISetCore<T4> dimension4)
+            ISetCore<T1> dimension1,
+            ISetCore<T2> dimension2,
+            ISetCore<T3> dimension3,
+            ISetCore<T4> dimension4)
             : base(dimension1, dimension2, dimension3, dimension4)
         {
         }
 
-        [NotNull]
         public ISetCore<T1> Dimension1 => (ISetCore<T1>)this.Dimensions[0];
 
-        [NotNull]
         public ISetCore<T2> Dimension2 => (ISetCore<T2>)this.Dimensions[1];
 
-        [NotNull]
         public ISetCore<T3> Dimension3 => (ISetCore<T3>)this.Dimensions[2];
 
-        [NotNull]
         public ISetCore<T4> Dimension4 => (ISetCore<T4>)this.Dimensions[3];
     }
 }

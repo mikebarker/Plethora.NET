@@ -1,8 +1,8 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections
 {
@@ -14,9 +14,11 @@ namespace Plethora.Collections
     [DebuggerDisplay("Count = {" + nameof(Count) + "}")]
     [Serializable]
     public class BidirectionalMap<T1, T2> : IEnumerable, IDictionary<T1, T2>, IReadOnlyDictionary<T1,T2>
+        where T1 : notnull
+        where T2 : notnull
     {
-        private readonly Dictionary<T1, T2> forwardMap = new Dictionary<T1, T2>();
-        private readonly Dictionary<T2, T1> reverseMap = new Dictionary<T2, T1>();
+        private readonly Dictionary<T1, T2> forwardMap = new();
+        private readonly Dictionary<T2, T1> reverseMap = new();
 
         #region Implementation of IEnumerable
 
@@ -58,8 +60,8 @@ namespace Plethora.Collections
             T1 t1 = pair.Key;
             T2 t2 = pair.Value;
 
-            var result = this.ValidatExistingItems(t1, t2);
-            return (result == ValidatExistingItemsResult.MatchingItems);
+            var result = this.ValidateExistingItems(t1, t2);
+            return (result == ValidateExistingItemsResult.MatchingItems);
         }
 
         /// <inheritdoc/>
@@ -74,13 +76,13 @@ namespace Plethora.Collections
             T1 t1 = pair.Key;
             T2 t2 = pair.Value;
 
-            var result = ValidatExistingItems(t1, t2);
+            var result = ValidateExistingItems(t1, t2);
             switch (result)
             {
-                case ValidatExistingItemsResult.NonExistant:
+                case ValidateExistingItemsResult.NonExistent:
                     return false;
 
-                case ValidatExistingItemsResult.MismatchedItems:
+                case ValidateExistingItemsResult.MismatchedItems:
                     throw new ArgumentException(ResourceProvider.KeysDoNotMatch(this.GetType()));
             }
 
@@ -138,10 +140,9 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentNullException"><paramref name="t1"/> is null.</exception>
         /// <exception cref="KeyNotFoundException">The forward key is not found.</exception>
         /// <remarks>
-        /// Utilsie the <see cref="Lookup(T1)"/> method if the generic parameter types cause this to be an ambiguous method.
+        /// Utilise the <see cref="Lookup(T1)"/> method if the generic parameter types cause this to be an ambiguous method.
         /// </remarks>
-        [NotNull]
-        public T2 this[[NotNull] T1 t1]
+        public T2 this[T1 t1]
         {
             get => this.Lookup(t1);
         }
@@ -154,10 +155,9 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentNullException"><paramref name="t2"/> is null.</exception>
         /// <exception cref="KeyNotFoundException">The reverse key is not found.</exception>
         /// <remarks>
-        /// Utilsie the <see cref="LookupReverse(T2)"/> method if the generic parameter types cause this to be an ambiguous method.
+        /// Utilise the <see cref="LookupReverse(T2)"/> method if the generic parameter types cause this to be an ambiguous method.
         /// </remarks>
-        [NotNull]
-        public T1 this[[NotNull] T2 t2]
+        public T1 this[T2 t2]
         {
             get => this.LookupReverse(t2);
         }
@@ -174,7 +174,7 @@ namespace Plethora.Collections
         /// <param name="t2">The reverse key.</param>
         /// <exception cref="ArgumentNullException">The forward or reverse key is null.</exception>
         /// <exception cref="ArgumentException">A mismatched pair already exists in the <see cref="BidirectionalMap{T1, T2}"/>.</exception>
-        public void Add([NotNull] T1 t1, [NotNull] T2 t2)
+        public void Add(T1 t1, T2 t2)
         {
             if (t1 == null)
                 throw new ArgumentNullException(nameof(t1));
@@ -183,13 +183,13 @@ namespace Plethora.Collections
                 throw new ArgumentNullException(nameof(t2));
 
 
-            var result = this.ValidatExistingItems(t1, t2);
+            var result = this.ValidateExistingItems(t1, t2);
             switch (result)
             {
-                case ValidatExistingItemsResult.MatchingItems:
+                case ValidateExistingItemsResult.MatchingItems:
                     return;
 
-                case ValidatExistingItemsResult.MismatchedItems:
+                case ValidateExistingItemsResult.MismatchedItems:
                     throw new ArgumentException(ResourceProvider.ElementWithSameKeyExists(this.GetType()));
             }
 
@@ -215,7 +215,7 @@ namespace Plethora.Collections
         /// true if the <see cref="BidirectionalMap{T1, T2}"/> contains the specified pair; otherwise, false.
         /// </returns>
         /// <exception cref="ArgumentNullException">The forward or reverse key is null.</exception>
-        public bool Contains([NotNull] T1 t1, [NotNull] T2 t2)
+        public bool Contains(T1 t1, T2 t2)
         {
             if (t1 == null)
                 throw new ArgumentNullException(nameof(t1));
@@ -224,8 +224,8 @@ namespace Plethora.Collections
                 throw new ArgumentNullException(nameof(t2));
 
 
-            var result = this.ValidatExistingItems(t1, t2);
-            return (result == ValidatExistingItemsResult.MatchingItems);
+            var result = this.ValidateExistingItems(t1, t2);
+            return (result == ValidateExistingItemsResult.MatchingItems);
         }
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace Plethora.Collections
         /// true if the <see cref="BidirectionalMap{T1, T2}"/> contains the specified forward key; otherwise, false.
         /// </returns>
         /// <exception cref="ArgumentNullException">The forward key is null.</exception>
-        public bool Contains([NotNull] T1 t1)
+        public bool Contains(T1 t1)
         {
             return this.forwardMap.ContainsKey(t1);
         }
@@ -249,7 +249,7 @@ namespace Plethora.Collections
         /// true if the <see cref="BidirectionalMap{T1, T2}"/> contains the specified reverse key; otherwise, false.
         /// </returns>
         /// <exception cref="ArgumentNullException">The reverse key is null.</exception>
-        public bool ContainsReverse([NotNull] T2 t2)
+        public bool ContainsReverse(T2 t2)
         {
             return this.reverseMap.ContainsKey(t2);
         }
@@ -261,8 +261,7 @@ namespace Plethora.Collections
         /// <returns>The element with the specified forward key.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="t1"/> is null.</exception>
         /// <exception cref="KeyNotFoundException">The forward key is not found.</exception>
-        [NotNull]
-        public T2 Lookup([NotNull] T1 t1)
+        public T2 Lookup(T1 t1)
         {
             return this.forwardMap[t1];
         }
@@ -274,8 +273,7 @@ namespace Plethora.Collections
         /// <returns>The element with the specified reverse key.</returns>
         /// <exception cref="ArgumentNullException"><paramref name="t2"/> is null.</exception>
         /// <exception cref="KeyNotFoundException">The reverse key is not found.</exception>
-        [NotNull]
-        public T1 LookupReverse([NotNull] T2 t2)
+        public T1 LookupReverse(T2 t2)
         {
             return this.reverseMap[t2];
         }
@@ -291,7 +289,7 @@ namespace Plethora.Collections
         /// </returns>
         /// <exception cref="ArgumentNullException">The forward or reverse key is null.</exception>
         /// <exception cref="ArgumentException">A mismatched pair already exists in the <see cref="BidirectionalMap{T1, T2}"/>.</exception>
-        public bool Remove([NotNull] T1 t1, [NotNull] T2 t2)
+        public bool Remove(T1 t1, T2 t2)
         {
             if (t1 == null)
                 throw new ArgumentNullException(nameof(t1));
@@ -300,13 +298,13 @@ namespace Plethora.Collections
                 throw new ArgumentNullException(nameof(t2));
 
 
-            var result = this.ValidatExistingItems(t1, t2);
+            var result = this.ValidateExistingItems(t1, t2);
             switch (result)
             {
-                case ValidatExistingItemsResult.NonExistant:
+                case ValidateExistingItemsResult.NonExistent:
                     return false;
 
-                case ValidatExistingItemsResult.MismatchedItems:
+                case ValidateExistingItemsResult.MismatchedItems:
                     throw new ArgumentException(ResourceProvider.KeysDoNotMatch(this.GetType()));
             }
 
@@ -324,13 +322,11 @@ namespace Plethora.Collections
         /// returns false if the forward key is not found in the <see cref="BidirectionalMap{T1, T2}"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">The forward key is null.</exception>
-        public bool Remove([NotNull] T1 t1)
+        public bool Remove(T1 t1)
         {
-            if (t1 == null)
-                throw new ArgumentNullException(nameof(t1));
+            ArgumentNullException.ThrowIfNull(nameof(t1));
 
-
-            if (!this.forwardMap.TryGetValue(t1, out T2 existingT2))
+            if (!this.forwardMap.TryGetValue(t1, out T2? existingT2))
                 return false;
 
             this.forwardMap.Remove(t1);
@@ -347,13 +343,11 @@ namespace Plethora.Collections
         /// returns false if the reverse key is not found in the <see cref="BidirectionalMap{T1, T2}"/>.
         /// </returns>
         /// <exception cref="ArgumentNullException">The reverse key is null.</exception>
-        public bool RemoveReverse([NotNull] T2 t2)
+        public bool RemoveReverse(T2 t2)
         {
-            if (t2 == null)
-                throw new ArgumentNullException(nameof(t2));
+            ArgumentNullException.ThrowIfNull(nameof(t2));
 
-
-            if (!this.reverseMap.TryGetValue(t2, out T1 existingT1))
+            if (!this.reverseMap.TryGetValue(t2, out T1? existingT1))
                 return false;
 
             this.forwardMap.Remove(existingT1);
@@ -385,8 +379,7 @@ namespace Plethora.Collections
         /// true if the <see cref="BidirectionalMap{T1, T2}"/> contains an element with the specified forward key; otherwise, false.
         /// </returns>
         /// <exception cref="ArgumentNullException">The specified forward key is null.</exception>
-        [ContractAnnotation("=> true, t2: notnull; => false, t2: null")]
-        public bool TryGetValue([NotNull] T1 t1, [CanBeNull] out T2 t2)
+        public bool TryGetValue(T1 t1, [MaybeNullWhen(false)] out T2 t2)
         {
             return this.forwardMap.TryGetValue(t1, out t2);
         }
@@ -404,8 +397,7 @@ namespace Plethora.Collections
         /// true if the <see cref="BidirectionalMap{T1, T2}"/> contains an element with the specified reverse key; otherwise, false.
         /// </returns>
         /// <exception cref="ArgumentNullException">The specified reverse key is null.</exception>
-        [ContractAnnotation("=> true, t1: notnull; => false, t1: null")]
-        public bool TryGetValueReverse([NotNull] T2 t2, [CanBeNull] out T1 t1)
+        public bool TryGetValueReverse(T2 t2, [MaybeNullWhen(false)] out T1 t1)
         {
             return this.reverseMap.TryGetValue(t2, out t1);
         }
@@ -413,12 +405,12 @@ namespace Plethora.Collections
         /// <summary>
         /// The result of validating if a pair exist in the map.
         /// </summary>
-        private enum ValidatExistingItemsResult
+        private enum ValidateExistingItemsResult
         {
             /// <summary>
             /// The specified pair is not found in the map.
             /// </summary>
-            NonExistant,
+            NonExistent,
 
             /// <summary>
             /// The specified pair mismatch to keys that exist in the map.
@@ -431,27 +423,27 @@ namespace Plethora.Collections
             MatchingItems,
         }
 
-        private ValidatExistingItemsResult ValidatExistingItems(T1 t1, T2 t2)
+        private ValidateExistingItemsResult ValidateExistingItems(T1 t1, T2 t2)
         {
-            if (this.forwardMap.TryGetValue(t1, out T2 existingT2))
+            if (this.forwardMap.TryGetValue(t1, out T2? existingT2))
             {
                 if (object.Equals(t2, existingT2))
                 {
-                    return ValidatExistingItemsResult.MatchingItems;
+                    return ValidateExistingItemsResult.MatchingItems;
                 }
                 else
                 {
-                    return ValidatExistingItemsResult.MismatchedItems;
+                    return ValidateExistingItemsResult.MismatchedItems;
                 }
             }
             else
             {
                 if (this.reverseMap.ContainsKey(t2))
                 {
-                    return ValidatExistingItemsResult.MismatchedItems;
+                    return ValidateExistingItemsResult.MismatchedItems;
                 }
 
-                return ValidatExistingItemsResult.NonExistant;
+                return ValidateExistingItemsResult.NonExistent;
             }
         }
     }

@@ -29,7 +29,7 @@ namespace Plethora.Collections
     /// to represent a hierarchy of child objects from the same interface. Example:
     ///  <code>
     ///  <![CDATA[
-    ///   public interace IStyle
+    ///   public interface IStyle
     ///   {
     ///      Color ForeColor { get; }
     ///   }
@@ -40,7 +40,7 @@ namespace Plethora.Collections
     ///      ...
     ///   }
     /// 
-    ///   // Hierarchial implementation of the interface.
+    ///   // Hierarchical implementation of the interface.
     ///   public class StyleHierarchy : Hierarchy<IStyle>, IStyle
     ///   {
     ///      public Color ForeColor
@@ -67,8 +67,7 @@ namespace Plethora.Collections
         protected Hierarchy(params T[] items)
         {
             //Validation
-            if (items == null)
-                throw new ArgumentNullException(nameof(items));
+            ArgumentNullException.ThrowIfNull(items);
 
             this.items = items;
         }
@@ -82,7 +81,7 @@ namespace Plethora.Collections
         /// <remarks>
         /// Lower indexed items give values in preference over lower indexed items.
         /// </remarks>
-        protected TValue GetValue<TValue>(Func<T, TValue> valueSelector)
+        protected TValue? GetValue<TValue>(Func<T, TValue> valueSelector)
             where TValue : class
         {
             return this.GetValue(valueSelector, false);
@@ -91,11 +90,11 @@ namespace Plethora.Collections
         /// <summary>
         /// Get the first non-null value from the hierarchy.
         /// </summary>
-        protected TValue GetValue<TValue>(Func<T, TValue> valueSelector, bool highIndexPriority)
+        protected TValue? GetValue<TValue>(Func<T, TValue> valueSelector, bool highIndexPriority)
             where TValue : class
         {
-            var itteration = this.GetItteration(highIndexPriority);
-            return GetValue(itteration, valueSelector);
+            var iteration = this.GetIteration(highIndexPriority);
+            return GetValue(iteration, valueSelector);
         }
 
         /// <summary>
@@ -116,17 +115,17 @@ namespace Plethora.Collections
         protected TValue GetValue<TValue>(Func<T, TValue> valueSelector, TValue @default, bool highIndexPriority)
             where TValue : struct
         {
-            var itteration = this.GetItteration(highIndexPriority);
+            var iteration = this.GetIteration(highIndexPriority);
 
-            Func<T, TValue?> nullableValueSelector = delegate(T t)
-                {
-                    TValue value = valueSelector(t);
-                    return @default.Equals(value)
-                        ? (TValue?)null
-                        : (TValue?)value;
-                };
+            TValue? nullableValueSelector(T t)
+            {
+                TValue value = valueSelector(t);
+                return @default.Equals(value)
+                    ? null
+                    : value;
+            }
 
-            TValue? rtnValue = GetValue(itteration, nullableValueSelector);
+            TValue? rtnValue = GetValue(iteration, nullableValueSelector);
             return (rtnValue.HasValue)
                 ? rtnValue.Value
                 : @default;
@@ -150,8 +149,8 @@ namespace Plethora.Collections
         protected TValue? GetValue<TValue>(Func<T, TValue?> valueSelector, bool highIndexPriority)
             where TValue : struct
         {
-            var itteration = this.GetItteration(highIndexPriority);
-            return GetValue(itteration, valueSelector);
+            var iteration = this.GetIteration(highIndexPriority);
+            return GetValue(iteration, valueSelector);
         }
         #endregion
 
@@ -165,15 +164,15 @@ namespace Plethora.Collections
             }
         }
 
-        private IEnumerable<T> GetItteration(bool highIndexPriority)
+        private IEnumerable<T> GetIteration(bool highIndexPriority)
         {
-            var itterator =  (highIndexPriority)
+            var iterator =  (highIndexPriority)
                 ? this.ReverseItems()
                 : this.items;
-            return itterator.Where(item => item != null);
+            return iterator.Where(item => item != null);
         }
 
-        private static TValue GetValue<TValue>(IEnumerable<T> enumerable, Func<T, TValue> valueSelector)
+        private static TValue? GetValue<TValue>(IEnumerable<T> enumerable, Func<T, TValue> valueSelector)
             where TValue : class
         {
             foreach (var item in enumerable)

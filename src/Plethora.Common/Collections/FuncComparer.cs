@@ -44,16 +44,24 @@ namespace Plethora.Collections
         public FuncComparer(
             Func<TSource, T1> getValue1)
         {
-            if (getValue1 == null)
-                throw new ArgumentNullException(nameof(getValue1));
+            ArgumentNullException.ThrowIfNull(getValue1);
 
 
             this.getValue1 = getValue1;
         }
 
-        public int Compare(TSource x, TSource y)
+        public int Compare(TSource? x, TSource? y)
         {
             int result;
+
+            if ((x is null) && (y is null))
+                return 0;
+
+            if (x is null)
+                return 1;
+
+            if (y is null)
+                return -1;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)
@@ -72,20 +80,26 @@ namespace Plethora.Collections
             Func<TSource, T1> getValue1,
             Func<TSource, T2> getValue2)
         {
-            if (getValue1 == null)
-                throw new ArgumentNullException(nameof(getValue1));
-
-            if (getValue2 == null)
-                throw new ArgumentNullException(nameof(getValue2));
+            ArgumentNullException.ThrowIfNull(getValue1);
+            ArgumentNullException.ThrowIfNull(getValue2);
 
 
             this.getValue1 = getValue1;
             this.getValue2 = getValue2;
         }
 
-        public int Compare(TSource x, TSource y)
+        public int Compare(TSource? x, TSource? y)
         {
             int result;
+
+            if ((x is null) && (y is null))
+                return 0;
+
+            if (x is null)
+                return 1;
+
+            if (y is null)
+                return -1;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)
@@ -110,14 +124,11 @@ namespace Plethora.Collections
             Func<TSource, T2> getValue2,
             Func<TSource, T3> getValue3)
         {
-            if (getValue1 == null)
-                throw new ArgumentNullException(nameof(getValue1));
+            ArgumentNullException.ThrowIfNull(getValue1);
 
-            if (getValue2 == null)
-                throw new ArgumentNullException(nameof(getValue2));
+            ArgumentNullException.ThrowIfNull(getValue2);
 
-            if (getValue3 == null)
-                throw new ArgumentNullException(nameof(getValue3));
+            ArgumentNullException.ThrowIfNull(getValue3);
 
 
             this.getValue1 = getValue1;
@@ -125,9 +136,18 @@ namespace Plethora.Collections
             this.getValue3 = getValue3;
         }
 
-        public int Compare(TSource x, TSource y)
+        public int Compare(TSource? x, TSource? y)
         {
             int result;
+
+            if ((x is null) && (y is null))
+                return 0;
+
+            if (x is null)
+                return 1;
+
+            if (y is null)
+                return -1;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)
@@ -158,17 +178,13 @@ namespace Plethora.Collections
             Func<TSource, T3> getValue3,
             Func<TSource, T4> getValue4)
         {
-            if (getValue1 == null)
-                throw new ArgumentNullException(nameof(getValue1));
+            ArgumentNullException.ThrowIfNull(getValue1);
 
-            if (getValue2 == null)
-                throw new ArgumentNullException(nameof(getValue2));
+            ArgumentNullException.ThrowIfNull(getValue2);
 
-            if (getValue3 == null)
-                throw new ArgumentNullException(nameof(getValue3));
+            ArgumentNullException.ThrowIfNull(getValue3);
 
-            if (getValue4 == null)
-                throw new ArgumentNullException(nameof(getValue4));
+            ArgumentNullException.ThrowIfNull(getValue4);
 
 
             this.getValue1 = getValue1;
@@ -177,9 +193,18 @@ namespace Plethora.Collections
             this.getValue4 = getValue4;
         }
 
-        public int Compare(TSource x, TSource y)
+        public int Compare(TSource? x, TSource? y)
         {
             int result;
+
+            if ((x is null) && (y is null))
+                return 0;
+
+            if (x is null)
+                return 1;
+
+            if (y is null)
+                return -1;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)

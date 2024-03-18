@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections
 {
@@ -21,7 +22,7 @@ namespace Plethora.Collections
 
         bool ContainsKey(TKey key);
         bool RemoveKey(TKey key);
-        bool TryGetValue(TKey key, out T item);
+        bool TryGetValue(TKey key, [MaybeNullWhen(false)] out T item);
         T this[TKey key] { get; }
 
         IEnumerable<TKey> Keys { get; }

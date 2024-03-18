@@ -17,9 +17,9 @@ namespace Plethora.Threading
 
         public override bool WaitOne(TimeSpan timeout, bool exitContext)
         {
-            OperationTimeout operationTimeout = new OperationTimeout(timeout);
+            OperationTimeout operationTimeout = new(timeout);
 
-            WaitHandle[] currentHandles = null;
+            WaitHandle[]? currentHandles = null;
             for (int i = 0; i < this.waitHandles.Length; i += MaxWaitHandles)
             {
                 int count = this.waitHandles.Length - i;

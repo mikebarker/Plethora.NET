@@ -79,7 +79,7 @@ namespace Plethora.Reflection
         ///   </code>
         ///  </example>
         /// </remarks>
-        public static MethodInfo GetGenericMethod(this Type type, string name, Type[] parameterTypes)
+        public static MethodInfo? GetGenericMethod(this Type type, string name, Type[] parameterTypes)
         {
             return GetGenericMethod(
                 type,
@@ -135,12 +135,12 @@ namespace Plethora.Reflection
         ///   </code>
         ///  </example>
         /// </remarks>
-        public static MethodInfo GetGenericMethod(this Type type,
+        public static MethodInfo? GetGenericMethod(this Type type,
             string name,
             BindingFlags bindingFlags,
-            Binder binder,
+            Binder? binder,
             Type[] parameterTypes,
-            ParameterModifier[] modifiers)
+            ParameterModifier[]? modifiers)
         {
             var methods = type.GetMethods(bindingFlags)
                 .Where(m => string.Equals(m.Name, name));

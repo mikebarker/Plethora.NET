@@ -68,8 +68,8 @@ namespace Plethora.ExpressionAide
             }
             else
             {
-                string @operator = GetOperator(expression);
-                if (@operator != null)
+                string? @operator = GetOperator(expression);
+                if (@operator is null)
                 {
                     BuildString(expression.Left, builder);
                     builder.Append(@operator);
@@ -147,9 +147,9 @@ namespace Plethora.ExpressionAide
             }
             else
             {
-                builder.Append(expression.Member.DeclaringType.Name);
+                builder.Append(expression.Member.DeclaringType!.Name);
             }
-            builder.Append(".");
+            builder.Append('.');
             builder.Append(expression.Member.Name);
         }
 
@@ -172,7 +172,7 @@ namespace Plethora.ExpressionAide
 
         private static void BuildString(MethodCallExpression expression, StringBuilder builder)
         {
-            Expression @object = expression.Object;
+            Expression @object = expression.Object!;
             if (Attribute.GetCustomAttribute(expression.Method, typeof(ExtensionAttribute)) != null)
             {
                 @object = expression.Arguments[0];
@@ -212,7 +212,7 @@ namespace Plethora.ExpressionAide
 
         private static void BuildString(NewExpression expression, StringBuilder builder)
         {
-            Type type = expression.Constructor.DeclaringType;
+            Type type = expression.Constructor!.DeclaringType!;
             builder.Append("new");
             int count = expression.Arguments.Count;
             builder.Append(type.Name);
@@ -222,7 +222,7 @@ namespace Plethora.ExpressionAide
                 {
                     if (expression.Members != null)
                     {
-                        PropertyInfo info;
+                        PropertyInfo? info;
                         MemberInfo member = expression.Members[i];
                         if ((member.MemberType == MemberTypes.Method) && ((info = GetPropertyNoThrow((MethodInfo)member)) != null))
                         {
@@ -442,11 +442,11 @@ namespace Plethora.ExpressionAide
         }
 
 
-        private static PropertyInfo GetPropertyNoThrow(MethodBase method)
+        private static PropertyInfo? GetPropertyNoThrow(MethodBase method)
         {
             if (method != null)
             {
-                Type declaringType = method.DeclaringType;
+                Type declaringType = method.DeclaringType!;
                 BindingFlags bindingAttr = BindingFlags.NonPublic | BindingFlags.Public;
                 bindingAttr |= (BindingFlags)(method.IsStatic ? 8 : 4);
                 foreach (PropertyInfo info in declaringType.GetProperties(bindingAttr))
@@ -464,7 +464,7 @@ namespace Plethora.ExpressionAide
             return null;
         }
 
-        private static string GetOperator(Expression expression)
+        private static string? GetOperator(Expression expression)
         {
             switch (expression.NodeType)
             {

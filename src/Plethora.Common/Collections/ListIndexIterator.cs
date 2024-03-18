@@ -12,7 +12,7 @@ namespace Plethora.Collections
         private readonly int startIndex;
         private readonly int endIndex;
         private int currentIndex;
-        private T current;
+        private T? current;
             
         #endregion
 
@@ -20,8 +20,7 @@ namespace Plethora.Collections
 
         public ListIndexIterator(IList<T> list, int startIndex, int count)
         {
-            if (list == null)
-                throw new ArgumentNullException(nameof(list));
+            ArgumentNullException.ThrowIfNull(list);
 
             if (startIndex < 0)
                 throw new ArgumentOutOfRangeException(nameof(startIndex), startIndex,
@@ -82,7 +81,7 @@ namespace Plethora.Collections
 
             if ((this.currentIndex > this.endIndex) || (this.currentIndex > this.list.Count))
             {
-                this.current = default(T);
+                this.current = default;
                 return false;
             }
 
@@ -93,12 +92,12 @@ namespace Plethora.Collections
         public void Reset()
         {
             this.currentIndex = -1;
-            this.current = default(T);
+            this.current = default;
         }
 
         object IEnumerator.Current
         {
-            get { return this.Current; }
+            get { return this.Current!; }
         }
 
         #endregion
@@ -107,7 +106,7 @@ namespace Plethora.Collections
 
         public T Current
         {
-            get { return this.current; }
+            get { return this.current!; }
         }
 
         #endregion
@@ -116,12 +115,12 @@ namespace Plethora.Collections
 
         void ICollection<T>.Add(T item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ICollection<T>.Clear()
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         public bool Contains(T item)
@@ -136,8 +135,7 @@ namespace Plethora.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            List<T> l = this.list as List<T>;
-            if (l != null)
+            if (this.list is List<T> l)
             {
                 l.CopyTo(
                     this.startIndex,
@@ -166,7 +164,7 @@ namespace Plethora.Collections
 
         bool ICollection<T>.Remove(T item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         #endregion

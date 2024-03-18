@@ -29,7 +29,7 @@ namespace Plethora.Collections.Trees
 
         #region Override Methods
 
-        protected override Node AddNode(TKey key, TValue value, Node parent, Edge? edge)
+        protected override Node AddNode(TKey key, TValue value, Node? parent, Edge? edge)
         {
             Node node = base.AddNode(key, value, parent, edge);
 
@@ -40,14 +40,14 @@ namespace Plethora.Collections.Trees
 
         protected override bool RemoveNode(Node node)
         {
-            Node parent = node.Parent;
+            Node? parent = node.Parent;
 
             bool rebalanceRequired = base.RemoveNode(node);
 
             if (rebalanceRequired)
             {
                 if (parent == null)
-                    this.BalanceNodeAfterDelete(this.Root);
+                    this.BalanceNodeAfterDelete(this.Root!);
                 else
                     this.BalanceNodeAfterDelete(parent);
             }
@@ -66,20 +66,21 @@ namespace Plethora.Collections.Trees
 
         private void BalanceNodeAfterAdd(Node node)
         {
-            while (node != null)
+            Node? _node = node;
+            while (_node is not null)
             {
                 //Test for balance
-                int balanceFactor = BalanceFactor(node);
+                int balanceFactor = BalanceFactor(_node);
                 if (balanceFactor == 2)
                 {
-                    if (BalanceFactor(node.Right) == 1)
+                    if (BalanceFactor(_node.Right) == 1)
                     {
-                        this.Rotate(node, RotationDirection.Left);
+                        this.Rotate(_node, RotationDirection.Left);
                     }
                     else
                     {
-                        this.Rotate(node.Right, RotationDirection.Right);
-                        this.Rotate(node, RotationDirection.Left);
+                        this.Rotate(_node.Right!, RotationDirection.Right);
+                        this.Rotate(_node, RotationDirection.Left);
                     }
 
                     //Insertion requires at most one single or double rotation
@@ -87,54 +88,55 @@ namespace Plethora.Collections.Trees
                 }
                 else if (balanceFactor == -2)
                 {
-                    if (BalanceFactor(node.Left) == -1)
+                    if (BalanceFactor(_node.Left) == -1)
                     {
-                        this.Rotate(node, RotationDirection.Right);
+                        this.Rotate(_node, RotationDirection.Right);
                     }
                     else
                     {
-                        this.Rotate(node.Left, RotationDirection.Left);
-                        this.Rotate(node, RotationDirection.Right);
+                        this.Rotate(_node.Left!, RotationDirection.Left);
+                        this.Rotate(_node, RotationDirection.Right);
                     }
 
                     //Insertion requires at most one single or double rotation
                     return;
                 }
 
-                node = node.Parent;
+                _node = _node.Parent;
             }
         }
 
         private void BalanceNodeAfterDelete(Node node)
         {
-            while (node != null)
+            Node? _node = node;
+            while (_node is not null)
             {
                 //Test for balance
-                int balanceFactor = BalanceFactor(node);
+                int balanceFactor = BalanceFactor(_node);
                 if (balanceFactor == 2)
                 {
-                    if (BalanceFactor(node.Right) >= 0)
+                    if (BalanceFactor(_node.Right) >= 0)
                     {
-                        this.Rotate(node, RotationDirection.Left);
+                        this.Rotate(_node, RotationDirection.Left);
                     }
                     else
                     {
-                        this.Rotate(node.Right, RotationDirection.Right);
-                        this.Rotate(node, RotationDirection.Left);
+                        this.Rotate(_node.Right!, RotationDirection.Right);
+                        this.Rotate(_node, RotationDirection.Left);
                     }
 
                     //Insertion requires at most one single or double rotation
                 }
                 else if (balanceFactor == -2)
                 {
-                    if (BalanceFactor(node.Left) <= 0)
+                    if (BalanceFactor(_node.Left) <= 0)
                     {
-                        this.Rotate(node, RotationDirection.Right);
+                        this.Rotate(_node, RotationDirection.Right);
                     }
                     else
                     {
-                        this.Rotate(node.Left, RotationDirection.Left);
-                        this.Rotate(node, RotationDirection.Right);
+                        this.Rotate(_node.Left!, RotationDirection.Left);
+                        this.Rotate(_node, RotationDirection.Right);
                     }
 
                     //Insertion requires at most one single or double rotation
@@ -142,13 +144,13 @@ namespace Plethora.Collections.Trees
                 else if ((balanceFactor == 1) || (balanceFactor == -1))
                 {
                     //For a delete (i.e. not insert), no further rebalance is 
-                    // required if the sub tree hieght is unchanged.
+                    // required if the sub tree height is unchanged.
                     // i.e. a balance factor of 1 or -1
                     //return;
                 }
 
                 //Test if the parent must be rebalanced
-                node = node.Parent;
+                _node = _node.Parent;
             }
         }
 

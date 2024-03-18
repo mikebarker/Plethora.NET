@@ -1,21 +1,20 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Threading;
 
 namespace Plethora.Threading
 {
     /// <summary>
-    /// Representa the result of a TryLock operation of <see cref="AsyncLock"/>.
+    /// Represents a the result of a TryLock operation of <see cref="AsyncLock"/>.
     /// </summary>
     /// <seealso cref="AsyncLock.TryLock(TimeSpan, CancellationToken)"/>
     /// <seealso cref="AsyncLock.TryLockAsync(TimeSpan, CancellationToken)"/>
     public sealed class LockResult : IDisposable
     {
-        private LockObject lockObject;
+        private LockObject? lockObject;
 
         private LockResult(
             bool isLockAcquired,
-            [CanBeNull] LockObject lockObject)
+            LockObject? lockObject)
         {
             this.IsLockAcquired = isLockAcquired;
             this.lockObject = lockObject;
@@ -46,7 +45,7 @@ namespace Plethora.Threading
 
             if (disposing)
             {
-                ((IDisposable)this.lockObject)?.Dispose();
+                ((IDisposable?)this.lockObject)?.Dispose();
             }
 
             this.disposed = true;
@@ -62,8 +61,7 @@ namespace Plethora.Threading
         /// <summary>
         /// An instance of <see cref="LockObject"/> if the lock was acquired; otherwise null.
         /// </summary>
-        [CanBeNull]
-        public LockObject LockObject => this.lockObject;
+        public LockObject? LockObject => this.lockObject;
 
         /// <summary>
         /// Extract ownership of the <see cref="LockObject"/>.
@@ -76,17 +74,15 @@ namespace Plethora.Threading
         /// This method allows this <see cref="LockResult"/> to be disposed without disposing the
         /// contained <see cref="Plethora.Threading.LockObject"/>.
         /// </remarks>
-        [CanBeNull]
-        public LockObject ExtractLockObject()
+        public LockObject? ExtractLockObject()
         {
             var lockObj = Interlocked.Exchange(ref this.lockObject, null);
             return lockObj;
         }
 
-        internal static LockResult Acquired([NotNull] Action releaseLockAction)
+        internal static LockResult Acquired(Action releaseLockAction)
         {
-            if (releaseLockAction == null)
-                throw new ArgumentNullException(nameof(releaseLockAction));
+            ArgumentNullException.ThrowIfNull(releaseLockAction);
 
             var lockObject = new LockObject(releaseLockAction);
             var lockResult = new LockResult(true, lockObject);

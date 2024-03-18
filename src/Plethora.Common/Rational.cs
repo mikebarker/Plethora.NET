@@ -81,18 +81,18 @@ namespace Plethora
                 (this.denominator == other.denominator);
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (ReferenceEquals(null, obj))
                 return false;
 
-            if (!(obj is Rational))
+            if (obj is not Rational)
                 return false;
 
             return this.Equals((Rational)obj);
         }
 
-        public override int GetHashCode()
+        public override readonly int GetHashCode()
         {
             unchecked
             {
@@ -130,12 +130,12 @@ namespace Plethora
 
         #region Implementation of IComparable<Rational>
 
-        int IComparable.CompareTo(object obj)
+        int IComparable.CompareTo(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
                 return 1;
 
-            if (!(obj is Rational))
+            if (obj is not Rational)
                 throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(obj), typeof(Rational)), nameof(obj));
 
             return this.CompareTo((Rational)obj);

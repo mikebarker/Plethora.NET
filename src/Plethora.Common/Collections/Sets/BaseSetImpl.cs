@@ -1,6 +1,5 @@
 ﻿using System;
-
-using JetBrains.Annotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections.Sets
 {
@@ -17,7 +16,7 @@ namespace Plethora.Collections.Sets
     ///   properties, respectively.
     ///  </para>
     ///  <para>
-    ///   NOTE: If an inheritting class overrides either of the <see cref="IsNativeUnion"/> or <see cref="IsNativeIntersect"/>
+    ///   NOTE: If an inheriting class overrides either of the <see cref="IsNativeUnion"/> or <see cref="IsNativeIntersect"/>
     ///   properties to return true, it must not call the base methods in <see cref="Union"/> or <see cref="Intersect"/>
     ///   methods as this can result in a recursive loop.
     ///  </para>
@@ -33,7 +32,7 @@ namespace Plethora.Collections.Sets
         /// <returns>True if the element is represented; else false.</returns>
         bool ISetCore.Contains(object element)
         {
-            if (!(element is T elementT))
+            if (element is not T elementT)
                 return false;
 
             return this.Contains(elementT);
@@ -45,7 +44,7 @@ namespace Plethora.Collections.Sets
         ISetCore ISetCore.Union(ISetCore other)
         {
             //Validation
-            if (!(other is ISetCore<T> otherT))
+            if (other is not ISetCore<T> otherT)
                 throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(other), typeof(ISetCore<T>)), nameof(other));
 
             return this.Union(otherT);
@@ -57,7 +56,7 @@ namespace Plethora.Collections.Sets
         ISetCore ISetCore.Intersect(ISetCore other)
         {
             //Validation
-            if (!(other is ISetCore<T> otherT))
+            if (other is not ISetCore<T> otherT)
                 throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(other), typeof(ISetCore<T>)), nameof(other));
 
             return this.Intersect(otherT);
@@ -70,7 +69,7 @@ namespace Plethora.Collections.Sets
         ISetCore ISetCore.Subtract(ISetCore other)
         {
             //Validation
-            if (!(other is ISetCore<T> otherT))
+            if (other is not ISetCore<T> otherT)
                 throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(other), typeof(ISetCore<T>)), nameof(other));
 
             return this.Subtract(otherT);
@@ -103,8 +102,7 @@ namespace Plethora.Collections.Sets
         public virtual ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Union is commutative
@@ -113,19 +111,16 @@ namespace Plethora.Collections.Sets
                 return otherImpl.Union(this);
 
             //Attempt any well-known optimisations
-            ISetCore<T> result;
-            if (this.TryWellKnownUnion(other, out result))
+            if (this.TryWellKnownUnion(other, out var result))
                 return result;
 
             return new UnionSet<T>(this, other);
         }
 
-        [ContractAnnotation("=> true, result: notnull; => false, result: null")]
-        protected bool TryWellKnownUnion([NotNull] ISetCore<T> other, [CanBeNull] out ISetCore<T> result)
+        protected bool TryWellKnownUnion(ISetCore<T> other, [NotNullWhen(true), MaybeNullWhen(false)] out ISetCore<T> result)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             bool thisIsEmpty = (this.IsEmpty == true);
@@ -161,8 +156,7 @@ namespace Plethora.Collections.Sets
         public virtual ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Intersect is commutative
@@ -171,19 +165,16 @@ namespace Plethora.Collections.Sets
                 return otherImpl.Intersect(this);
 
             //Attempt any well-known optimisations
-            ISetCore<T> result;
-            if (this.TryWellKnownIntersect(other, out result))
+            if (this.TryWellKnownIntersect(other, out var result))
                 return result;
 
             return new IntersectionSet<T>(this, other);
         }
 
-        [ContractAnnotation("=> true, result: notnull; => false, result: null")]
-        protected bool TryWellKnownIntersect([NotNull] ISetCore<T> other, [CanBeNull] out ISetCore<T> result)
+        protected bool TryWellKnownIntersect(ISetCore<T> other, [NotNullWhen(true), MaybeNullWhen(false)] out ISetCore<T> result)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
             if (this.IsEmpty == true)
             {
@@ -208,23 +199,19 @@ namespace Plethora.Collections.Sets
         public virtual ISetCore<T> Subtract(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
             //Attempt any well-known optimisations
-            ISetCore<T> result;
-            if (this.TryWellKnownSubtract(other, out result))
+            if (this.TryWellKnownSubtract(other, out var result))
                 return result;
 
             return new SubtractionSet<T>(this, other);
         }
 
-        [ContractAnnotation("=> true, result: notnull; => false, result: null")]
-        protected bool TryWellKnownSubtract([NotNull] ISetCore<T> other, [CanBeNull] out ISetCore<T> result)
+        protected bool TryWellKnownSubtract(ISetCore<T> other, [NotNullWhen(true), MaybeNullWhen(false)] out ISetCore<T> result)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
             if (other is CompleteSet<T>)
             {

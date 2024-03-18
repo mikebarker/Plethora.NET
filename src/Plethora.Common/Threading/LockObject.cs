@@ -1,23 +1,21 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Threading;
 
 namespace Plethora.Threading
 {
     /// <summary>
-    /// Representa a lock as acquired by <see cref="AsyncLock"/>.
+    /// Represent a lock as acquired by <see cref="AsyncLock"/>.
     /// </summary>
     /// <remarks>
     /// Disposing this object will release the acquired lock.
     /// </remarks>
     public sealed class LockObject : IDisposable
     {
-        private Action releaseLockAction;
+        private Action? releaseLockAction;
 
-        internal LockObject([NotNull] Action releaseLockAction)
+        internal LockObject(Action releaseLockAction)
         {
-            if (releaseLockAction == null)
-                throw new ArgumentNullException(nameof(releaseLockAction));
+            ArgumentNullException.ThrowIfNull(releaseLockAction);
 
             this.releaseLockAction = releaseLockAction;
         }

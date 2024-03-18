@@ -39,7 +39,7 @@ namespace Plethora.Collections.Transformations
         /// <summary>
         /// Occurs when the collection changes.
         /// </summary>
-        public event NotifyCollectionChangedEventHandler CollectionChanged;
+        public event NotifyCollectionChangedEventHandler? CollectionChanged;
 
         private void OnCollectionChanged_Add(IEnumerable<ContiguousIndexGroup> groups)
         {
@@ -266,7 +266,7 @@ namespace Plethora.Collections.Transformations
             var groups = new List<ContiguousIndexGroup>();
 
             int prevIndex = default;
-            List<object> groupList = null;
+            List<object>? groupList = null;
             foreach (var (index, item) in orderedPairs)
             {
                 bool includeInGroup =
@@ -275,7 +275,7 @@ namespace Plethora.Collections.Transformations
 
                 if (groupList == null || !includeInGroup)
                 {
-                    groupList = new List<object>();
+                    groupList = new();
                     groups.Add(new ContiguousIndexGroup(index, groupList));
                 }
 
@@ -287,7 +287,7 @@ namespace Plethora.Collections.Transformations
             return groups;
         }
 
-        private void Source_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void Source_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {

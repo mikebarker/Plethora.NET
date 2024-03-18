@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Plethora
 {
     /// <summary>
@@ -19,10 +17,9 @@ namespace Plethora
         /// The value of <paramref name="value"/> as type <paramref name="returnType"/>.
         /// </returns>
         /// <see cref="AsType(Type, object)"/>
-        [CanBeNull]
-        public static T As<T>([CanBeNull] this object value)
+        public static T? As<T>(this object? value)
         {
-            return (T)AsType(value, typeof(T));
+            return (T?)AsType(value, typeof(T));
         }
 
         /// <summary>
@@ -44,11 +41,9 @@ namespace Plethora
         /// <exception cref="OverflowException">
         ///     <paramref name="value"/> represents a number that is out of the range of <paramref name="returnType"/>.
         /// </exception>
-        [CanBeNull]
-        public static object AsType([CanBeNull] this object value, [NotNull] Type returnType)
+        public static object? AsType(this object? value, Type returnType)
         {
-            if (returnType == null)
-                throw new ArgumentNullException(nameof(returnType));
+            ArgumentNullException.ThrowIfNull(returnType);
 
 
             if (returnType.IsInstanceOfType(value))
@@ -61,14 +56,14 @@ namespace Plethora
                     if (value is string)
                         return Enum.Parse(returnType, (string)value);
 
-                    object underlyingValue = AsType(value, returnType.GetEnumUnderlyingType());
-                    object enumValue = Enum.ToObject(returnType, underlyingValue);
+                    object? underlyingValue = AsType(value, returnType.GetEnumUnderlyingType());
+                    object enumValue = Enum.ToObject(returnType, underlyingValue!);
                     return enumValue;
                 }
 
-                if ((returnType == typeof(Guid)) && (value is string))
+                if ((returnType == typeof(Guid)) && (value is string strValue))
                 {
-                    Guid guidValue = Guid.Parse((string)value);
+                    Guid guidValue = Guid.Parse(strValue);
                     return guidValue;
                 }
 
@@ -77,15 +72,15 @@ namespace Plethora
                     if (value == null)
                         return null; //Unboxing will take care of type conversion.
 
-                    Type underlyingType = Nullable.GetUnderlyingType(returnType);
+                    Type? underlyingType = Nullable.GetUnderlyingType(returnType);
 
                     //Because of boxing of the underlying type, and the treatment of boxed value by Nullable<T>,
                     // no further type conversion needs to be done here.
-                    object underlyingValue = AsType(value, underlyingType);
+                    object? underlyingValue = AsType(value, underlyingType!);
                     return underlyingValue;
                 }
 
-                object convertedValue = Convert.ChangeType(value, returnType);
+                object? convertedValue = Convert.ChangeType(value, returnType);
                 return convertedValue;
             }
             catch (ArgumentException ex)
@@ -106,10 +101,9 @@ namespace Plethora
         /// True if the <paramref name="type"/> is a generic <see cref="Nullable{T}"/> type; otherwise False.
         /// </returns>
         /// <exception cref="ArgumentNullException"><paramref name="type"/> is null.</exception>
-        public static bool IsNullable([NotNull] this Type type)
+        public static bool IsNullable(this Type type)
         {
-            if (type == null)
-                throw new ArgumentNullException(nameof(type));
+            ArgumentNullException.ThrowIfNull(type);
 
 
             if (type.IsClass)

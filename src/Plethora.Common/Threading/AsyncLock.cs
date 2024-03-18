@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -54,10 +53,10 @@ namespace Plethora.Threading
     /// </example>
     public class AsyncLock : IDisposable
     {
-        private readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim semaphore = new(1, 1);
         private readonly string name;
-        private readonly LockRegister register;
-        private readonly CancellationTokenSource disposedCancellationTokenSource = new CancellationTokenSource();
+        private readonly LockRegister? register;
+        private readonly CancellationTokenSource disposedCancellationTokenSource = new();
 
         /// <summary>
         /// Initialise a new instance of the <see cref="AsyncLock"/> class.
@@ -82,13 +81,13 @@ namespace Plethora.Threading
         /// </summary>
         /// <param name="register">
         /// The <see cref="LockRegister"/> with which this instance will participate in long-wait detection.
-        /// Specifing null will prevent this instance from participating in long-wait detection.
+        /// Specifying null will prevent this instance from participating in long-wait detection.
         /// </param>
         /// <param name="memberName">The caller member name.</param>
         /// <param name="sourceFilePath">The caller source file path.</param>
         /// <param name="sourceLineNumber">The caller source file number.</param>
         public AsyncLock(
-            [CanBeNull] LockRegister register,
+            LockRegister? register,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
@@ -105,7 +104,7 @@ namespace Plethora.Threading
         /// detection using the default instance; otherwise it will not.
         /// </remarks>
         public AsyncLock(
-            [NotNull] string name)
+            string name)
             : this(name, LockRegister.DefaultInstance)
         {
         }
@@ -116,14 +115,13 @@ namespace Plethora.Threading
         /// <param name="name">The name of the <see cref="AsyncLock"/>.</param>
         /// <param name="register">
         /// Optional. The <see cref="LockRegister"/> with which this instance will participate in long-wait detection.
-        /// Specifing null will prevent this instance from participating in long-wait detection.
+        /// Specifying null will prevent this instance from participating in long-wait detection.
         /// </param>
         public AsyncLock(
-            [NotNull] string name,
-            [CanBeNull] LockRegister register)
+            string name,
+            LockRegister? register)
         {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             this.name = name;
             this.register = register;
@@ -181,14 +179,13 @@ namespace Plethora.Threading
         /// <exception cref="OperationCanceledException">
         /// <paramref name="cancellationToken"/> was canceled.
         /// </exception>
-        public LockObject Lock(
+        public LockObject? Lock(
             CancellationToken cancellationToken = default,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            if (this.disposed)
-                throw new ObjectDisposedException(nameof(AsyncLock));
+            ObjectDisposedException.ThrowIf(this.disposed, this);
 
             var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
 
@@ -213,7 +210,7 @@ namespace Plethora.Threading
         /// <param name="cancellationToken">The <see cref="CancellationToken"/> token to observe.</param>
         /// <returns>
         /// A <see cref="LockResult"/> where <see cref="LockResult.IsLockAcquired"/> is true if the lock was
-        /// acquired; otherwise fasle. <see cref="LockResult.LockObject"/> represents the lock acquired.
+        /// acquired; otherwise false. <see cref="LockResult.LockObject"/> represents the lock acquired.
         /// </returns>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="timeout"/> represents a negative number other than -1.
@@ -235,8 +232,7 @@ namespace Plethora.Threading
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            if (this.disposed)
-                throw new ObjectDisposedException(nameof(AsyncLock));
+            ObjectDisposedException.ThrowIf(this.disposed, this);
 
             var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
 
@@ -266,14 +262,13 @@ namespace Plethora.Threading
         /// <exception cref="OperationCanceledException">
         /// <paramref name="cancellationToken"/> was canceled.
         /// </exception>
-        public async Task<LockObject> LockAsync(
+        public async Task<LockObject?> LockAsync(
             CancellationToken cancellationToken = default,
             [CallerMemberName] string memberName = "",
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            if (this.disposed)
-                throw new ObjectDisposedException(nameof(AsyncLock));
+            ObjectDisposedException.ThrowIf(this.disposed, this);
 
             var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
 
@@ -406,7 +401,7 @@ namespace Plethora.Threading
             return $"{fileName}__{sourceLineNumber:00}";
         }
 
-        private IDisposable RegisterAwait(
+        private IDisposable? RegisterAwait(
             CallerData callerData)
         {
             if (this.register == null)
@@ -417,7 +412,7 @@ namespace Plethora.Threading
             return this.register.RegisterAwaitingLock(this, callerData.MemberName, callerData.SourceFilePath, callerData.SourceLineNumber);
         }
 
-        private IDisposable RegisterAcquired(
+        private IDisposable? RegisterAcquired(
             CallerData callerData)
         {
             if (this.register == null)
@@ -428,18 +423,11 @@ namespace Plethora.Threading
             return this.register.RegisterAcquiredLock(this, callerData.MemberName, callerData.SourceFilePath, callerData.SourceLineNumber);
         }
 
-        private struct CallerData
+        private readonly struct CallerData(string memberName, string sourceFilePath, int sourceLineNumber)
         {
-            public CallerData(string memberName, string sourceFilePath, int sourceLineNumber)
-            {
-                this.MemberName = memberName;
-                this.SourceFilePath = sourceFilePath;
-                this.SourceLineNumber = sourceLineNumber;
-            }
-
-            public readonly string MemberName;
-            public readonly string SourceFilePath;
-            public readonly int SourceLineNumber;
+            public readonly string MemberName = memberName;
+            public readonly string SourceFilePath = sourceFilePath;
+            public readonly int SourceLineNumber = sourceLineNumber;
         }
     }
 }

@@ -4,7 +4,8 @@ using System.Diagnostics.Contracts;
 
 namespace Plethora
 {
-    public struct Range<T> : IEquatable<Range<T>>
+    public readonly struct Range<T> : IEquatable<Range<T>>
+        where T : notnull
     {
         #region Fields
 
@@ -47,8 +48,7 @@ namespace Plethora
         /// </summary>
         public Range(T min, bool minInclusive, T max, bool maxInclusive, IComparer<T> comparer)
         {
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(comparer);
 
             if (comparer.Compare(min, max) > 0) // min > max
                 throw new ArgumentException(ResourceProvider.ArgMustBeLessThanEqualTo("range.Min", "range.Max"));
@@ -153,9 +153,9 @@ namespace Plethora
 
         #region Overrides of Object
         
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (!(obj is Range<T>))
+            if (obj is not Range<T>)
                 return false;
 
             return this.Equals((Range<T>)obj);
@@ -172,8 +172,9 @@ namespace Plethora
     public static class RangeHelper
     {
         public static IReadOnlyCollection<Range<T>> Subtract<T>(this Range<T> rangeA, Range<T> rangeB)
+            where T : notnull
         {
-            List<Range<T>> list = new List<Range<T>>(2);
+            List<Range<T>> list = new(2);
 
             var comparer = rangeA.Comparer;
 
@@ -209,12 +210,12 @@ namespace Plethora
             int minCompare = comparer.Compare(rangeA.Min, rangeB.Min);
             if (minCompare < 0)  // rangeA.Min < rangeB.Min
             {
-                var remainder = new Range<T>(rangeA.Min, rangeA.MinInclusive, rangeB.Min, !rangeB.MinInclusive, comparer);
+                Range<T> remainder = new(rangeA.Min, rangeA.MinInclusive, rangeB.Min, !rangeB.MinInclusive, comparer);
                 list.Add(remainder);
             }
             else if ((minCompare == 0) && (rangeA.MinInclusive) && (!rangeB.MinInclusive))
             {
-                var remainder = new Range<T>(rangeA.Min, true, rangeA.Min, true, comparer);
+                Range<T> remainder = new(rangeA.Min, true, rangeA.Min, true, comparer);
                 list.Add(remainder);
             }
 
@@ -222,12 +223,12 @@ namespace Plethora
             int maxCompare = comparer.Compare(rangeA.Max, rangeB.Max);
             if (maxCompare > 0)  // rangeA.Max > rangeB.Max
             {
-                var remainder = new Range<T>(rangeB.Max, !rangeB.MaxInclusive, rangeA.Max, rangeA.MaxInclusive, comparer);
+                Range<T> remainder = new(rangeB.Max, !rangeB.MaxInclusive, rangeA.Max, rangeA.MaxInclusive, comparer);
                 list.Add(remainder);
             }
             else if ((maxCompare == 0) && (rangeA.MaxInclusive) && (!rangeB.MaxInclusive))
             {
-                var remainder = new Range<T>(rangeA.Max, true, rangeA.Max, true, comparer);
+                Range<T> remainder = new(rangeA.Max, true, rangeA.Max, true, comparer);
                 list.Add(remainder);
             }
 

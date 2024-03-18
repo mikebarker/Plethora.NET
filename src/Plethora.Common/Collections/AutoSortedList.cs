@@ -55,21 +55,20 @@ namespace Plethora.Collections
         {
             //Validation
             if ((duplicatesPolicy != DuplicatesPolicy.Allow) &&
-                (duplicatesPolicy != DuplicatesPolicy.Ignor) &&
+                (duplicatesPolicy != DuplicatesPolicy.Ignore) &&
                 (duplicatesPolicy != DuplicatesPolicy.Replace) &&
                 (duplicatesPolicy != DuplicatesPolicy.Error))
             {
                 throw new ArgumentOutOfRangeException(nameof(duplicatesPolicy), duplicatesPolicy,
-                    ResourceProvider.ArgMustBeOneOf(nameof(duplicatesPolicy), "Allow", "Ignor", "Replace", "Error"));
+                    ResourceProvider.ArgMustBeOneOf(nameof(duplicatesPolicy), "Allow", "Ignore", "Replace", "Error"));
             }
 
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(comparer);
 
 
             this.duplicatesPolicy = duplicatesPolicy;
             this.comparer = comparer;
-            this.innerList = new List<T>();
+            this.innerList = new();
         }
 
         /// <summary>
@@ -139,7 +138,7 @@ namespace Plethora.Collections
                 {
                     throw new InvalidOperationException(ResourceProvider.ArgAddingDuplicate());
                 }
-                else if (this.duplicatesPolicy == DuplicatesPolicy.Ignor)
+                else if (this.duplicatesPolicy == DuplicatesPolicy.Ignore)
                 {
                     return -1;
                 }
@@ -180,8 +179,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to locate in the <see cref="ICollection{T}"/>.</param>
         public bool Contains(T item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             int index = this.BinarySearch(item);
             return (index >= 0);
@@ -225,6 +223,8 @@ namespace Plethora.Collections
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
         public bool Remove(T item)
         {
+            ArgumentNullException.ThrowIfNull(item);
+
             int index = this.BinarySearch(item);
             if (index < 0)
                 return false;
@@ -312,8 +312,7 @@ namespace Plethora.Collections
         public void AddRange(IEnumerable<T> enumerable)
         {
             //Validation
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
+            ArgumentNullException.ThrowIfNull(enumerable);
 
             foreach (T item in enumerable)
             {
@@ -340,8 +339,7 @@ namespace Plethora.Collections
         public int BinarySearch(int index, int count, T item)
         {
             //Validation
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(nameof(item));
 
 
             int result = this.innerList.BinarySearch(index, count, item, this.comparer);
@@ -374,7 +372,7 @@ namespace Plethora.Collections
             return this.innerList.Exists(match);
         }
 
-        public T Find(Predicate<T> match)
+        public T? Find(Predicate<T> match)
         {
             return this.innerList.Find(match);
         }
@@ -399,7 +397,7 @@ namespace Plethora.Collections
             return this.innerList.FindIndex(startIndex, count, match);
         }
 
-        public T FindLast(Predicate<T> match)
+        public T? FindLast(Predicate<T> match)
         {
             return this.innerList.FindLast(match);
         }
@@ -521,7 +519,7 @@ namespace Plethora.Collections
             {
                 return
                     (this.duplicatesPolicy == DuplicatesPolicy.Error) ||
-                    (this.duplicatesPolicy == DuplicatesPolicy.Ignor) ||
+                    (this.duplicatesPolicy == DuplicatesPolicy.Ignore) ||
                     (this.duplicatesPolicy == DuplicatesPolicy.Replace);
             }
         }

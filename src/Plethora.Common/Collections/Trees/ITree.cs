@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections.Trees
 {
@@ -83,7 +84,7 @@ namespace Plethora.Collections.Trees
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
         /// <seealso cref="AddEx"/>
-        bool TryGetValueEx(TKey key, out TValue value, out object info);
+        bool TryGetValueEx(TKey key, [MaybeNullWhen(false)] out TValue value, out object info);
 
         /// <summary>
         /// Returns an enumerator that iterates through the key-value pairs in the tree. 

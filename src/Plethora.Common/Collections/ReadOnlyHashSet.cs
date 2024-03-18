@@ -45,12 +45,12 @@ namespace Plethora.Collections
 
         void ICollection<T>.Add(T item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ICollection<T>.Clear()
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         public bool Contains(T item)
@@ -65,7 +65,7 @@ namespace Plethora.Collections
 
         bool ICollection<T>.Remove(T item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         public int Count
@@ -84,28 +84,28 @@ namespace Plethora.Collections
 
         bool ISet<T>.Add(T item)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ISet<T>.UnionWith(IEnumerable<T> other)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ISet<T>.IntersectWith(IEnumerable<T> other)
         {
 
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ISet<T>.ExceptWith(IEnumerable<T> other)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         void ISet<T>.SymmetricExceptWith(IEnumerable<T> other)
         {
-            throw new InvalidOperationException(ResourceProvider.CollectionReadonly());
+            throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 
         public bool IsSubsetOf(IEnumerable<T> other)
@@ -150,7 +150,7 @@ namespace Plethora.Collections
             innerHashSet.GetObjectData(info, context);
         }
 
-        void IDeserializationCallback.OnDeserialization(object sender)
+        void IDeserializationCallback.OnDeserialization(object? sender)
         {
             innerHashSet.OnDeserialization(sender);
         }

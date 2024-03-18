@@ -24,26 +24,26 @@ namespace Plethora.Collections.Trees
 
             #region Properties
 
-            public new RedBlackNode Left
+            public new RedBlackNode? Left
             {
-                get { return (RedBlackNode)base.Left; }
+                get { return (RedBlackNode?)base.Left; }
                 protected internal set { base.Left = value; }
             }
 
-            public new RedBlackNode Right
+            public new RedBlackNode? Right
             {
-                get { return (RedBlackNode)base.Right; }
+                get { return (RedBlackNode?)base.Right; }
                 protected internal set { base.Right = value; }
             }
 
-            public new RedBlackNode Parent
+            public new RedBlackNode? Parent
             {
-                get { return (RedBlackNode)base.Parent; }
+                get { return (RedBlackNode?)base.Parent; }
             }
 
-            public new RedBlackNode Sibling
+            public new RedBlackNode? Sibling
             {
-                get { return (RedBlackNode)base.Sibling; }
+                get { return (RedBlackNode?)base.Sibling; }
             }
 
             internal Color Color
@@ -85,13 +85,13 @@ namespace Plethora.Collections.Trees
 
         #region Override Methods
 
-        protected internal new RedBlackNode Root
+        protected internal new RedBlackNode? Root
         {
-            get { return (RedBlackNode)base.Root; }
+            get { return (RedBlackNode?)base.Root; }
             set { base.Root = value; }
         }
 
-        protected override Node AddNode(TKey key, TValue value, Node parent, Edge? edge)
+        protected override Node AddNode(TKey key, TValue value, Node? parent, Edge? edge)
         {
             RedBlackNode node = (RedBlackNode)base.AddNode(key, value, parent, edge);
 
@@ -105,7 +105,7 @@ namespace Plethora.Collections.Trees
         {
             RedBlackNode redBlackNode = ((RedBlackNode)node);
 
-            RedBlackNode parent = redBlackNode.Parent;
+            RedBlackNode? parent = redBlackNode.Parent;
             Edge? edge = redBlackNode.RelationToParent;
             Color nodeColor = redBlackNode.Color;
 
@@ -125,7 +125,7 @@ namespace Plethora.Collections.Trees
 
             if (!skipRebalance & rebalanceRequired)
             {
-                RedBlackNode child;
+                RedBlackNode? child;
                 if (parent == null)
                     child = this.Root;
                 else if (edge == Edge.Left)
@@ -135,13 +135,13 @@ namespace Plethora.Collections.Trees
 
                 if (nodeColor == Color.Black)
                 {
-                    if (child.Color == Color.Red)
+                    if (child?.Color == Color.Red)
                     {
                         child.Color = Color.Black;
                     }
                     else
                     {
-                        this.DeleteCase1(child);
+                        this.DeleteCase1(child!);
                     }
                 }
             }
@@ -169,7 +169,7 @@ namespace Plethora.Collections.Trees
                 return;
             }
 
-            RedBlackNode grandParent = node.Parent.Parent;
+            RedBlackNode? grandParent = node.Parent.Parent;
             if (grandParent == null)
             {
                 // Parent is the root node.
@@ -183,7 +183,7 @@ namespace Plethora.Collections.Trees
                 return;
             }
 
-            RedBlackNode uncle = node.Parent.Sibling;
+            RedBlackNode? uncle = node.Parent.Sibling;
 
             if ((uncle != null) && (uncle.Color == Color.Red))  // uncle is red
             {
@@ -197,20 +197,20 @@ namespace Plethora.Collections.Trees
             {
                 RedBlackNode step2Node = node;
                 RedBlackNode step2Parent = node.Parent;
-                RedBlackNode step2GrandParent = node.Parent.Parent;
+                RedBlackNode step2GrandParent = node.Parent.Parent!;
 
                 //Step 1
                 if ((grandParent.Left != null) && (node == grandParent.Left.Right))
                 {
                     this.Rotate(node.Parent, RotationDirection.Left);
-                    step2Node = node.Left;
+                    step2Node = node.Left!;
                     step2Parent = node;
                     step2GrandParent = node.Parent;
                 }
                 else if ((grandParent.Right != null) && (node == grandParent.Right.Left))
                 {
                     this.Rotate(node.Parent, RotationDirection.Right);
-                    step2Node = node.Right;
+                    step2Node = node.Right!;
                     step2Parent = node;
                     step2GrandParent = node.Parent;
                 }
@@ -235,11 +235,11 @@ namespace Plethora.Collections.Trees
 
         private void DeleteCase2(RedBlackNode node)
         {
-            RedBlackNode sibling = node.Sibling;
+            RedBlackNode? sibling = node.Sibling;
 
-            if (sibling.Color == Color.Red)
+            if (sibling?.Color == Color.Red)
             {
-                node.Parent.Color = Color.Red;
+                node.Parent!.Color = Color.Red;
                 sibling.Color = Color.Black;
 
                 if (ReferenceEquals(node.Parent.Left, node))
@@ -253,12 +253,12 @@ namespace Plethora.Collections.Trees
 
         private void DeleteCase3(RedBlackNode node)
         {
-            RedBlackNode sibling = node.Sibling;
+            RedBlackNode sibling = node.Sibling!;
 
-            if ((node.Parent.Color == Color.Black) &&
+            if ((node.Parent!.Color == Color.Black) &&
                 (sibling.Color == Color.Black) &&
-                (sibling.Left.SafeColor() == Color.Black) &&
-                (sibling.Right.SafeColor() == Color.Black))
+                (sibling.Left!.SafeColor() == Color.Black) &&
+                (sibling.Right!.SafeColor() == Color.Black))
             {
                 sibling.Color = Color.Red;
                 this.DeleteCase1(node.Parent);
@@ -271,13 +271,13 @@ namespace Plethora.Collections.Trees
 
         private void DeleteCase4(RedBlackNode node)
         {
-            RedBlackNode sibling = node.Sibling;
+            RedBlackNode sibling = node.Sibling!;
 
 
-            if ((node.Parent.Color == Color.Red) &&
+            if ((node.Parent!.Color == Color.Red) &&
                 (sibling.Color == Color.Black) &&
-                (sibling.Left.SafeColor() == Color.Black) &&
-                (sibling.Right.SafeColor() == Color.Black))
+                (sibling.Left!.SafeColor() == Color.Black) &&
+                (sibling.Right!.SafeColor() == Color.Black))
             {
                 sibling.Color = Color.Red;
                 node.Parent.Color = Color.Black;
@@ -290,7 +290,7 @@ namespace Plethora.Collections.Trees
 
         private void DeleteCase5(RedBlackNode node)
         {
-            RedBlackNode sibling = node.Sibling;
+            RedBlackNode sibling = node.Sibling!;
 
             if (sibling.Color == Color.Black)
             {
@@ -300,23 +300,23 @@ namespace Plethora.Collections.Trees
                  * the following statements just force the red to be on the left of the left of the parent,
                  * or right of the right, so case six will rotate correctly.
                  */
-                if ((node == node.Parent.Left) &&
-                    (sibling.Right.SafeColor() == Color.Black) &&
-                    (sibling.Left.SafeColor() == Color.Red))
+                if ((node == node.Parent!.Left) &&
+                    (sibling.Right!.SafeColor() == Color.Black) &&
+                    (sibling.Left!.SafeColor() == Color.Red))
                 {
                     // this last test is trivial too due to cases 2-4.
                     sibling.Color = Color.Red;
-                    sibling.Left.Color = Color.Black;
+                    sibling.Left!.Color = Color.Black;
 
                     this.Rotate(sibling, RotationDirection.Right);
                 }
                 else if ((node == node.Parent.Right) &&
-                    (sibling.Left.SafeColor() == Color.Black) &&
-                    (sibling.Right.SafeColor() == Color.Red))
+                    (sibling.Left!.SafeColor() == Color.Black) &&
+                    (sibling.Right!.SafeColor() == Color.Red))
                 {
                     // this last test is trivial too due to cases 2-4.
                     sibling.Color = Color.Red;
-                    sibling.Right.Color = Color.Black;
+                    sibling.Right!.Color = Color.Black;
 
                     this.Rotate(sibling, RotationDirection.Left);
                 }
@@ -327,19 +327,19 @@ namespace Plethora.Collections.Trees
 
         private void DeleteCase6(RedBlackNode node)
         {
-            RedBlackNode sibling = node.Sibling;
+            RedBlackNode sibling = node.Sibling!;
 
-            sibling.Color = node.Parent.Color;
+            sibling!.Color = node.Parent!.Color;
             node.Parent.Color = Color.Black;
 
             if (node == node.Parent.Left)
             {
-                sibling.Right.Color = Color.Black;
+                sibling.Right!.Color = Color.Black;
                 this.Rotate(node.Parent, RotationDirection.Left);
             }
             else
             {
-                sibling.Left.Color = Color.Black;
+                sibling.Left!.Color = Color.Black;
                 this.Rotate(node.Parent, RotationDirection.Right);
             }
         }

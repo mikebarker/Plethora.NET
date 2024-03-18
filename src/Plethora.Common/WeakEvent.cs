@@ -44,9 +44,9 @@ namespace Plethora
 
             public HandlerInfo(TEventHandler handler, WeakEvent<TEventHandler> parent)
             {
-                var @delegate = (Delegate)(object)handler;
+                var @delegate = (Delegate?)(object?)handler;
 
-                this.WeakTarget = new WeakReference(@delegate.Target);
+                this.WeakTarget = new WeakReference(@delegate!.Target);
                 this.Method = @delegate.Method;
                 this.Handler = WeakDelegate.CreateWeakDelegate(handler, h => parent.Remove(this));
             }
@@ -56,8 +56,8 @@ namespace Plethora
 
         #region Field
 
-        private readonly List<HandlerInfo> innerDelegates = new List<HandlerInfo>(0);
-        private readonly object @lock = new object();
+        private readonly List<HandlerInfo> innerDelegates = new(0);
+        private readonly object @lock = new();
 
         #endregion
 
@@ -68,7 +68,7 @@ namespace Plethora
         /// </summary>
         public void Add(TEventHandler handler)
         {
-            HandlerInfo info = new HandlerInfo(handler, this);
+            HandlerInfo info = new(handler, this);
             lock (this.@lock)
             {
                 this.innerDelegates.Add(info);
@@ -80,9 +80,9 @@ namespace Plethora
         /// </summary>
         public void Remove(TEventHandler handler)
         {
-            var @delegate = (Delegate)(object)handler;
+            var @delegate = (Delegate?)(object?)handler;
 
-            var target = @delegate.Target;
+            var target = @delegate!.Target;
             var method = @delegate.Method;
 
             lock (this.@lock)

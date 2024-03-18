@@ -12,9 +12,9 @@ namespace Plethora
     {
         #region Fields
 
-        private static char[] whiteSpace;
-        private static Regex beginWordRegex;
-        private static Regex endWordRegex;
+        private static char[]? whiteSpace;
+        private static Regex? beginWordRegex;
+        private static Regex? endWordRegex;
         #endregion
 
         #region Public Static Properties
@@ -28,7 +28,7 @@ namespace Plethora
             {
                 if (whiteSpace == null)
                 {
-                    List<char> whitespaceList = new List<char>(32);
+                    List<char> whitespaceList = new(32);
 
                     //The loop should include the upper bound char.MaxValue
                     // (i.e. the test should be i <= char.MaxValue) but since when i
@@ -78,8 +78,7 @@ namespace Plethora
         public static int IndexNotOfAny(this string str, char[] values)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return IndexNotOfAny(str, values, 0, str.Length);
         }
@@ -105,8 +104,7 @@ namespace Plethora
         public static int IndexNotOfAny(this string str, char[] values, int startIndex)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return IndexNotOfAny(str, values, startIndex, str.Length - startIndex);
         }
@@ -136,11 +134,9 @@ namespace Plethora
         public static int IndexNotOfAny(this string str, char[] values, int startIndex, int count)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
-            if (values == null)
-                throw new ArgumentNullException(nameof(values));
+            ArgumentNullException.ThrowIfNull(values);
 
             if ((startIndex < 0) || (startIndex >= str.Length))
                 throw new ArgumentOutOfRangeException(nameof(startIndex),
@@ -182,8 +178,7 @@ namespace Plethora
         public static int LastIndexNotOfAny(this string str, char[] values)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return LastIndexNotOfAny(str, values, str.Length - 1, str.Length);
         }
@@ -236,11 +231,9 @@ namespace Plethora
         public static int LastIndexNotOfAny(this string str, char[] values, int startIndex, int count)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
-            if (values == null)
-                throw new ArgumentNullException(nameof(values));
+            ArgumentNullException.ThrowIfNull(values);
 
             if ((startIndex < 0) || (startIndex >= str.Length))
                 throw new ArgumentOutOfRangeException(nameof(startIndex),
@@ -279,8 +272,7 @@ namespace Plethora
         public static int IndexOfWhiteSpace(this string str)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return str.IndexOfAny(WhiteSpace);
         }
@@ -302,8 +294,7 @@ namespace Plethora
         public static int IndexOfWhiteSpace(this string str, int startIndex)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return str.IndexOfAny(WhiteSpace, startIndex);
         }
@@ -329,8 +320,7 @@ namespace Plethora
         public static int IndexOfWhiteSpace(this string str, int startIndex, int count)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return str.IndexOfAny(WhiteSpace, startIndex, count);
         }
@@ -352,8 +342,7 @@ namespace Plethora
         public static int LastIndexOfWhiteSpace(this string str)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return str.LastIndexOfAny(WhiteSpace);
         }
@@ -375,8 +364,7 @@ namespace Plethora
         public static int LastIndexOfWhiteSpace(this string str, int startIndex)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return str.LastIndexOfAny(WhiteSpace, startIndex);
         }
@@ -402,8 +390,7 @@ namespace Plethora
         public static int LastIndexOfWhiteSpace(this string str, int startIndex, int count)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             return str.LastIndexOfAny(WhiteSpace, startIndex, count);
         }
@@ -537,7 +524,7 @@ namespace Plethora
         /// Reports the index of the beginning of the first word in the string.
         /// </summary>
         /// <param name="str">
-        /// The string in which to find the index of the beginning of the firstword.
+        /// The string in which to find the index of the beginning of the first word.
         /// </param>
         /// <returns>
         /// The index position of the beginning of the next word if found, or
@@ -596,8 +583,7 @@ namespace Plethora
         public static int IndexOfWord(this string str, int startIndex, bool findWordBeginning)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             if ((startIndex < 0) || (startIndex >= str.Length))
                 throw new ArgumentOutOfRangeException(nameof(startIndex),
@@ -644,8 +630,7 @@ namespace Plethora
         public static int LastIndexOfWord(this string str)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
 
             return LastIndexOfWord(str, str.Length - 1, true);
@@ -700,8 +685,7 @@ namespace Plethora
         public static int LastIndexOfWord(this string str, int startIndex, bool findWordBeginning)
         {
             //Validation
-            if (str == null)
-                throw new ArgumentNullException(nameof(str));
+            ArgumentNullException.ThrowIfNull(str);
 
             if ((startIndex < 0) || (startIndex >= str.Length))
                 throw new ArgumentOutOfRangeException(nameof(startIndex),
@@ -721,12 +705,12 @@ namespace Plethora
                 indexOffset = 0;
             }
 
-            string tmp = str.Substring(0, startIndex + 1);
+            string tmp = str[..(startIndex + 1)];
             MatchCollection matches = regex.Matches(tmp);
             if (matches.Count == 0)
                 return -1;
 
-            Match match = matches[matches.Count - 1];
+            Match match = matches[^1];
 
             //Special case for finding the end of a word and not considering cropped text.
             if ((!findWordBeginning) && (match.Index == tmp.Length-1))
@@ -743,7 +727,7 @@ namespace Plethora
                             return -1;
 
                         //Use the previous match
-                        match = matches[matches.Count - 2];
+                        match = matches[^2];
                     }
                     else
                     {
@@ -770,8 +754,7 @@ namespace Plethora
         {
             get
             {
-                if (beginWordRegex == null)
-                    beginWordRegex = new Regex(@"(\W|^)\w", RegexOptions.Compiled);
+                beginWordRegex ??= new(@"(\W|^)\w", RegexOptions.Compiled);
                 return beginWordRegex;
             }
         }
@@ -783,8 +766,7 @@ namespace Plethora
         {
             get
             {
-                if (endWordRegex == null)
-                    endWordRegex = new Regex(@"\w(\W|$)", RegexOptions.Compiled);
+                endWordRegex ??= new(@"\w(\W|$)", RegexOptions.Compiled);
                 return endWordRegex;
             }
         }

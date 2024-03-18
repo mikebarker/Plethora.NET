@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections.Trees
 {
@@ -26,12 +27,12 @@ namespace Plethora.Collections.Trees
         {
             #region Fields
 
-            private Node parent;
+            private Node? parent;
 
-            private Node left;
-            private Node right;
+            private Node? left;
+            private Node? right;
 
-            private bool ignorSetHeight = false;
+            private bool ignoreSetHeight = false;
             #endregion
 
             #region Constructors
@@ -68,7 +69,7 @@ namespace Plethora.Collections.Trees
             /// The left child will have a key value less than the
             /// this <see cref="Node"/>'s key.
             /// </remarks>
-            public Node Left
+            public Node? Left
             {
                 get { return this.left; }
                 protected internal set
@@ -92,7 +93,7 @@ namespace Plethora.Collections.Trees
             /// The right child will have a key value less than the
             /// this <see cref="Node"/>'s key.
             /// </remarks>
-            public Node Right
+            public Node? Right
             {
                 get { return this.right; }
                 protected internal set
@@ -112,7 +113,7 @@ namespace Plethora.Collections.Trees
             /// <summary>
             /// Gets the parent <see cref="Node"/> of this <see cref="Node"/>.
             /// </summary>
-            public Node Parent
+            public Node? Parent
             {
                 get { return this.parent; }
                 private set
@@ -141,7 +142,7 @@ namespace Plethora.Collections.Trees
             /// <see cref="Parent"/>.<see cref="Left"/> if this <see cref="Node"/> is the right child of its <see cref="Parent"/>.
             /// null if this <see cref="Node"/> has no parent.
             /// </value>
-            public Node Sibling
+            public Node? Sibling
             {
                 get
                 {
@@ -207,11 +208,11 @@ namespace Plethora.Collections.Trees
 
             private void SetHeight()
             {
-                if (this.ignorSetHeight)
+                if (this.ignoreSetHeight)
                     return;
 
                 //Prevent infinite recursion (incase of circular references)
-                this.ignorSetHeight = true;
+                this.ignoreSetHeight = true;
 
                 int leftHeight = (this.left == null) ? -1 : this.left.Height;
                 int rightHeight = (this.right == null) ? -1 : this.right.Height;
@@ -222,7 +223,7 @@ namespace Plethora.Collections.Trees
                 if ((this.Parent != null) && (prevHeight != this.Height))
                     this.Parent.SetHeight();
 
-                this.ignorSetHeight = false;
+                this.ignoreSetHeight = false;
             }
             #endregion
 
@@ -257,7 +258,7 @@ namespace Plethora.Collections.Trees
             //}
         }
 
-        private struct LocationInfo
+        private readonly struct LocationInfo
         {
             #region Fields
 
@@ -280,7 +281,7 @@ namespace Plethora.Collections.Trees
 
         #region Fields
 
-        private Node root;
+        private Node? root;
         private readonly IComparer<TKey> comparer;
         #endregion
 
@@ -303,8 +304,7 @@ namespace Plethora.Collections.Trees
         public BinaryTree(IComparer<TKey> comparer)
         {
             //Validation
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(comparer);
 
 
             this.comparer = comparer;
@@ -319,8 +319,7 @@ namespace Plethora.Collections.Trees
         protected BinaryTree(BinaryTree<TKey, TValue> tree)
         {
             //Validation
-            if (tree == null)
-                throw new ArgumentNullException(nameof(tree));
+            ArgumentNullException.ThrowIfNull(tree);
 
 
             this.comparer = tree.comparer;
@@ -353,9 +352,7 @@ namespace Plethora.Collections.Trees
         /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
         public bool ContainsKey(TKey key)
         {
-            Node node;
-            Edge? edge;
-            return this.Find(key, out node, out edge);
+            return this.Find(key, out _, out _);
         }
 
         /// <summary>
@@ -371,15 +368,10 @@ namespace Plethora.Collections.Trees
         public bool Remove(TKey key)
         {
             //Validation
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
 
-            Node node;
-            Edge? edge;
-            bool result = this.Find(key, out node, out edge);
-
-            if (!result)
+            if (!this.Find(key, out var node, out _))
                 return false;
 
             this.RemoveNode(node);
@@ -401,21 +393,22 @@ namespace Plethora.Collections.Trees
         /// This parameter is passed uninitialized.
         /// </param>
         /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
             //Validation
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
 
-            Node node;
-            Edge? edge;
-            bool result = this.Find(key, out node, out edge);
-
-            value = result
-                ? node.Value
-                : default(TValue);
-            return result;
+            if (this.Find(key, out var node, out _))
+            {
+                value = node.Value;
+                return true;
+            }
+            else
+            {
+                value = default;
+                return false;
+            }
         }
 
         /// <summary>
@@ -432,14 +425,10 @@ namespace Plethora.Collections.Trees
             get
             {
                 //Validation
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+                ArgumentNullException.ThrowIfNull(key);
 
 
-                Node node;
-                Edge? edge;
-                bool result = this.Find(key, out node, out edge);
-                if (!result)
+                if (!this.Find(key, out var node, out _))
                     throw new KeyNotFoundException();
                 else
                     return node.Value;
@@ -447,14 +436,10 @@ namespace Plethora.Collections.Trees
             set
             {
                 //Validation
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+                ArgumentNullException.ThrowIfNull(key);
 
 
-                Node node;
-                Edge? edge;
-                bool result = this.Find(key, out node, out edge);
-                if (!result)
+                if (!this.Find(key, out var node, out _))
                     throw new KeyNotFoundException();
                 else
                     node.Value = value;
@@ -560,8 +545,7 @@ namespace Plethora.Collections.Trees
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
             //Validation
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+            ArgumentNullException.ThrowIfNull(array);
 
             if (array.Rank != 1)
                 throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
@@ -632,13 +616,9 @@ namespace Plethora.Collections.Trees
         public bool AddOrUpdate(TKey key, TValue value)
         {
             //Validation
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
-            Node node;
-            Edge? edge;
-            bool result = this.Find(key, out node, out edge);
-            if (result)
+            if (this.Find(key, out var node, out var edge))
             {
                 //Update
                 node.Value = value;
@@ -677,19 +657,16 @@ namespace Plethora.Collections.Trees
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
         /// <seealso cref="AddEx"/>
-        public bool TryGetValueEx(TKey key, out TValue value, out object info)
+        public bool TryGetValueEx(TKey key, [MaybeNullWhen(false)] out TValue value, out object info)
         {
             //Validation
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
 
-            Node node;
-            Edge? edge;
-            bool result = this.Find(key, out node, out edge);
+            bool result = this.Find(key, out var node, out var edge);
 
-            info = new LocationInfo(node, edge);
-            value = (!result) ? default(TValue) : node.Value;
+            info = new LocationInfo(node!, edge);
+            value = (!result) ? default : node!.Value;
             return result;
         }
 
@@ -731,11 +708,8 @@ namespace Plethora.Collections.Trees
         public void AddEx(TKey key, TValue value, object info)
         {
             //Validation
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
-
-            if (info == null)
-                throw new ArgumentNullException(nameof(info));
+            ArgumentNullException.ThrowIfNull(key);
+            ArgumentNullException.ThrowIfNull(info);
 
             if (!(info is LocationInfo))
                 throw new ArgumentException("info not as supplied by TryGetValueEx method.");
@@ -770,19 +744,18 @@ namespace Plethora.Collections.Trees
 
         #region Protected Members
 
-        public Node Root
+        public Node? Root
         {
             get { return this.root; }
             protected internal set
             {
                 this.root = value;
 
-                if (this.root != null)
-                    this.root.RemoveFromParent();
+                this.root?.RemoveFromParent();
             }
         }
 
-        protected virtual Node AddNode(TKey key, TValue value, Node parent, Edge? edge)
+        protected virtual Node AddNode(TKey key, TValue value, Node? parent, Edge? edge)
         {
             //Insert node
             Node node = this.CreateNode(key, value);
@@ -793,6 +766,9 @@ namespace Plethora.Collections.Trees
             }
             else
             {
+                if (edge is null)
+                    throw new ArgumentException(nameof(edge));
+
                 switch (edge.Value)
                 {
                     case Edge.Left:
@@ -822,13 +798,10 @@ namespace Plethora.Collections.Trees
         private Node AddNodeInternal(TKey key, TValue value)
         {
             //Validation
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
 
-            Node parentNode;
-            Edge? edge;
-            bool result = this.Find(key, out parentNode, out edge);
+            bool result = this.Find(key, out var parentNode, out var edge);
 
             //Duplicate key found.
             if (result)
@@ -841,8 +814,7 @@ namespace Plethora.Collections.Trees
         private bool RemoveNodeInternal(Node node)
         {
             //Validation
-            if (node == null)
-                throw new ArgumentNullException(nameof(node));
+            ArgumentNullException.ThrowIfNull(node);
 
 
             if ((node.Left == null) && (node.Right == null))
@@ -854,7 +826,7 @@ namespace Plethora.Collections.Trees
             }
             else if ((node.Left == null) || (node.Right == null))
             {
-                Node childNode = node.Left ?? node.Right;
+                Node? childNode = node.Left ?? node.Right;
 
                 //Swap parents
                 if (node.Parent == null)
@@ -893,7 +865,7 @@ namespace Plethora.Collections.Trees
         /// else returns the parent node for an insert operation, 'null' if the tree is empty.
         /// </param>
         /// <param name="edge">
-        /// Output. Indicates the edge, relavtive to the parent returned by <paramref name="node"/>, where
+        /// Output. Indicates the edge, relative to the parent returned by <paramref name="node"/>, where
         /// the key be inserted. 
         /// Invalid if <paramref name="node"/> is null, or the return value is true.
         /// </param>
@@ -913,11 +885,11 @@ namespace Plethora.Collections.Trees
         /// ]]>
         /// X = Undefined, possibly null.
         /// </remarks>
-        private bool Find(TKey key, out Node node, out Edge? edge)
+        private bool Find(TKey key, [NotNullWhen(true), MaybeNullWhen(false)] out Node node, [MaybeNullWhen(false)] out Edge? edge)
         {
             edge = null;
-            Node parent = null;
-            Node current = this.Root;
+            Node? parent = null;
+            Node? current = this.Root;
             while(current != null)
             {
                 int result = this.comparer.Compare(current.Key, key);

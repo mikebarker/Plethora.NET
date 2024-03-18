@@ -61,17 +61,10 @@ namespace Plethora.Collections
             IEqualityComparer<TValue> valueEqualityComparer)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keySelector);
+            ArgumentNullException.ThrowIfNull(keyComparer);
 
 
             //Order the sets by key
@@ -106,14 +99,9 @@ namespace Plethora.Collections
             IEqualityComparer<TValue> valueEqualityComparer)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keyComparer);
 
 
             //Order the sets by key
@@ -220,23 +208,12 @@ namespace Plethora.Collections
             IEqualityComparer<TValue> valueEqualityComparer)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
-
-            if (valueSelector == null)
-                throw new ArgumentNullException(nameof(valueSelector));
-
-            if (valueEqualityComparer == null)
-                throw new ArgumentNullException(nameof(valueEqualityComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keySelector);
+            ArgumentNullException.ThrowIfNull(keyComparer);
+            ArgumentNullException.ThrowIfNull(valueSelector);
+            ArgumentNullException.ThrowIfNull(valueEqualityComparer);
 
 
             //Select the key-value pairs
@@ -389,17 +366,10 @@ namespace Plethora.Collections
             Action<TKey, TValue> onRightOnly)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keySelector);
+            ArgumentNullException.ThrowIfNull(keyComparer);
 
 
             //Order the sets by key
@@ -446,14 +416,9 @@ namespace Plethora.Collections
             Action<TKey, TValue> onRightOnly)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keyComparer);
 
 
             //Order the sets by key
@@ -587,23 +552,12 @@ namespace Plethora.Collections
             Action<TKey, TValue> onRightOnly)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keySelector == null)
-                throw new ArgumentNullException(nameof(keySelector));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
-
-            if (valueSelector == null)
-                throw new ArgumentNullException(nameof(valueSelector));
-
-            if (valueEqualityComparer == null)
-                throw new ArgumentNullException(nameof(valueEqualityComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keySelector);
+            ArgumentNullException.ThrowIfNull(keyComparer);
+            ArgumentNullException.ThrowIfNull(valueSelector);
+            ArgumentNullException.ThrowIfNull(valueEqualityComparer);
 
 
             //Select the key-value pairs
@@ -704,117 +658,109 @@ namespace Plethora.Collections
             Action<TKey, TValue> onRightOnly)
         {
             //Validation
-            if (leftSet == null)
-                throw new ArgumentNullException(nameof(leftSet));
-
-            if (rightSet == null)
-                throw new ArgumentNullException(nameof(rightSet));
-
-            if (keyComparer == null)
-                throw new ArgumentNullException(nameof(keyComparer));
-
-            if (valueEqualityComparer == null)
-                throw new ArgumentNullException(nameof(valueEqualityComparer));
+            ArgumentNullException.ThrowIfNull(leftSet);
+            ArgumentNullException.ThrowIfNull(rightSet);
+            ArgumentNullException.ThrowIfNull(keyComparer);
+            ArgumentNullException.ThrowIfNull(valueEqualityComparer);
 
 
             //Get the enumerators
-            using (var leftEnumerator = leftSet.GetEnumerator())
-            using (var rightEnumerator = rightSet.GetEnumerator())
-            {
-                //Move to first elements
-                bool leftIsFinished = !leftEnumerator.MoveNext();
-                bool rightIsFinished = !rightEnumerator.MoveNext();
+            using var leftEnumerator = leftSet.GetEnumerator();
+            using var rightEnumerator = rightSet.GetEnumerator();
 
-                //Loop through the ordered collections
-                while (!leftIsFinished && !rightIsFinished)
+            //Move to first elements
+            bool leftIsFinished = !leftEnumerator.MoveNext();
+            bool rightIsFinished = !rightEnumerator.MoveNext();
+
+            //Loop through the ordered collections
+            while (!leftIsFinished && !rightIsFinished)
+            {
+                var leftPair = leftEnumerator.Current;
+                var rightPair = rightEnumerator.Current;
+
+                TKey leftKey = leftPair.Key;
+                TKey rightKey = rightPair.Key;
+
+                int result = keyComparer.Compare(leftKey, rightKey);
+                if (result == 0) // leftKey == rightKey
+                {
+                    #region In Both
+
+                    TValue leftValue = leftPair.Value;
+                    TValue rightValue = rightPair.Value;
+
+                    if (valueEqualityComparer.Equals(leftValue, rightValue))
+                    {
+                        //Values match
+                        if (onMatch is not null)
+                            onMatch(leftKey, leftValue);
+                    }
+                    else
+                    {
+                        //Values do not match
+                        if (onDifferent is not null)
+                            onDifferent(leftKey, leftValue, rightValue);
+                    }
+
+
+                    // increment both
+                    leftIsFinished = !leftEnumerator.MoveNext();
+                    rightIsFinished = !rightEnumerator.MoveNext();
+
+                    #endregion
+                }
+                else if (result < 0) // leftKey < rightKey   (in the left only)
+                {
+                    #region Left Only
+
+                    if (onLeftOnly is not null)
+                    {
+                        TValue leftValue = leftPair.Value;
+                        onLeftOnly(leftKey, leftValue);
+                    }
+
+                    // increment left
+                    leftIsFinished = !leftEnumerator.MoveNext();
+
+                    #endregion
+                }
+                else if (result > 0) // leftKey > rightKey   (in the right only)
+                {
+                    #region Right Only
+
+                    if (onRightOnly is not null)
+                    {
+                        TValue rightValue = rightPair.Value;
+                        onRightOnly(rightKey, rightValue);
+                    }
+
+                    // increment right
+                    rightIsFinished = !rightEnumerator.MoveNext();
+
+                    #endregion
+                }
+            }
+
+            while (!leftIsFinished)
+            {
+                if (onLeftOnly is not null)
                 {
                     var leftPair = leftEnumerator.Current;
+                    onLeftOnly(leftPair.Key, leftPair.Value);
+                }
+
+                leftIsFinished = !leftEnumerator.MoveNext();
+            }
+
+            while (!rightIsFinished)
+            {
+                if (onRightOnly is not null)
+                {
                     var rightPair = rightEnumerator.Current;
-
-                    TKey leftKey = leftPair.Key;
-                    TKey rightKey = rightPair.Key;
-
-                    int result = keyComparer.Compare(leftKey, rightKey);
-                    if (result == 0) // leftKey == rightKey
-                    {
-                        #region In Both
-
-                        TValue leftValue = leftPair.Value;
-                        TValue rightValue = rightPair.Value;
-
-                        if (valueEqualityComparer.Equals(leftValue, rightValue))
-                        {
-                            //Values match
-                            if (!ReferenceEquals(onMatch, null))
-                                onMatch(leftKey, leftValue);
-                        }
-                        else
-                        {
-                            //Values do not match
-                            if (!ReferenceEquals(onDifferent, null))
-                                onDifferent(leftKey, leftValue, rightValue);
-                        }
-
-
-                        // increment both
-                        leftIsFinished = !leftEnumerator.MoveNext();
-                        rightIsFinished = !rightEnumerator.MoveNext();
-
-                        #endregion
-                    }
-                    else if (result < 0) // leftKey < rightKey   (in the left only)
-                    {
-                        #region Left Only
-
-                        if (!ReferenceEquals(onLeftOnly, null))
-                        {
-                            TValue leftValue = leftPair.Value;
-                            onLeftOnly(leftKey, leftValue);
-                        }
-
-                        // increment left
-                        leftIsFinished = !leftEnumerator.MoveNext();
-
-                        #endregion
-                    }
-                    else if (result > 0) // leftKey > rightKey   (in the right only)
-                    {
-                        #region Right Only
-
-                        if (!ReferenceEquals(onRightOnly, null))
-                        {
-                            TValue rightValue = rightPair.Value;
-                            onRightOnly(rightKey, rightValue);
-                        }
-
-                        // increment right
-                        rightIsFinished = !rightEnumerator.MoveNext();
-
-                        #endregion
-                    }
+                    onRightOnly(rightPair.Key, rightPair.Value);
                 }
 
-                while (!leftIsFinished)
-                {
-                    if (!ReferenceEquals(onLeftOnly, null))
-                    {
-                        var leftPair = leftEnumerator.Current;
-                        onLeftOnly(leftPair.Key, leftPair.Value);
-                    }
-
-                    leftIsFinished = !leftEnumerator.MoveNext();
-                }
-
-                while (!rightIsFinished)
-                {
-                    if (!ReferenceEquals(onRightOnly, null))
-                    {
-                        var rightPair = rightEnumerator.Current;
-                        onRightOnly(rightPair.Key, rightPair.Value);
-                    }
-
-                    rightIsFinished = !rightEnumerator.MoveNext();
-                }
+                rightIsFinished = !rightEnumerator.MoveNext();
             }
         }
 
@@ -853,12 +799,12 @@ namespace Plethora.Collections
 
         public static MergeItem<TKey, TValue> LeftOnly<TKey, TValue>(TKey key, TValue leftValue)
         {
-            return new MergeItem<TKey, TValue>(MergeType.LeftOnly, key, leftValue, default(TValue));
+            return new MergeItem<TKey, TValue>(MergeType.LeftOnly, key, leftValue, default);
         }
 
         public static MergeItem<TKey, TValue> RightOnly<TKey, TValue>(TKey key, TValue rightValue)
         {
-            return new MergeItem<TKey, TValue>(MergeType.RightOnly, key, default(TValue), rightValue);
+            return new MergeItem<TKey, TValue>(MergeType.RightOnly, key, default, rightValue);
         }
 
         public static MergeItem<TKey, TValue> Match<TKey, TValue>(TKey key, TValue value)
@@ -874,19 +820,19 @@ namespace Plethora.Collections
         #endregion
     }
 
-    public struct MergeItem<TKey, TValue>
+    public readonly struct MergeItem<TKey, TValue>
     {
         #region Fields
 
         public readonly MergeType MergeType;
         public readonly TKey Key;
-        public readonly TValue LeftValue;
-        public readonly TValue RightValue;
+        public readonly TValue? LeftValue;
+        public readonly TValue? RightValue;
         #endregion
 
         #region Constructors
 
-        internal MergeItem(MergeType mergeType, TKey key, TValue leftValue, TValue rightValue)
+        internal MergeItem(MergeType mergeType, TKey key, TValue? leftValue, TValue? rightValue)
         {
             this.MergeType = mergeType;
             this.Key = key;

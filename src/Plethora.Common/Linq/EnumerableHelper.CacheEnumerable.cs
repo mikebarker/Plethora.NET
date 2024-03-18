@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Linq
 {
@@ -20,7 +21,7 @@ namespace Plethora.Linq
 
                 private int index;
                 private bool hasCurrent;
-                private T current;
+                private T? current;
                 #endregion
 
                 #region Constructors
@@ -59,16 +60,19 @@ namespace Plethora.Linq
                 /// </returns>
                 public bool MoveNext()
                 {
-                    if (this.index < (this.owner.cachedElements.Count - 1))
+                    if (this.owner.cachedElements is not null)
                     {
-                        this.current = this.owner.cachedElements[++this.index];
-                        this.hasCurrent = true;
-                        return true;
+                        if (this.index < (this.owner.cachedElements.Count - 1))
+                        {
+                            this.current = this.owner.cachedElements[++this.index];
+                            this.hasCurrent = true;
+                            return true;
+                        }
                     }
 
-                    if (this.owner.sourceEnumerator == null)
+                    if (this.owner.sourceEnumerator is null)
                     {
-                        this.current = default(T);
+                        this.current = default;
                         this.hasCurrent = false;
                         return false;
                     }
@@ -87,7 +91,7 @@ namespace Plethora.Linq
 
                     ++this.index;
                     this.current = this.owner.sourceEnumerator.Current;
-                    this.owner.cachedElements.Add(this.current);
+                    this.owner.cachedElements!.Add(this.current);
                     this.hasCurrent = true;
                     return true;
                 }
@@ -109,7 +113,7 @@ namespace Plethora.Linq
                 /// <returns>
                 /// The current element in the collection.
                 /// </returns>
-                object IEnumerator.Current
+                object? IEnumerator.Current
                 {
                     get { return this.Current; }
                 }
@@ -130,7 +134,7 @@ namespace Plethora.Linq
                         if (!this.hasCurrent)
                             throw new InvalidOperationException("Enumeration has not started or already completed.");
 
-                        return this.current;
+                        return this.current!;
                     }
                 }
                 #endregion
@@ -138,10 +142,10 @@ namespace Plethora.Linq
 
             #region Fields
 
-            private IEnumerable<T> source;
+            private IEnumerable<T>? source;
 
-            private IEnumerator<T> sourceEnumerator;
-            private List<T> cachedElements;
+            private IEnumerator<T>? sourceEnumerator;
+            private List<T>? cachedElements;
             #endregion
 
             #region Constructors
@@ -180,7 +184,7 @@ namespace Plethora.Linq
             {
                 //Performance short-cut for fully cached results
                 if (this.source == null)
-                    return this.cachedElements.GetEnumerator();
+                    return this.cachedElements!.GetEnumerator();
 
                 //Performance short-cut for CacheEnumerable types
                 if (this.source is CacheEnumerable<T>)
@@ -194,7 +198,7 @@ namespace Plethora.Linq
                 if (this.cachedElements == null)
                 {
                     this.sourceEnumerator = this.source.GetEnumerator();
-                    this.cachedElements = new List<T>();
+                    this.cachedElements = new();
                 }
 
                 return new CacheEnumerator(this);

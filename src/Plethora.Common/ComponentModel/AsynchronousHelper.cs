@@ -10,7 +10,7 @@ namespace Plethora.ComponentModel
         #region GetValue
 
         /// <summary>
-        /// Extention method used to retrieve a value from a <see cref="ISynchronizeInvoke"/>
+        /// Extension method used to retrieve a value from a <see cref="ISynchronizeInvoke"/>
         /// object, where the getter must be called on the required thread.
         /// </summary>
         /// <typeparam name="TSync">The type of the synchronization object.</typeparam>
@@ -29,15 +29,12 @@ namespace Plethora.ComponentModel
             where TSync : ISynchronizeInvoke
         {
             //Validation
-            if (syncInvoke == null)
-                throw new ArgumentNullException(nameof(syncInvoke));
-
-            if (getter == null)
-                throw new ArgumentNullException(nameof(getter));
+            ArgumentNullException.ThrowIfNull(syncInvoke);
+            ArgumentNullException.ThrowIfNull(getter);
 
 
             if (syncInvoke.InvokeRequired)
-                return (TResult)syncInvoke.Invoke(getter, new object[] { syncInvoke });
+                return (TResult)syncInvoke.Invoke(getter, new object?[] { syncInvoke })!;
             else
                 return getter(syncInvoke);
         }
@@ -46,7 +43,7 @@ namespace Plethora.ComponentModel
         #region Execute
 
         /// <summary>
-        /// Extention method used to marshall the execution of an action to 
+        /// Extension method used to marshal the execution of an action to 
         /// the thread required by an <see cref="ISynchronizeInvoke"/>.
         /// </summary>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
@@ -59,11 +56,8 @@ namespace Plethora.ComponentModel
         public static void Execute(this ISynchronizeInvoke syncInvoke, Action action)
         {
             //Validation
-            if (syncInvoke == null)
-                throw new ArgumentNullException(nameof(syncInvoke));
-
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentNullException.ThrowIfNull(syncInvoke);
+            ArgumentNullException.ThrowIfNull(action);
 
 
             if (syncInvoke.InvokeRequired)
@@ -77,7 +71,7 @@ namespace Plethora.ComponentModel
         }
 
         /// <summary>
-        /// Extention method used to marshall the execution of an action to 
+        /// Extension method used to marshal the execution of an action to 
         /// the thread required by an <see cref="ISynchronizeInvoke"/>.
         /// </summary>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
@@ -91,7 +85,7 @@ namespace Plethora.ComponentModel
         /// </returns>
         /// <remarks>
         /// If no thread marshalling is required, the action is executed on the calling thread
-        /// and <paramref name="timeout"/> is ignorred.
+        /// and <paramref name="timeout"/> is ignored.
         /// </remarks>
         /// <example>
         ///  <code>
@@ -101,11 +95,8 @@ namespace Plethora.ComponentModel
         public static bool Execute(this ISynchronizeInvoke syncInvoke, Action action, TimeSpan timeout)
         {
             //Validation
-            if (syncInvoke == null)
-                throw new ArgumentNullException(nameof(syncInvoke));
-
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentNullException.ThrowIfNull(syncInvoke);
+            ArgumentNullException.ThrowIfNull(action);
 
             if ((timeout < TimeSpan.Zero) && (timeout != Timeout.InfiniteTimeSpan))
                 throw new ArgumentOutOfRangeException(
@@ -130,7 +121,7 @@ namespace Plethora.ComponentModel
         #region AsyncTask
 
         /// <summary>
-        /// Actionutes an <see cref="Action"/> asyncronously.
+        /// Executes an <see cref="Action"/> asynchronously.
         /// </summary>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
@@ -153,7 +144,7 @@ namespace Plethora.ComponentModel
         }
 
         /// <summary>
-        /// Actionutes an <see cref="Action"/> asyncronously.
+        /// Executes an <see cref="Action"/> asynchronously.
         /// </summary>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
@@ -178,13 +169,13 @@ namespace Plethora.ComponentModel
         public static IAsyncResult AsyncExecute(
             this ISynchronizeInvoke syncInvoke,
             Action action,
-            Action onCompletedSuccessfully)
+            Action? onCompletedSuccessfully)
         {
             return AsyncExecute(syncInvoke, action, onCompletedSuccessfully, null);
         }
 
         /// <summary>
-        /// Actionutes an <see cref="Action"/> asyncronously.
+        /// Executes an <see cref="Action"/> asynchronously.
         /// </summary>
         /// <param name="syncInvoke">The object for which the called must be synchronised.</param>
         /// <param name="action">The <see cref="Action"/> which must be executed on the synchronized value.</param>
@@ -206,22 +197,19 @@ namespace Plethora.ComponentModel
         public static IAsyncResult AsyncExecute(
             this ISynchronizeInvoke syncInvoke,
             Action action,
-            Action onCompletedSuccessfully,
-            Action<Exception> onException)
+            Action? onCompletedSuccessfully,
+            Action<Exception>? onException)
         {
             //Validation
-            if (syncInvoke == null)
-                throw new ArgumentNullException(nameof(syncInvoke));
-
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentNullException.ThrowIfNull(syncInvoke);
+            ArgumentNullException.ThrowIfNull(action);
 
 
-            AsyncExecuteResult asyncResult = new AsyncExecuteResult();
+            AsyncExecuteResult asyncResult = new();
 
             WaitCallback wrappedAction = (state) =>
                 {
-                    Exception exception = null;
+                    Exception? exception = null;
 
                     try
                     {
@@ -263,9 +251,9 @@ namespace Plethora.ComponentModel
 
         private class AsyncExecuteResult : IAsyncResult
         {
-            private readonly ManualResetEvent waitHandle = new ManualResetEvent(false);
+            private readonly ManualResetEvent waitHandle = new(false);
 
-            public object AsyncState => null;
+            public object? AsyncState => null;
 
             public WaitHandle AsyncWaitHandle => this.waitHandle;
 

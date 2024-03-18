@@ -80,23 +80,18 @@ namespace Plethora
         public static string Description(this Enum value, string separator, Type attributeType, string attributeProperty)
         {
             //Validation
-            if (separator == null)
-                throw new ArgumentNullException(nameof(separator));
-
-            if (attributeType == null)
-                throw new ArgumentNullException(nameof(attributeType));
-
-            if (attributeProperty == null)
-                throw new ArgumentNullException(nameof(attributeProperty));
+            ArgumentNullException.ThrowIfNull(separator);
+            ArgumentNullException.ThrowIfNull(attributeType);
+            ArgumentNullException.ThrowIfNull(attributeProperty);
 
 
-            var enumToDescription = CreateEnumToDescrptionFunc(attributeType, attributeProperty);
+            var enumToDescription = CreateEnumToDescriptionFunc(attributeType, attributeProperty);
 
             Type enumType = value.GetType();
 
-            object[] flagsAttribs = enumType.GetCustomAttributes(typeof(FlagsAttribute), false);
+            object[] flagsAttributes = enumType.GetCustomAttributes(typeof(FlagsAttribute), false);
 
-            if (flagsAttribs.Length == 0)
+            if (flagsAttributes.Length == 0)
             {
                 return enumToDescription(value);
             }
@@ -130,7 +125,7 @@ namespace Plethora
             long lngValue = Convert.ToInt64(value, CultureInfo.CurrentCulture);
 
             Array flagValues = Enum.GetValues(enumType);
-            List<string> rtnList = new List<string>(flagValues.Length);
+            List<string> rtnList = new(flagValues.Length);
             foreach (Enum flagValue in flagValues)
             {
                 long lngFlagValue = Convert.ToInt64(flagValue, CultureInfo.CurrentCulture);
@@ -139,7 +134,7 @@ namespace Plethora
                 if (lngValue == lngFlagValue)
                 {
                     string description = enumToDescription(flagValue);
-                    return new string[] { description };
+                    return [description];
                 }
                 //Each individual flag which is set returns, unless an exact is found
                 else if ((lngFlagValue != 0) && ((lngValue & lngFlagValue) == lngFlagValue))
@@ -150,33 +145,33 @@ namespace Plethora
             }
 
             if (rtnList.Count == 0)
-                return new string[] { value.ToString() };
+                return [value.ToString()];
             else
                 return rtnList.ToArray();
         }
 
-        private static Func<Enum, string> CreateEnumToDescrptionFunc(Type attributeType, string attributeProperty)
+        private static Func<Enum, string> CreateEnumToDescriptionFunc(Type attributeType, string attributeProperty)
         {
-            PropertyInfo propertyInfo = attributeType.GetProperty(attributeProperty, BindingFlags.Instance | BindingFlags.Public);
-            Func<Enum, string> enumToDescrptionFunc = delegate(Enum value)
-                {
-                    Type enumType = value.GetType();
+            PropertyInfo? propertyInfo = attributeType.GetProperty(attributeProperty, BindingFlags.Instance | BindingFlags.Public);
+            string EnumToDescriptionFunc(Enum value)
+            {
+                Type enumType = value.GetType();
 
-                    string enumString = value.ToString();
+                string enumString = value.ToString();
 
-                    FieldInfo field = enumType.GetField(enumString);
-                    if (field == null)
-                        return enumString;
+                FieldInfo? field = enumType.GetField(enumString);
+                if (field is null)
+                    return enumString;
 
-                    object[] attribs = field.GetCustomAttributes(attributeType, false);
-                    if (attribs.Length == 0)
-                        return enumString;
+                object[] attributes = field.GetCustomAttributes(attributeType, false);
+                if (attributes.Length == 0)
+                    return enumString;
 
-                    var description = propertyInfo.GetValue(attribs[0], null);
-                    return description.ToString();
-                };
+                var description = propertyInfo!.GetValue(attributes[0], null);
+                return description!.ToString()!;
+            }
 
-            return enumToDescrptionFunc;
+            return EnumToDescriptionFunc;
         }
         #endregion
     }

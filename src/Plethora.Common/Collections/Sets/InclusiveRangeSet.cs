@@ -5,6 +5,7 @@ using System.Linq;
 namespace Plethora.Collections.Sets
 {
     public class RangeInclusiveSet<T> : BaseSetImpl<T>, ISetCoreMultiSubtract<T>
+        where T : notnull
     {
         private readonly Range<T> range;
 

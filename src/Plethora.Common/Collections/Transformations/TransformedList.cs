@@ -38,7 +38,7 @@ namespace Plethora.Collections.Transformations
         #region Implementaiton of IList
 
         /// <inheritdoc/>
-        object IList.this[int index]
+        object? IList.this[int index]
         {
             get => this[index];
             set => throw new NotSupportedException();
@@ -51,7 +51,7 @@ namespace Plethora.Collections.Transformations
         bool IList.IsReadOnly => ((ICollection<T>)this).IsReadOnly;
 
         /// <inheritdoc/>
-        int IList.Add(object value)
+        int IList.Add(object? value)
         {
             if (value is T item)
             {
@@ -63,7 +63,7 @@ namespace Plethora.Collections.Transformations
         }
 
         /// <inheritdoc/>
-        bool IList.Contains(object value)
+        bool IList.Contains(object? value)
         {
             if (value is T item)
             {
@@ -74,7 +74,7 @@ namespace Plethora.Collections.Transformations
         }
 
         /// <inheritdoc/>
-        int IList.IndexOf(object value)
+        int IList.IndexOf(object? value)
         {
             if (value is T item)
             {
@@ -85,13 +85,13 @@ namespace Plethora.Collections.Transformations
         }
 
         /// <inheritdoc/>
-        void IList.Insert(int index, object value)
+        void IList.Insert(int index, object? value)
         {
             throw new NotSupportedException();
         }
 
         /// <inheritdoc/>
-        void IList.Remove(object value)
+        void IList.Remove(object? value)
         {
             if (value is T item)
             {

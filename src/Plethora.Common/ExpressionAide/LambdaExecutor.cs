@@ -4,19 +4,17 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using JetBrains.Annotations;
-
 namespace Plethora.ExpressionAide
 {
     public interface ILambdaExecutor
     {
-        object Execute(LambdaExpression lambda, params object[] args);
+        object? Execute(LambdaExpression lambda, params object?[] args);
     }
 
     public interface ILambdaExecutor<in TLambda> : ILambdaExecutor
         where TLambda : LambdaExpression
     {
-        object Execute(TLambda lambda, params object[] args);
+        object? Execute(TLambda lambda, params object?[] args);
     }
 
     public class LambdaExecutorBase<TLambda> : ILambdaExecutor<TLambda>
@@ -24,12 +22,12 @@ namespace Plethora.ExpressionAide
     {
         #region Delegates
 
-        private delegate object InvokeMethodDelegate(object[] args);
+        private delegate object? InvokeMethodDelegate(object?[] args);
         #endregion
 
         #region Fields
 
-        private readonly Step[] path;
+        private readonly Step[]? path;
         private readonly Delegate dupeDelegate;
         private readonly InvokeMethodDelegate invokeMethod;
         #endregion
@@ -49,10 +47,10 @@ namespace Plethora.ExpressionAide
 
         #region Protected Methods
 
-        protected object Execute(TLambda lambda, params object[] args)
+        protected object? Execute(TLambda lambda, params object?[] args)
         {
             //Inject the additional parameter to override the constant expression
-            object[] delegateArgs;
+            object?[] delegateArgs;
             if (this.path != null)
             {
                 delegateArgs = new object[args.Length + 1];
@@ -72,20 +70,23 @@ namespace Plethora.ExpressionAide
 
         private object GetMagicParameter(TLambda lambda)
         {
-            Expression tmp = lambda;
+            if (path is null)
+                throw new InvalidOperationException("path is null.");
+
+            Expression? tmp = lambda;
             foreach (var step in this.path)
             {
                 tmp = Move(tmp, step);
             }
-            return ((ConstantExpression)tmp).Value;
+            return ((ConstantExpression)tmp).Value!;
         }
 
-        private static Step[] FindMagicParameterPath(IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
+        private static Step[]? FindMagicParameterPath(IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
         {
             foreach (var pair in parameters)
             {
                 ParameterExpression parameterExpression = pair.Key;
-                if (parameterExpression.Name.StartsWith(ExpressionDuplicatorWithClosurePromotion.CLOSURE_CONSTANT_NAME))
+                if (parameterExpression.Name!.StartsWith(ExpressionDuplicatorWithClosurePromotion.CLOSURE_CONSTANT_NAME))
                 {
                     return pair.Value.ToArray();
                 }
@@ -107,7 +108,7 @@ namespace Plethora.ExpressionAide
                 case Direction.Operand:
                     return ((UnaryExpression)expr).Operand;
                 case Direction.Object:
-                    return ((MethodCallExpression)expr).Object;
+                    return ((MethodCallExpression)expr).Object!;
                 case Direction.Body:
                     return ((LambdaExpression)expr).Body;
                 case Direction.Test:
@@ -117,42 +118,50 @@ namespace Plethora.ExpressionAide
                 case Direction.IfFalse:
                     return ((ConditionalExpression)expr).IfFalse;
                 case Direction.Expression:
-                    if (expr is InvocationExpression)
-                        return ((InvocationExpression)expr).Expression;
-                    else if (expr is TypeBinaryExpression)
-                        return ((TypeBinaryExpression)expr).Expression;
-                    else if (expr is MemberExpression)
-                        return ((MemberExpression)expr).Expression;
+                    {
+                        if (expr is InvocationExpression invocationExpression)
+                            return invocationExpression.Expression;
+                        else if (expr is TypeBinaryExpression typeBinaryExpression)
+                            return typeBinaryExpression.Expression;
+                        else if (expr is MemberExpression memberExpression)
+                            return memberExpression.Expression!;
+                    }
                     break;
                 case Direction.NewExpression:
-                    if (expr is ListInitExpression)
-                        return ((ListInitExpression)expr).NewExpression;
-                    else if (expr is MemberInitExpression)
-                        return ((MemberInitExpression)expr).NewExpression;
+                    {
+                        if (expr is ListInitExpression listInitExpression)
+                            return listInitExpression.NewExpression;
+                        else if (expr is MemberInitExpression memberInitExpression)
+                            return memberInitExpression.NewExpression;
+                    }
                     break;
 
                 case Direction.Arguments:
-                    if (expr is MethodCallExpression)
                     {
-                        IList<Expression> arguments = ((MethodCallExpression)expr).Arguments;
-                        return arguments[step.Index];
-                    }
-                    else if (expr is NewExpression)
-                    {
-                        IList<Expression> arguments = ((NewExpression)expr).Arguments;
-                        return arguments[step.Index];
-                    }
-                    else if (expr is InvocationExpression)
-                    {
-                        IList<Expression> arguments = ((InvocationExpression)expr).Arguments;
-                        return arguments[step.Index];
+                        if (expr is MethodCallExpression methodCallExpression)
+                        {
+                            IList<Expression> arguments = methodCallExpression.Arguments;
+                            return arguments[step.Index];
+                        }
+                        else if (expr is NewExpression newExpression)
+                        {
+                            IList<Expression> arguments = newExpression.Arguments;
+                            return arguments[step.Index];
+                        }
+                        else if (expr is InvocationExpression _invocationExpression)
+                        {
+                            IList<Expression> arguments = _invocationExpression.Arguments;
+                            return arguments[step.Index];
+                        }
                     }
                     break;
                 case Direction.Expressions:
-                    if (expr is NewArrayExpression)
                     {
-                        IList<Expression> arguments = ((NewArrayExpression)expr).Expressions;
-                        return arguments[step.Index];
+                        if (expr is NewArrayExpression newArrayExpression)
+                        {
+                            IList<Expression> arguments = newArrayExpression.Expressions;
+                            return arguments[step.Index];
+                        }
                     }
                     break;
             }
@@ -170,31 +179,32 @@ namespace Plethora.ExpressionAide
         /// <returns></returns>
         /// <remarks>
         /// This provides an optimisation where, by creating a named delegate, the
-        /// dupilcated delegate no longer need to use DynamicInvoke.
+        /// duplicated delegate no longer need to use DynamicInvoke.
         /// </remarks>
         private InvokeMethodDelegate GetInvokeDelegateFor(Delegate @delegate)
         {
-            InvokeMethodDelegate rtn = null;
+            InvokeMethodDelegate? rtn = null;
 
             Type delegateType = @delegate.GetType();
             if (delegateType.IsGenericType)
             {
                 Type[] genericArgs = delegateType.GetGenericArguments();
 
-                MethodInfo methodInfo = typeof(LambdaExecutorBase<TLambda>)
+                MethodInfo? methodInfo = typeof(LambdaExecutorBase<TLambda>)
                     .GetMethods(BindingFlags.NonPublic | BindingFlags.Instance)
                     .Where(method =>
                            method.Name == "InvokeMethod" &&
                            method.GetGenericArguments().Length == genericArgs.Length)
                     .SingleOrDefault();
 
-                if (methodInfo != default(MethodInfo))
+                if (methodInfo != default)
                 {
                     MethodInfo genericMethod = methodInfo.MakeGenericMethod(genericArgs);
-                    rtn = (InvokeMethodDelegate)Delegate.CreateDelegate(
-                                                                   typeof(InvokeMethodDelegate),
-                                                                   this,
-                                                                   genericMethod, false);
+                    rtn = (InvokeMethodDelegate?)Delegate.CreateDelegate(
+                        typeof(InvokeMethodDelegate),
+                        this,
+                        genericMethod,
+                        false);
                 }
             }
 
@@ -205,8 +215,7 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
-        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
-        private object InvokeMethod<TResult>(object[] args)
+        private object? InvokeMethod<TResult>(object[] args)
         {
             if (args.Length != 0)
                 throw new ArgumentException("Invalid number of arguments");
@@ -219,15 +228,14 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
-        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
-        private object InvokeMethod<T1, TResult>(object[] args)
+        private object? InvokeMethod<T1, TResult>(object?[] args)
         {
             if (args.Length != 1)
                 throw new ArgumentException("Invalid number of arguments");
 
-            T1 arg1 = (T1)args[0];
+            T1? arg1 = (T1?)args[0];
 
-            var del = (Func<T1, TResult>)this.dupeDelegate;
+            var del = (Func<T1?, TResult>)this.dupeDelegate;
             return del.Invoke(arg1);
         }
 
@@ -235,16 +243,15 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
-        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
-        private object InvokeMethod<T1, T2, TResult>(object[] args)
+        private object? InvokeMethod<T1, T2, TResult>(object?[] args)
         {
             if (args.Length != 2)
                 throw new ArgumentException("Invalid number of arguments");
 
-            T1 arg1 = (T1)args[0];
-            T2 arg2 = (T2)args[1];
+            T1? arg1 = (T1?)args[0];
+            T2? arg2 = (T2?)args[1];
 
-            var del = (Func<T1, T2, TResult>)this.dupeDelegate;
+            var del = (Func<T1?, T2?, TResult>)this.dupeDelegate;
             return del.Invoke(arg1, arg2);
         }
 
@@ -252,17 +259,16 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
-        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
-        private object InvokeMethod<T1, T2, T3, TResult>(object[] args)
+        private object? InvokeMethod<T1, T2, T3, TResult>(object?[] args)
         {
             if (args.Length != 3)
                 throw new ArgumentException("Invalid number of arguments");
 
-            T1 arg1 = (T1)args[0];
-            T2 arg2 = (T2)args[1];
-            T3 arg3 = (T3)args[2];
+            T1? arg1 = (T1?)args[0];
+            T2? arg2 = (T2?)args[1];
+            T3? arg3 = (T3?)args[2];
 
-            var del = (Func<T1, T2, T3, TResult>)this.dupeDelegate;
+            var del = (Func<T1?, T2?, T3?, TResult>)this.dupeDelegate;
             return del.Invoke(arg1, arg2, arg3);
         }
 
@@ -270,22 +276,21 @@ namespace Plethora.ExpressionAide
         /// Method referenced dynamically by <see cref="GetInvokeDelegateFor"/> method.
         /// DO NOT REMOVE.
         /// </remarks>
-        [UsedImplicitly(ImplicitUseKindFlags.Access, ImplicitUseTargetFlags.Itself)]
-        private object InvokeMethod<T1, T2, T3, T4, TResult>(object[] args)
+        private object? InvokeMethod<T1, T2, T3, T4, TResult>(object?[] args)
         {
             if (args.Length != 4)
                 throw new ArgumentException("Invalid number of arguments");
 
-            T1 arg1 = (T1)args[0];
-            T2 arg2 = (T2)args[1];
-            T3 arg3 = (T3)args[2];
-            T4 arg4 = (T4)args[3];
+            T1? arg1 = (T1?)args[0];
+            T2? arg2 = (T2?)args[1];
+            T3? arg3 = (T3?)args[2];
+            T4? arg4 = (T4?)args[3];
 
-            var del = (Func<T1, T2, T3, T4, TResult>)this.dupeDelegate;
+            var del = (Func<T1?, T2?, T3?, T4?, TResult>)this.dupeDelegate;
             return del.Invoke(arg1, arg2, arg3, arg4);
         }
 
-        private object InvokeMethod(object[] args)
+        private object? InvokeMethod(object?[] args)
         {
             return this.dupeDelegate.DynamicInvoke(args);
         }
@@ -294,12 +299,12 @@ namespace Plethora.ExpressionAide
 
         #region Implementation of ILambdaExecutor<TLambda>
 
-        object ILambdaExecutor.Execute(LambdaExpression lambda, params object[] args)
+        object? ILambdaExecutor.Execute(LambdaExpression lambda, params object?[] args)
         {
             return this.Execute((TLambda)lambda, args);
         }
 
-        object ILambdaExecutor<TLambda>.Execute(TLambda lambda, params object[] args)
+        object? ILambdaExecutor<TLambda>.Execute(TLambda lambda, params object?[] args)
         {
             return this.Execute(lambda, args);
         }
@@ -321,7 +326,7 @@ namespace Plethora.ExpressionAide
 
         #region Public Methods
 
-        public new object Execute(LambdaExpression lambda, params object[] args)
+        public new object? Execute(LambdaExpression lambda, params object[] args)
         {
             return base.Execute(lambda, args);
         }
@@ -345,7 +350,7 @@ namespace Plethora.ExpressionAide
 
         public TResult Execute(Expression<Func<TResult>> lambda)
         {
-            return (TResult)base.Execute(lambda);
+            return (TResult)base.Execute(lambda)!;
         }
         #endregion
     }
@@ -367,7 +372,7 @@ namespace Plethora.ExpressionAide
 
         public TResult Execute(Expression<Func<T, TResult>> lambda, T arg)
         {
-            return (TResult)base.Execute(lambda, arg);
+            return (TResult)base.Execute(lambda, arg)!;
         }
         #endregion
     }
@@ -389,7 +394,7 @@ namespace Plethora.ExpressionAide
 
         public TResult Execute(Expression<Func<T1, T2, TResult>> lambda, T1 arg1, T2 arg2)
         {
-            return (TResult)base.Execute(lambda, arg1, arg2);
+            return (TResult)base.Execute(lambda, arg1, arg2)!;
         }
         #endregion
     }
@@ -411,7 +416,7 @@ namespace Plethora.ExpressionAide
 
         public TResult Execute(Expression<Func<T1, T2, T3, TResult>> lambda, T1 arg1, T2 arg2, T3 arg3)
         {
-            return (TResult)base.Execute(lambda, arg1, arg2, arg3);
+            return (TResult)base.Execute(lambda, arg1, arg2, arg3)!;
         }
         #endregion
     }
@@ -433,7 +438,7 @@ namespace Plethora.ExpressionAide
 
         public TResult Execute(Expression<Func<T1, T2, T3, T4, TResult>> lambda, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
         {
-            return (TResult)base.Execute(lambda, arg1, arg2, arg3, arg4);
+            return (TResult)base.Execute(lambda, arg1, arg2, arg3, arg4)!;
         }
         #endregion
     }

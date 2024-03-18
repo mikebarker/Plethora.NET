@@ -19,7 +19,7 @@ namespace Plethora.Collections
             #region Fields
 
             private readonly WeakCollection<T> weakCollection;
-            private T current;
+            private T? current;
             private int index;
 
             #endregion
@@ -28,8 +28,7 @@ namespace Plethora.Collections
 
             public Enumerator(WeakCollection<T> weakCollection)
             {
-                if (weakCollection == null)
-                    throw new ArgumentNullException(nameof(weakCollection));
+                ArgumentNullException.ThrowIfNull(weakCollection);
 
 
                 this.weakCollection = weakCollection;
@@ -96,9 +95,9 @@ namespace Plethora.Collections
                         return false;
                     }
 
-                    this.weakCollection.innerList[this.index].TryGetTarget(out T target);
+                    this.weakCollection.innerList[this.index].TryGetTarget(out var target);
                     this.current = target;
-                    if (this.current != null)
+                    if (this.current is not null)
                     {
                         return true;
                     }
@@ -147,15 +146,14 @@ namespace Plethora.Collections
 
         public WeakCollection()
         {
-            this.innerList = new List<WeakReference<T>>();
+            this.innerList = new();
         }
 
         public WeakCollection(IEnumerable<T> collection)
             : this()
         {
             //Validation
-            if (collection == null)
-                throw new ArgumentNullException(nameof(collection));
+            ArgumentNullException.ThrowIfNull(collection);
 
             foreach (T item in collection)
             {
@@ -224,17 +222,16 @@ namespace Plethora.Collections
         /// </remarks>
         public void Add(T item, bool minimiseMemoryUsage)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             var weakReference = new WeakReference<T>(item);
 
             if (minimiseMemoryUsage)
             {
-                //Try to reuse memory if it is availble
+                //Try to reuse memory if it is available
                 for (int i = 0; i < this.innerList.Count; i++)
                 {
-                    if (!this.innerList[i].TryGetTarget(out T _))
+                    if (!this.innerList[i].TryGetTarget(out _))
                     {
                         this.innerList[i] = weakReference;  
                         return;
@@ -268,13 +265,12 @@ namespace Plethora.Collections
         /// </remarks>
         public bool Contains(T item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
 
             foreach (var weakReference in this.innerList)
             {
-                weakReference.TryGetTarget(out T target);
+                weakReference.TryGetTarget(out var target);
                 if (item.Equals(target))
                     return true;
             }
@@ -327,13 +323,12 @@ namespace Plethora.Collections
         /// <exception cref="NotSupportedException">The <see cref="ICollection{T}"/> is read-only.</exception>
         public bool Remove(T item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
 
             for (int i = 0; i < this.innerList.Count; i++)
             {
-                this.innerList[i].TryGetTarget(out T target);
+                this.innerList[i].TryGetTarget(out var target);
                 if (item.Equals(target))
                 {
                     this.innerList.RemoveAt(i);
@@ -357,7 +352,7 @@ namespace Plethora.Collections
                 int count = 0;
                 foreach (var weakReference in this.innerList)
                 {
-                    if (weakReference.TryGetTarget(out T _))
+                    if (weakReference.TryGetTarget(out _))
                         count++;
                 }
 
@@ -403,7 +398,7 @@ namespace Plethora.Collections
             var list = new List<T>(this.EstimateCount);
             foreach (var weakReference in this.innerList)
             {
-                if (weakReference.TryGetTarget(out T target))
+                if (weakReference.TryGetTarget(out var target))
                     list.Add(target);
             }
 
@@ -417,7 +412,7 @@ namespace Plethora.Collections
         {
             for (int i = this.innerList.Count - 1; i >= 0; i--)
             {
-                if (!this.innerList[i].TryGetTarget(out T _))
+                if (!this.innerList[i].TryGetTarget(out _))
                 {
                     this.innerList.RemoveAt(i);
                 }

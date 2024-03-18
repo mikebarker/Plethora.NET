@@ -12,14 +12,13 @@ namespace Plethora.Mvvm.Bindings
     /// </summary>
     public class IndexerBindingElementDefinition : BindingElementDefinition
     {
-        public struct Argument
+        public readonly struct Argument
         {
             public Argument(
                 [NotNull] string value,
                 [CanBeNull] Type type = null)
             {
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
 
                 this.Value = value;
                 this.Type = type;
@@ -37,20 +36,20 @@ namespace Plethora.Mvvm.Bindings
             {
                 if (obj is null) return false;
 
-                if (!(obj is Argument other))
+                if (obj is not Argument other)
                     return false;
 
                 return this.Equals(other);
             }
 
-            public bool Equals(Argument other)
+            public readonly bool Equals(Argument other)
             {
                 return
                     string.Equals(this.Value, other.Value) &&
                     Type.Equals(this.Type, other.Type);
             }
 
-            public override int GetHashCode()
+            public override readonly int GetHashCode()
             {
                 return HashCodeHelper.GetHashCode(this.Value, this.Type);
             }
@@ -61,8 +60,7 @@ namespace Plethora.Mvvm.Bindings
         public IndexerBindingElementDefinition(
             [NotNull, ItemNotNull] Argument[] arguments)
         {
-            if (arguments == null)
-                throw new ArgumentNullException(nameof(arguments));
+            ArgumentNullException.ThrowIfNull(arguments);
 
             this.Arguments = arguments;
         }

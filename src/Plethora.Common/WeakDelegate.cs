@@ -3,8 +3,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-using JetBrains.Annotations;
-
 namespace Plethora
 {
     /// <summary>
@@ -175,10 +173,10 @@ namespace Plethora
             DelegateReference<TDelegate> delegateReference,
             Func<BinaryExpression, MethodCallExpression, MethodCallExpression, Expression> generateBody)
         {
-            var del = (Delegate)(object)@delegate;
+            var del = (Delegate?)(object?)@delegate;
 
             //For static method calls, return the delegate without wrapping
-            if (del.Target == null)
+            if (del!.Target == null)
                 return @delegate;
 
             WeakReference weakTarget = new WeakReference(del.Target);
@@ -202,7 +200,7 @@ namespace Plethora
 
 
             Type type = delegateReference.GetType();
-            MethodInfo onTargetCollected = type.GetMethod("OnTargetCollected", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+            MethodInfo? onTargetCollected = type.GetMethod("OnTargetCollected", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!;
 
             MethodCallExpression onTargetCollectedCallExp = Expression.Call(Expression.Constant(delegateReference), onTargetCollected);
 
@@ -244,13 +242,13 @@ namespace Plethora
 
         internal abstract class DelegateReference
         {
-            public WeakReference _weakTarget;
+            public WeakReference? _weakTarget;
 
             public bool IsTargetAlive
             {
                 get
                 {
-                    var isTargetAlive = this._weakTarget.IsAlive;
+                    var isTargetAlive = this._weakTarget?.IsAlive ?? false;
                     if (!isTargetAlive)
                     {
                         this.CallOnTargetCollected();
@@ -265,7 +263,7 @@ namespace Plethora
 
         private abstract class DelegateReference<TDelegate> : DelegateReference
         {
-            public TDelegate _delegate;
+            public TDelegate? _delegate;
         }
 
         private class DelegateReference_Action<TDelegate> : DelegateReference<TDelegate>
@@ -288,7 +286,7 @@ namespace Plethora
                 if (this.onTargetCollectedCalled)
                     return;
 
-                this.onTargetCollected(this._delegate);
+                this.onTargetCollected(this._delegate!);
                 this.onTargetCollectedCalled = true;
             }
         }
@@ -308,13 +306,12 @@ namespace Plethora
                 this.OnTargetCollected();
             }
 
-            [UsedImplicitly]
-            private TResult OnTargetCollected() // Do not change signature, used by reflection
+            private TResult? OnTargetCollected() // Do not change signature, used by reflection
             {
                 if (this.onTargetCollectedCalled)
-                    return default(TResult);
+                    return default;
 
-                var result = this.onTargetCollected(this._delegate);
+                var result = this.onTargetCollected(this._delegate!);
                 this.onTargetCollectedCalled = true;
                 return result;
             }
@@ -331,24 +328,24 @@ namespace Plethora
 
         public static bool IsTargetAlive(this Delegate @delegate)
         {
-            object target = @delegate.Target;
+            object? target = @delegate.Target;
             if (target != null)
             {
                 Type targetType = target.GetType();
                 if (targetType.FullName == ClosureTypeName)
                 {
-                    FieldInfo fieldInfo = targetType.GetField(ConstantsFieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-                    if (fieldInfo == null)
+                    FieldInfo? fieldInfo = targetType.GetField(ConstantsFieldName, BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+                    if (fieldInfo is null)
                         throw new MissingFieldException($"Expected field {ConstantsFieldName} not found on type {ClosureTypeName}.");
 
-                    object value = fieldInfo.GetValue(target);
-                    object[] closureConstants = (object[])value;
+                    object? value = fieldInfo.GetValue(target);
+                    object[] closureConstants = (object[])value!;
 
-                    WeakDelegate.DelegateReference delegateReference = closureConstants
+                    WeakDelegate.DelegateReference? delegateReference = closureConstants
                         .OfType<WeakDelegate.DelegateReference>()
                         .SingleOrDefault();
 
-                    if (delegateReference != null)
+                    if (delegateReference is not null)
                         return delegateReference.IsTargetAlive;
                 }
             }

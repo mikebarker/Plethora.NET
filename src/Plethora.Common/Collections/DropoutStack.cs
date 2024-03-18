@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections
 {
@@ -24,9 +25,9 @@ namespace Plethora.Collections
                 this.stack = stack;
             }
 
-            public T Current => this.stack.items[this.index];
+            public T Current => this.stack.items[this.index]!;
 
-            object IEnumerator.Current => this.Current;
+            object? IEnumerator.Current => this.Current;
 
             void IDisposable.Dispose()
             {
@@ -60,7 +61,7 @@ namespace Plethora.Collections
             }
         }
 
-        private readonly T[] items;
+        private readonly T?[] items;
         private int firstIndex;
         private int count;
 
@@ -168,7 +169,7 @@ namespace Plethora.Collections
             if (!TryPeek(out var result))
                 throw new InvalidOperationException();
 
-            return result;
+            return result!;
         }
 
         /// <summary>
@@ -181,7 +182,7 @@ namespace Plethora.Collections
         /// <returns>
         /// true if there is an object at the top of the <see cref="DropoutStack{T}"/>; false if the <see cref="DropoutStack{T}"/> is empty.
         /// </returns>
-        public bool TryPop(out T result)
+        public bool TryPop([MaybeNullWhen(false)] out T result)
         {
             if (this.count == 0)
             {
@@ -189,7 +190,7 @@ namespace Plethora.Collections
                 return false;
             }
 
-            result = this.items[this.firstIndex];
+            result = this.items[this.firstIndex]!;
             this.items[this.firstIndex] = default; // Release the item if a reference.
 
             this.count--;
@@ -210,7 +211,7 @@ namespace Plethora.Collections
         /// <returns>
         /// true if there is an object at the top of the <see cref="DropoutStack{T}"/>; false if the <see cref="DropoutStack{T}"/> is empty.
         /// </returns>
-        public bool TryPeek(out T result)
+        public bool TryPeek([MaybeNullWhen(false)] out T result)
         {
             if (this.count == 0)
             {
@@ -218,7 +219,7 @@ namespace Plethora.Collections
                 return false;
             }
 
-            result = this.items[this.firstIndex];
+            result = this.items[this.firstIndex]!;
             return true;
         }
 
@@ -255,8 +256,7 @@ namespace Plethora.Collections
         public void CopyTo(T[] array, int arrayIndex)
         {
             // Validation
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+            ArgumentNullException.ThrowIfNull(array);
 
             if (array.Rank != 1)
                 throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());

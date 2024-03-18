@@ -62,26 +62,24 @@ namespace Plethora.Collections
         public SortedByKeyList(Func<T, TKey> getKeyFunc, DuplicatesPolicy duplicatesPolicy, IComparer<TKey> comparer)
         {
             //Validation
-            if (getKeyFunc == null)
-                throw new ArgumentNullException(nameof(getKeyFunc));
+            ArgumentNullException.ThrowIfNull(getKeyFunc);
 
             if ((duplicatesPolicy != DuplicatesPolicy.Allow) &&
-                (duplicatesPolicy != DuplicatesPolicy.Ignor) &&
+                (duplicatesPolicy != DuplicatesPolicy.Ignore) &&
                 (duplicatesPolicy != DuplicatesPolicy.Replace) &&
                 (duplicatesPolicy != DuplicatesPolicy.Error))
             {
                 throw new ArgumentOutOfRangeException(nameof(duplicatesPolicy), duplicatesPolicy,
-                    ResourceProvider.ArgMustBeOneOf(nameof(duplicatesPolicy), "Allow", "Ignor", "Replace", "Error"));
+                    ResourceProvider.ArgMustBeOneOf(nameof(duplicatesPolicy), "Allow", "Ignore", "Replace", "Error"));
             }
 
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(comparer);
 
 
             this.getKeyFunc = getKeyFunc;
             this.duplicatesPolicy = duplicatesPolicy;
             this.comparer = comparer;
-            this.innerList = new List<T>();
+            this.innerList = new();
         }
 
         /// <summary>
@@ -140,8 +138,7 @@ namespace Plethora.Collections
         public int Add(T item)
         {
             //Validation
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
 
             TKey key = this.getKeyFunc(item);
@@ -153,7 +150,7 @@ namespace Plethora.Collections
                 {
                     throw new InvalidOperationException(ResourceProvider.ArgAddingDuplicate());
                 }
-                else if (this.duplicatesPolicy == DuplicatesPolicy.Ignor)
+                else if (this.duplicatesPolicy == DuplicatesPolicy.Ignore)
                 {
                     return -1;
                 }
@@ -210,8 +207,7 @@ namespace Plethora.Collections
         /// <param name="key">The key of the object to locate in the <see cref="ICollection{T}"/>.</param>
         public bool Contains(TKey key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
 
             int index = this.BinarySearch(key);
@@ -383,8 +379,7 @@ namespace Plethora.Collections
         public void AddRange(IEnumerable<T> enumerable)
         {
             //Validation
-            if (enumerable == null)
-                throw new ArgumentNullException(nameof(enumerable));
+            ArgumentNullException.ThrowIfNull(enumerable);
 
             foreach (T item in enumerable)
             {
@@ -474,7 +469,7 @@ namespace Plethora.Collections
             return this.innerList.Exists(match);
         }
 
-        public T Find(Predicate<T> match)
+        public T? Find(Predicate<T> match)
         {
             return this.innerList.Find(match);
         }
@@ -499,7 +494,7 @@ namespace Plethora.Collections
             return this.innerList.FindIndex(startIndex, count, match);
         }
 
-        public T FindLast(Predicate<T> match)
+        public T? FindLast(Predicate<T> match)
         {
             return this.innerList.FindLast(match);
         }
@@ -542,7 +537,7 @@ namespace Plethora.Collections
 
         /// <returns>
         /// If >= 0 the return value contains the index of the first item with the given key;
-        /// if negative the return value is the bit-wise compilment of the point in the list
+        /// if negative the return value is the bit-wise compliment of the point in the list
         /// where the value would be inserted.
         /// </returns>
         /// <see cref="BinarySearch(TKey)"/>
@@ -637,7 +632,7 @@ namespace Plethora.Collections
             {
                 return
                     (this.duplicatesPolicy == DuplicatesPolicy.Error) ||
-                    (this.duplicatesPolicy == DuplicatesPolicy.Ignor) ||
+                    (this.duplicatesPolicy == DuplicatesPolicy.Ignore) ||
                     (this.duplicatesPolicy == DuplicatesPolicy.Replace);
             }
         }

@@ -13,9 +13,9 @@ namespace Plethora.Collections.Trees
             private readonly BinaryTree<TKey, TValue> tree;
             private bool hasStart = false;
             private bool hasStop = false;
-            private TKey start;
-            private TKey stop;
-            private Node currentNode;
+            private TKey? start;
+            private TKey? stop;
+            private Node? currentNode;
             #endregion
 
             #region Constructors
@@ -91,7 +91,7 @@ namespace Plethora.Collections.Trees
                 // null indicates the end of the enumeration
                 bool result = (this.currentNode != null);
                 if (result && this.hasStop)
-                    result &= (this.tree.comparer.Compare(this.currentNode.Key, this.stop) <= 0);
+                    result &= (this.tree.comparer.Compare(this.currentNode!.Key, this.stop) <= 0);
 
                 return result;
             }
@@ -129,7 +129,7 @@ namespace Plethora.Collections.Trees
             /// -or-
             /// The collection was modified after the enumerator was created.
             /// </exception>
-            object IEnumerator.Current
+            object? IEnumerator.Current
             {
                 get { return this.Current; }
             }
@@ -147,7 +147,7 @@ namespace Plethora.Collections.Trees
                     if (!this.hasStart)
                         throw new InvalidOperationException("No start value defined.");
 
-                    return this.start;
+                    return this.start!;
                 }
                 set
                 {
@@ -166,7 +166,7 @@ namespace Plethora.Collections.Trees
                     if (!this.hasStop)
                         throw new InvalidOperationException("No stop value defined.");
 
-                    return this.stop;
+                    return this.stop!;
                 }
                 set
                 {
@@ -178,7 +178,7 @@ namespace Plethora.Collections.Trees
 
             #region Properties
 
-            protected Node CurrentNode
+            protected Node? CurrentNode
             {
                 get { return this.currentNode; }
             }
@@ -186,7 +186,7 @@ namespace Plethora.Collections.Trees
 
             #region Private Methods
 
-            private Node FindFirstNode()
+            private Node? FindFirstNode()
             {
                 if (!this.hasStart)
                 {
@@ -197,8 +197,8 @@ namespace Plethora.Collections.Trees
                 }
                 else
                 {
-                    Node n = this.tree.Root;
-                    Node startNode = null;
+                    Node? n = this.tree.Root;
+                    Node? startNode = null;
 
                     while (n != null)
                     {
@@ -232,16 +232,17 @@ namespace Plethora.Collections.Trees
                 return node;
             }
 
-            private static Node FirstRightParent(Node node)
+            private static Node? FirstRightParent(Node node)
             {
-                while (node.RelationToParent == Edge.Right)
+                Node? _node = node;
+                while (_node?.RelationToParent == Edge.Right)
                 {
-                    node = node.Parent;
+                    _node = _node?.Parent;
                 }
 
-                return (node.RelationToParent == null)
+                return (_node?.RelationToParent == null)
                     ? null
-                    : node.Parent;
+                    : _node.Parent;
             }
             #endregion
         }
@@ -262,10 +263,7 @@ namespace Plethora.Collections.Trees
 
             #region BaseEnumerator Overrides
 
-            public override TValue Current
-            {
-                get { return this.CurrentNode.Value; }
-            }
+            public override TValue Current => this.CurrentNode!.Value;
             #endregion
         }
 
@@ -287,7 +285,7 @@ namespace Plethora.Collections.Trees
 
             public override TKey Current
             {
-                get { return this.CurrentNode.Key; }
+                get { return this.CurrentNode!.Key; }
             }
             #endregion
         }
@@ -310,7 +308,7 @@ namespace Plethora.Collections.Trees
 
             public override KeyValuePair<TKey, TValue> Current
             {
-                get { return new KeyValuePair<TKey, TValue>(this.CurrentNode.Key, this.CurrentNode.Value); }
+                get { return new KeyValuePair<TKey, TValue>(this.CurrentNode!.Key, this.CurrentNode!.Value); }
             }
             #endregion
         }

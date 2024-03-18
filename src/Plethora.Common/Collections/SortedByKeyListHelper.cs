@@ -7,14 +7,15 @@ namespace Plethora.Collections
     public static class SortedByKeyListHelper
     {
         public static IEnumerable<T> GetByKey<TKey, T>(this SortedByKeyList<TKey, T> list, TKey key)
+            where TKey : notnull
         {
             return GetByRange(list, new Range<TKey>(key, true, key, true, list.Comparer));
         }
 
         public static IEnumerable<T> GetByRange<TKey, T>(this SortedByKeyList<TKey, T> list, Range<TKey> range)
+            where TKey : notnull
         {
-            if (list == null)
-                throw new ArgumentNullException(nameof(list));
+            ArgumentNullException.ThrowIfNull(list);
 
             if (list.Comparer.Compare(range.Min, range.Max) > 0) // min > max
                 throw new ArgumentException(ResourceProvider.ArgMustBeLessThan("range.Min", "range.Max"), nameof(range));

@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 
 namespace Plethora.Threading
 {
@@ -17,7 +16,7 @@ namespace Plethora.Threading
         /// <param name="sourceFilePath">The source file path of the origin of the lock.</param>
         /// <param name="sourceLineNumber">The source line number of the origin of the lock.</param>
         public LockContext(
-            [NotNull] object @lock,
+            object @lock,
             LockRequestStatus lockRequestStatus,
             string memberName,
             string sourceFilePath,
@@ -36,7 +35,6 @@ namespace Plethora.Threading
         /// <summary>
         /// Gets the lock.
         /// </summary>
-        [NotNull] 
         public object Lock { get; }
 
         /// <summary>
@@ -45,17 +43,17 @@ namespace Plethora.Threading
         public LockRequestStatus LockRequestStatus { get; }
 
         /// <summary>
-        /// Getst the member name of the origin of the lock.
+        /// Gets the member name of the origin of the lock.
         /// </summary>
         public string MemberName { get; }
 
         /// <summary>
-        /// Getst the source file path of the origin of the lock.
+        /// Gets the source file path of the origin of the lock.
         /// </summary>
         public string SourceFilePath { get; }
 
         /// <summary>
-        /// Getst the source line number of the origin of the lock.
+        /// Gets the source line number of the origin of the lock.
         /// </summary>
         public int SourceLineNumber { get; }
     }

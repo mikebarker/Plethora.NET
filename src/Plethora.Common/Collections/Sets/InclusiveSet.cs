@@ -22,8 +22,7 @@ namespace Plethora.Collections.Sets
         public InclusiveSet(IEnumerable<T> includedElements)
         {
             //Validation
-            if (includedElements == null)
-                throw new ArgumentNullException(nameof(includedElements));
+            ArgumentNullException.ThrowIfNull(includedElements);
 
 
             this.includedElements = new HashSet<T>(includedElements);
@@ -55,13 +54,11 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Short-cut method to intersect well-known sets.
-            ISetCore<T> result;
-            if (this.TryWellKnownUnion(other, out result))
+            if (this.TryWellKnownUnion(other, out var result))
                 return result;
 
 
@@ -76,7 +73,7 @@ namespace Plethora.Collections.Sets
                 var newElements = this.includedElements
                     .Concat(otherInclusive.includedElements);
 
-                HashSet<T> newHashSet = new HashSet<T>(newElements);
+                HashSet<T> newHashSet = new(newElements);
                 if (newHashSet.Count == 0)
                     return EmptySet<T>.Instance;
 
@@ -90,7 +87,7 @@ namespace Plethora.Collections.Sets
                 var newElements = otherExclusive.excludedElements
                     .Except(this.includedElements);
 
-                HashSet<T> newHashSet = new HashSet<T>(newElements);
+                HashSet<T> newHashSet = new(newElements);
                 if (newHashSet.Count == 0)
                     return CompleteSet<T>.Instance;
 
@@ -106,20 +103,18 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Short-cut method to intersect well-known sets.
-            ISetCore<T> result;
-            if (this.TryWellKnownIntersect(other, out result))
+            if (this.TryWellKnownIntersect(other, out var result))
                 return result;
 
 
             var newElements = this.includedElements
                 .Where(element => other.Contains(element));
 
-            HashSet<T> newHashSet = new HashSet<T>(newElements);
+            HashSet<T> newHashSet = new(newElements);
             if (newHashSet.Count == 0)
                 return EmptySet<T>.Instance;
 
@@ -132,20 +127,18 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Subtract(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Short-cut method to intersect well-known sets.
-            ISetCore<T> result;
-            if (this.TryWellKnownSubtract(other, out result))
+            if (this.TryWellKnownSubtract(other, out var result))
                 return result;
 
 
             var newElements = this.includedElements
                 .Where(element => !other.Contains(element));
 
-            HashSet<T> newHashSet = new HashSet<T>(newElements);
+            HashSet<T> newHashSet = new(newElements);
             if (newHashSet.Count == 0)
                 return EmptySet<T>.Instance;
 

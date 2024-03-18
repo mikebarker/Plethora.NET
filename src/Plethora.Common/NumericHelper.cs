@@ -260,15 +260,15 @@ namespace Plethora
             #endregion
         }
 
-        private static Numeral[] ROMAN_NUMERALS;
+        private static Numeral[]? ROMAN_NUMERALS;
         private static Numeral[] RomanNumerals
         {
             get
             {
                 if (ROMAN_NUMERALS == null)
                 {
-                    ROMAN_NUMERALS = new[]
-                        {
+                    ROMAN_NUMERALS =
+                        [
                             new Numeral( "M", 1000),
                             new Numeral("CM",  900),
                             new Numeral( "D",  500),
@@ -282,7 +282,7 @@ namespace Plethora
                             new Numeral( "V",    5),
                             new Numeral("IV",    4),
                             new Numeral( "I",    1),
-                        };
+                        ];
                 }
 
                 return ROMAN_NUMERALS;

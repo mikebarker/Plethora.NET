@@ -18,7 +18,7 @@ namespace Plethora.Collections
             this.comparer = comparer;
         }
 
-        public int Compare(T x, T y)
+        public int Compare(T? x, T? y)
         {
             //Change the comparison order
             int result = this.comparer.Compare(y, x);

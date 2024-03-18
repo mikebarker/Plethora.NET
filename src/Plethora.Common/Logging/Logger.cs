@@ -10,18 +10,17 @@ namespace Plethora.Logging
     {
         #region Static Methods
 
-        private static ILoggerProvider loggerProvider;
+        private static ILoggerProvider? loggerProvider;
         public static ILoggerProvider LoggerProvider
         {
             get
             {
-                return loggerProvider;
+                return loggerProvider!;
             }
             set
             {
                 //Validation
-                if (value == null)
-                    throw new ArgumentNullException(nameof(value));
+                ArgumentNullException.ThrowIfNull(value);
 
                 loggerProvider = value;
             }
@@ -29,12 +28,12 @@ namespace Plethora.Logging
 
         public static ILogger GetLogger(string name)
         {
-            return loggerProvider.GetLogger(name);
+            return loggerProvider!.GetLogger(name);
         }
 
         public static ILogger GetLogger(Type type)
         {
-            return loggerProvider.GetLogger(type);
+            return loggerProvider!.GetLogger(type);
         }
         #endregion
 
@@ -217,12 +216,12 @@ namespace Plethora.Logging
         #region Abstract Members
 
         protected abstract bool IsEnabledFor(LogLevel logLevel);
-        protected abstract void ForceLog(LogLevel logLevel, Exception exception, string message);
+        protected abstract void ForceLog(LogLevel logLevel, Exception? exception, string message);
         #endregion
 
         #region Non-Public Methods
 
-        protected virtual void Log(LogLevel logLevel, Exception exception, Func<string> messageProvider)
+        protected virtual void Log(LogLevel logLevel, Exception? exception, Func<string> messageProvider)
         {
             //If the exception is logged then skip
             if (IsLogged(exception))
@@ -240,19 +239,17 @@ namespace Plethora.Logging
             MarkAsLogged(exception);
         }
 
-        private static bool IsLogged(Exception exception)
+        private static bool IsLogged(Exception? exception)
         {
-            var isLoggedException = exception as IsLoggedException;
-            if (isLoggedException == null)
+            if (exception is not IsLoggedException isLoggedException)
                 return false;
 
             return isLoggedException.IsLogged;
         }
 
-        private static void MarkAsLogged(Exception exception)
+        private static void MarkAsLogged(Exception? exception)
         {
-            var isLoggedException = exception as IsLoggedException;
-            if (isLoggedException == null)
+            if (exception is not IsLoggedException isLoggedException)
                 return;
 
             isLoggedException.IsLogged = true;

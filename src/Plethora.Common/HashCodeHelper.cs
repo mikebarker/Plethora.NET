@@ -21,12 +21,15 @@ namespace Plethora
         #region GetHashCode
 
         public static int GetHashCode<T>(T item)
+                where T : notnull
         {
             return EqualityComparer<T>.Default.GetHashCode(item);
         }
 
         public static int GetHashCode<T1, T2>(
             T1 item1, T2 item2)
+                where T1 : notnull
+                where T2 : notnull
         {
             unchecked
             {
@@ -39,6 +42,9 @@ namespace Plethora
 
         public static int GetHashCode<T1, T2, T3>(
             T1 item1, T2 item2, T3 item3)
+                where T1 : notnull
+                where T2 : notnull
+                where T3 : notnull
         {
             unchecked
             {
@@ -52,6 +58,10 @@ namespace Plethora
 
         public static int GetHashCode<T1, T2, T3, T4>(
             T1 item1, T2 item2, T3 item3, T4 item4)
+                where T1 : notnull
+                where T2 : notnull
+                where T3 : notnull
+                where T4 : notnull
         {
             unchecked
             {
@@ -67,6 +77,11 @@ namespace Plethora
         public static int GetHashCode<T1, T2, T3, T4, T5>(
             T1 item1, T2 item2, T3 item3, T4 item4,
             T5 item5)
+                where T1 : notnull
+                where T2 : notnull
+                where T3 : notnull
+                where T4 : notnull
+                where T5 : notnull
         {
             unchecked
             {
@@ -83,6 +98,12 @@ namespace Plethora
         public static int GetHashCode<T1, T2, T3, T4, T5, T6>(
             T1 item1, T2 item2, T3 item3, T4 item4,
             T5 item5, T6 item6)
+                where T1 : notnull
+                where T2 : notnull
+                where T3 : notnull
+                where T4 : notnull
+                where T5 : notnull
+                where T6 : notnull
         {
             unchecked
             {
@@ -100,6 +121,13 @@ namespace Plethora
         public static int GetHashCode<T1, T2, T3, T4, T5, T6, T7>(
             T1 item1, T2 item2, T3 item3, T4 item4,
             T5 item5, T6 item6, T7 item7)
+                where T1 : notnull
+                where T2 : notnull
+                where T3 : notnull
+                where T4 : notnull
+                where T5 : notnull
+                where T6 : notnull
+                where T7 : notnull
         {
             unchecked
             {
@@ -118,6 +146,14 @@ namespace Plethora
         public static int GetHashCode<T1, T2, T3, T4, T5, T6, T7, T8>(
             T1 item1, T2 item2, T3 item3, T4 item4,
             T5 item5, T6 item6, T7 item7, T8 item8)
+                where T1 : notnull
+                where T2 : notnull
+                where T3 : notnull
+                where T4 : notnull
+                where T5 : notnull
+                where T6 : notnull
+                where T7 : notnull
+                where T8 : notnull
         {
             unchecked
             {
@@ -153,7 +189,7 @@ namespace Plethora
 
         #region Generate
 
-        public struct HashCodeElement
+        public readonly struct HashCodeElement
         {
             private readonly int num;
 
@@ -162,9 +198,10 @@ namespace Plethora
                 this.num = num;
             }
 
-            public int Num => this.num;
+            public readonly int Num => this.num;
 
-            public HashCodeElement Then<T>(T value)
+            public readonly HashCodeElement Then<T>(T value)
+                where T : notnull
             {
                 unchecked
                 {
@@ -177,6 +214,7 @@ namespace Plethora
         }
 
         public static HashCodeElement Generate<T>(T value)
+                where T : notnull
         {
             unchecked
             {

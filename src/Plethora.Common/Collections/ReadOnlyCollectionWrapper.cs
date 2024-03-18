@@ -3,12 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
-using JetBrains.Annotations;
 
 namespace Plethora.Collections
 {
     /// <summary>
-    /// Implementaion of <see cref="ICollection{T}"/> which wraps a collection in a readonly interface.
+    /// Implementation of <see cref="ICollection{T}"/> which wraps a collection in a readonly interface.
     /// </summary>
     /// <typeparam name="T">
     /// The type of the collection's elements.
@@ -22,7 +21,7 @@ namespace Plethora.Collections
     {
         private readonly ICollection<T> innerCollection;
         [NonSerialized]
-        private object syncRoot;
+        private object? syncRoot;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="ReadOnlyCollectionWrapper{T}"/> class.
@@ -30,10 +29,9 @@ namespace Plethora.Collections
         /// <param name="collection">
         /// The collection to be wrapped.
         /// </param>
-        public ReadOnlyCollectionWrapper([NotNull] ICollection<T> collection)
+        public ReadOnlyCollectionWrapper(ICollection<T> collection)
         {
-            if (collection == null)
-                throw new ArgumentNullException(nameof(collection));
+            ArgumentNullException.ThrowIfNull(collection);
 
             this.innerCollection = collection;
         }
@@ -65,14 +63,14 @@ namespace Plethora.Collections
             get { return this.innerCollection.Count; }
         }
 
-        void ICollection<T>.Add([NotNull] T item)
+        void ICollection<T>.Add(T item)
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         void ICollection<T>.Clear()
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         /// <summary>
@@ -84,7 +82,7 @@ namespace Plethora.Collections
         /// <returns>
         /// true if item is found in the <see cref="ICollection{T}"/> otherwise, false.
         /// </returns>
-        public bool Contains([NotNull] T item)
+        public bool Contains(T item)
         {
             return this.innerCollection.Contains(item);
         }
@@ -101,9 +99,9 @@ namespace Plethora.Collections
             this.innerCollection.CopyTo(array, arrayIndex);
         }
 
-        bool ICollection<T>.Remove([NotNull] T item)
+        bool ICollection<T>.Remove(T item)
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         bool ICollection<T>.IsReadOnly
@@ -113,8 +111,7 @@ namespace Plethora.Collections
 
         void ICollection.CopyTo(Array array, int index)
         {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+            ArgumentNullException.ThrowIfNull(array);
 
             if (array.Rank != 1)
                 throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
@@ -128,19 +125,21 @@ namespace Plethora.Collections
             if ((array.Length - index) < this.Count)
                 throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(index), "count"));
 
-            if (array is T[])
+            if (array is T[] arrayT)
             {
-                this.innerCollection.CopyTo((T[])array, index);
+                this.innerCollection.CopyTo(arrayT, index);
             }
             else
             {
-                Type elementType = array.GetType().GetElementType();
+                Type? elementType = array.GetType().GetElementType();
+                if (elementType is null)
+                    throw new ArgumentException(ResourceProvider.ArgArrayInvalidType());
+
                 Type c = typeof(T);
                 if (!elementType.IsAssignableFrom(c) && !c.IsAssignableFrom(elementType))
                     throw new ArgumentException(ResourceProvider.ArgArrayInvalidType());
 
-                object[] objArray = array as object[];
-                if (objArray == null)
+                if (array is not object?[] objArray)
                     throw new ArgumentException(ResourceProvider.ArgArrayInvalidType());
 
                 try
@@ -165,11 +164,10 @@ namespace Plethora.Collections
             {
                 if (this.syncRoot == null)
                 {
-                    ICollection collection = this.innerCollection as ICollection;
-                    if (collection != null)
+                    if (this.innerCollection is ICollection collection)
                         this.syncRoot = collection.SyncRoot;
                     else
-                        Interlocked.CompareExchange<object>(ref this.syncRoot, new object(), null);
+                        Interlocked.CompareExchange<object?>(ref this.syncRoot, new object(), null);
                 }
                 return this.syncRoot;
             }
@@ -179,9 +177,9 @@ namespace Plethora.Collections
         {
             get
             {
-                if (this.innerCollection is ICollection)
+                if (this.innerCollection is ICollection collection)
                 {
-                    return ((ICollection)this.innerCollection).IsSynchronized;
+                    return collection.IsSynchronized;
                 }
                 return false;
             }

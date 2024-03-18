@@ -1,14 +1,12 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Plethora
 {
     /// <summary>
     /// A class which calls an <see cref="Action"/> delegate when disposed.
     /// </summary>
     /// <remarks>
-    /// This is useful when defining a class to make using of the "using" symantics to provide some kind of logic.
+    /// This is useful when defining a class to make using of the "using" semantics to provide some kind of logic.
     /// <example>
     /// The class:
     /// <code><![CDATA[
@@ -69,7 +67,7 @@ namespace Plethora
 
         #region Constructors
 
-        public ActionOnDispose([NotNull] Action onDispose)
+        public ActionOnDispose(Action onDispose)
         {
             if (onDispose == null)
                 throw new ArgumentNullException(nameof(onDispose));

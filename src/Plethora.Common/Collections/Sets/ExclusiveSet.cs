@@ -22,8 +22,7 @@ namespace Plethora.Collections.Sets
         public ExclusiveSet(IEnumerable<T> excludedElements)
         {
             //Validation
-            if (excludedElements == null)
-                throw new ArgumentNullException(nameof(excludedElements));
+            ArgumentNullException.ThrowIfNull(excludedElements);
 
 
             this.excludedElements = new HashSet<T>(excludedElements);
@@ -50,13 +49,11 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Short-cut method to union well-known sets.
-            ISetCore<T> result;
-            if (this.TryWellKnownUnion(other, out result))
+            if (this.TryWellKnownUnion(other, out var result))
                 return result;
 
 
@@ -69,13 +66,11 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Short-cut method to intersect well-known sets.
-            ISetCore<T> result;
-            if (this.TryWellKnownIntersect(other, out result))
+            if (this.TryWellKnownIntersect(other, out var result))
                 return result;
 
 
@@ -99,19 +94,16 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Subtract(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             //Short-cut method to subtract well-known sets.
-            ISetCore<T> result;
-            if (this.TryWellKnownIntersect(other, out result))
+            if (this.TryWellKnownIntersect(other, out var result))
                 return result;
 
 
             //Short-cut method to subtract an exclusive set.
-            var otherExclusive = other as ExclusiveSet<T>;
-            if (otherExclusive != null)
+            if (other is ExclusiveSet<T> otherExclusive)
             {
                 var newElements = otherExclusive.excludedElements
                     .Except(this.excludedElements);

@@ -12,9 +12,9 @@
         Allow,
 
         /// <summary>
-        /// The insert or update is ignorred, and the collection remains unchanged.
+        /// The insert or update is ignored, and the collection remains unchanged.
         /// </summary>
-        Ignor,
+        Ignore,
 
         /// <summary>
         /// The element is replaced by the inserted or updated element.

@@ -74,7 +74,7 @@ namespace Plethora.IO
         /// <param name="buffer">
         /// The character array to write to the text stream.
         /// </param>
-        public override void Write(char[] buffer)
+        public override void Write(char[]? buffer)
         {
             if (buffer == null)
                 return;
@@ -108,7 +108,7 @@ namespace Plethora.IO
         /// <param name="value">
         /// The string to write.
         /// </param>
-        public override void Write(string value)
+        public override void Write(string? value)
         {
             if (value == null)
                 return;
@@ -152,7 +152,7 @@ namespace Plethora.IO
         /// <returns>
         /// A task that represents the asynchronous write operation.
         /// </returns>
-        public override Task WriteAsync(string value)
+        public override Task WriteAsync(string? value)
         {
             if (value == null)
                 return Task.CompletedTask;

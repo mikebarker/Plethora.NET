@@ -41,7 +41,7 @@ namespace Plethora.ExpressionAide
                 sb.AppendLine(strBranch + "Method = " + ((exp.Method == null) ? "<null>" : exp.Method.Name));
                 sb.AppendLine(strBranch + "IsLifted = " + exp.IsLifted);
                 sb.AppendLine(strBranch + "IsLiftedToNull = " + exp.IsLiftedToNull);
-                AddGraphNode(sb, depth + 1, "Conversion", exp.Conversion);
+                AddGraphNode(sb, depth + 1, "Conversion", exp.Conversion!);
                 AddGraphNode(sb, depth + 1, "Left", exp.Left);
                 AddGraphNode(sb, depth + 1, "Right", exp.Right);
             }
@@ -93,7 +93,7 @@ namespace Plethora.ExpressionAide
 
                 sb.Append(strBranch);
                 sb.AppendLine("Member = " + exp.Member.Name);
-                AddGraphNode(sb, depth + 1, "Expression", exp.Expression);
+                AddGraphNode(sb, depth + 1, "Expression", exp.Expression!);
             }
             else if (expression is MethodCallExpression)
             {
@@ -103,7 +103,7 @@ namespace Plethora.ExpressionAide
 
                 sb.Append(strBranch);
                 sb.AppendLine("Method = " + (method.DeclaringType + "." + method.Name));
-                AddGraphNode(sb, depth + 1, "Object", exp.Object);
+                AddGraphNode(sb, depth + 1, "Object", exp.Object!);
 
                 int i = 0;
                 foreach (var argument in exp.Arguments)
@@ -117,7 +117,7 @@ namespace Plethora.ExpressionAide
                 var exp = (NewExpression)expression;
 
                 sb.Append(strBranch);
-                sb.AppendLine("Constructor = " + exp.Constructor.Name);
+                sb.AppendLine("Constructor = " + exp.Constructor!.Name);
 
                 int i = 0;
                 foreach (var argument in exp.Arguments)
@@ -127,7 +127,7 @@ namespace Plethora.ExpressionAide
                 }
 
                 i = 0;
-                foreach (var member in exp.Members)
+                foreach (var member in exp.Members!)
                 {
                     sb.Append(strBranch);
                     sb.AppendLine("Member " + i + " = " + member.Name);

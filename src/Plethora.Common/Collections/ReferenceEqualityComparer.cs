@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Runtime.CompilerServices;
 using System.Threading;
-using JetBrains.Annotations;
 
 namespace Plethora.Collections
 {
@@ -16,7 +15,7 @@ namespace Plethora.Collections
     /// </typeparam>
     public sealed class ReferenceEqualityComparer<T> : IEqualityComparer<T>, IEqualityComparer
     {
-        private static ReferenceEqualityComparer<T> defaultComparer;
+        private static ReferenceEqualityComparer<T>? defaultComparer;
 
         /// <summary>
         /// Returns a default equality comparer for the type specified by the generic argument.
@@ -24,7 +23,6 @@ namespace Plethora.Collections
         /// <returns>
         /// The default instance of the <see cref="ReferenceEqualityComparer{T}"/> class for type <typeparamref name="T"/>.
         /// </returns>
-        [NotNull]
         public static ReferenceEqualityComparer<T> Default
         {
             get
@@ -44,7 +42,7 @@ namespace Plethora.Collections
         /// <param name="y">The second object of type <typeparamref name="T"/> to compare.</param>
         /// <returns>true if the specified objects are equal; otherwise, false.</returns>
         [Pure]
-        public bool Equals([CanBeNull] T x, [CanBeNull] T y)
+        public bool Equals(T? x, T? y)
         {
             return ReferenceEquals(x, y);
         }
@@ -56,21 +54,21 @@ namespace Plethora.Collections
         /// <returns>A hash code for the specified object.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is null.</exception>
         [Pure]
-        public int GetHashCode([NotNull] T obj)
+        public int GetHashCode(T obj)
         {
             return RuntimeHelpers.GetHashCode(obj);
         }
 
         [Pure]
-        bool IEqualityComparer.Equals([CanBeNull] object x, [CanBeNull] object y)
+        bool IEqualityComparer.Equals(object? x, object? y)
         {
-            if ((x != null) && (!(x is T)))
+            if ((x != null) && (x is not T))
                 throw new ArgumentException(ResourceProvider.InvalidCast());
 
-            if ((y != null) && (!(y is T)))
+            if ((y != null) && (y is not T))
                 throw new ArgumentException(ResourceProvider.InvalidCast());
 
-            return this.Equals((T)x, (T)y);
+            return this.Equals((T?)x, (T?)y);
         }
 
         /// <summary>
@@ -80,12 +78,11 @@ namespace Plethora.Collections
         /// <returns>A hash code for the specified object.</returns>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is null.</exception>
         [Pure]
-        int IEqualityComparer.GetHashCode([NotNull] object obj)
+        int IEqualityComparer.GetHashCode(object obj)
         {
-            if (obj == null)
-                throw new ArgumentNullException(nameof(obj));
+            ArgumentNullException.ThrowIfNull(obj);
 
-            if (!(obj is T))
+            if (obj is not T)
                 throw new ArgumentException(ResourceProvider.InvalidCast());
 
             return this.GetHashCode((T)obj);

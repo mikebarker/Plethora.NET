@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace Plethora.Collections
@@ -32,11 +33,8 @@ namespace Plethora.Collections
             public WeakKey(TKey target, IEqualityComparer<TKey> comparer)
             {
                 //validation
-                if (target == null)
-                    throw new ArgumentNullException(nameof(target));
-
-                if (comparer == null)
-                    throw new ArgumentNullException(nameof(comparer));
+                ArgumentNullException.ThrowIfNull(target);
+                ArgumentNullException.ThrowIfNull(comparer);
 
 
                 this.weakReference = new WeakReference<TKey>(target);
@@ -51,7 +49,7 @@ namespace Plethora.Collections
 
             #region Implementation of IEquatable<WeakKeyDictionary<TKey,TValue>.WeakKey>
 
-            public bool Equals(WeakKey other)
+            public bool Equals(WeakKey? other)
             {
                 if (other == null)
                     return false;
@@ -62,11 +60,8 @@ namespace Plethora.Collections
                 if (this.hashCode != other.hashCode)
                     return false;
 
-                TKey thisTarget;
-                TKey otherTarget;
-
-                this.weakReference.TryGetTarget(out thisTarget);
-                other.weakReference.TryGetTarget(out otherTarget);
+                this.weakReference.TryGetTarget(out var thisTarget);
+                other.weakReference.TryGetTarget(out var otherTarget);
 
                 return this.comparer.Equals(thisTarget, otherTarget);
             }
@@ -75,7 +70,7 @@ namespace Plethora.Collections
 
             #region 
 
-            public bool TryGetTarget(out TKey target)
+            public bool TryGetTarget([NotNullWhen(true), MaybeNullWhen(false)] out TKey target)
             {
                 return this.weakReference.TryGetTarget(out target);
             }
@@ -84,11 +79,10 @@ namespace Plethora.Collections
 
             #region Object Overrides
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
-                if (obj is WeakKey)
+                if (obj is WeakKey other)
                 {
-                    var other = (WeakKey)obj;
                     return this.Equals(other);
                 }
 
@@ -102,16 +96,13 @@ namespace Plethora.Collections
 
             public override string ToString()
             {
-                TKey target;
-                if (!this.weakReference.TryGetTarget(out target))
+                if (this.weakReference.TryGetTarget(out var target))
                 {
-                    return "WeakKey [<dead>]";
+                    return $"WeakKey [{target}]";
                 }
                 else
                 {
-                    string targetToString = target.ToString();
-
-                    return $"WeakKey [{targetToString}]";
+                    return "WeakKey [<dead>]";
                 }
             }
 
@@ -123,7 +114,7 @@ namespace Plethora.Collections
         {
             #region Static Instance
 
-            private static WeakKeyComparer defaultInstance;
+            private static WeakKeyComparer? defaultInstance;
             public static WeakKeyComparer Default
             {
                 get
@@ -151,8 +142,7 @@ namespace Plethora.Collections
             public WeakKeyComparer(IEqualityComparer<TKey> comparer)
             {
                 //Validation
-                if (comparer == null)
-                    throw new ArgumentNullException(nameof(comparer));
+                ArgumentNullException.ThrowIfNull(comparer);
 
                 this.innerComparer = comparer;
             }
@@ -160,7 +150,7 @@ namespace Plethora.Collections
 
             #region Implementation of IEqualityComparer<WeakKey>
 
-            public bool Equals(WeakKey weakKeyX, WeakKey weakKeyY)
+            public bool Equals(WeakKey? weakKeyX, WeakKey? weakKeyY)
             {
                 if ((weakKeyX == null) && (weakKeyY == null))
                     return true;
@@ -230,7 +220,7 @@ namespace Plethora.Collections
         /// class that is empty, has the specified initial capacity, and uses the
         /// specified <see cref="IEqualityComparer{T}"/>.
         /// </summary>
-        public WeakKeyDictionary(int capacity, IEqualityComparer<TKey> keyComparer)
+        public WeakKeyDictionary(int capacity, IEqualityComparer<TKey>? keyComparer)
         {
             if (capacity < 0)
                 throw new ArgumentOutOfRangeException(nameof(capacity), capacity, ResourceProvider.ArgMustBeGreaterThanZero("capacity"));
@@ -262,7 +252,7 @@ namespace Plethora.Collections
         /// A <see cref="IEnumerator{T}"/> that can be used to iterate through the collection.
         /// </returns>
         /// <remarks>
-        /// This only itterates over pairs where the key is alive. The itterator snapshots
+        /// This only iterates over pairs where the key is alive. The iterator snapshots
         /// the key's target and returns a strong reference to the target (preventing garbage 
         /// collection).
         /// </remarks>
@@ -271,8 +261,8 @@ namespace Plethora.Collections
             return this.innerDictionary
                 .Select(pair =>
                 {
-                    pair.Key.TryGetTarget(out TKey target);
-                    return new KeyValuePair<TKey, TValue>(target, pair.Value);
+                    pair.Key.TryGetTarget(out var target);
+                    return new KeyValuePair<TKey, TValue>(target!, pair.Value);
                 })
                 .Where(pair => pair.Key != null)
                 .GetEnumerator();
@@ -323,8 +313,7 @@ namespace Plethora.Collections
 
         public bool ContainsKey(TKey key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
             var weakKey = this.GetWeakKey(key);
             return this.innerDictionary.ContainsKey(weakKey);
@@ -332,8 +321,7 @@ namespace Plethora.Collections
 
         public void Add(TKey key, TValue value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
             var weakKey = this.GetWeakKey(key);
 
@@ -342,17 +330,15 @@ namespace Plethora.Collections
 
         public bool Remove(TKey key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
             var weakKey = this.GetWeakKey(key);
             return this.innerDictionary.Remove(weakKey);
         }
 
-        public bool TryGetValue(TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
             var weakKey = this.GetWeakKey(key);
             return this.innerDictionary.TryGetValue(weakKey, out value);
@@ -362,16 +348,14 @@ namespace Plethora.Collections
         {
             get
             {
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+                ArgumentNullException.ThrowIfNull(key);
 
                 var weakKey = this.GetWeakKey(key);
                 return this.innerDictionary[weakKey];
             }
             set
             {
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+                ArgumentNullException.ThrowIfNull(key);
 
                 var weakKey = this.GetWeakKey(key);
                 this.innerDictionary[weakKey] = value;
@@ -414,7 +398,7 @@ namespace Plethora.Collections
         public bool TrimExcess()
         {
             var deadKeyList = this.innerDictionary
-                .Where(pair => !pair.Key.TryGetTarget(out TKey target))
+                .Where(pair => pair.Key.TryGetTarget(out var target))
                 .Select(pair => pair.Key)
                 .ToList();
 

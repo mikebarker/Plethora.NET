@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace Plethora.Collections
 {
@@ -20,9 +20,10 @@ namespace Plethora.Collections
     /// <typeparam name="TKey">The type of the keys in the dictionary.</typeparam>
     /// <typeparam name="TValue">The type of the values in the dictionary.</typeparam>
     /// <remarks>
-    /// Accessing the entries via LINQ will cause all entries itterated through to be marked as accessed. It is recommended that this method of access be avoided.
+    /// Accessing the entries via LINQ will cause all entries iterated through to be marked as accessed. It is recommended that this method of access be avoided.
     /// </remarks>
     public class MruDictionary<TKey, TValue> : IDictionary<TKey, TValue>
+        where TKey : notnull
     {
         private readonly Dictionary<TKey, MruEntry<TValue>> innerDictionary;
         private int maxEntries;
@@ -32,7 +33,7 @@ namespace Plethora.Collections
         /// Initializes a new instance of the <see cref="MruDictionary{TKey,TValue}"/> class.
         /// </summary>
         /// <param name="maxEntries">The maximum number of elements this dictionary will store.</param>
-        /// <param name="watermark">The number of enteries this dictionary will reduce to once the <see cref="MaxEntries"/> is exceeded.</param>
+        /// <param name="watermark">The number of entries this dictionary will reduce to once the <see cref="MaxEntries"/> is exceeded.</param>
         /// <param name="comparer">The <see cref="IEqualityComparer{TKey}"/> implementation to use when comparing keys, or null to use the default <see cref="EqualityComparer{TKey}"/> for the type of the key.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maxEntries"/> is less than two.
@@ -42,7 +43,7 @@ namespace Plethora.Collections
         public MruDictionary(
             int maxEntries = MruDictionary.DefaultMaxEntries,
             int? watermark = null,
-            IEqualityComparer<TKey> comparer = null)
+            IEqualityComparer<TKey>? comparer = null)
         {
             if (maxEntries < 2)
                 throw new ArgumentOutOfRangeException(nameof(maxEntries), maxEntries, ResourceProvider.ArgMustBeGreaterThan(nameof(maxEntries), 2));
@@ -88,8 +89,7 @@ namespace Plethora.Collections
 
         bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> pair)
         {
-            TValue value;
-            if (!this.TryGetValue(pair.Key, out value))
+            if (!this.TryGetValue(pair.Key, out var value))
                 return false;
 
             return EqualityComparer<TValue>.Default.Equals(value, pair.Value);
@@ -97,8 +97,7 @@ namespace Plethora.Collections
 
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
         {
-            if (array == null)
-                throw new ArgumentNullException(nameof(array));
+            ArgumentNullException.ThrowIfNull(array);
 
             if (array.Rank != 1)
                 throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
@@ -117,8 +116,7 @@ namespace Plethora.Collections
 
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> pair)
         {
-            TValue value;
-            if (!this.TryGetValue(pair.Key, out value))
+            if (!this.TryGetValue(pair.Key, out var value))
                 return false;
 
             if (!EqualityComparer<TValue>.Default.Equals(value, pair.Value))
@@ -141,40 +139,35 @@ namespace Plethora.Collections
 
         #region Implementation of IDictionary<TKey, TValue>
 
-        public bool ContainsKey([NotNull] TKey key)
+        public bool ContainsKey(TKey key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
             return this.innerDictionary.ContainsKey(key);
         }
 
-        public void Add([NotNull] TKey key, TValue value)
+        public void Add(TKey key, TValue value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
-            this.ReclaimLeastUsedEnties(1);
+            this.ReclaimLeastUsedEntries(1);
             this.innerDictionary.Add(key, new MruEntry<TValue>(value));
         }
 
-        public bool Remove([NotNull] TKey key)
+        public bool Remove(TKey key)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
             return this.innerDictionary.Remove(key);
         }
 
-        public bool TryGetValue([NotNull] TKey key, out TValue value)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out TValue value)
         {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+            ArgumentNullException.ThrowIfNull(key);
 
-            MruEntry<TValue> entry;
-            if (!this.innerDictionary.TryGetValue(key, out entry))
+            if (!this.innerDictionary.TryGetValue(key, out var entry))
             {
-                value = default(TValue);
+                value = default;
                 return false;
             }
 
@@ -182,23 +175,20 @@ namespace Plethora.Collections
             return true;
         }
 
-        public TValue this[[NotNull] TKey key]
+        public TValue this[TKey key]
         {
             get
             {
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+                ArgumentNullException.ThrowIfNull(key);
 
                 MruEntry<TValue> entry = this.innerDictionary[key];
                 return this.GetValue(entry);
             }
             set
             {
-                if (key == null)
-                    throw new ArgumentNullException(nameof(key));
+                ArgumentNullException.ThrowIfNull(key);
 
-                MruEntry<TValue> entry;
-                if (this.innerDictionary.TryGetValue(key, out entry))
+                if (this.innerDictionary.TryGetValue(key, out var entry))
                 {
                     entry.Value = value;
                 }
@@ -231,7 +221,7 @@ namespace Plethora.Collections
         /// Sets the <see cref="MaxEntries"/> and <see cref="Watermark"/> of this <see cref="MruDictionary{TKey, TValue}"/>.
         /// </summary>
         /// <param name="maxEntries">The maximum number of elements this dictionary will store.</param>
-        /// <param name="watermark">The number of enteries this dictionary will reduce to when <paramref name="maxEntries"/> will be exceeded.</param>
+        /// <param name="watermark">The number of entries this dictionary will reduce to when <paramref name="maxEntries"/> will be exceeded.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         /// <paramref name="maxEntries"/> is less than two.
         /// OR
@@ -251,11 +241,11 @@ namespace Plethora.Collections
             this.maxEntries = maxEntries;
             this.watermark = watermark;
 
-            this.ReclaimLeastUsedEnties(0);
+            this.ReclaimLeastUsedEntries(0);
         }
 
         /// <summary>
-        /// The maximum number of enteries this dictionary can contain.
+        /// The maximum number of entries this dictionary can contain.
         /// </summary>
         /// <remarks>
         /// When <see cref="Count"/> exceeds <see cref="MaxEntries"/> the least used entries are dropped from the dictionary until the <see cref="Count"/> reaches <see cref="Watermark"/>.
@@ -266,7 +256,7 @@ namespace Plethora.Collections
         }
 
         /// <summary>
-        /// The number of enteries this dictionary will reduce to once the <see cref="MaxEntries"/> is exceeded.
+        /// The number of entries this dictionary will reduce to once the <see cref="MaxEntries"/> is exceeded.
         /// </summary>
         /// <remarks>
         /// When <see cref="Count"/> exceeds <see cref="MaxEntries"/> the least used entries are dropped from the dictionary until the <see cref="Count"/> reaches <see cref="Watermark"/>.
@@ -276,7 +266,7 @@ namespace Plethora.Collections
             get { return this.watermark; }
         }
 
-        private void ReclaimLeastUsedEnties(int additionalEntries)
+        private void ReclaimLeastUsedEntries(int additionalEntries)
         {
             if ((this.Count + additionalEntries) <= this.maxEntries)
                 return;

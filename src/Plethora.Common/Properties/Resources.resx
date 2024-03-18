@@ -189,7 +189,7 @@
   <data name="ArgMustBeOneOf" xml:space="preserve">
     <value>'{0}' must be one of {1}.</value>
   </data>
-  <data name="CollectionReadonly" xml:space="preserve">
+  <data name="CollectionReadOnly" xml:space="preserve">
     <value>The collection is readonly.</value>
   </data>
   <data name="ArgArrayMultiDimensionNotSupported" xml:space="preserve">

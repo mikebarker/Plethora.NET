@@ -51,12 +51,12 @@ namespace Plethora.Collections.Trees
         /// </remarks>
         protected void Rotate(Node rotationRoot, RotationDirection direction)
         {
-            Node parent = rotationRoot.Parent;
+            Node? parent = rotationRoot.Parent;
             Edge? edge = rotationRoot.RelationToParent;
 
             Node pivot = (direction == RotationDirection.Right)
-                ? rotationRoot.Left
-                : rotationRoot.Right;
+                ? rotationRoot.Left!
+                : rotationRoot.Right!;
 
 
             if (direction == RotationDirection.Right)
@@ -78,15 +78,18 @@ namespace Plethora.Collections.Trees
             }
             else
             {
-                if (edge.Value == Edge.Left)
+                if (edge!.Value == Edge.Left)
                     parent.Left = pivot;
                 else
                     parent.Right = pivot;
             }
         }
 
-        protected static int BalanceFactor(Node node)
+        protected static int BalanceFactor(Node? node)
         {
+            if (node is null)
+                return 0;
+
             int leftHeight = (node.Left == null) ? -1 : node.Left.Height;
             int rightHeight = (node.Right == null) ? -1 : node.Right.Height;
 

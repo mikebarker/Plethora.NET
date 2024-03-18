@@ -24,6 +24,7 @@ namespace Plethora.Collections.Transformations
         /// <param name="orderedBy">
         /// A function to extract the order-by property from an element.
         /// </param>
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public SortedTransformedList(
             IEnumerable<T> source,
             Func<T, TProperty> orderedBy)
@@ -33,6 +34,7 @@ namespace Plethora.Collections.Transformations
 
             this.ResetSource();
         }
+#pragma warning restore CS8618
 
         /// <inheritdoc/>
         public override int Count => this.orderedList.Count;

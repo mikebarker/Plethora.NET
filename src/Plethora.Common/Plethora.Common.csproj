@@ -9,6 +9,7 @@
     <Product>The Plethora .NET Project</Product>
     <PackageLicenseFile>license.md</PackageLicenseFile>
     <PackageProjectUrl>https://github.com/mikebarker/Plethora.NET</PackageProjectUrl>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,10 +17,6 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
   </ItemGroup>
 
   <ItemGroup>

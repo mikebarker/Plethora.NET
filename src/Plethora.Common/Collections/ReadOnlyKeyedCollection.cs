@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Collections
 {
@@ -28,8 +29,7 @@ namespace Plethora.Collections
         public ReadOnlyKeyedCollection(IKeyedCollection<TKey, T> keyedCollection)
         {
             //Validation
-            if (keyedCollection == null)
-                throw new ArgumentNullException(nameof(keyedCollection));
+            ArgumentNullException.ThrowIfNull(keyedCollection);
 
 
             this.innerKeyedCollection = keyedCollection;
@@ -72,7 +72,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to add to the <see cref="ICollection{T}"/>.</param>
         void ICollection<T>.Add(T item)
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Plethora.Collections
         /// </summary>
         void ICollection<T>.Clear()
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to remove from the <see cref="ICollection{T}"/>.</param>
         bool ICollection<T>.Remove(T item)
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace Plethora.Collections
 
         bool IKeyedCollection<TKey, T>.Upsert(T item)
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
         /// <summary>
@@ -169,10 +169,10 @@ namespace Plethora.Collections
 
         bool IKeyedCollection<TKey, T>.RemoveKey(TKey key)
         {
-            throw new NotSupportedException(ResourceProvider.CollectionReadonly());
+            throw new NotSupportedException(ResourceProvider.CollectionReadOnly());
         }
 
-        public bool TryGetValue(TKey key, out T item)
+        public bool TryGetValue(TKey key, [MaybeNullWhen(false)] out T item)
         {
             return this.innerKeyedCollection.TryGetValue(key, out item);
         }

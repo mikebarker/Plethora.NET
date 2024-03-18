@@ -16,6 +16,7 @@ namespace Plethora.Collections
     /// <seealso cref="KeyedCollection{TKey,T}"/>
     /// <seealso cref="HashSet{T}"/>
     public class AutoKeyedCollection<T> : KeyedCollection<T, T>
+        where T : notnull
     {
         #region Fields
 
@@ -61,6 +62,7 @@ namespace Plethora.Collections
     public static class AutoKeyedCollectionHelper
     {
         public static AutoKeyedCollection<T> ToKeyedCollection<T>(this IEnumerable<T> enumerable)
+            where T : notnull
         {
             return new AutoKeyedCollection<T>(enumerable);
         }

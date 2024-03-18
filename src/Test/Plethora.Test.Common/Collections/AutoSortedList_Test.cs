@@ -621,7 +621,7 @@ namespace Plethora.Test.Collections
 
         private void PresetDuplicatesIgnor()
         {
-            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Ignor, new Person.NameComparer());
+            this.autoSortedList = new AutoSortedList<Person>(DuplicatesPolicy.Ignore, new Person.NameComparer());
             PresetPopulate();
         }
 

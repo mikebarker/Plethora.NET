@@ -24,7 +24,7 @@ namespace Plethora
     /// </remarks>
     /// <example>
     /// In this example 'LambdaKeyer' is an internal class, but it's GetKey method is made
-    /// easily accessable using the <see cref="MirrorClass{T}"/> to reflect on the class.
+    /// easily accessible using the <see cref="MirrorClass{T}"/> to reflect on the class.
     /// <code>
     /// <![CDATA[
     ///    class LambdaKeyerEx
@@ -52,7 +52,7 @@ namespace Plethora
     /// </example>
     public class MirrorClass
     {
-        public static readonly object StaticOnlyContext = new object();
+        public static readonly object StaticOnlyContext = new();
 
         #region Constants
 
@@ -67,11 +67,10 @@ namespace Plethora
 
         #region Fields
 
-        private static readonly Dictionary<RuntimeMethodHandle, MethodInfo> methodPool =
-            new Dictionary<RuntimeMethodHandle, MethodInfo>();
+        private static readonly Dictionary<RuntimeMethodHandle, MethodInfo> methodPool = new();
 
         private readonly Type reflectedType;
-        private readonly object innerInstance;
+        private readonly object? innerInstance;
         #endregion
 
         #region Constructors
@@ -91,11 +90,8 @@ namespace Plethora
         public MirrorClass(Type reflectedType, params object[] args)
         {
             //Validation
-            if (reflectedType == null)
-                throw new ArgumentNullException(nameof(reflectedType));
-
-            if (args == null)
-                throw new ArgumentNullException(nameof(args));
+            ArgumentNullException.ThrowIfNull(reflectedType);
+            ArgumentNullException.ThrowIfNull(args);
 
 
             this.reflectedType = reflectedType;
@@ -120,14 +116,11 @@ namespace Plethora
         public static MirrorClass Create(Assembly assembly, string fullName, params object[] args)
         {
             //Validation
-            if (assembly == null)
-                throw new ArgumentNullException(nameof(assembly));
-
-            if (fullName == null)
-                throw new ArgumentNullException(nameof(fullName));
+            ArgumentNullException.ThrowIfNull(assembly);
+            ArgumentNullException.ThrowIfNull(fullName);
 
 
-            Type reflectType = assembly.GetType(fullName);
+            Type? reflectType = assembly.GetType(fullName);
             if (reflectType == null)
                 throw new ArgumentException(ResourceProvider.TypeNotFoundInAssembly(fullName, assembly.FullName));
 
@@ -137,14 +130,11 @@ namespace Plethora
         public static MirrorClass CreateStaticOnly(Assembly assembly, string fullName)
         {
             //Validation
-            if (assembly == null)
-                throw new ArgumentNullException(nameof(assembly));
-
-            if (fullName == null)
-                throw new ArgumentNullException(nameof(fullName));
+            ArgumentNullException.ThrowIfNull(assembly);
+            ArgumentNullException.ThrowIfNull(fullName);
 
 
-            Type reflectType = assembly.GetType(fullName);
+            Type? reflectType = assembly.GetType(fullName);
             if (reflectType == null)
                 throw new ArgumentException(ResourceProvider.TypeNotFoundInAssembly(fullName, assembly.FullName));
 
@@ -163,9 +153,13 @@ namespace Plethora
         /// <returns>
         /// The result of the underlying method.
         /// </returns>
-        public object Exec(Type[] genericArguments, params object[] args)
+        public object? Exec(Type[] genericArguments, params object[] args)
         {
-            MethodBase callingMethod = new StackFrame(1, false).GetMethod();
+            StackFrame frame = new(1, false);
+            MethodBase? callingMethod = frame.GetMethod();
+
+            if (callingMethod is null)
+                throw new MemberNotFoundException(ResourceProvider.MethodNotFound());
 
             //Ensure a static method is not called in a non-static context
             if ((!callingMethod.IsStatic) && (this.innerInstance == null))
@@ -174,7 +168,7 @@ namespace Plethora
             MethodInfo mirroredMethod = GetMirroredMethod(this.reflectedType, callingMethod, genericArguments);
 
 
-            object instance = callingMethod.IsStatic
+            object? instance = callingMethod.IsStatic
                            ? null
                            : this.innerInstance;
 
@@ -205,7 +199,7 @@ namespace Plethora
         private static MethodInfo GetCachedMirroredMethodGenericDefinition(Type type, MethodBase callingMethod)
         {
             RuntimeMethodHandle hCallingMethod = callingMethod.MethodHandle;
-            MethodInfo method;
+            MethodInfo? method;
             lock (methodPool)
             {
                 if (!methodPool.TryGetValue(hCallingMethod, out method))
@@ -222,7 +216,7 @@ namespace Plethora
         }
 
         // The calling and returned method are the open method definitions, in the case of generics.
-        private static MethodInfo GetMirroredMethodGenericDefinition(Type type, MethodBase callingMethod)
+        private static MethodInfo? GetMirroredMethodGenericDefinition(Type type, MethodBase callingMethod)
         {
             //Can't just use type.GetMethod(...) because of generic arguments.
 
@@ -242,7 +236,7 @@ namespace Plethora
                     (method.GetParameters().Length == callingParameters.Length) &&
                     (method.GetGenericArguments().Length == callingGenericArgs.Length));
 
-            MethodInfo matchedMethod = null;
+            MethodInfo? matchedMethod = null;
             foreach (var potentialMethod in potentialMethods)
             {
                 MethodInfo typedPotentialMethod;
@@ -268,7 +262,7 @@ namespace Plethora
             return matchedMethod;            
         }
 
-        protected static object InvokeMethod(MethodInfo method, object obj, params object[] args)
+        protected static object? InvokeMethod(MethodInfo method, object? obj, params object?[] args)
         {
             return method.Invoke(obj, args);
         }
@@ -310,9 +304,12 @@ namespace Plethora
         /// <returns>
         /// The result of the underlying method.
         /// </returns>
-        public new static object Exec(Type[] genericArguments, params object[] args)
+        public new static object? Exec(Type[] genericArguments, params object[] args)
         {
-            MethodBase callingMethod = new StackFrame(1, false).GetMethod();
+            MethodBase? callingMethod = new StackFrame(1, false).GetMethod();
+
+            if (callingMethod is null)
+                throw new MemberNotFoundException(ResourceProvider.MethodNotFound());
 
             //Ensure a static method is not called in a non-static context
             if (!callingMethod.IsStatic)

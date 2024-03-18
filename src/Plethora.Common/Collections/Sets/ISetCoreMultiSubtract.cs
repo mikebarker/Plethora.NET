@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
 namespace Plethora.Collections.Sets
@@ -12,8 +11,8 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Returns a set representing the set difference of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        IReadOnlyCollection<ISetCore> Subtract([NotNull] ISetCore other);
+        [Pure]
+        IReadOnlyCollection<ISetCore> Subtract(ISetCore other);
     }
 
     /// <summary>
@@ -24,8 +23,8 @@ namespace Plethora.Collections.Sets
         /// <summary>
         /// Returns a set representing the set difference of this and another set.
         /// </summary>
-        [Pure, NotNull]
-        IReadOnlyCollection<ISetCore<T>> Subtract([NotNull] ISetCore<T> other);
+        [Pure]
+        IReadOnlyCollection<ISetCore<T>> Subtract(ISetCore<T> other);
     }
 
     public static class SetCoreMultiSubtractHelper

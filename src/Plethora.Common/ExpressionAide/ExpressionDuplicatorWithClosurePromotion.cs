@@ -97,9 +97,9 @@ namespace Plethora.ExpressionAide
 
         public LambdaExpression DuplicateWithClosurePromotion(LambdaExpression expr, out IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
         {
-            ParamDictionary parametersDic = new ParamDictionary();
-            List<Step> path = new List<Step>();
-            var dupe = (LambdaExpression)this.Duplicate(expr, new Step(Direction.This), parametersDic, path);
+            ParamDictionary parametersDic = new();
+            List<Step> path = new();
+            var dupe = (LambdaExpression)this.Duplicate(expr, new Step(Direction.This), parametersDic, path)!;
 
             parameters = parametersDic;
             return dupe;
@@ -110,9 +110,9 @@ namespace Plethora.ExpressionAide
 
         protected override Expression DuplicateConstant(ConstantExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            if ((expression != null) && expression.Type.Name.StartsWith(CLOSURE_CONSTANT_NAME))
+            if ((expression is not null) && expression.Type.Name.StartsWith(CLOSURE_CONSTANT_NAME))
             {
-                ParameterExpression rtn = null;
+                ParameterExpression? rtn = null;
 
                 //Test if the constant has been encountered before
                 string expressionName = expression.Type.Name;
@@ -135,7 +135,7 @@ namespace Plethora.ExpressionAide
                 return rtn;
             }
 
-            return base.DuplicateConstant(expression, parameters, path);
+            return base.DuplicateConstant(expression!, parameters, path);
         }
         #endregion
     }
