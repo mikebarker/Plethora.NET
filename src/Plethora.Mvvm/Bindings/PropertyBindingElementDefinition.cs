@@ -10,15 +10,13 @@ namespace Plethora.Mvvm.Bindings
     public class PropertyBindingElementDefinition : BindingElementDefinition
     {
         public PropertyBindingElementDefinition(
-            [NotNull] string propertyName)
+            string propertyName)
         {
-            if (propertyName == null)
-                throw new ArgumentNullException(nameof(propertyName));
+            ArgumentNullException.ThrowIfNull(propertyName);
 
             this.PropertyName = propertyName;
         }
 
-        [NotNull]
         public string PropertyName { get; }
 
         public override IBindingObserverElement CreateObserver(IGetterProvider getterProvider)
@@ -29,6 +27,10 @@ namespace Plethora.Mvvm.Bindings
         protected override Expression CreateGetterExpression(Type observedType, Expression observedExpression)
         {
             var property = observedType.GetProperty(this.PropertyName);
+            if (property is null)
+            {
+                throw new InvalidOperationException($"Property '{this.PropertyName}' not found on type '{observedType}'.");
+            }
 
             var getPropertyExpression = Expression.Property(observedExpression, property);
             return getPropertyExpression;
@@ -36,17 +38,17 @@ namespace Plethora.Mvvm.Bindings
 
         #region Equality
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
 
             return this.Equals(obj as PropertyBindingElementDefinition);
         }
 
-        public bool Equals(PropertyBindingElementDefinition other)
+        public bool Equals(PropertyBindingElementDefinition? other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return string.Equals(this.PropertyName, other.PropertyName);

@@ -1,8 +1,6 @@
 using System;
 using System.Globalization;
 
-using JetBrains.Annotations;
-
 using Plethora.Mvvm.Properties;
 
 namespace Plethora.Mvvm
@@ -19,8 +17,7 @@ namespace Plethora.Mvvm
         /// </summary>
         /// <param name="memberName">The name of the member of the type.</param>
         /// <param name="type">The type.</param>
-        [NotNull]
-        public static string CantFindStaticMember([NotNull] string memberName, [NotNull] Type type)
+        public static string CantFindStaticMember(string memberName, Type type)
         {
             return StringFormat(Resources.CantFindStaticMember,
                 memberName,
@@ -32,9 +29,7 @@ namespace Plethora.Mvvm
         /// </summary>
         /// <param name="propertyName">The name of the property.</param>
         /// <param name="propertyType">The type of the property.</param>
-        /// <param name="defaultValue">The default value provided.</param>
-        [NotNull]
-        public static string DefaultPropertyValueNotOfType([NotNull] string propertyName, [NotNull] Type propertyType, [CanBeNull] object defaultValue)
+        public static string DefaultPropertyValueNotOfType(string propertyName, Type propertyType, object? defaultValue)
         {
             return StringFormat(Resources.DefaultPropertyValueNotOfType,
                 propertyName,
@@ -47,8 +42,7 @@ namespace Plethora.Mvvm
         /// </summary>
         /// <param name="propertyExpressionArgumentName">The name of the property expression argument.</param>
         /// <param name="type">The type.</param>
-        [NotNull]
-        public static string PropertyExpression([InvokerParameterName, NotNull] string propertyExpressionArgumentName, [NotNull] Type type)
+        public static string PropertyExpression(string propertyExpressionArgumentName, Type type)
         {
             return StringFormat(Resources.PropertyExpression,
                 propertyExpressionArgumentName,
@@ -72,9 +66,7 @@ namespace Plethora.Mvvm
         /// The format string with substitutions made, according to the current UI
         /// culture.
         /// </returns>
-        [StringFormatMethod("format")]
-        [NotNull]
-        private static string StringFormat([NotNull] string format, [NotNull, ItemCanBeNull] params object[] args)
+        private static string StringFormat(string format, params object?[] args)
         {
             return string.Format(CultureInfo.CurrentCulture, format, args);
         }

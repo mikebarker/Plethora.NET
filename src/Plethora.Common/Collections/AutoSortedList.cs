@@ -339,7 +339,7 @@ namespace Plethora.Collections
         public int BinarySearch(int index, int count, T item)
         {
             //Validation
-            ArgumentNullException.ThrowIfNull(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
 
             int result = this.innerList.BinarySearch(index, count, item, this.comparer);

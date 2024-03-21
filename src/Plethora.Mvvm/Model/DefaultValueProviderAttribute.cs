@@ -1,5 +1,4 @@
 ﻿using System;
-using JetBrains.Annotations;
 
 namespace Plethora.Mvvm.Model
 {
@@ -48,8 +47,8 @@ namespace Plethora.Mvvm.Model
         /// The static field or property name for which the default value must be retrieved from <paramref name="type"/>.
         /// </param>
         public DefaultValueProviderAttribute(
-            [NotNull] Type type,
-            [NotNull] string staticMemberName)
+            Type type,
+            string staticMemberName)
         {
             this.type = type;
             this.staticMemberName = staticMemberName;
@@ -58,7 +57,6 @@ namespace Plethora.Mvvm.Model
         /// <summary>
         /// The type from which the default value must be retrieved.
         /// </summary>
-        [NotNull]
         public Type Type
         {
             get { return this.type; }
@@ -67,7 +65,6 @@ namespace Plethora.Mvvm.Model
         /// <summary>
         /// The static field or property name for which the default value must be retrieved from <see name="DefaultValueProviderAttribute.Type"/>.
         /// </summary>
-        [NotNull]
         public string StaticMemberName
         {
             get { return this.staticMemberName; }

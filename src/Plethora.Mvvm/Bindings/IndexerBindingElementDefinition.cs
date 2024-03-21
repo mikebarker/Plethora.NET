@@ -1,6 +1,6 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -15,8 +15,8 @@ namespace Plethora.Mvvm.Bindings
         public readonly struct Argument
         {
             public Argument(
-                [NotNull] string value,
-                [CanBeNull] Type type = null)
+                string value,
+                Type? type = null)
             {
                 ArgumentNullException.ThrowIfNull(value);
 
@@ -24,15 +24,13 @@ namespace Plethora.Mvvm.Bindings
                 this.Type = type;
             }
 
-            [NotNull] 
             public string Value { get; }
         
-            [CanBeNull]
-            public Type Type { get; }
+            public Type? Type { get; }
 
             #region Equality
 
-            public override bool Equals(object obj)
+            public override bool Equals(object? obj)
             {
                 if (obj is null) return false;
 
@@ -58,7 +56,7 @@ namespace Plethora.Mvvm.Bindings
         }
 
         public IndexerBindingElementDefinition(
-            [NotNull, ItemNotNull] Argument[] arguments)
+            Argument[] arguments)
         {
             ArgumentNullException.ThrowIfNull(arguments);
 
@@ -75,6 +73,10 @@ namespace Plethora.Mvvm.Bindings
         protected override Expression CreateGetterExpression(Type observedType, Expression observedExpression)
         {
             var tuple = TryGetIndexerProperty(observedType, this.Arguments);
+            if (tuple is null)
+            {
+                throw new InvalidOperationException($"Indexer not found on type '{observedType}'.");
+            }
 
             var indexerProperty = tuple.Item1;
             var argumentValues = tuple.Item2;
@@ -87,13 +89,13 @@ namespace Plethora.Mvvm.Bindings
             return getPropertyExpression;
         }
 
-        private static Tuple<PropertyInfo, object[]> TryGetIndexerProperty(Type type, Argument[] arguments)
+        private static Tuple<PropertyInfo, object?[]>? TryGetIndexerProperty(Type type, Argument[] arguments)
         {
             var properties = type.GetProperties();
             foreach (var property in properties)
             {
                 var indexParameters = property.GetIndexParameters();
-                if (AreMatch(indexParameters, arguments, out object[] argumentValues))
+                if (AreMatch(indexParameters, arguments, out var argumentValues))
                 {
                     return Tuple.Create(property, argumentValues);
                 }
@@ -102,7 +104,7 @@ namespace Plethora.Mvvm.Bindings
             return null;
         }
 
-        private static bool AreMatch(ParameterInfo[] indexParameters, Argument[] arguments, out object[] argumentValues)
+        private static bool AreMatch(ParameterInfo[] indexParameters, Argument[] arguments, [MaybeNullWhen(false)] out object?[] argumentValues)
         {
             if (indexParameters.Length != arguments.Length)
             {
@@ -126,7 +128,7 @@ namespace Plethora.Mvvm.Bindings
             return true;
         }
 
-        private static bool AreMatch(ParameterInfo indexParameter, Argument argument, out object value)
+        private static bool AreMatch(ParameterInfo indexParameter, Argument argument, out object? value)
         {
             if (argument.Type != null)
             {
@@ -161,17 +163,17 @@ namespace Plethora.Mvvm.Bindings
 
         #region Equality
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
+            if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
 
             return this.Equals(obj as IndexerBindingElementDefinition);
         }
 
-        public bool Equals(IndexerBindingElementDefinition other)
+        public bool Equals(IndexerBindingElementDefinition? other)
         {
-            if (ReferenceEquals(null, other)) return false;
+            if (other is null) return false;
             if (ReferenceEquals(this, other)) return true;
 
             return Enumerable.SequenceEqual(this.Arguments, other.Arguments);

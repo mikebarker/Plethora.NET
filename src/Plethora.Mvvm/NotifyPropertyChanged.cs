@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using JetBrains.Annotations;
 
 namespace Plethora.Mvvm
 {
@@ -42,7 +41,7 @@ namespace Plethora.Mvvm
     {
         private bool isNotifying = true;
 
-        protected bool ChangeProperty<T>(T value, ref T field, [CallerMemberName] string propertyName = null)
+        protected bool ChangeProperty<T>(T value, ref T field, [CallerMemberName] string? propertyName = null)
         {
             if (Equals(value, field))
                 return false;
@@ -58,7 +57,7 @@ namespace Plethora.Mvvm
         /// <summary>
         /// Raised when a property value is changing.
         /// </summary>
-        protected event PropertyChangingEventHandler InternalPropertyChanging;
+        protected event PropertyChangingEventHandler? InternalPropertyChanging;
 
         /// <summary>
         /// Raises the <see cref="InternalPropertyChanging"/> event.
@@ -68,15 +67,13 @@ namespace Plethora.Mvvm
             if (!this.IsNotifying)
                 return;
 
-            var handler = this.InternalPropertyChanging;
-            if (handler != null)
-                handler(this, e);
+            this.InternalPropertyChanging?.Invoke(this, e);
         }
 
         /// <summary>
         /// Raises the <see cref="InternalPropertyChanging"/> event.
         /// </summary>
-        protected void OnPropertyChanging([CanBeNull][CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanging([CallerMemberName] string? propertyName = null)
         {
             this.OnPropertyChanging(new PropertyChangingEventArgs(propertyName));
         }
@@ -88,7 +85,7 @@ namespace Plethora.Mvvm
         /// <summary>
         /// Raised when a property changes.
         /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event.
@@ -98,16 +95,13 @@ namespace Plethora.Mvvm
             if (!this.IsNotifying)
                 return;
 
-            var handler = this.PropertyChanged;
-            if (handler != null)
-                handler(this, e);
+            this.PropertyChanged?.Invoke(this, e);
         }
 
         /// <summary>
         /// Raises the <see cref="PropertyChanged"/> event.
         /// </summary>
-        [NotifyPropertyChangedInvocator]
-        protected void OnPropertyChanged([CanBeNull][CallerMemberName] string propertyName = null)
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             this.OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
         }

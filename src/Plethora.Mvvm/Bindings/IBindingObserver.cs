@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Mvvm.Bindings
 {
     public interface IBindingObserver
     {
-        event EventHandler ValueChanging;
+        event EventHandler? ValueChanging;
 
-        event EventHandler ValueChanged;
+        event EventHandler? ValueChanged;
 
-        void SetObserved(object observed);
+        void SetObserved(object? observed);
 
-        bool TryGetValue(out object value);
+        bool TryGetValue([MaybeNullWhen(false)] out object value);
     }
 
     /// <summary>
@@ -18,6 +19,6 @@ namespace Plethora.Mvvm.Bindings
     /// </summary>
     public interface IBindingObserverElement : IBindingObserver
     {
-        void SetParent(IBindingObserver parent);
+        void SetParent(IBindingObserver? parent);
     }
 }

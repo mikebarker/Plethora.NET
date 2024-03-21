@@ -21,7 +21,7 @@ namespace Plethora.Mvvm
 
         private readonly DropoutStack<INavigationState> backStack;
         private readonly DropoutStack<INavigationState> forwardStack;
-        private IViewModel current;
+        private IViewModel? current;
 
         /// <summary>
         /// Initialise a new instance of the <see cref="Navigator"/> class, with the default capacity.
@@ -47,7 +47,7 @@ namespace Plethora.Mvvm
         /// <summary>
         /// Gets the current view-model.
         /// </summary>
-        public IViewModel Current
+        public IViewModel? Current
         {
             get { return this.current; }
             private set
@@ -66,10 +66,9 @@ namespace Plethora.Mvvm
         /// </remarks>
         public void NavigatorTo(IViewModel viewModel)
         {
-            if (viewModel is null)
-                throw new ArgumentNullException(nameof(viewModel));
+            ArgumentNullException.ThrowIfNull(viewModel);
 
-            if (this.Current != null)
+            if (this.Current is not null)
             {
                 var currentNavigationState = this.Current.NavigationState;
                 this.PushBack(currentNavigationState);
@@ -78,7 +77,7 @@ namespace Plethora.Mvvm
             if (this.forwardStack.Count != 0)
             {
                 this.forwardStack.Clear();
-                this.OnPropertyChanged(nameof(this.CanNavigateForeward));
+                this.OnPropertyChanged(nameof(this.CanNavigateForward));
             }
 
             this.Current = viewModel;
@@ -97,7 +96,7 @@ namespace Plethora.Mvvm
             if (!this.CanNavigateBack)
                 throw new InvalidOperationException();
 
-            if (this.Current != null)
+            if (this.Current is not null)
             {
                 var currentNavigationState = this.Current.NavigationState;
                 this.PushForward(currentNavigationState);
@@ -111,14 +110,14 @@ namespace Plethora.Mvvm
         /// <summary>
         /// Gets a flag indicating whether it is possible to navigate forward.
         /// </summary>
-        public bool CanNavigateForeward => this.forwardStack.Count > 0;
+        public bool CanNavigateForward => this.forwardStack.Count > 0;
 
         /// <summary>
         /// Navigates to the next view-model.
         /// </summary>
-        public void NavigateForeward()
+        public void NavigateForward()
         {
-            if (!this.CanNavigateForeward)
+            if (!this.CanNavigateForward)
                 throw new InvalidOperationException();
 
             if (this.Current != null)
@@ -144,12 +143,12 @@ namespace Plethora.Mvvm
 
         private void PushForward(INavigationState navigationState)
         {
-            this.Push(navigationState, this.forwardStack, nameof(CanNavigateForeward));
+            this.Push(navigationState, this.forwardStack, nameof(CanNavigateForward));
         }
 
         private INavigationState PopForward()
         {
-            return this.Pop(this.forwardStack, nameof(CanNavigateForeward));
+            return this.Pop(this.forwardStack, nameof(CanNavigateForward));
         }
 
         private void Push(INavigationState navigationState, DropoutStack<INavigationState> stack, string canNavigatePropertyName)

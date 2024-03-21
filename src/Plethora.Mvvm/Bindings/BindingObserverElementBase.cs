@@ -1,5 +1,5 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Mvvm.Bindings
 {
@@ -10,33 +10,35 @@ namespace Plethora.Mvvm.Bindings
     {
         private readonly BindingElementDefinition bindingElementDefinition;
         private readonly IGetterProvider getterProvider;
-        private IBindingObserver parent;
-        private object observed;
-        private Func<object, object> getter;
+        private IBindingObserver? parent;
+        private object? observed;
+        private Func<object, object>? getter;
 
         protected BindingObserverElementBase(
-            [NotNull] BindingElementDefinition bindingElementDefinition,
-            [NotNull] IGetterProvider getterProvider)
+            BindingElementDefinition bindingElementDefinition,
+            IGetterProvider getterProvider)
         {
-            if (bindingElementDefinition == null)
-                throw new ArgumentNullException(nameof(bindingElementDefinition));
-
-            if (getterProvider == null)
-                throw new ArgumentNullException(nameof(getterProvider));
+            ArgumentNullException.ThrowIfNull(bindingElementDefinition);
+            ArgumentNullException.ThrowIfNull(getterProvider);
 
             this.bindingElementDefinition = bindingElementDefinition;
             this.getterProvider = getterProvider;
         }
 
-        protected object Observed => this.observed;
+        protected object? Observed => this.observed;
 
         private Func<object, object> Getter
         {
             get
             {
-                if (this.getter == null)
+                if (this.getter is null)
                 {
-                    this.getter = this.getterProvider.AcquireGetter(this.Observed.GetType(), this.bindingElementDefinition);
+                    if (this.Observed is null)
+                    {
+                        throw new InvalidOperationException("Observed object is null.");
+                    }
+
+                    this.getter = this.getterProvider.AcquireGetter(this.Observed!.GetType(), this.bindingElementDefinition);
                 }
 
                 return this.getter;
@@ -45,7 +47,7 @@ namespace Plethora.Mvvm.Bindings
 
         #region ValueChanging Event
 
-        public event EventHandler ValueChanging;
+        public event EventHandler? ValueChanging;
 
         protected virtual void OnValueChanging()
         {
@@ -56,7 +58,7 @@ namespace Plethora.Mvvm.Bindings
 
         #region ValueChanged Event
 
-        public event EventHandler ValueChanged;
+        public event EventHandler? ValueChanged;
 
         protected virtual void OnValueChanged()
         {
@@ -65,9 +67,9 @@ namespace Plethora.Mvvm.Bindings
 
         #endregion
 
-        public bool TryGetValue(out object value)
+        public bool TryGetValue([MaybeNullWhen(false)] out object value)
         {
-            if (ReferenceEquals(this.Observed, null))
+            if (this.Observed is null)
             {
                 value = null;
                 return false;
@@ -77,7 +79,7 @@ namespace Plethora.Mvvm.Bindings
             return true;
         }
 
-        public void SetParent(IBindingObserver parent)
+        public void SetParent(IBindingObserver? parent)
         {
             if (ReferenceEquals(this.parent, parent))
             {
@@ -91,7 +93,7 @@ namespace Plethora.Mvvm.Bindings
 
             this.parent = parent;
 
-            if (this.parent != null)
+            if (this.parent is not null)
             {
                 this.parent.ValueChanged += HandleParentValueChanged;
 
@@ -103,7 +105,7 @@ namespace Plethora.Mvvm.Bindings
             }
         }
 
-        private void HandleParentValueChanging(object sender, EventArgs e)
+        private void HandleParentValueChanging(object? sender, EventArgs e)
         {
             this.HandleParentValueChanging();
         }
@@ -113,14 +115,14 @@ namespace Plethora.Mvvm.Bindings
             this.OnValueChanging();
         }
 
-        private void HandleParentValueChanged(object sender, EventArgs e)
+        private void HandleParentValueChanged(object? sender, EventArgs e)
         {
             this.HandleParentValueChanged();
         }
 
         private void HandleParentValueChanged()
         {
-            if (this.parent.TryGetValue(out object parentProperty))
+            if (this.parent!.TryGetValue(out var parentProperty))
             {
                 this.SetObserved(parentProperty);
             }
@@ -130,7 +132,7 @@ namespace Plethora.Mvvm.Bindings
             }
         }
 
-        public void SetObserved([CanBeNull] object observed)
+        public void SetObserved(object? observed)
         {
             if (ReferenceEquals(this.observed, observed))
             {

@@ -324,7 +324,7 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentNullException">The forward key is null.</exception>
         public bool Remove(T1 t1)
         {
-            ArgumentNullException.ThrowIfNull(nameof(t1));
+            ArgumentNullException.ThrowIfNull(t1);
 
             if (!this.forwardMap.TryGetValue(t1, out T2? existingT2))
                 return false;
@@ -345,7 +345,7 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentNullException">The reverse key is null.</exception>
         public bool RemoveReverse(T2 t2)
         {
-            ArgumentNullException.ThrowIfNull(nameof(t2));
+            ArgumentNullException.ThrowIfNull(t2);
 
             if (!this.reverseMap.TryGetValue(t2, out T1? existingT1))
                 return false;

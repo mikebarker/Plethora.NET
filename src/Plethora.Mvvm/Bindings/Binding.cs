@@ -10,8 +10,8 @@ namespace Plethora.Mvvm.Bindings
 
         public static IBindingObserver CreateObserver<T>(T item, IEnumerable<BindingElementDefinition> elements)
         {
-            IBindingObserver root = null;
-            IBindingObserver leaf = null;
+            IBindingObserver? root = null;
+            IBindingObserver? leaf = null;
 
             foreach (var element in elements)
             {
@@ -24,6 +24,11 @@ namespace Plethora.Mvvm.Bindings
 
                 observer.SetParent(leaf);
                 leaf = observer;
+            }
+
+            if (root == null || leaf == null)
+            {
+                throw new InvalidOperationException("Binding must have at least one element.");
             }
 
             IBindingObserver bindingObserver;

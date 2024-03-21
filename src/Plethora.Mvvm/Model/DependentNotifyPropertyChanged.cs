@@ -5,8 +5,6 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-using JetBrains.Annotations;
-
 using Plethora.Collections;
 using Plethora.Mvvm.Bindings;
 
@@ -67,10 +65,9 @@ namespace Plethora.Mvvm.Model
         private class BindingDefinition
         {
             public BindingDefinition(
-                [NotNull, ItemNotNull] IEnumerable<BindingElementDefinition> elements)
+                IEnumerable<BindingElementDefinition> elements)
             {
-                if (elements == null)
-                    throw new ArgumentNullException(nameof(elements));
+                ArgumentNullException.ThrowIfNull(elements);
 
                 this.Elements = elements.ToList();
             }
@@ -78,9 +75,8 @@ namespace Plethora.Mvvm.Model
             public IReadOnlyList<BindingElementDefinition> Elements { get; }
         }
 
-        private static readonly ReaderWriterLockSlim dependencyMapLock = new ReaderWriterLockSlim();
-        private static readonly MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>>> dependencyMapByType =
-            new MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>>>(maxEntries: 1024);
+        private static readonly ReaderWriterLockSlim dependencyMapLock = new();
+        private static readonly MruDictionary<Type, IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>>?> dependencyMapByType = new(maxEntries: 1024);
 
         /// <summary>
         /// Gets and sets a tuning parameter which determines the maximum number of types for which the dependency map
@@ -96,10 +92,9 @@ namespace Plethora.Mvvm.Model
             set { dependencyMapByType.SetMaxEntriesAndWatermark(value, null); }
         }
 
-        [CanBeNull]
-        private static IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> GetDependencyMapForType([NotNull] Type type)
+        private static IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> GetDependencyMapForType(Type type)
         {
-            IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> map;
+            IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>>? map;
             bool result;
 
             dependencyMapLock.EnterReadLock();
@@ -130,11 +125,10 @@ namespace Plethora.Mvvm.Model
                 }
             }
 
-            return map;
+            return map!;
         }
 
-        [NotNull]
-        private static IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> CreateDependencyMapForType([NotNull] Type type)
+        private static IReadOnlyDictionary<string, IReadOnlyCollection<BindingDefinition>> CreateDependencyMapForType(Type type)
         {
             var bindingDefinitionsMap = new Dictionary<string, IReadOnlyCollection<BindingDefinition>>();
 
@@ -166,7 +160,7 @@ namespace Plethora.Mvvm.Model
 
         #endregion
 
-        private readonly List<IBindingObserver> bindingObservers;
+        private readonly List<IBindingObserver>? bindingObservers;
 
         /// <summary>
         /// Initialises a new instance of the <see cref="DependentNotifyPropertyChanged"/> class.
@@ -188,7 +182,7 @@ namespace Plethora.Mvvm.Model
 
                     if (this.bindingObservers == null)
                     {
-                        this.bindingObservers = new List<IBindingObserver>();
+                        this.bindingObservers = new();
                     }
                     this.bindingObservers.Add(observer);
                 }

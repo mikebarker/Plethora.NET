@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Specialized;
 
 namespace Plethora.Mvvm.Bindings
@@ -12,12 +11,11 @@ namespace Plethora.Mvvm.Bindings
         private readonly int? index;
 
         public CollectionObserverElement(
-            [NotNull] IndexerBindingElementDefinition indexerDefinition,
-            [NotNull] IGetterProvider getterProvider)
+            IndexerBindingElementDefinition indexerDefinition,
+            IGetterProvider getterProvider)
             : base(indexerDefinition, getterProvider)
         {
-            if (indexerDefinition == null)
-                throw new ArgumentNullException(nameof(indexerDefinition));
+            ArgumentNullException.ThrowIfNull(indexerDefinition);
 
             if (indexerDefinition.Arguments.Length == 1)
             {
@@ -44,7 +42,7 @@ namespace Plethora.Mvvm.Bindings
             }
         }
 
-        private void HandleObservedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void HandleObservedCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             bool invokeValueChanged = false;
             if (this.index.HasValue)

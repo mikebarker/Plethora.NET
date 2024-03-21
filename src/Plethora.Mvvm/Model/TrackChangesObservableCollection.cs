@@ -188,14 +188,19 @@ namespace Plethora.Mvvm.Model
         }
 
 
-        private void ItemPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void ItemPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (!this.inBulkUpdate)
             {
                 bool preHasChanged = this.HasChanged;
 
-                if (!(e is DependentPropertyChangedEventArgs))
-                { 
+                if (e is not DependentPropertyChangedEventArgs)
+                {
+                    if (sender is null)
+                    {
+                        return;
+                    }
+
                     T item = (T)sender;
 
                     if (!this.added.Contains(item))

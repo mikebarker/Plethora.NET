@@ -7,8 +7,8 @@ namespace Plethora.Mvvm.ViewModel
     /// </summary>
     public abstract class ViewModelBase : NotifyPropertyChanged, IViewModel, INavigationState
     {
-        private readonly object viewLock = new object();
-        private readonly WeakReference<object> weakView = new WeakReference<object>(null);
+        private readonly object viewLock = new();
+        private readonly WeakReference<object?> weakView = new(null);
 
         /// <inheritdoc />
         IViewModel INavigationState.GetViewModel() => this;
@@ -30,7 +30,7 @@ namespace Plethora.Mvvm.ViewModel
         {
             get
             {
-                object view;
+                object? view;
                 if (this.weakView.TryGetTarget(out view))
                 {
                     return view;
@@ -57,7 +57,7 @@ namespace Plethora.Mvvm.ViewModel
         /// The view associated with this view-model.
         /// </returns>
         /// <remarks>
-        /// This method is guarenteed to be called only once during the view-model's lifetime.
+        /// This method is guaranteed to be called only once during the view-model's lifetime.
         /// </remarks>
         protected abstract object CreateView();
     }

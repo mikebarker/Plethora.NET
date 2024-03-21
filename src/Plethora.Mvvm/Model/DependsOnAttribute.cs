@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Plethora.Mvvm.Model
 {
     /// <summary>
@@ -19,10 +17,9 @@ namespace Plethora.Mvvm.Model
         /// </summary>
         /// <param name="path">The path of the dependent property.</param>
         public DependsOnAttribute(
-            [NotNull] string path)
+            string path)
         {
-            if (path == null)
-                throw new ArgumentNullException(nameof(path));
+            ArgumentNullException.ThrowIfNull(path);
 
             this.path = path;
         }
@@ -30,7 +27,6 @@ namespace Plethora.Mvvm.Model
         /// <summary>
         /// The path of the dependent property.
         /// </summary>
-        [NotNull]
         public string Path
         {
             get { return this.path; }

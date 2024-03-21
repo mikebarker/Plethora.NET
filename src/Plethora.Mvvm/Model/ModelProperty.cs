@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
-using JetBrains.Annotations;
-
 namespace Plethora.Mvvm.Model
 {
     /// <summary>
@@ -11,7 +9,7 @@ namespace Plethora.Mvvm.Model
     /// </summary>
     internal interface IModelProperty : ITrackChanges
     {
-        bool IsUnchangedDefaultValue(IModelPropertyMetadata propertyMetadata);
+        bool IsUnchangedDefaultValue(IModelPropertyMetadata? propertyMetadata);
     }
 
     /// <summary>
@@ -23,24 +21,22 @@ namespace Plethora.Mvvm.Model
     [DebuggerDisplay("{" + nameof(Value) + "}")]
     internal sealed class ModelProperty<T> : IModelProperty
     {
-        private T originalValue;
-        private T currentValue;
+        private T? originalValue;
+        private T? currentValue;
 
-        public ModelProperty([CanBeNull] T value)
+        public ModelProperty(T? value)
         {
             this.originalValue = value;
             this.currentValue = value;
         }
 
-        [CanBeNull]
-        public T OriginalValue
+        public T? OriginalValue
         {
             get { return this.originalValue; }
             set { this.originalValue = value; }
         }
 
-        [CanBeNull]
-        public T Value
+        public T? Value
         {
             get { return this.currentValue; }
             set { this.currentValue = value; }
@@ -64,7 +60,7 @@ namespace Plethora.Mvvm.Model
             this.currentValue = this.originalValue;
         }
 
-        bool IModelProperty.IsUnchangedDefaultValue([CanBeNull] IModelPropertyMetadata propertyMetadata)
+        bool IModelProperty.IsUnchangedDefaultValue(IModelPropertyMetadata? propertyMetadata)
         {
             if (propertyMetadata != null && !(propertyMetadata is ModelPropertyMetadata<T>))
             {
@@ -73,12 +69,12 @@ namespace Plethora.Mvvm.Model
                     nameof(propertyMetadata));
             }
 
-            return this.IsUnchangedDefaultValue((ModelPropertyMetadata<T>)propertyMetadata);
+            return this.IsUnchangedDefaultValue((ModelPropertyMetadata<T>?)propertyMetadata);
         }
 
-        public bool IsUnchangedDefaultValue([CanBeNull] ModelPropertyMetadata<T> propertyMetadata)
+        public bool IsUnchangedDefaultValue(ModelPropertyMetadata<T>? propertyMetadata)
         {
-            T defaultValue = ModelPropertyMetadataHelper.GetDefaultValueSafe(propertyMetadata);
+            var defaultValue = ModelPropertyMetadataHelper.GetDefaultValueSafe(propertyMetadata);
 
             return
                 EqualityComparer<T>.Default.Equals(this.originalValue, defaultValue) &&

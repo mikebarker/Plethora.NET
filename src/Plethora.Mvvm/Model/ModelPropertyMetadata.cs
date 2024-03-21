@@ -1,7 +1,5 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 namespace Plethora.Mvvm.Model
 {
     /// <summary>
@@ -9,7 +7,6 @@ namespace Plethora.Mvvm.Model
     /// </summary>
     internal interface IModelPropertyMetadata
     {
-        [NotNull]
         string Name { get; }
     }
 
@@ -22,14 +19,13 @@ namespace Plethora.Mvvm.Model
     internal sealed class ModelPropertyMetadata<T> : IModelPropertyMetadata
     {
         private readonly string name;
-        private readonly T defaultValue;
+        private readonly T? defaultValue;
 
         public ModelPropertyMetadata(
-            [NotNull] string name,
-            T defaultValue)
+            string name,
+            T? defaultValue)
         {
-            if (name == null)
-                throw new ArgumentNullException(nameof(name));
+            ArgumentNullException.ThrowIfNull(name);
 
             this.name = name;
             this.defaultValue = defaultValue;
@@ -40,8 +36,7 @@ namespace Plethora.Mvvm.Model
             get { return this.name; }
         }
 
-        [CanBeNull]
-        public T DefaultValue
+        public T? DefaultValue
         {
             get { return this.defaultValue; }
         }
@@ -49,11 +44,10 @@ namespace Plethora.Mvvm.Model
 
     internal static class ModelPropertyMetadataHelper
     {
-        [CanBeNull]
-        public static T GetDefaultValueSafe<T>([CanBeNull] this ModelPropertyMetadata<T> propertyMetadata)
+        public static T? GetDefaultValueSafe<T>(this ModelPropertyMetadata<T>? propertyMetadata)
         {
             if (propertyMetadata == null)
-                return default(T);
+                return default;
 
             return propertyMetadata.DefaultValue;
         }

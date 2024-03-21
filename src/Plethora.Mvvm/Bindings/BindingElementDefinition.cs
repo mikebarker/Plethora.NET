@@ -25,7 +25,7 @@ namespace Plethora.Mvvm.Bindings
 
         protected abstract Expression CreateGetterExpression(Type observedType, Expression observedExpression);
 
-        public override abstract bool Equals(object obj);
+        public override abstract bool Equals(object? obj);
 
         public override abstract int GetHashCode();
     }

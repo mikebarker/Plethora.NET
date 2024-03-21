@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.ComponentModel;
 
 namespace Plethora.Mvvm.Bindings
@@ -12,12 +11,11 @@ namespace Plethora.Mvvm.Bindings
         private readonly PropertyBindingElementDefinition propertyDefinition;
 
         public PropertyObserverElement(
-            [NotNull] PropertyBindingElementDefinition propertyDefinition,
-            [NotNull] IGetterProvider getterProvider)
+            PropertyBindingElementDefinition propertyDefinition,
+            IGetterProvider getterProvider)
             : base(propertyDefinition, getterProvider)
         {
-            if (propertyDefinition == null)
-                throw new ArgumentNullException(nameof(propertyDefinition));
+            ArgumentNullException.ThrowIfNull(propertyDefinition);
 
             this.propertyDefinition = propertyDefinition;
         }
@@ -49,7 +47,7 @@ namespace Plethora.Mvvm.Bindings
             }
         }
 
-        private void HandleObservedPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void HandleObservedPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             if (string.Equals(e.PropertyName, this.propertyDefinition.PropertyName))
             {
@@ -57,7 +55,7 @@ namespace Plethora.Mvvm.Bindings
             }
         }
 
-        private void HandleObservedPropertyChanging(object sender, PropertyChangingEventArgs e)
+        private void HandleObservedPropertyChanging(object? sender, PropertyChangingEventArgs e)
         {
             if (string.Equals(e.PropertyName, this.propertyDefinition.PropertyName))
             {

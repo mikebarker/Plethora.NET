@@ -1,5 +1,5 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Mvvm.Bindings
 {
@@ -23,14 +23,11 @@ namespace Plethora.Mvvm.Bindings
         /// It is expected that the binding elements are chained from the <paramref name="root"/> to the <paramref name="leaf"/>.
         /// </remarks>
         public BindingObserver(
-            [NotNull] IBindingObserver root,
-            [NotNull] IBindingObserver leaf)
+            IBindingObserver root,
+            IBindingObserver leaf)
         {
-            if (root == null)
-                throw new ArgumentNullException(nameof(root));
-
-            if (leaf == null)
-                throw new ArgumentNullException(nameof(leaf));
+            ArgumentNullException.ThrowIfNull(root);
+            ArgumentNullException.ThrowIfNull(leaf);
 
             this.root = root;
             this.leaf = leaf;
@@ -39,7 +36,7 @@ namespace Plethora.Mvvm.Bindings
         /// <summary>
         /// Sets the object to be observed by this observer.
         /// </summary>
-        public void SetObserved(object observed)
+        public void SetObserved(object? observed)
         {
             this.root.SetObserved(observed);
         }
@@ -47,7 +44,7 @@ namespace Plethora.Mvvm.Bindings
         /// <summary>
         /// Raised when the value of the evaluated binding is changing.
         /// </summary>
-        public event EventHandler ValueChanging
+        public event EventHandler? ValueChanging
         {
             add { this.leaf.ValueChanging += value; }
             remove { this.leaf.ValueChanging += value; }
@@ -56,7 +53,7 @@ namespace Plethora.Mvvm.Bindings
         /// <summary>
         /// Raised when the value of the evaluated binding changes.
         /// </summary>
-        public event EventHandler ValueChanged
+        public event EventHandler? ValueChanged
         {
             add { this.leaf.ValueChanged += value; }
             remove { this.leaf.ValueChanged += value; }
@@ -69,7 +66,7 @@ namespace Plethora.Mvvm.Bindings
         /// <returns>
         /// 'true' if the binding evaluation was successful; otherwise false.
         /// </returns>
-        public bool TryGetValue(out object value)
+        public bool TryGetValue([MaybeNullWhen(false)] out object value)
         {
             return this.leaf.TryGetValue(out value);
         }

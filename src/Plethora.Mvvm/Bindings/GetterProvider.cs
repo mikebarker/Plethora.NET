@@ -10,8 +10,7 @@ namespace Plethora.Mvvm.Bindings
 
     public class CachedGetterProvider : IGetterProvider
     {
-        private readonly MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>> gettersMap =
-            new MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>>(maxEntries: 1024);
+        private readonly MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>> gettersMap = new(maxEntries: 1024);
         private readonly IGetterProvider innerProvider;
 
         public CachedGetterProvider(
@@ -24,7 +23,7 @@ namespace Plethora.Mvvm.Bindings
         {
             var key = Tuple.Create(observedType, bindingElementDefinition);
 
-            if (!gettersMap.TryGetValue(key, out Func<object, object> getter))
+            if (!gettersMap.TryGetValue(key, out var getter))
             {
                 getter = innerProvider.AcquireGetter(observedType, bindingElementDefinition);
                 gettersMap.Add(key, getter);
