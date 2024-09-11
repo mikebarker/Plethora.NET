@@ -37,7 +37,7 @@ namespace Plethora.Collections
                 ArgumentNullException.ThrowIfNull(comparer);
 
 
-                this.weakReference = new WeakReference<TKey>(target);
+                this.weakReference = new(target);
 
                 //Capture the hash code to prevent it changing if the
                 // target is garbage collected.
@@ -123,7 +123,7 @@ namespace Plethora.Collections
                     // instance of the default WeakKeyComparer if called by several
                     // threads during initialisation. This is not an issue for this class,
                     // and is not worth locking to prevent.
-                    defaultInstance ??= new WeakKeyComparer(EqualityComparer<TKey>.Default);
+                    defaultInstance ??= new(EqualityComparer<TKey>.Default);
                     return defaultInstance;
                 }
             }
@@ -219,15 +219,13 @@ namespace Plethora.Collections
         /// </summary>
         public WeakKeyDictionary(int capacity, IEqualityComparer<TKey>? keyComparer)
         {
-            if (capacity < 0)
-                throw new ArgumentOutOfRangeException(nameof(capacity), capacity, ResourceProvider.ArgMustBeGreaterThanZero("capacity"));
+            ArgumentOutOfRangeException.ThrowIfLessThan(capacity, 0);
 
-            this.weakKeyComparer = (keyComparer == null)
+            this.weakKeyComparer = (keyComparer is null)
                 ? WeakKeyComparer.Default
                 : new WeakKeyComparer(keyComparer);
 
-            this.innerDictionary = new Dictionary<WeakKey, TValue>(
-                capacity, this.weakKeyComparer);
+            this.innerDictionary = new(capacity, this.weakKeyComparer);
         }
         #endregion
 

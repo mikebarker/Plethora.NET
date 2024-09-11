@@ -11,7 +11,7 @@ namespace Plethora.Collections.Transformations
     {
         private readonly Func<T, bool> filterBy;
 
-        private readonly IndexItemPairList filteredList = new IndexItemPairList();
+        private readonly IndexItemPairList filteredList = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="FilteredTransformedList{T}"/> class with its
@@ -130,8 +130,8 @@ namespace Plethora.Collections.Transformations
 
         private sealed class IndexItemPairList
         {
-            private readonly List<T> filteredItems = new List<T>();
-            private readonly List<int> filteredIndices = new List<int>();
+            private readonly List<T> filteredItems = new();
+            private readonly List<int> filteredIndices = new();
 
             public int Count => this.filteredItems.Count;
 

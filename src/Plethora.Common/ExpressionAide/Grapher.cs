@@ -10,7 +10,7 @@ namespace Plethora.ExpressionAide
     {
         public static string TextGraph(Expression expression)
         {
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             AddGraphNode(sb, 0, "", expression);
             return sb.ToString();
         }
@@ -38,7 +38,7 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (BinaryExpression)expression;
 
-                sb.AppendLine(strBranch + "Method = " + ((exp.Method == null) ? "<null>" : exp.Method.Name));
+                sb.AppendLine(strBranch + "Method = " + ((exp.Method is null) ? "<null>" : exp.Method.Name));
                 sb.AppendLine(strBranch + "IsLifted = " + exp.IsLifted);
                 sb.AppendLine(strBranch + "IsLiftedToNull = " + exp.IsLiftedToNull);
                 AddGraphNode(sb, depth + 1, "Conversion", exp.Conversion!);
@@ -221,7 +221,7 @@ namespace Plethora.ExpressionAide
             {
                 var exp = (UnaryExpression)expression;
 
-                sb.AppendLine(strBranch + "Method = " + ((exp.Method == null) ? "<null>" : exp.Method.Name));
+                sb.AppendLine(strBranch + "Method = " + ((exp.Method is null) ? "<null>" : exp.Method.Name));
                 sb.AppendLine(strBranch + "IsLifted = " + exp.IsLifted);
                 sb.AppendLine(strBranch + "IsLiftedToNull = " + exp.IsLiftedToNull);
                 AddGraphNode(sb, depth + 1, "Operand", exp.Operand);

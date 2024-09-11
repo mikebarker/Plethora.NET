@@ -71,8 +71,7 @@ namespace Plethora.Collections
         /// <param name="capacity">The maximum number of elements that the <see cref="DropoutStack{T}"/> can contain.</param>
         public DropoutStack(int capacity)
         {
-            if (capacity <= 0)
-                throw new ArgumentOutOfRangeException(nameof(capacity), capacity, ResourceProvider.ArgMustBeGreaterThanZero(nameof(capacity)));
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(capacity, 0);
 
             this.items = new T[capacity];
             this.firstIndex = -1;

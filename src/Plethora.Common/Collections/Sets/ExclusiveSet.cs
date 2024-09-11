@@ -25,7 +25,7 @@ namespace Plethora.Collections.Sets
             ArgumentNullException.ThrowIfNull(excludedElements);
 
 
-            this.excludedElements = new HashSet<T>(excludedElements);
+            this.excludedElements = new(excludedElements);
         }
 
         #endregion

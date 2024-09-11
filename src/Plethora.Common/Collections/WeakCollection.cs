@@ -163,7 +163,7 @@ namespace Plethora.Collections
 
         public WeakCollection(int capacity)
         {
-            this.innerList = new List<WeakReference<T>>(capacity);
+            this.innerList = new(capacity);
         }
         #endregion
 

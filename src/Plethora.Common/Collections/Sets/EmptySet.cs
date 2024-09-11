@@ -4,7 +4,7 @@ namespace Plethora.Collections.Sets
 {
     public sealed class EmptySet<T> : BaseSetImpl<T>
     {
-        public static readonly EmptySet<T> Instance = new EmptySet<T>();
+        public static readonly EmptySet<T> Instance = new();
 
         #region Constructors
 

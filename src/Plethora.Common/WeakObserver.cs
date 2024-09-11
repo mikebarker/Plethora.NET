@@ -23,7 +23,7 @@ namespace Plethora
             ArgumentNullException.ThrowIfNull(observer);
             ArgumentNullException.ThrowIfNull(onObserverCollected);
 
-            this.innerObserver = new WeakReference<IObserver<T>>(observer);
+            this.innerObserver = new(observer);
             this.onObserverCollected = onObserverCollected;
         }
 

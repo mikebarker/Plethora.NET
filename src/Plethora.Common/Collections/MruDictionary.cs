@@ -56,7 +56,7 @@ namespace Plethora.Collections
 
             this.maxEntries = maxEntries;
             this.watermark = watermark;
-            this.innerDictionary = new Dictionary<TKey, MruEntry<TValue>>(comparer);
+            this.innerDictionary = new(comparer);
         }
 
         #region Implementation of IEnumerable
@@ -109,7 +109,7 @@ namespace Plethora.Collections
             int i = 0;
             foreach (var pair in this.innerDictionary)
             {
-                array[arrayIndex + i] = new KeyValuePair<TKey, TValue>(pair.Key, this.GetValue(pair.Value));
+                array[arrayIndex + i] = new(pair.Key, this.GetValue(pair.Value));
                 i++;
             }
         }
@@ -194,7 +194,7 @@ namespace Plethora.Collections
                 }
                 else
                 {
-                    this.innerDictionary[key] = new MruEntry<TValue>(value);
+                    this.innerDictionary[key] = new(value);
                 }
             }
         }

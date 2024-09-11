@@ -196,8 +196,8 @@ namespace Plethora.Collections.Trees
             {
                 get
                 {
-                    int leftCount  = ((this.Left == null)  ? 0 : this.Left.SubTreeCount  + 1);
-                    int rightCount = ((this.Right == null) ? 0 : this.Right.SubTreeCount + 1);
+                    int leftCount  = ((this.Left is null)  ? 0 : this.Left.SubTreeCount  + 1);
+                    int rightCount = ((this.Right is null) ? 0 : this.Right.SubTreeCount + 1);
 
                     return leftCount + rightCount;
                 }
@@ -214,8 +214,8 @@ namespace Plethora.Collections.Trees
                 //Prevent infinite recursion (incase of circular references)
                 this.ignoreSetHeight = true;
 
-                int leftHeight = (this.left == null) ? -1 : this.left.Height;
-                int rightHeight = (this.right == null) ? -1 : this.right.Height;
+                int leftHeight = (this.left is null) ? -1 : this.left.Height;
+                int rightHeight = (this.right is null) ? -1 : this.right.Height;
 
                 int prevHeight = this.Height;
                 this.Height = Math.Max(leftHeight, rightHeight) + 1;
@@ -595,7 +595,7 @@ namespace Plethora.Collections.Trees
         {
             get
             {
-                if (this.Root == null)
+                if (this.Root is null)
                     return 0;
                 else
                     return this.Root.SubTreeCount + 1;

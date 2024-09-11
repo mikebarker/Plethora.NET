@@ -166,7 +166,7 @@ namespace Plethora.Linq
         /// </remarks>
         public static IEnumerable<TSource> Flatten<TSource>(this IEnumerable<TSource> source, Func<TSource, IEnumerable<TSource>> childSelector)
         {
-            return source.Concat(source.SelectMany(item => (item == null)
+            return source.Concat(source.SelectMany(item => (item is null)
                 ? Enumerable.Empty<TSource>()
                 : childSelector(item).Flatten(childSelector)));
         }

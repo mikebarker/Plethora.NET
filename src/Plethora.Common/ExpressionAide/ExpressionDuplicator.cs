@@ -315,7 +315,7 @@ namespace Plethora.ExpressionAide
             }
             if (assigned)
             {
-                Debug.Assert(exprs != null);
+                Debug.Assert(exprs is not null);
 
                 List<Expression?> dupes = new();
                 int count = exprs.Count;

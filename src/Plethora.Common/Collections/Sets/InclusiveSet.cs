@@ -25,7 +25,7 @@ namespace Plethora.Collections.Sets
             ArgumentNullException.ThrowIfNull(includedElements);
 
 
-            this.includedElements = new HashSet<T>(includedElements);
+            this.includedElements = new(includedElements);
         }
 
         private InclusiveSet(HashSet<T> includedElements)

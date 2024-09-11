@@ -21,7 +21,7 @@ namespace Plethora.Collections
 
         public ReadOnlyHashSet(IEnumerable<T> enumerable, IEqualityComparer<T> comparer)
         {
-            innerHashSet = new HashSet<T>(enumerable, comparer);
+            innerHashSet = new(enumerable, comparer);
             innerHashSet.TrimExcess();
         }
 

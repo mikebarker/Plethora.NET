@@ -60,7 +60,7 @@ namespace Plethora.Calendar
                 DateTime date = DateTime.MinValue;
                 foreach (int day in this.daysOfMonth)
                 {
-                    date = new DateTime(year, month, day);
+                    date = new(year, month, day);
 
                     if (date >= startDate)
                     {

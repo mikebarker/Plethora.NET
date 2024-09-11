@@ -253,7 +253,7 @@ namespace Plethora.Collections.Trees
                     node = node.Parent!;
                 }
 
-                return (node.RelationToParent == null)
+                return (node.RelationToParent is null)
                     ? null
                     : node.Parent;
             }

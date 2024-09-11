@@ -16,9 +16,7 @@ namespace Plethora.Calendar
         /// <param name="nYearly">The number of years between occurances in this calendar.</param>
         public YearlyCalendarProperties(int nYearly)
         {
-            if (nYearly <= 0)
-                throw new ArgumentOutOfRangeException(nameof(nYearly), nYearly, ResourceProvider.ArgMustBeGreaterThanZero(nameof(nYearly)));
-
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(nYearly, 0);
 
             this.nYearly = nYearly;
         }
@@ -35,7 +33,7 @@ namespace Plethora.Calendar
 
             while (true)
             {
-                DateTime date = new DateTime(year, month, day);
+                DateTime date = new(year, month, day);
                 if (date >= startDate)
                 {
                     yield return date;
