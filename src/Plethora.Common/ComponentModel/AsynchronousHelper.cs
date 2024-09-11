@@ -34,7 +34,7 @@ namespace Plethora.ComponentModel
 
 
             if (syncInvoke.InvokeRequired)
-                return (TResult)syncInvoke.Invoke(getter, new object?[] { syncInvoke })!;
+                return (TResult)syncInvoke.Invoke(getter, [syncInvoke])!;
             else
                 return getter(syncInvoke);
         }
@@ -207,44 +207,42 @@ namespace Plethora.ComponentModel
 
             AsyncExecuteResult asyncResult = new();
 
-            WaitCallback wrappedAction = (state) =>
-                {
-                    Exception? exception = null;
+            ThreadPool.QueueUserWorkItem(_ =>
+            {
+                Exception? exception = null;
 
+                try
+                {
                     try
                     {
-                        try
-                        {
-                            action();
-                        }
-                        catch (Exception ex)
-                        {
-                            exception = ex;
-                        }
-
-                        // Do not call the callbacks within the context of the try..catch block
-                        if (exception == null)
-                        {
-                            if (onCompletedSuccessfully != null)
-                            {
-                                syncInvoke.Invoke(onCompletedSuccessfully, Array.Empty<object>());
-                            }
-                        }
-                        else
-                        {
-                            if (onException != null)
-                            {
-                                syncInvoke.Invoke(onException, new object[] { exception });
-                            }
-                        }
+                        action();
                     }
-                    finally
+                    catch (Exception ex)
                     {
-                        asyncResult.Complete();
+                        exception = ex;
                     }
-                };
 
-            ThreadPool.QueueUserWorkItem(wrappedAction, null);
+                    // Do not call the callbacks within the context of the try..catch block
+                    if (exception is null)
+                    {
+                        if (onCompletedSuccessfully is not null)
+                        {
+                            syncInvoke.Invoke(onCompletedSuccessfully, Array.Empty<object>());
+                        }
+                    }
+                    else
+                    {
+                        if (onException is not null)
+                        {
+                            syncInvoke.Invoke(onException, [exception]);
+                        }
+                    }
+                }
+                finally
+                {
+                    asyncResult.Complete();
+                }
+            });
 
             return asyncResult;
         }
@@ -253,7 +251,7 @@ namespace Plethora.ComponentModel
         {
             private readonly ManualResetEvent waitHandle = new(false);
 
-            public object? AsyncState => null;
+            object? IAsyncResult.AsyncState => null;
 
             public WaitHandle AsyncWaitHandle => this.waitHandle;
 

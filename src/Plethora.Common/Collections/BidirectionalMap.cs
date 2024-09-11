@@ -176,11 +176,8 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentException">A mismatched pair already exists in the <see cref="BidirectionalMap{T1, T2}"/>.</exception>
         public void Add(T1 t1, T2 t2)
         {
-            if (t1 == null)
-                throw new ArgumentNullException(nameof(t1));
-
-            if (t2 == null)
-                throw new ArgumentNullException(nameof(t2));
+            ArgumentNullException.ThrowIfNull(t1);
+            ArgumentNullException.ThrowIfNull(t2);
 
 
             var result = this.ValidateExistingItems(t1, t2);
@@ -217,11 +214,8 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentNullException">The forward or reverse key is null.</exception>
         public bool Contains(T1 t1, T2 t2)
         {
-            if (t1 == null)
-                throw new ArgumentNullException(nameof(t1));
-
-            if (t2 == null)
-                throw new ArgumentNullException(nameof(t2));
+            ArgumentNullException.ThrowIfNull(t1);
+            ArgumentNullException.ThrowIfNull(t2);
 
 
             var result = this.ValidateExistingItems(t1, t2);
@@ -291,11 +285,8 @@ namespace Plethora.Collections
         /// <exception cref="ArgumentException">A mismatched pair already exists in the <see cref="BidirectionalMap{T1, T2}"/>.</exception>
         public bool Remove(T1 t1, T2 t2)
         {
-            if (t1 == null)
-                throw new ArgumentNullException(nameof(t1));
-
-            if (t2 == null)
-                throw new ArgumentNullException(nameof(t2));
+            ArgumentNullException.ThrowIfNull(t1);
+            ArgumentNullException.ThrowIfNull(t2);
 
 
             var result = this.ValidateExistingItems(t1, t2);
@@ -326,7 +317,8 @@ namespace Plethora.Collections
         {
             ArgumentNullException.ThrowIfNull(t1);
 
-            if (!this.forwardMap.TryGetValue(t1, out T2? existingT2))
+
+            if (!this.forwardMap.TryGetValue(t1, out var existingT2))
                 return false;
 
             this.forwardMap.Remove(t1);
@@ -347,7 +339,8 @@ namespace Plethora.Collections
         {
             ArgumentNullException.ThrowIfNull(t2);
 
-            if (!this.reverseMap.TryGetValue(t2, out T1? existingT1))
+
+            if (!this.reverseMap.TryGetValue(t2, out var existingT1))
                 return false;
 
             this.forwardMap.Remove(existingT1);
@@ -425,7 +418,7 @@ namespace Plethora.Collections
 
         private ValidateExistingItemsResult ValidateExistingItems(T1 t1, T2 t2)
         {
-            if (this.forwardMap.TryGetValue(t1, out T2? existingT2))
+            if (this.forwardMap.TryGetValue(t1, out var existingT2))
             {
                 if (object.Equals(t2, existingT2))
                 {

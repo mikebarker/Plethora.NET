@@ -52,8 +52,7 @@ namespace Plethora.Linq
         public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index)
         {
             //Validation
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
 
 
             var count = source.Count - index;
@@ -69,8 +68,7 @@ namespace Plethora.Linq
         public static IEnumerable<TSource> SubListOrEmpty<TSource>(this IList<TSource> source, int index)
         {
             //Validation
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
 
             
             var count = source.Count - index;
@@ -80,11 +78,8 @@ namespace Plethora.Linq
         public static IEnumerable<TSource> SubListOrEmpty<TSource>(this IList<TSource> source, int index, int count)
         {
             //Validation
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(index)));
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
 
 
             if (index > source.Count - 1)

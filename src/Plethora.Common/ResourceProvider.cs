@@ -1,7 +1,7 @@
+using Plethora.Properties;
 using System;
 using System.Globalization;
 using System.Text;
-using Plethora.Properties;
 
 namespace Plethora
 {
@@ -575,7 +575,7 @@ namespace Plethora
         /// </summary>
         /// <param name="type">The type name not found.</param>
         /// <param name="assembly">The assembly name in which the type was not found.</param>
-        public static string TypeNotFoundInAssembly(string type, string? assembly)
+        public static string TypeNotFoundInAssembly(string type, string assembly)
         {
             return StringFormat(Resources.TypeNotFoundInAssembly, type, assembly);
         }

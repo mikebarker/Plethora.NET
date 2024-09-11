@@ -101,24 +101,20 @@ namespace Plethora.Linq.Expressions
             bool canBeField,
             Func<string> errorTextFunc)
         {
-            if (expression == null)
-                throw new ArgumentNullException(nameof(expression));
+            ArgumentNullException.ThrowIfNull(expression);
 
-            var body = expression.Body as MemberExpression;
-            if (body == null)
+            if (expression.Body is not MemberExpression body)
                 throw new ArgumentException(errorTextFunc());
 
             if (canBeProperty)
             {
-                var property = body.Member as PropertyInfo;
-                if (property != null)
+                if (body.Member is PropertyInfo property)
                     return property.Name;
             }
 
             if (canBeField)
             {
-                var field = body.Member as FieldInfo;
-                if (field != null)
+                if (body.Member is FieldInfo field)
                     return field.Name;
             }
 

@@ -44,8 +44,7 @@ namespace Plethora.Collections.Trees
             public void CopyTo(T[] array, int arrayIndex)
             {
                 //Validation
-                if (array == null)
-                    throw new ArgumentNullException(nameof(array));
+                ArgumentNullException.ThrowIfNull(array);
 
                 if (array.Rank != 1)
                     throw new ArgumentException(ResourceProvider.ArgArrayMultiDimensionNotSupported());
@@ -118,9 +117,9 @@ namespace Plethora.Collections.Trees
             {
                 foreach (var value in this)
                 {
-                    if (item == null)
+                    if (item is null)
                     {
-                        if (value == null)
+                        if (value is null)
                             return true;
                     }
                     else

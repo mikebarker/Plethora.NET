@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Plethora.Collections.Trees
 {
@@ -54,44 +55,47 @@ namespace Plethora.Collections.Trees
             Node? parent = rotationRoot.Parent;
             Edge? edge = rotationRoot.RelationToParent;
 
-            Node pivot = (direction == RotationDirection.Right)
-                ? rotationRoot.Left!
-                : rotationRoot.Right!;
-
-
+            Node pivot;
             if (direction == RotationDirection.Right)
             {
+                Debug.Assert(rotationRoot.Left is not null);
+
+                pivot = rotationRoot.Left;
+
                 rotationRoot.Left = pivot.Right;
                 pivot.Right = rotationRoot;
             }
             else
             {
+                Debug.Assert(rotationRoot.Right is not null);
+
+                pivot = rotationRoot.Right;
+
                 rotationRoot.Right = pivot.Left;
                 pivot.Left = rotationRoot;
             }
 
 
             //Swap the parent of the nodes
-            if (parent == null)
+            if (parent is null)
             {
                 this.Root = pivot;
             }
             else
             {
-                if (edge!.Value == Edge.Left)
+                Debug.Assert(edge is not null); // edge is not null if the parent is not null.
+
+                if (edge.Value == Edge.Left)
                     parent.Left = pivot;
                 else
                     parent.Right = pivot;
             }
         }
 
-        protected static int BalanceFactor(Node? node)
+        protected static int BalanceFactor(Node node)
         {
-            if (node is null)
-                return 0;
-
-            int leftHeight = (node.Left == null) ? -1 : node.Left.Height;
-            int rightHeight = (node.Right == null) ? -1 : node.Right.Height;
+            int leftHeight = (node.Left is null) ? -1 : node.Left.Height;
+            int rightHeight = (node.Right is null) ? -1 : node.Right.Height;
 
             return rightHeight - leftHeight;
         }

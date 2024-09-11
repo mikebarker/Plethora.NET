@@ -95,9 +95,9 @@ namespace Plethora.Collections
             this.current = default;
         }
 
-        object IEnumerator.Current
+        object? IEnumerator.Current
         {
-            get { return this.Current!; }
+            get { return this.Current; }
         }
 
         #endregion

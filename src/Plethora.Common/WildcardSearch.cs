@@ -7,7 +7,7 @@ namespace Plethora
     /// </summary>
     public static class WildcardSearch
     {
-        private static char WILDCARD = '*';
+        private const char WILDCARD = '*';
 
         public static char WildCard
         {
@@ -29,11 +29,8 @@ namespace Plethora
         public static bool IsMatch(string input, string pattern, StringComparison comparisonType = StringComparison.Ordinal)
         {
             //Validation
-            if (input == null)
-                throw new ArgumentNullException(nameof(input));
-
-            if (pattern == null)
-                throw new ArgumentNullException(nameof(pattern));
+            ArgumentNullException.ThrowIfNull(input);
+            ArgumentNullException.ThrowIfNull(pattern);
 
 
             //Special case

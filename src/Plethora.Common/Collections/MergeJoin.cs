@@ -267,7 +267,7 @@ namespace Plethora.Collections
             IComparer<TKey> keyComparer,
             IEqualityComparer<TValue> valueEqualityComparer)
         {
-            var mergeSet = new List<MergeItem<TKey, TValue>>();
+            List<MergeItem<TKey, TValue>> mergeSet = new();
 
             InternalMergePreOrdered(
                 leftSet,

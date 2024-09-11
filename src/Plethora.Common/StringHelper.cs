@@ -26,7 +26,7 @@ namespace Plethora
         {
             get
             {
-                if (whiteSpace == null)
+                if (whiteSpace is null)
                 {
                     List<char> whitespaceList = new(32);
 
@@ -135,7 +135,6 @@ namespace Plethora
         {
             //Validation
             ArgumentNullException.ThrowIfNull(str);
-
             ArgumentNullException.ThrowIfNull(values);
 
             if ((startIndex < 0) || (startIndex >= str.Length))
@@ -232,7 +231,6 @@ namespace Plethora
         {
             //Validation
             ArgumentNullException.ThrowIfNull(str);
-
             ArgumentNullException.ThrowIfNull(values);
 
             if ((startIndex < 0) || (startIndex >= str.Length))
@@ -705,7 +703,7 @@ namespace Plethora
                 indexOffset = 0;
             }
 
-            string tmp = str[..(startIndex + 1)];
+            string tmp = str.Substring(0, startIndex + 1);
             MatchCollection matches = regex.Matches(tmp);
             if (matches.Count == 0)
                 return -1;

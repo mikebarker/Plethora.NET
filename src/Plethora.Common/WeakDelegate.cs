@@ -35,21 +35,20 @@ namespace Plethora
         /// </example>
         /// </remarks>
         public static TDelegate CreateWeakDelegate<TDelegate>(TDelegate @delegate, Action<TDelegate> onTargetCollected)
+            where TDelegate : notnull
         {
             //Validation
-            if (@delegate == null)
-                throw new ArgumentNullException(nameof(@delegate));
+            ArgumentNullException.ThrowIfNull(@delegate);
 
             if (!typeof(Delegate).IsAssignableFrom(typeof(TDelegate)))
                 throw new ArgumentException(ResourceProvider.GenericArgMustBeDelegate(), nameof(@delegate));
 
-            if (onTargetCollected == null)
-                throw new ArgumentNullException(nameof(onTargetCollected));
+            ArgumentNullException.ThrowIfNull(onTargetCollected);
 
             var del = (Delegate)(object)@delegate;
 
             //For static method calls, return the delegate without wrapping
-            if (del.Target == null)
+            if (del.Target is null)
                 return @delegate;
 
             if (del.Method.ReturnType != typeof(void))
@@ -62,7 +61,7 @@ namespace Plethora
              * ****************************
              * 
              *   var target = weakReference.Target;
-             *   if (target != null)
+             *   if (target is not null)
              *       method.Invoke(target, parameters);
              *   else
              *       onTargetCollected(delegateReference._delegate);
@@ -106,21 +105,20 @@ namespace Plethora
         /// </example>
         /// </remarks>
         public static TDelegate CreateWeakDelegate<TDelegate, TResult>(TDelegate @delegate, Func<TDelegate, TResult> onTargetCollected)
+            where TDelegate : notnull
         {
             //Validation
-            if (@delegate == null)
-                throw new ArgumentNullException(nameof(@delegate));
+            ArgumentNullException.ThrowIfNull(@delegate);
 
             if (!typeof(Delegate).IsAssignableFrom(typeof(TDelegate)))
                 throw new ArgumentException(ResourceProvider.GenericArgMustBeDelegate(), nameof(@delegate));
 
-            if (onTargetCollected == null)
-                throw new ArgumentNullException(nameof(onTargetCollected));
+            ArgumentNullException.ThrowIfNull(onTargetCollected);
 
             var del = (Delegate)(object)@delegate;
 
             //For static method calls, return the delegate without wrapping
-            if (del.Target == null)
+            if (del.Target is null)
                 return @delegate;
 
             if (del.Method.ReturnType == typeof(void))
@@ -137,7 +135,7 @@ namespace Plethora
              * 
              *   var target = weakReference.Target;
              *   TResult result;
-             *   if (target != null)
+             *   if (target is not null)
              *       result = (TResult)method.Invoke(target, parameters);
              *   else
              *       result = onTargetCollected(delegateReference._delegate);
@@ -172,14 +170,15 @@ namespace Plethora
             TDelegate @delegate,
             DelegateReference<TDelegate> delegateReference,
             Func<BinaryExpression, MethodCallExpression, MethodCallExpression, Expression> generateBody)
+            where TDelegate : notnull
         {
-            var del = (Delegate?)(object?)@delegate;
+            var del = (Delegate)(object)@delegate;
 
             //For static method calls, return the delegate without wrapping
-            if (del!.Target == null)
+            if (del.Target is null)
                 return @delegate;
 
-            WeakReference weakTarget = new WeakReference(del.Target);
+            WeakReference weakTarget = new(del.Target);
             MethodInfo method = del.Method;
 
             delegateReference._weakTarget = weakTarget;
@@ -190,7 +189,7 @@ namespace Plethora
              * 
              *   var target = weakReference.Target;
              *   TResult result;
-             *   if (target != null)
+             *   if (target is not null)
              *       result = (TResult)method.Invoke(target, parameters);
              *   else
              *       result = delegateReference.OnTargetCollected();
@@ -200,9 +199,9 @@ namespace Plethora
 
 
             Type type = delegateReference.GetType();
-            MethodInfo? onTargetCollected = type.GetMethod("OnTargetCollected", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)!;
+            MethodInfo? onTargetCollected = type.GetMethod("OnTargetCollected", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            MethodCallExpression onTargetCollectedCallExp = Expression.Call(Expression.Constant(delegateReference), onTargetCollected);
+            MethodCallExpression onTargetCollectedCallExp = Expression.Call(Expression.Constant(delegateReference), onTargetCollected!);
 
 
 
@@ -329,7 +328,7 @@ namespace Plethora
         public static bool IsTargetAlive(this Delegate @delegate)
         {
             object? target = @delegate.Target;
-            if (target != null)
+            if (target is not null)
             {
                 Type targetType = target.GetType();
                 if (targetType.FullName == ClosureTypeName)

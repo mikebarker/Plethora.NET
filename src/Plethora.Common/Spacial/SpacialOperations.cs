@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Plethora.Collections.Sets;
+using System;
 using System.Collections.Generic;
-using Plethora.Collections.Sets;
 
 namespace Plethora.Spacial
 {
@@ -14,7 +14,7 @@ namespace Plethora.Spacial
             Func<ISetCore[], TSpaceRegion> ctorFunc)
             where TSpaceRegion : SpaceRegion
         {
-            var list = new List<TSpaceRegion>();
+            List<TSpaceRegion> list = new();
 
             var remainingDimensions = (ISetCore[])regionA.Dimensions.Clone();
 
@@ -98,7 +98,7 @@ namespace Plethora.Spacial
             SpaceRegion<T1, T2, T3, T4> regionA,
             SpaceRegion<T1, T2, T3, T4> regionB)
         {
-            return SubtractInternal<SpaceRegion<T1, T2, T3, T4>>(
+            return SubtractInternal(
                 regionA,
                 regionB,
                 d =>

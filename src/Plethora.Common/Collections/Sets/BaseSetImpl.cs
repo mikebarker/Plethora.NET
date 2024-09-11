@@ -106,8 +106,7 @@ namespace Plethora.Collections.Sets
 
 
             //Union is commutative
-            var otherImpl = other as BaseSetImpl<T>;
-            if ((otherImpl != null) && (otherImpl.IsNativeUnion))
+            if ((other is BaseSetImpl<T> otherImpl) && (otherImpl.IsNativeUnion))
                 return otherImpl.Union(this);
 
             //Attempt any well-known optimisations
@@ -117,7 +116,7 @@ namespace Plethora.Collections.Sets
             return new UnionSet<T>(this, other);
         }
 
-        protected bool TryWellKnownUnion(ISetCore<T> other, [NotNullWhen(true), MaybeNullWhen(false)] out ISetCore<T> result)
+        protected bool TryWellKnownUnion(ISetCore<T> other, [MaybeNullWhen(false)] out ISetCore<T> result)
         {
             //Validation
             ArgumentNullException.ThrowIfNull(other);
@@ -125,8 +124,7 @@ namespace Plethora.Collections.Sets
 
             bool thisIsEmpty = (this.IsEmpty == true);
 
-            var otherImpl = other as BaseSetImpl<T>;
-            bool otherIsEmpty = ((otherImpl != null) && (otherImpl.IsEmpty == true));
+            bool otherIsEmpty = ((other is BaseSetImpl<T> otherImpl) && (otherImpl.IsEmpty == true));
 
             if (thisIsEmpty && otherIsEmpty)
             {
@@ -160,8 +158,7 @@ namespace Plethora.Collections.Sets
 
 
             //Intersect is commutative
-            var otherImpl = other as BaseSetImpl<T>;
-            if ((otherImpl != null) && (otherImpl.IsNativeIntersect))
+            if ((other is BaseSetImpl<T> otherImpl) && (otherImpl.IsNativeIntersect))
                 return otherImpl.Intersect(this);
 
             //Attempt any well-known optimisations
@@ -171,7 +168,7 @@ namespace Plethora.Collections.Sets
             return new IntersectionSet<T>(this, other);
         }
 
-        protected bool TryWellKnownIntersect(ISetCore<T> other, [NotNullWhen(true), MaybeNullWhen(false)] out ISetCore<T> result)
+        protected bool TryWellKnownIntersect(ISetCore<T> other, [MaybeNullWhen(false)] out ISetCore<T> result)
         {
             //Validation
             ArgumentNullException.ThrowIfNull(other);
@@ -182,8 +179,7 @@ namespace Plethora.Collections.Sets
                 return true;
             }
 
-            var otherImpl = other as BaseSetImpl<T>;
-            if ((otherImpl != null) && (otherImpl.IsEmpty == true))
+            if ((other is BaseSetImpl<T> otherImpl) && (otherImpl.IsEmpty == true))
             {
                 result = EmptySet<T>.Instance;
                 return true;
@@ -208,7 +204,7 @@ namespace Plethora.Collections.Sets
             return new SubtractionSet<T>(this, other);
         }
 
-        protected bool TryWellKnownSubtract(ISetCore<T> other, [NotNullWhen(true), MaybeNullWhen(false)] out ISetCore<T> result)
+        protected bool TryWellKnownSubtract(ISetCore<T> other, [MaybeNullWhen(false)] out ISetCore<T> result)
         {
             //Validation
             ArgumentNullException.ThrowIfNull(other);
@@ -225,8 +221,7 @@ namespace Plethora.Collections.Sets
                 return true;
             }
 
-            var otherImpl = other as BaseSetImpl<T>;
-            if ((otherImpl != null) && (otherImpl.IsEmpty == true))
+            if ((other is BaseSetImpl<T> otherImpl) && (otherImpl.IsEmpty == true))
             {
                 result = this;
                 return true;

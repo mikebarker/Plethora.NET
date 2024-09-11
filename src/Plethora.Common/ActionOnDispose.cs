@@ -69,8 +69,7 @@ namespace Plethora
 
         public ActionOnDispose(Action onDispose)
         {
-            if (onDispose == null)
-                throw new ArgumentNullException(nameof(onDispose));
+            ArgumentNullException.ThrowIfNull(onDispose);
 
             this.onDispose = onDispose;
         }

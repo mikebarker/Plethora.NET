@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 
 namespace Plethora
@@ -105,9 +104,9 @@ namespace Plethora
             return sb.ToString();
         }
 
-        private string ToStringFormat(T t, params object[] values)
+        private string ToStringFormat(params object?[] values)
         {
-            var toString = t!.GetType().Name + " {" + string.Format(this.toStringPattern, values) + "}";
+            var toString = typeof(T).Name + " {" + string.Format(this.toStringPattern, values) + "}";
 
             return toString;
         }
@@ -119,7 +118,6 @@ namespace Plethora
 
         public static EqualityHelper<T> Create<T1>(
             Expression<Func<T, T1>> exp1)
-                where T1 : notnull
         {
             return new Helper<T1>(
                 exp1);
@@ -128,8 +126,6 @@ namespace Plethora
         public static EqualityHelper<T> Create<T1, T2>(
             Expression<Func<T, T1>> exp1,
             Expression<Func<T, T2>> exp2)
-                where T1 : notnull
-                where T2 : notnull
         {
             return new Helper<T1, T2>(
                 exp1,
@@ -140,9 +136,6 @@ namespace Plethora
             Expression<Func<T, T1>> exp1,
             Expression<Func<T, T2>> exp2,
             Expression<Func<T, T3>> exp3)
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
         {
             return new Helper<T1, T2, T3>(
                 exp1,
@@ -155,10 +148,6 @@ namespace Plethora
             Expression<Func<T, T2>> exp2,
             Expression<Func<T, T3>> exp3,
             Expression<Func<T, T4>> exp4)
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
         {
             return new Helper<T1, T2, T3, T4>(
                 exp1,
@@ -173,11 +162,6 @@ namespace Plethora
             Expression<Func<T, T3>> exp3,
             Expression<Func<T, T4>> exp4,
             Expression<Func<T, T5>> exp5)
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
         {
             return new Helper<T1, T2, T3, T4, T5>(
                 exp1,
@@ -194,12 +178,6 @@ namespace Plethora
             Expression<Func<T, T4>> exp4,
             Expression<Func<T, T5>> exp5,
             Expression<Func<T, T6>> exp6)
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
-                where T6 : notnull
         {
             return new Helper<T1, T2, T3, T4, T5, T6>(
                 exp1,
@@ -218,13 +196,6 @@ namespace Plethora
             Expression<Func<T, T5>> exp5,
             Expression<Func<T, T6>> exp6,
             Expression<Func<T, T7>> exp7)
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
-                where T6 : notnull
-                where T7 : notnull
         {
             return new Helper<T1, T2, T3, T4, T5, T6, T7>(
                 exp1,
@@ -245,14 +216,6 @@ namespace Plethora
             Expression<Func<T, T6>> exp6,
             Expression<Func<T, T7>> exp7,
             Expression<Func<T, T8>> exp8)
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
-                where T6 : notnull
-                where T7 : notnull
-                where T8 : notnull
         {
             return new Helper<T1, T2, T3, T4, T5, T6, T7, T8>(
                 exp1,
@@ -270,7 +233,6 @@ namespace Plethora
 
 
         private class Helper<T1> : EqualityHelper<T>
-                where T1 : notnull
         {
             #region Fields
 
@@ -285,8 +247,7 @@ namespace Plethora
                 : base(exp1)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
+                ArgumentNullException.ThrowIfNull(exp1);
 
 
                 this.func1 = exp1.Compile();
@@ -301,10 +262,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -321,15 +282,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t));
+                    this.func1(t));
             }
 
             #endregion
         }
 
         private class Helper<T1, T2> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
         {
             #region Fields
 
@@ -346,11 +305,8 @@ namespace Plethora
                 : base(exp1, exp2)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
 
 
                 this.func1 = exp1.Compile();
@@ -366,10 +322,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -387,16 +343,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t));
+                    this.func1(t), this.func2(t));
             }
 
             #endregion
         }
 
         private class Helper<T1, T2, T3> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
         {
             #region Fields
 
@@ -415,14 +368,9 @@ namespace Plethora
                 : base(exp1, exp2, exp3)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
-
-                if (exp3 == null)
-                    throw new ArgumentNullException(nameof(exp3));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
+                ArgumentNullException.ThrowIfNull(exp3);
 
 
                 this.func1 = exp1.Compile();
@@ -439,10 +387,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -461,17 +409,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t), this.func3(t));
+                    this.func1(t), this.func2(t), this.func3(t));
             }
 
             #endregion
         }
 
         private class Helper<T1, T2, T3, T4> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
         {
             #region Fields
 
@@ -492,17 +436,10 @@ namespace Plethora
                 : base(exp1, exp2, exp3, exp4)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
-
-                if (exp3 == null)
-                    throw new ArgumentNullException(nameof(exp3));
-
-                if (exp4 == null)
-                    throw new ArgumentNullException(nameof(exp4));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
+                ArgumentNullException.ThrowIfNull(exp3);
+                ArgumentNullException.ThrowIfNull(exp4);
 
 
                 this.func1 = exp1.Compile();
@@ -520,10 +457,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -543,18 +480,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t));
+                    this.func1(t), this.func2(t), this.func3(t), this.func4(t));
             }
-
+            
             #endregion
         }
 
         private class Helper<T1, T2, T3, T4, T5> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
         {
             #region Fields
 
@@ -577,20 +509,11 @@ namespace Plethora
                 : base(exp1, exp2, exp3, exp4, exp5)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
-
-                if (exp3 == null)
-                    throw new ArgumentNullException(nameof(exp3));
-
-                if (exp4 == null)
-                    throw new ArgumentNullException(nameof(exp4));
-
-                if (exp5 == null)
-                    throw new ArgumentNullException(nameof(exp5));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
+                ArgumentNullException.ThrowIfNull(exp3);
+                ArgumentNullException.ThrowIfNull(exp4);
+                ArgumentNullException.ThrowIfNull(exp5);
 
 
                 this.func1 = exp1.Compile();
@@ -609,10 +532,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -633,19 +556,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t));
+                    this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t));
             }
 
             #endregion
         }
 
         private class Helper<T1, T2, T3, T4, T5, T6> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
-                where T6 : notnull
         {
             #region Fields
 
@@ -670,23 +587,12 @@ namespace Plethora
                 : base(exp1, exp2, exp3, exp4, exp5, exp6)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
-
-                if (exp3 == null)
-                    throw new ArgumentNullException(nameof(exp3));
-
-                if (exp4 == null)
-                    throw new ArgumentNullException(nameof(exp4));
-
-                if (exp5 == null)
-                    throw new ArgumentNullException(nameof(exp5));
-
-                if (exp6 == null)
-                    throw new ArgumentNullException(nameof(exp6));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
+                ArgumentNullException.ThrowIfNull(exp3);
+                ArgumentNullException.ThrowIfNull(exp4);
+                ArgumentNullException.ThrowIfNull(exp5);
+                ArgumentNullException.ThrowIfNull(exp6);
 
 
                 this.func1 = exp1.Compile();
@@ -706,10 +612,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -731,20 +637,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t));
+                    this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t));
             }
 
             #endregion
         }
 
         private class Helper<T1, T2, T3, T4, T5, T6, T7> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
-                where T6 : notnull
-                where T7 : notnull
         {
             #region Fields
 
@@ -771,26 +670,13 @@ namespace Plethora
                 : base(exp1, exp2, exp3, exp4, exp5, exp6, exp7)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
-
-                if (exp3 == null)
-                    throw new ArgumentNullException(nameof(exp3));
-
-                if (exp4 == null)
-                    throw new ArgumentNullException(nameof(exp4));
-
-                if (exp5 == null)
-                    throw new ArgumentNullException(nameof(exp5));
-
-                if (exp6 == null)
-                    throw new ArgumentNullException(nameof(exp6));
-
-                if (exp7 == null)
-                    throw new ArgumentNullException(nameof(exp7));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
+                ArgumentNullException.ThrowIfNull(exp3);
+                ArgumentNullException.ThrowIfNull(exp4);
+                ArgumentNullException.ThrowIfNull(exp5);
+                ArgumentNullException.ThrowIfNull(exp6);
+                ArgumentNullException.ThrowIfNull(exp7);
 
 
                 this.func1 = exp1.Compile();
@@ -811,10 +697,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -837,21 +723,13 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t));
+                    this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t));
             }
 
             #endregion
         }
 
         private class Helper<T1, T2, T3, T4, T5, T6, T7, T8> : EqualityHelper<T>
-                where T1 : notnull
-                where T2 : notnull
-                where T3 : notnull
-                where T4 : notnull
-                where T5 : notnull
-                where T6 : notnull
-                where T7 : notnull
-                where T8 : notnull
         {
             #region Fields
 
@@ -880,29 +758,14 @@ namespace Plethora
                 : base(exp1, exp2, exp3, exp4, exp5, exp6, exp7, exp8)
             {
                 //Validation
-                if (exp1 == null)
-                    throw new ArgumentNullException(nameof(exp1));
-
-                if (exp2 == null)
-                    throw new ArgumentNullException(nameof(exp2));
-
-                if (exp3 == null)
-                    throw new ArgumentNullException(nameof(exp3));
-
-                if (exp4 == null)
-                    throw new ArgumentNullException(nameof(exp4));
-
-                if (exp5 == null)
-                    throw new ArgumentNullException(nameof(exp5));
-
-                if (exp6 == null)
-                    throw new ArgumentNullException(nameof(exp6));
-
-                if (exp7 == null)
-                    throw new ArgumentNullException(nameof(exp7));
-
-                if (exp8 == null)
-                    throw new ArgumentNullException(nameof(exp8));
+                ArgumentNullException.ThrowIfNull(exp1);
+                ArgumentNullException.ThrowIfNull(exp2);
+                ArgumentNullException.ThrowIfNull(exp3);
+                ArgumentNullException.ThrowIfNull(exp4);
+                ArgumentNullException.ThrowIfNull(exp5);
+                ArgumentNullException.ThrowIfNull(exp6);
+                ArgumentNullException.ThrowIfNull(exp7);
+                ArgumentNullException.ThrowIfNull(exp8);
 
 
                 this.func1 = exp1.Compile();
@@ -924,10 +787,10 @@ namespace Plethora
                 if (ReferenceEquals(x, y))
                     return true;
 
-                if (x == null)
+                if (x is null)
                     return false;
 
-                if (y == null)
+                if (y is null)
                     return false;
 
                 bool result = true;
@@ -951,7 +814,7 @@ namespace Plethora
             public override string GetToString(T t)
             {
                 return this.ToStringFormat(
-                    t, this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t), this.func8(t));
+                    this.func1(t), this.func2(t), this.func3(t), this.func4(t), this.func5(t), this.func6(t), this.func7(t), this.func8(t));
             }
 
             #endregion

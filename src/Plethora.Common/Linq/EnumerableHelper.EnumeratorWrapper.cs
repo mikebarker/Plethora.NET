@@ -29,8 +29,7 @@ namespace Plethora.Linq
             internal EnumeratorWrapper(IEnumerator<T> enumerator)
             {
                 //Validation
-                if (enumerator == null)
-                    throw new ArgumentNullException(nameof(enumerator));
+                ArgumentNullException.ThrowIfNull(enumerator);
 
 
                 this.enumerator = enumerator;

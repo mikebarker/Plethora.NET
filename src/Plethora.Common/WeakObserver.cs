@@ -34,7 +34,7 @@ namespace Plethora
         /// <param name="value">The current notification information.</param>
         public void OnNext(T value)
         {
-            IObserver<T>? observer = this.GetObserver();
+            var observer = this.GetObserver();
             if (observer is null)
                 return;
 
@@ -47,7 +47,7 @@ namespace Plethora
         /// <param name="error">An object that provides additional information about the error.</param>
         public void OnError(Exception error)
         {
-            IObserver<T>? observer = this.GetObserver();
+            var observer = this.GetObserver();
             if (observer is null)
                 return;
 
@@ -59,7 +59,7 @@ namespace Plethora
         /// </summary>
         public void OnCompleted()
         {
-            IObserver<T>? observer = this.GetObserver();
+            var observer = this.GetObserver();
             if (observer is null)
                 return;
 
@@ -68,15 +68,15 @@ namespace Plethora
 
 
         /// <summary>
-        /// Deferences the weak reference and cleans up the references and subscription when the 
+        /// Dereferences the weak reference and cleans up the references and subscription when the 
         /// inner observer has been collected.
         /// </summary>
         /// <returns>
-        /// The internal observer; or null if it has been collected.
+        /// The internal observer; or <see langword="null"/> if it has been collected.
         /// </returns>
         private IObserver<T>? GetObserver()
         {
-            if (this.innerObserver == null)
+            if (this.innerObserver is null)
                 return null;
 
             if (!this.innerObserver.TryGetTarget(out var target))
@@ -117,7 +117,7 @@ namespace Plethora
 
             WeakObserver<T> weakObserver = new(
                 observer,
-                () => disposableContainer.Dispose());
+                disposableContainer.Dispose);
 
             IDisposable disposable = observable.Subscribe(weakObserver);
             disposableContainer.SetDisposable(disposable);
@@ -160,7 +160,7 @@ namespace Plethora
                 if (disposing)
                 {
                     // Free any other managed objects here. 
-                    if (this.disposable != null)
+                    if (this.disposable is not null)
                     {
                         this.disposable.Dispose();
                         this.disposable = null;

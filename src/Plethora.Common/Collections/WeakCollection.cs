@@ -60,7 +60,7 @@ namespace Plethora.Collections
             {
                 get
                 {
-                    if (this.current == null)
+                    if (this.current is null)
                         throw new InvalidOperationException(
                             "Current item is before the start or after the end of the enumeration.");
 
@@ -224,7 +224,7 @@ namespace Plethora.Collections
         {
             ArgumentNullException.ThrowIfNull(item);
 
-            var weakReference = new WeakReference<T>(item);
+            WeakReference<T> weakReference = new(item);
 
             if (minimiseMemoryUsage)
             {
@@ -395,7 +395,7 @@ namespace Plethora.Collections
         /// </returns>
         public ICollection<T> ToCollection()
         {
-            var list = new List<T>(this.EstimateCount);
+            List<T> list = new(this.EstimateCount);
             foreach (var weakReference in this.innerList)
             {
                 if (weakReference.TryGetTarget(out var target))

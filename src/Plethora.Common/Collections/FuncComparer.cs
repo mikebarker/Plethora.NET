@@ -52,9 +52,7 @@ namespace Plethora.Collections
 
         public int Compare(TSource? x, TSource? y)
         {
-            int result;
-
-            if ((x is null) && (y is null))
+            if (ReferenceEquals(x, y))
                 return 0;
 
             if (x is null)
@@ -62,6 +60,8 @@ namespace Plethora.Collections
 
             if (y is null)
                 return -1;
+
+            int result;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)
@@ -90,9 +90,7 @@ namespace Plethora.Collections
 
         public int Compare(TSource? x, TSource? y)
         {
-            int result;
-
-            if ((x is null) && (y is null))
+            if (ReferenceEquals(x, y))
                 return 0;
 
             if (x is null)
@@ -100,6 +98,8 @@ namespace Plethora.Collections
 
             if (y is null)
                 return -1;
+
+            int result;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)
@@ -125,9 +125,7 @@ namespace Plethora.Collections
             Func<TSource, T3> getValue3)
         {
             ArgumentNullException.ThrowIfNull(getValue1);
-
             ArgumentNullException.ThrowIfNull(getValue2);
-
             ArgumentNullException.ThrowIfNull(getValue3);
 
 
@@ -138,9 +136,7 @@ namespace Plethora.Collections
 
         public int Compare(TSource? x, TSource? y)
         {
-            int result;
-
-            if ((x is null) && (y is null))
+            if (ReferenceEquals(x, y))
                 return 0;
 
             if (x is null)
@@ -148,6 +144,8 @@ namespace Plethora.Collections
 
             if (y is null)
                 return -1;
+
+            int result;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)
@@ -179,11 +177,8 @@ namespace Plethora.Collections
             Func<TSource, T4> getValue4)
         {
             ArgumentNullException.ThrowIfNull(getValue1);
-
             ArgumentNullException.ThrowIfNull(getValue2);
-
             ArgumentNullException.ThrowIfNull(getValue3);
-
             ArgumentNullException.ThrowIfNull(getValue4);
 
 
@@ -195,9 +190,7 @@ namespace Plethora.Collections
 
         public int Compare(TSource? x, TSource? y)
         {
-            int result;
-
-            if ((x is null) && (y is null))
+            if (ReferenceEquals(x, y))
                 return 0;
 
             if (x is null)
@@ -205,6 +198,8 @@ namespace Plethora.Collections
 
             if (y is null)
                 return -1;
+
+            int result;
 
             result = Comparer<T1>.Default.Compare(this.getValue1(x), this.getValue1(y));
             if (result != 0)

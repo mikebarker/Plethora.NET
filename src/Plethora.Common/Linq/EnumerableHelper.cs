@@ -23,7 +23,7 @@ namespace Plethora.Linq
         ///   will execute once, however if part of the enumeration is not required this
         ///   waste execution and memory resource.
         ///   If one chooses not to concretise a LINQ query the entire enumeration may be
-        ///   executed mutiple times, wasting execution resource.
+        ///   executed multiple times, wasting execution resource.
         ///  </para>
         /// </remarks>
         public static IEnumerable<T> CacheResult<T>(this IEnumerable<T> source)
@@ -41,24 +41,22 @@ namespace Plethora.Linq
         private static bool IsCount<T>(this IEnumerable<T> source, int count, Func<int, int, bool> comparison)
         {
             //Validity
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
 
             if (count < 0)
                 throw new ArgumentOutOfRangeException(nameof(count), count,
                     ResourceProvider.ArgMustBeGreaterThanEqualToZero(nameof(count)));
 
-            if (comparison == null)
-                throw new ArgumentNullException(nameof(comparison));
+            ArgumentNullException.ThrowIfNull(comparison);
 
 
             //short-cut IReadOnlyCollection
-            if (source is IReadOnlyCollection<T>)
-                return comparison(((IReadOnlyCollection<T>)source).Count, count);
+            if (source is IReadOnlyCollection<T> readOnlyCollection)
+                return comparison(readOnlyCollection.Count, count);
 
             //short-cut ICollection
-            if (source is ICollection<T>)
-                return comparison(((ICollection<T>)source).Count, count);
+            if (source is ICollection<T> collection)
+                return comparison(collection.Count, count);
 
             int num = 0;
             using (var enumerator = source.GetEnumerator())
@@ -82,7 +80,7 @@ namespace Plethora.Linq
         /// <c>if (enumerable.Count() == 10) { }</c>
         /// use:
         /// <c>if (enumerable.IsCount(10)) { }</c>.
-        /// The latter example will only enumerate 'enumerable' upto the eleventh element
+        /// The latter example will only enumerate 'enumerable' up to the eleventh element
         /// before returning. For a large enumerable this is more performant. 
         /// </remarks>
         public static bool IsCount<T>(this IEnumerable<T> source, int count)
@@ -123,13 +121,10 @@ namespace Plethora.Linq
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action)
         {
             //Validation
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(action);
 
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
 
-            
             foreach (T t in source)
             {
                 action(t);
@@ -142,11 +137,8 @@ namespace Plethora.Linq
         public static void ForEach<T>(this IEnumerable<T> source, Action<T, int> action)
         {
             //Validation
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
-
-            if (action == null)
-                throw new ArgumentNullException(nameof(action));
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(action);
 
 
             int num = 0;
@@ -200,7 +192,7 @@ namespace Plethora.Linq
         #region ToCollectionIfRequired<T>
 
         /// <summary>
-        /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="IReadOnlyCollection{T}"/> if required,
+        /// Converts the source <see cref="IEnumerable{T}"/> to a <see cref="IReadOnlyCollection{T}"/> if required,
         /// otherwise returns the source directly.
         /// </summary>
         /// <typeparam name="T">The type of the collection.</typeparam>
@@ -211,8 +203,7 @@ namespace Plethora.Linq
         /// </returns>
         public static IReadOnlyCollection<T> ToReadOnlyCollectionIfRequired<T>(this IEnumerable<T> source)
         {
-            var sourceCollection = source as IReadOnlyCollection<T>;
-            if (sourceCollection != null)
+            if (source is IReadOnlyCollection<T> sourceCollection)
                 return sourceCollection;
 
             return source.ToList();
@@ -223,7 +214,7 @@ namespace Plethora.Linq
         #region ToCollectionIfRequired<T>
 
         /// <summary>
-        /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="ICollection{T}"/> if required,
+        /// Converts the source <see cref="IEnumerable{T}"/> to a <see cref="ICollection{T}"/> if required,
         /// otherwise returns the source directly.
         /// </summary>
         /// <typeparam name="T">The type of the collection.</typeparam>
@@ -234,8 +225,7 @@ namespace Plethora.Linq
         /// </returns>
         public static ICollection<T> ToCollectionIfRequired<T>(this IEnumerable<T> source)
         {
-            var sourceCollection = source as ICollection<T>;
-            if (sourceCollection != null)
+            if (source is ICollection<T> sourceCollection)
                 return sourceCollection;
 
             return source.ToList();
@@ -246,7 +236,7 @@ namespace Plethora.Linq
         #region ToListIfRequired<T>
 
         /// <summary>
-        /// Converts the soucre <see cref="IEnumerable{T}"/> to a <see cref="IList{T}"/> if required,
+        /// Converts the source <see cref="IEnumerable{T}"/> to a <see cref="IList{T}"/> if required,
         /// otherwise returns the source directly.
         /// </summary>
         /// <typeparam name="T">The type of the list.</typeparam>
@@ -257,8 +247,7 @@ namespace Plethora.Linq
         /// </returns>
         public static IList<T> ToListIfRequired<T>(this IEnumerable<T> source)
         {
-            var sourceList = source as IList<T>;
-            if (sourceList != null)
+            if (source is IList<T> sourceList)
                 return sourceList;
 
             return source.ToList();

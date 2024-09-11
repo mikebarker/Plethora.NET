@@ -126,8 +126,7 @@ namespace Plethora.Collections
         public int Add(T item)
         {
             //Validation
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
 
             int index = this.BinarySearch(item);

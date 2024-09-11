@@ -18,7 +18,7 @@ namespace Plethora.ExpressionAide
 
         private static void AddGraphNode(StringBuilder sb, int depth, string relationDescription, Expression expression)
         {
-            if (expression == null)
+            if (expression is null)
                 return;
 
             string strBranch = string.Empty;

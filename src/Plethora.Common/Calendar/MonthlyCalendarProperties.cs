@@ -16,7 +16,7 @@ namespace Plethora.Calendar
         /// <summary>
         /// Initialise a new instance of the <see cref="MonthlyCalendarProperties"/> class.
         /// </summary>
-        /// <param name="nMonthly">The number of months between occurances in this calendar.</param>
+        /// <param name="nMonthly">The number of months between occurrences in this calendar.</param>
         /// <param name="daysOfMonth">The days of the month which are included in this calendar.</param>
         public MonthlyCalendarProperties(int nMonthly, IEnumerable<int> daysOfMonth)
             : this(nMonthly, daysOfMonth, false)
@@ -26,7 +26,7 @@ namespace Plethora.Calendar
         /// <summary>
         /// Initialise a new instance of the <see cref="MonthlyCalendarProperties"/> class.
         /// </summary>
-        /// <param name="nMonthly">The number of months between occurances in this calendar.</param>
+        /// <param name="nMonthly">The number of months between occurrences in this calendar.</param>
         /// <param name="daysOfMonth">The days of the month which are included in this calendar.</param>
         /// <param name="lastDayOfMonth">True if the last day of the month is included in the calendar; otherwise false.</param>
         /// <remarks>
@@ -34,11 +34,8 @@ namespace Plethora.Calendar
         /// </remarks>
         public MonthlyCalendarProperties(int nMonthly, IEnumerable<int> daysOfMonth, bool lastDayOfMonth)
         {
-            if (nMonthly <= 0)
-                throw new ArgumentOutOfRangeException(nameof(nMonthly), nMonthly, ResourceProvider.ArgMustBeGreaterThanZero(nameof(nMonthly)));
-
-            if (daysOfMonth == null)
-                throw new ArgumentNullException(nameof(daysOfMonth));
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(nMonthly, 0);
+            ArgumentNullException.ThrowIfNull(daysOfMonth);
 
 
             this.nMonthly = nMonthly;
@@ -74,7 +71,7 @@ namespace Plethora.Calendar
                 if (this.lastDayOfMonth)
                 {
                     int day = DateTime.DaysInMonth(year, month);
-                    DateTime lastDateOfMonth = new DateTime(year, month, day);
+                    DateTime lastDateOfMonth = new(year, month, day);
 
                     if (date != lastDateOfMonth)
                     {
@@ -88,8 +85,7 @@ namespace Plethora.Calendar
                 month += this.nMonthly;
                 if (month >= 13)
                 {
-                    int remainder;
-                    int quotient = Math.DivRem(month, 12, out remainder);
+                    int quotient = Math.DivRem(month, 12, out var remainder);
 
                     month = remainder;
                     year += quotient;

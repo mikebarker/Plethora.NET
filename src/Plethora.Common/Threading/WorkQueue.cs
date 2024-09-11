@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 
@@ -56,7 +55,7 @@ namespace Plethora.Threading
             public object? GetResult()
             {
                 this.waitHandle.WaitOne();
-                if (this.exception == null)
+                if (this.exception is null)
                 {
                     return this.result;
                 }
@@ -164,7 +163,7 @@ namespace Plethora.Threading
 
 
             this.availableThreadCount = threadCount;
-            this.threads = new List<Thread>(threadCount);
+            this.threads = new(threadCount);
             for (int i = 0; i < threadCount; i++)
             {
                 Thread thread = new(this.DoLoop)
@@ -269,14 +268,14 @@ namespace Plethora.Threading
         /// </param>
         /// <param name="args">
         /// An array of type <see cref="Object"/> to pass as arguments to the given method.
-        /// This can be null if no arguments are needed.
+        /// This can be <see langword="null"/> if no arguments are needed.
         /// </param>
         public IAsyncResult BeginInvoke(Delegate method, object?[]? args)
         {
             if (this.disposed)
                 throw new InvalidOperationException(ResourceProvider.AlreadyDisposed());
 
-            var workItem = new WorkItem(method, args);
+            WorkItem workItem = new(method, args);
             lock(this.workQueue)
             {
                 this.workQueue.Enqueue(workItem);
@@ -314,7 +313,7 @@ namespace Plethora.Threading
         /// </summary>
         /// <returns>
         /// An <see cref="Object"/> that represents the return value from the delegate
-        /// being invoked, or null if the delegate has no return value.
+        /// being invoked, or <see langword="null"/> if the delegate has no return value.
         /// </returns>
         /// <param name="method">
         /// A <see cref="Delegate"/> that contains a method to call, in the context of
@@ -322,7 +321,7 @@ namespace Plethora.Threading
         /// </param>
         /// <param name="args">
         /// An array of type <see cref="Object"/> that represents the arguments to pass
-        /// to the given method. This can be null if no arguments are needed.
+        /// to the given method. This can be <see langword="null"/> if no arguments are needed.
         /// </param>
         public object? Invoke(Delegate method, object?[]? args)
         {
@@ -384,7 +383,7 @@ namespace Plethora.Threading
                     }
                 }
 
-                if (workItem != null)
+                if (workItem is not null)
                 {
                     //Ensure the decrement only happens once per thread
                     if (isThisThreadAvailable)
@@ -405,7 +404,7 @@ namespace Plethora.Threading
                         isThisThreadAvailable = true;
 
                         EventHandler? handler = this.ThreadAvailable;
-                        if (handler != null)
+                        if (handler is not null)
                             ThreadPool.QueueUserWorkItem((o) => handler(this, EventArgs.Empty));
                     }
 

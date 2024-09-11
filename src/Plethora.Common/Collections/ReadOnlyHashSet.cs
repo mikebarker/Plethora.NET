@@ -94,7 +94,6 @@ namespace Plethora.Collections
 
         void ISet<T>.IntersectWith(IEnumerable<T> other)
         {
-
             throw new InvalidOperationException(ResourceProvider.CollectionReadOnly());
         }
 

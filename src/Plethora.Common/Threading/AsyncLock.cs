@@ -187,7 +187,7 @@ namespace Plethora.Threading
         {
             ObjectDisposedException.ThrowIf(this.disposed, this);
 
-            var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
+            CallerData callerData = new(memberName, sourceFilePath, sourceLineNumber);
 
             LockResult result = this.InternalTryLock(
                 Timeout.InfiniteTimeSpan,
@@ -234,7 +234,7 @@ namespace Plethora.Threading
         {
             ObjectDisposedException.ThrowIf(this.disposed, this);
 
-            var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
+            CallerData callerData = new(memberName, sourceFilePath, sourceLineNumber);
 
             return this.InternalTryLock(
                 timeout,
@@ -270,7 +270,7 @@ namespace Plethora.Threading
         {
             ObjectDisposedException.ThrowIf(this.disposed, this);
 
-            var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
+            CallerData callerData = new(memberName, sourceFilePath, sourceLineNumber);
 
             LockResult result = await this.InternalTryLockAsync(
                 Timeout.InfiniteTimeSpan,
@@ -316,10 +316,9 @@ namespace Plethora.Threading
             [CallerFilePath] string sourceFilePath = "",
             [CallerLineNumber] int sourceLineNumber = 0)
         {
-            if (this.disposed)
-                throw new ObjectDisposedException(nameof(AsyncLock));
+            ObjectDisposedException.ThrowIf(this.disposed, this);
 
-            var callerData = new CallerData(memberName, sourceFilePath, sourceLineNumber);
+            CallerData callerData = new(memberName, sourceFilePath, sourceLineNumber);
 
             return this.InternalTryLockAsync(
                 timeout,
@@ -404,7 +403,7 @@ namespace Plethora.Threading
         private IDisposable? RegisterAwait(
             CallerData callerData)
         {
-            if (this.register == null)
+            if (this.register is null)
             {
                 return null;
             }
@@ -415,7 +414,7 @@ namespace Plethora.Threading
         private IDisposable? RegisterAcquired(
             CallerData callerData)
         {
-            if (this.register == null)
+            if (this.register is null)
             {
                 return null;
             }

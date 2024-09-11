@@ -16,14 +16,11 @@ namespace Plethora.Calendar
         /// <summary>
         /// Initialise a new instance of the <see cref="WeeklyCalendarProperties"/> class.
         /// </summary>
-        /// <param name="nWeekly">The number of weeks between occurances in this calendar.</param>
+        /// <param name="nWeekly">The number of weeks between occurrences in this calendar.</param>
         public WeeklyCalendarProperties(int nWeekly, IEnumerable<DayOfWeek> daysOfWeek)
         {
-            if (nWeekly <= 0)
-                throw new ArgumentOutOfRangeException(nameof(nWeekly), nWeekly, ResourceProvider.ArgMustBeGreaterThanZero(nameof(nWeekly)));
-
-            if (daysOfWeek == null)
-                throw new ArgumentNullException(nameof(daysOfWeek));
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(nWeekly, 0);
+            ArgumentNullException.ThrowIfNull(daysOfWeek);
 
 
             this.nWeekly = nWeekly;

@@ -27,7 +27,7 @@ namespace Plethora.Collections
         {
             get
             {
-                if (defaultComparer == null)
+                if (defaultComparer is null)
                 {
                     Interlocked.CompareExchange(ref defaultComparer, new ReferenceEqualityComparer<T>(), null);
                 }
@@ -62,10 +62,10 @@ namespace Plethora.Collections
         [Pure]
         bool IEqualityComparer.Equals(object? x, object? y)
         {
-            if ((x != null) && (x is not T))
+            if ((x is not null) && (x is not T))
                 throw new ArgumentException(ResourceProvider.InvalidCast());
 
-            if ((y != null) && (y is not T))
+            if ((y is not null) && (y is not T))
                 throw new ArgumentException(ResourceProvider.InvalidCast());
 
             return this.Equals((T?)x, (T?)y);

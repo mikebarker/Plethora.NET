@@ -4,7 +4,7 @@ using System.Threading;
 namespace Plethora.Threading
 {
     /// <summary>
-    /// Represents a the result of a TryLock operation of <see cref="AsyncLock"/>.
+    /// Represents the result of a TryLock operation of <see cref="AsyncLock"/>.
     /// </summary>
     /// <seealso cref="AsyncLock.TryLock(TimeSpan, CancellationToken)"/>
     /// <seealso cref="AsyncLock.TryLockAsync(TimeSpan, CancellationToken)"/>
@@ -84,14 +84,14 @@ namespace Plethora.Threading
         {
             ArgumentNullException.ThrowIfNull(releaseLockAction);
 
-            var lockObject = new LockObject(releaseLockAction);
-            var lockResult = new LockResult(true, lockObject);
+            LockObject lockObject = new(releaseLockAction);
+            LockResult lockResult = new(true, lockObject);
             return lockResult;
         }
 
         internal static LockResult NotAcquired()
         {
-            var lockResult = new LockResult(false, null);
+            LockResult lockResult = new(false, null);
             return lockResult;
         }
     }

@@ -5,7 +5,6 @@ using System.Diagnostics.Contracts;
 namespace Plethora
 {
     public readonly struct Range<T> : IEquatable<Range<T>>
-        where T : notnull
     {
         #region Fields
 
@@ -166,13 +165,22 @@ namespace Plethora
             return HashCodeHelper.GetHashCode(this.min, this.max, this.minInclusive, this.maxInclusive);
         }
 
+        public static bool operator ==(Range<T> left, Range<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(Range<T> left, Range<T> right)
+        {
+            return !(left == right);
+        }
+
         #endregion
     }
 
     public static class RangeHelper
     {
         public static IReadOnlyCollection<Range<T>> Subtract<T>(this Range<T> rangeA, Range<T> rangeB)
-            where T : notnull
         {
             List<Range<T>> list = new(2);
 

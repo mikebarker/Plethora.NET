@@ -21,8 +21,7 @@ namespace Plethora.Collections.Sets
         public InverseSet(ISetCore<T> a)
         {
             //Validation
-            if (a == null)
-                throw new ArgumentNullException(nameof(a));
+            ArgumentNullException.ThrowIfNull(a);
 
 
             this.a = a;

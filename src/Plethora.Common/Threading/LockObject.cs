@@ -4,7 +4,7 @@ using System.Threading;
 namespace Plethora.Threading
 {
     /// <summary>
-    /// Represent a lock as acquired by <see cref="AsyncLock"/>.
+    /// Represents a lock as acquired by <see cref="AsyncLock"/>.
     /// </summary>
     /// <remarks>
     /// Disposing this object will release the acquired lock.

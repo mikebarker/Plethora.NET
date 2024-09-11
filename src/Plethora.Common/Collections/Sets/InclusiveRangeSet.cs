@@ -5,7 +5,6 @@ using System.Linq;
 namespace Plethora.Collections.Sets
 {
     public class RangeInclusiveSet<T> : BaseSetImpl<T>, ISetCoreMultiSubtract<T>
-        where T : notnull
     {
         private readonly Range<T> range;
 
@@ -90,7 +89,7 @@ namespace Plethora.Collections.Sets
                 {
                     if (allowMultipleResults)
                     {
-                        var results = new List<RangeInclusiveSet<T>>();
+                        List<RangeInclusiveSet<T>> results = new();
                         foreach (var remainder in remainders)
                         {
                             results.Add(new RangeInclusiveSet<T>(remainder));

@@ -51,7 +51,7 @@ namespace Plethora.Collections
 
             public bool Equals(WeakKey? other)
             {
-                if (other == null)
+                if (other is null)
                     return false;
 
                 if (ReferenceEquals(this, other))
@@ -70,7 +70,7 @@ namespace Plethora.Collections
 
             #region 
 
-            public bool TryGetTarget([NotNullWhen(true), MaybeNullWhen(false)] out TKey target)
+            public bool TryGetTarget([MaybeNullWhen(false)] out TKey target)
             {
                 return this.weakReference.TryGetTarget(out target);
             }
@@ -123,10 +123,7 @@ namespace Plethora.Collections
                     // instance of the default WeakKeyComparer if called by several
                     // threads during initialisation. This is not an issue for this class,
                     // and is not worth locking to prevent.
-                    if (defaultInstance == null)
-                    {
-                        defaultInstance = new WeakKeyComparer(EqualityComparer<TKey>.Default);
-                    }
+                    defaultInstance ??= new WeakKeyComparer(EqualityComparer<TKey>.Default);
                     return defaultInstance;
                 }
             }
@@ -152,10 +149,10 @@ namespace Plethora.Collections
 
             public bool Equals(WeakKey? weakKeyX, WeakKey? weakKeyY)
             {
-                if ((weakKeyX == null) && (weakKeyY == null))
+                if ((weakKeyX is null) && (weakKeyY is null))
                     return true;
 
-                if ((weakKeyX == null) || (weakKeyY == null))
+                if ((weakKeyX is null) || (weakKeyY is null))
                     return false;
 
                 return weakKeyX.Equals(weakKeyY);
@@ -262,9 +259,10 @@ namespace Plethora.Collections
                 .Select(pair =>
                 {
                     pair.Key.TryGetTarget(out var target);
-                    return new KeyValuePair<TKey, TValue>(target!, pair.Value);
+                    return new { Key = target, pair.Value };
                 })
-                .Where(pair => pair.Key != null)
+                .Where(x => x.Key is not null)
+                .Select(x => new KeyValuePair<TKey, TValue>(x.Key!, x.Value))
                 .GetEnumerator();
         }
         #endregion
@@ -283,7 +281,7 @@ namespace Plethora.Collections
 
         bool ICollection<KeyValuePair<TKey,TValue>>.Contains(KeyValuePair<TKey, TValue> item)
         {
-            var weakPair = new KeyValuePair<WeakKey, TValue>(this.GetWeakKey(item.Key), item.Value);
+            KeyValuePair<WeakKey, TValue> weakPair = new(this.GetWeakKey(item.Key), item.Value);
             return ((ICollection<KeyValuePair<WeakKey, TValue>>)this.innerDictionary).Contains(weakPair);
         }
 
@@ -398,7 +396,7 @@ namespace Plethora.Collections
         public bool TrimExcess()
         {
             var deadKeyList = this.innerDictionary
-                .Where(pair => pair.Key.TryGetTarget(out var target))
+                .Where(pair => !pair.Key.TryGetTarget(out var target))
                 .Select(pair => pair.Key)
                 .ToList();
 
@@ -441,8 +439,7 @@ namespace Plethora.Collections
             public AutoCleanup(WeakKeyDictionary<TKey, TValue> dictionary)
             {
                 //validation
-                if (dictionary == null)
-                    throw new ArgumentNullException("dictionary");
+                ArgumentNullException.ThrowIfNull(dictionary);
 
                 this.dictionary = dictionary;
                 this.cleanupTimer = new Timer(Cleanup, null, LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);

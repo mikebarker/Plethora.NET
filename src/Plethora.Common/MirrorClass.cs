@@ -121,8 +121,8 @@ namespace Plethora
 
 
             Type? reflectType = assembly.GetType(fullName);
-            if (reflectType == null)
-                throw new ArgumentException(ResourceProvider.TypeNotFoundInAssembly(fullName, assembly.FullName));
+            if (reflectType is null)
+                throw new ArgumentException(ResourceProvider.TypeNotFoundInAssembly(fullName, assembly.FullName ?? ""));
 
             return new MirrorClass(reflectType, args);
         }
@@ -135,8 +135,8 @@ namespace Plethora
 
 
             Type? reflectType = assembly.GetType(fullName);
-            if (reflectType == null)
-                throw new ArgumentException(ResourceProvider.TypeNotFoundInAssembly(fullName, assembly.FullName));
+            if (reflectType is null)
+                throw new ArgumentException(ResourceProvider.TypeNotFoundInAssembly(fullName, assembly.FullName ?? ""));
 
             return new MirrorClass(reflectType, StaticOnlyContext);
         }
@@ -162,7 +162,7 @@ namespace Plethora
                 throw new MemberNotFoundException(ResourceProvider.MethodNotFound());
 
             //Ensure a static method is not called in a non-static context
-            if ((!callingMethod.IsStatic) && (this.innerInstance == null))
+            if ((!callingMethod.IsStatic) && (this.innerInstance is null))
                 throw new InvalidOperationException(ResourceProvider.StaticOnlyMirror());
 
             MethodInfo mirroredMethod = GetMirroredMethod(this.reflectedType, callingMethod, genericArguments);
@@ -205,7 +205,7 @@ namespace Plethora
                 if (!methodPool.TryGetValue(hCallingMethod, out method))
                 {
                     method = GetMirroredMethodGenericDefinition(type, callingMethod);
-                    if (method == null)
+                    if (method is null)
                         throw new MemberNotFoundException(ResourceProvider.MethodNotFound());
 
                     methodPool.Add(hCallingMethod, method);
@@ -262,7 +262,7 @@ namespace Plethora
             return matchedMethod;            
         }
 
-        protected static object? InvokeMethod(MethodInfo method, object? obj, params object?[] args)
+        protected static object? InvokeMethod(MethodInfo method, object? obj, params object?[]? args)
         {
             return method.Invoke(obj, args);
         }
@@ -307,7 +307,6 @@ namespace Plethora
         public new static object? Exec(Type[] genericArguments, params object[] args)
         {
             MethodBase? callingMethod = new StackFrame(1, false).GetMethod();
-
             if (callingMethod is null)
                 throw new MemberNotFoundException(ResourceProvider.MethodNotFound());
 

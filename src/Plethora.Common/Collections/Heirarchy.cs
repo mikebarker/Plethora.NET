@@ -69,6 +69,7 @@ namespace Plethora.Collections
             //Validation
             ArgumentNullException.ThrowIfNull(items);
 
+
             this.items = items;
         }
         #endregion
@@ -117,7 +118,7 @@ namespace Plethora.Collections
         {
             var iteration = this.GetIteration(highIndexPriority);
 
-            TValue? nullableValueSelector(T t)
+            TValue? NullableValueSelector(T t)
             {
                 TValue value = valueSelector(t);
                 return @default.Equals(value)
@@ -125,10 +126,8 @@ namespace Plethora.Collections
                     : value;
             }
 
-            TValue? rtnValue = GetValue(iteration, nullableValueSelector);
-            return (rtnValue.HasValue)
-                ? rtnValue.Value
-                : @default;
+            TValue? rtnValue = GetValue(iteration, NullableValueSelector);
+            return rtnValue ?? @default;
         }
 
         /// <summary>
@@ -169,7 +168,7 @@ namespace Plethora.Collections
             var iterator =  (highIndexPriority)
                 ? this.ReverseItems()
                 : this.items;
-            return iterator.Where(item => item != null);
+            return iterator.Where(item => item is not null);
         }
 
         private static TValue? GetValue<TValue>(IEnumerable<T> enumerable, Func<T, TValue> valueSelector)
@@ -178,7 +177,7 @@ namespace Plethora.Collections
             foreach (var item in enumerable)
             {
                 TValue value = valueSelector(item);
-                if (value != null)
+                if (value is not null)
                     return value;
             }
             return null;
@@ -190,7 +189,7 @@ namespace Plethora.Collections
             foreach (var item in enumerable)
             {
                 TValue? value = valueSelector(item);
-                if (value != null)
+                if (value is not null)
                     return value;
             }
             return null;

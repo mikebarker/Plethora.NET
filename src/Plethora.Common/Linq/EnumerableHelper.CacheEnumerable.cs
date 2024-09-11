@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics;
 
 namespace Plethora.Linq
 {
@@ -60,14 +60,13 @@ namespace Plethora.Linq
                 /// </returns>
                 public bool MoveNext()
                 {
-                    if (this.owner.cachedElements is not null)
+                    Debug.Assert(this.owner.cachedElements is not null);
+
+                    if (this.index < (this.owner.cachedElements.Count - 1))
                     {
-                        if (this.index < (this.owner.cachedElements.Count - 1))
-                        {
-                            this.current = this.owner.cachedElements[++this.index];
-                            this.hasCurrent = true;
-                            return true;
-                        }
+                        this.current = this.owner.cachedElements[++this.index];
+                        this.hasCurrent = true;
+                        return true;
                     }
 
                     if (this.owner.sourceEnumerator is null)
@@ -84,14 +83,14 @@ namespace Plethora.Linq
                         this.owner.sourceEnumerator.Dispose();
                         this.owner.sourceEnumerator = null;
 
-                        this.current = default(T);
+                        this.current = default;
                         this.hasCurrent = false;
                         return false;
                     }
 
                     ++this.index;
                     this.current = this.owner.sourceEnumerator.Current;
-                    this.owner.cachedElements!.Add(this.current);
+                    this.owner.cachedElements.Add(this.current);
                     this.hasCurrent = true;
                     return true;
                 }
@@ -103,7 +102,7 @@ namespace Plethora.Linq
                 public void Reset()
                 {
                     this.index = -1;
-                    this.current = default(T);
+                    this.current = default;
                     this.hasCurrent = false;
                 }
 
@@ -156,8 +155,7 @@ namespace Plethora.Linq
             public CacheEnumerable(IEnumerable<T> source)
             {
                 //Validation
-                if (source == null)
-                    throw new ArgumentNullException(nameof(source));
+                ArgumentNullException.ThrowIfNull(source);
 
                 this.source = source;
             }
@@ -183,7 +181,7 @@ namespace Plethora.Linq
             public IEnumerator<T> GetEnumerator()
             {
                 //Performance short-cut for fully cached results
-                if (this.source == null)
+                if (this.source is null)
                     return this.cachedElements!.GetEnumerator();
 
                 //Performance short-cut for CacheEnumerable types
@@ -195,7 +193,7 @@ namespace Plethora.Linq
                     return this.source.GetEnumerator();
 
 
-                if (this.cachedElements == null)
+                if (this.cachedElements is null)
                 {
                     this.sourceEnumerator = this.source.GetEnumerator();
                     this.cachedElements = new();
@@ -238,8 +236,7 @@ namespace Plethora.Linq
                     if (disposing)
                     {
                         // Dispose managed resources.
-                        if (this.sourceEnumerator != null)
-                            this.sourceEnumerator.Dispose();
+                        this.sourceEnumerator?.Dispose();
                     }
 
                     // Release unmanaged resources.

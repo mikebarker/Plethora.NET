@@ -33,8 +33,7 @@ namespace Plethora.IO
         public MulticastWriter(IEnumerable<TextWriter> textWriters)
         {
             //Validation
-            if (textWriters == null)
-                throw new ArgumentNullException(nameof(textWriters));
+            ArgumentNullException.ThrowIfNull(textWriters);
 
 
             this.writers = textWriters.ToArray();
@@ -76,7 +75,7 @@ namespace Plethora.IO
         /// </param>
         public override void Write(char[]? buffer)
         {
-            if (buffer == null)
+            if (buffer is null)
                 return;
 
             this.Execute(writer => writer.Write(buffer));
@@ -96,7 +95,7 @@ namespace Plethora.IO
         /// </param>
         public override void Write(char[] buffer, int index, int count)
         {
-            if (buffer == null)
+            if (buffer is null)
                 return;
 
             this.Execute(writer => writer.Write(buffer, index, count));
@@ -110,7 +109,7 @@ namespace Plethora.IO
         /// </param>
         public override void Write(string? value)
         {
-            if (value == null)
+            if (value is null)
                 return;
 
             this.Execute(writer => writer.Write(value));
@@ -139,7 +138,7 @@ namespace Plethora.IO
         /// </returns>
         public override Task WriteAsync(char[] buffer, int index, int count)
         {
-            if (buffer == null)
+            if (buffer is null)
                 return Task.CompletedTask;
 
             return this.ExecuteAsync(writer => writer.WriteAsync(buffer, index, count));
@@ -154,7 +153,7 @@ namespace Plethora.IO
         /// </returns>
         public override Task WriteAsync(string? value)
         {
-            if (value == null)
+            if (value is null)
                 return Task.CompletedTask;
 
             return this.ExecuteAsync(writer => writer.WriteAsync(value));

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -51,7 +52,7 @@ namespace Plethora.ExpressionAide
         {
             //Inject the additional parameter to override the constant expression
             object?[] delegateArgs;
-            if (this.path != null)
+            if (this.path is not null)
             {
                 delegateArgs = new object[args.Length + 1];
                 args.CopyTo(delegateArgs, 0);
@@ -70,8 +71,7 @@ namespace Plethora.ExpressionAide
 
         private object GetMagicParameter(TLambda lambda)
         {
-            if (path is null)
-                throw new InvalidOperationException("path is null.");
+            Debug.Assert(path is not null);
 
             Expression? tmp = lambda;
             foreach (var step in this.path)

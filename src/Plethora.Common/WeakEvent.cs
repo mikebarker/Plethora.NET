@@ -25,14 +25,14 @@ namespace Plethora
     ///        {
     ///            foreach (var handler in myWeakEvent.GetInvocationList())
     ///            {
-    ///                if (handler != null)
-    ///                    handler(sender, e);
+    ///                handler?.Invoke(sender, e);
     ///            }
     ///        }
     /// ]]>
     ///  </example>
     /// </remark>
     public class WeakEvent<TEventHandler>
+        where TEventHandler : notnull
     {
         #region Internal Class
 
@@ -44,9 +44,9 @@ namespace Plethora
 
             public HandlerInfo(TEventHandler handler, WeakEvent<TEventHandler> parent)
             {
-                var @delegate = (Delegate?)(object?)handler;
+                var @delegate = (Delegate)(object)handler;
 
-                this.WeakTarget = new WeakReference(@delegate!.Target);
+                this.WeakTarget = new(@delegate.Target);
                 this.Method = @delegate.Method;
                 this.Handler = WeakDelegate.CreateWeakDelegate(handler, h => parent.Remove(this));
             }
@@ -80,9 +80,9 @@ namespace Plethora
         /// </summary>
         public void Remove(TEventHandler handler)
         {
-            var @delegate = (Delegate?)(object?)handler;
+            var @delegate = (Delegate)(object)handler;
 
-            var target = @delegate!.Target;
+            var target = @delegate.Target;
             var method = @delegate.Method;
 
             lock (this.@lock)

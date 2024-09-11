@@ -22,8 +22,7 @@ namespace Plethora.Threading
             string sourceFilePath,
             int sourceLineNumber)
         {
-            if (@lock == null)
-                throw new ArgumentNullException(nameof(@lock));
+            ArgumentNullException.ThrowIfNull(@lock);
 
             this.Lock = @lock;
             this.LockRequestStatus = lockRequestStatus;

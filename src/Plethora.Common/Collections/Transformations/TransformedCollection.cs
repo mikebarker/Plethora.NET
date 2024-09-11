@@ -263,7 +263,7 @@ namespace Plethora.Collections.Transformations
             var orderedPairs = pairs
                 .OrderBy(tuple => tuple.Item1);
 
-            var groups = new List<ContiguousIndexGroup>();
+            List<ContiguousIndexGroup> groups = new();
 
             int prevIndex = default;
             List<object>? groupList = null;
@@ -273,7 +273,7 @@ namespace Plethora.Collections.Transformations
                     ((index == -1) && (prevIndex == -1)) ||
                     (index == prevIndex + 1);
 
-                if (groupList == null || !includeInGroup)
+                if (groupList is null || !includeInGroup)
                 {
                     groupList = new();
                     groups.Add(new ContiguousIndexGroup(index, groupList));
@@ -293,12 +293,12 @@ namespace Plethora.Collections.Transformations
             {
                 case NotifyCollectionChangedAction.Add:
                     {
-                        if (e.NewItems == null)
+                        if (e.NewItems is null)
                         {
                             return;
                         }
 
-                        var itemIndexPairs = new List<Tuple<int, object>>();
+                        List<Tuple<int, object>> itemIndexPairs = new();
                         int index = e.NewStartingIndex;
                         foreach (T newItem in e.NewItems)
                         {
@@ -317,12 +317,12 @@ namespace Plethora.Collections.Transformations
 
                 case NotifyCollectionChangedAction.Remove:
                     {
-                        if (e.OldItems == null)
+                        if (e.OldItems is null)
                         {
                             return;
                         }
 
-                        var itemIndexPairs = new List<Tuple<int, object>>();
+                        List<Tuple<int, object>> itemIndexPairs = new();
                         int index = e.OldStartingIndex;
                         foreach (T oldItem in e.OldItems)
                         {

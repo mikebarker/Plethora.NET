@@ -12,7 +12,7 @@ namespace Plethora
     /// </example>
     /// </remarks>
     [System.Diagnostics.DebuggerDisplay("Rational [{" + nameof(numerator) + "} / {" + nameof(denominator) + "}]")]
-    public struct Rational : IComparable, IComparable<Rational>, IEquatable<Rational>
+    public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable<Rational>
     {
         private readonly int numerator;
         private readonly int denominator;
@@ -28,7 +28,7 @@ namespace Plethora
         }
 
         /// <summary>
-        /// Initializes a new <seealso cref="Rational"/>, providing the numerator, denominator, and a flag indicating whether the rational must be redued to its canonical form.
+        /// Initializes a new <seealso cref="Rational"/>, providing the numerator, denominator, and a flag indicating whether the rational must be reduced to its canonical form.
         /// </summary>
         /// <param name="numerator">The numerator.</param>
         /// <param name="denominator">The denominator.</param>
@@ -42,8 +42,8 @@ namespace Plethora
             {
                 int gcd = MathEx.GreatestCommonDivisor(numerator, denominator);
 
-                numerator = numerator / gcd;
-                denominator = denominator / gcd;
+                numerator /= gcd;
+                denominator /= gcd;
             }
 
             if (denominator < 0)
@@ -74,7 +74,7 @@ namespace Plethora
 
         #region Equality
 
-        public bool Equals(Rational other)
+        public readonly bool Equals(Rational other)
         {
             return
                 (this.numerator == other.numerator) &&
@@ -83,7 +83,7 @@ namespace Plethora
 
         public override bool Equals(object? obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
                 return false;
 
             if (obj is not Rational)

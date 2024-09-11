@@ -169,7 +169,7 @@ namespace Plethora.Collections
             if (!TryPeek(out var result))
                 throw new InvalidOperationException();
 
-            return result!;
+            return result;
         }
 
         /// <summary>

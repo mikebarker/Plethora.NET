@@ -142,7 +142,7 @@ namespace Plethora
         /// <summary>
         /// Returns the value constrained by a minimum and maximum.
         /// </summary>
-        /// <param name="value">The value to be contrained.</param>
+        /// <param name="value">The value to be constrained.</param>
         /// <param name="min">The minimum value of the constraint.</param>
         /// <param name="max">The maximum value of the constraint.</param>
         /// <returns>
@@ -163,7 +163,7 @@ namespace Plethora
         /// <summary>
         /// Returns the value constrained by a minimum and maximum.
         /// </summary>
-        /// <param name="value">The value to be contrained.</param>
+        /// <param name="value">The value to be constrained.</param>
         /// <param name="min">The minimum value of the constraint.</param>
         /// <param name="max">The maximum value of the constraint.</param>
         /// <returns>
@@ -184,7 +184,7 @@ namespace Plethora
         /// <summary>
         /// Returns the value constrained by a minimum and maximum.
         /// </summary>
-        /// <param name="value">The value to be contrained.</param>
+        /// <param name="value">The value to be constrained.</param>
         /// <param name="min">The minimum value of the constraint.</param>
         /// <param name="max">The maximum value of the constraint.</param>
         /// <returns>
@@ -205,7 +205,7 @@ namespace Plethora
         /// <summary>
         /// Returns the value constrained by a minimum and maximum.
         /// </summary>
-        /// <param name="value">The value to be contrained.</param>
+        /// <param name="value">The value to be constrained.</param>
         /// <param name="min">The minimum value of the constraint.</param>
         /// <param name="max">The maximum value of the constraint.</param>
         /// <returns>
@@ -229,7 +229,7 @@ namespace Plethora
         /// <summary>
         /// Struct used to store a roman numeral and its value.
         /// </summary>
-        private struct Numeral
+        private readonly struct Numeral
         {
             #region Fields
 
@@ -265,9 +265,7 @@ namespace Plethora
         {
             get
             {
-                if (ROMAN_NUMERALS == null)
-                {
-                    ROMAN_NUMERALS =
+                ROMAN_NUMERALS ??=
                         [
                             new Numeral( "M", 1000),
                             new Numeral("CM",  900),
@@ -283,7 +281,6 @@ namespace Plethora
                             new Numeral("IV",    4),
                             new Numeral( "I",    1),
                         ];
-                }
 
                 return ROMAN_NUMERALS;
             }
@@ -306,14 +303,13 @@ namespace Plethora
         public static int FromRomanNumerals(string romanNumerals)
         {
             //Validation
-            if (romanNumerals == null)
-                throw new ArgumentNullException(nameof(romanNumerals));
+            ArgumentNullException.ThrowIfNull(romanNumerals);
 
             if (romanNumerals.Length == 0)
                 throw new ArgumentException(ResourceProvider.ArgStringEmpty(nameof(romanNumerals)), nameof(romanNumerals));
 
             Regex romanNumeralRegex =
-              new Regex("^M{0,3}(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$");
+              new("^M{0,3}(D?C{0,3}|C[DM])(L?X{0,3}|X[LC])(V?I{0,3}|I[VX])$");
 
             if (!romanNumeralRegex.IsMatch(romanNumerals))
                 throw new ArgumentException(ResourceProvider.ArgInvalid(nameof(romanNumerals)),
@@ -367,7 +363,7 @@ namespace Plethora
                   ResourceProvider.ArgMustBeBetween(nameof(number), 1, 3999));
 
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
             int temp = number;
             int i = 0;
 

@@ -12,8 +12,7 @@ namespace Plethora.Collections
 
         public ReverseComparer(IComparer<T> comparer)
         {
-            if (comparer == null)
-                throw new ArgumentNullException(nameof(comparer));
+            ArgumentNullException.ThrowIfNull(comparer);
 
             this.comparer = comparer;
         }

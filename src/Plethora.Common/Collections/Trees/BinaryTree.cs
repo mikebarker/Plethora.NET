@@ -74,12 +74,12 @@ namespace Plethora.Collections.Trees
                 get { return this.left; }
                 protected internal set
                 {
-                    if (this.left != null)
+                    if (this.left is not null)
                         this.left.Parent = null;
 
                     this.left = value;
 
-                    if (this.left != null)
+                    if (this.left is not null)
                         this.left.Parent = this;
 
                     this.SetHeight();
@@ -98,12 +98,12 @@ namespace Plethora.Collections.Trees
                 get { return this.right; }
                 protected internal set
                 {
-                    if (this.right != null)
+                    if (this.right is not null)
                         this.right.Parent = null;
 
                     this.right = value;
 
-                    if (this.right != null)
+                    if (this.right is not null)
                         this.right.Parent = this;
 
                     this.SetHeight();
@@ -120,7 +120,7 @@ namespace Plethora.Collections.Trees
                 {
                     //Ensure the previous parent no longer points to
                     // this node.
-                    if (this.parent != null)
+                    if (this.parent is not null)
                     {
                         if (this.parent.left == this)
                             this.parent.left = null;
@@ -140,13 +140,13 @@ namespace Plethora.Collections.Trees
             /// <value>
             /// <see cref="Parent"/>.<see cref="Right"/> if this <see cref="Node"/> is the left child of its <see cref="Parent"/>.
             /// <see cref="Parent"/>.<see cref="Left"/> if this <see cref="Node"/> is the right child of its <see cref="Parent"/>.
-            /// null if this <see cref="Node"/> has no parent.
+            /// <see langword="null"/> if this <see cref="Node"/> has no parent.
             /// </value>
             public Node? Sibling
             {
                 get
                 {
-                    if (this.Parent == null)
+                    if (this.Parent is null)
                         return null;
                     else if (this.Parent.Left == this)
                         return this.Parent.Right;
@@ -166,13 +166,13 @@ namespace Plethora.Collections.Trees
             /// <value>
             /// <see cref="Edge.Left"/> if this <see cref="Node"/> is the left child of its <see cref="Parent"/>.
             /// <see cref="Edge.Right"/> if this <see cref="Node"/> is the right child of its <see cref="Parent"/>.
-            /// null if this <see cref="Node"/> has no parent.
+            /// <see langword="null"/> if this <see cref="Node"/> has no parent.
             /// </value>
             public Edge? RelationToParent
             {
                 get
                 {
-                    if (this.Parent == null)
+                    if (this.Parent is null)
                         return null;
                     else if (this.Parent.Left == this)
                         return Edge.Left;
@@ -220,7 +220,7 @@ namespace Plethora.Collections.Trees
                 int prevHeight = this.Height;
                 this.Height = Math.Max(leftHeight, rightHeight) + 1;
 
-                if ((this.Parent != null) && (prevHeight != this.Height))
+                if ((this.Parent is not null) && (prevHeight != this.Height))
                     this.Parent.SetHeight();
 
                 this.ignoreSetHeight = false;
@@ -262,7 +262,7 @@ namespace Plethora.Collections.Trees
         {
             #region Fields
 
-            internal readonly Node node;
+            internal readonly Node? node;
             internal readonly Edge? edge;
             #endregion
 
@@ -271,7 +271,7 @@ namespace Plethora.Collections.Trees
             /// <summary>
             /// Initialises a new instance of the <see cref="LocationInfo"/> class.
             /// </summary>
-            internal LocationInfo(Node node, Edge? edge)
+            internal LocationInfo(Node? node, Edge? edge)
             {
                 this.node = node;
                 this.edge = edge;
@@ -371,12 +371,16 @@ namespace Plethora.Collections.Trees
             ArgumentNullException.ThrowIfNull(key);
 
 
-            if (!this.Find(key, out var node, out _))
+            if (this.Find(key, out var node, out _))
+            {
+                this.RemoveNode(node);
+
+                return true;
+            }
+            else
+            {
                 return false;
-
-            this.RemoveNode(node);
-
-            return true;
+            }
         }
 
         /// <summary>
@@ -428,10 +432,14 @@ namespace Plethora.Collections.Trees
                 ArgumentNullException.ThrowIfNull(key);
 
 
-                if (!this.Find(key, out var node, out _))
-                    throw new KeyNotFoundException();
-                else
+                if (this.Find(key, out var node, out _))
+                {
                     return node.Value;
+                }
+                else
+                {
+                    throw new KeyNotFoundException();
+                }
             }
             set
             {
@@ -439,10 +447,14 @@ namespace Plethora.Collections.Trees
                 ArgumentNullException.ThrowIfNull(key);
 
 
-                if (!this.Find(key, out var node, out _))
-                    throw new KeyNotFoundException();
-                else
+                if (this.Find(key, out var node, out _))
+                {
                     node.Value = value;
+                }
+                else
+                {
+                    throw new KeyNotFoundException();
+                }
             }
         }
 
@@ -594,7 +606,7 @@ namespace Plethora.Collections.Trees
         /// Gets a value indicating whether the <see cref="ICollection{T}" /> is read-only.
         /// </summary>
         /// <returns>
-        /// true if the <see cref="ICollection{T}" /> is read-only; otherwise, false.
+        /// <see langword="true"/> if the <see cref="ICollection{T}" /> is read-only; otherwise <see langword="false"/>.
         /// </returns>
         bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly
         {
@@ -611,7 +623,7 @@ namespace Plethora.Collections.Trees
         /// <param name="key">The object to use as the key of the element to add.</param>
         /// <param name="value">The object to use as the value of the element to add.</param>
         /// <returns>
-        /// true if the item was added; else false.
+        /// <see langword="true"/> if the item was added; otherwise <see langword="false"/>.
         /// </returns>
         public bool AddOrUpdate(TKey key, TValue value)
         {
@@ -644,7 +656,7 @@ namespace Plethora.Collections.Trees
         /// </param>
         /// <param name="info">
         /// Output. Object containing location information of <see cref="key"/> if located;
-        /// or null if <see cref="key"/> was not located.
+        /// or <see langword="null"/> if <see cref="key"/> was not located.
         /// This parameter is passed uninitialized.
         /// </param>
         /// <returns>
@@ -657,7 +669,7 @@ namespace Plethora.Collections.Trees
         /// </remarks>
         /// <exception cref="ArgumentNullException"><paramref name="key" /> is null.</exception>
         /// <seealso cref="AddEx"/>
-        public bool TryGetValueEx(TKey key, [MaybeNullWhen(false)] out TValue value, out object info)
+        public bool TryGetValueEx(TKey key, [MaybeNullWhen(false)] out TValue value, [MaybeNullWhen(false)] out object info)
         {
             //Validation
             ArgumentNullException.ThrowIfNull(key);
@@ -665,7 +677,7 @@ namespace Plethora.Collections.Trees
 
             bool result = this.Find(key, out var node, out var edge);
 
-            info = new LocationInfo(node!, edge);
+            info = new LocationInfo(node, edge);
             value = (!result) ? default : node!.Value;
             return result;
         }
@@ -711,7 +723,7 @@ namespace Plethora.Collections.Trees
             ArgumentNullException.ThrowIfNull(key);
             ArgumentNullException.ThrowIfNull(info);
 
-            if (!(info is LocationInfo))
+            if (info is not LocationInfo)
                 throw new ArgumentException("info not as supplied by TryGetValueEx method.");
 
 
@@ -759,15 +771,14 @@ namespace Plethora.Collections.Trees
         {
             //Insert node
             Node node = this.CreateNode(key, value);
-            if (parent == null)
+            if (parent is null)
             {
                 //Tree is empty
                 this.Root = node;
             }
             else
             {
-                if (edge is null)
-                    throw new ArgumentException(nameof(edge));
+                Debug.Assert(edge.HasValue);
 
                 switch (edge.Value)
                 {
@@ -817,19 +828,19 @@ namespace Plethora.Collections.Trees
             ArgumentNullException.ThrowIfNull(node);
 
 
-            if ((node.Left == null) && (node.Right == null))
+            if ((node.Left is null) && (node.Right is null))
             {
                 //No children
                 node.RemoveFromParent();
 
                 return true;
             }
-            else if ((node.Left == null) || (node.Right == null))
+            else if ((node.Left is null) || (node.Right is null))
             {
                 Node? childNode = node.Left ?? node.Right;
 
                 //Swap parents
-                if (node.Parent == null)
+                if (node.Parent is null)
                     this.Root = childNode;
                 else if (node.RelationToParent == Edge.Left)
                     node.Parent.Left = childNode;
@@ -842,7 +853,7 @@ namespace Plethora.Collections.Trees
             {
                 Node current = node.Left;
                 //Find largest node in left sub tree
-                while (current.Right != null)
+                while (current.Right is not null)
                 {
                     current = current.Right;
                 }
@@ -885,12 +896,12 @@ namespace Plethora.Collections.Trees
         /// ]]>
         /// X = Undefined, possibly null.
         /// </remarks>
-        private bool Find(TKey key, [NotNullWhen(true), MaybeNullWhen(false)] out Node node, [MaybeNullWhen(false)] out Edge? edge)
+        private bool Find(TKey key, [MaybeNullWhen(false)] out Node node, out Edge? edge)
         {
             edge = null;
             Node? parent = null;
             Node? current = this.Root;
-            while(current != null)
+            while(current is not null)
             {
                 int result = this.comparer.Compare(current.Key, key);
                 if (result == 0)        // current.Key == key
@@ -913,7 +924,7 @@ namespace Plethora.Collections.Trees
                 }
             }
 
-            if (current != null)
+            if (current is not null)
             {
                 //Node found
                 edge = null;

@@ -33,8 +33,7 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Union(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             return other;
@@ -43,8 +42,7 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Intersect(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             return this;
@@ -53,8 +51,7 @@ namespace Plethora.Collections.Sets
         public override ISetCore<T> Subtract(ISetCore<T> other)
         {
             //Validation
-            if (other == null)
-                throw new ArgumentNullException(nameof(other));
+            ArgumentNullException.ThrowIfNull(other);
 
 
             return this;

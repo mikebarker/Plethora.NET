@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Buffers;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,6 +8,9 @@ namespace Plethora.IO
 {
     public static class TextReaderHelper
     {
+        //Use the default internal stream buffer size.
+        const int BUFFER_SIZE = 4096;
+
         /// <summary>
         /// Copies the content of a <see cref="TextReader"/> to a <see cref="TextWriter"/>.
         /// </summary>
@@ -39,17 +43,16 @@ namespace Plethora.IO
             ArgumentNullException.ThrowIfNull(reader);
             ArgumentNullException.ThrowIfNull(writer);
 
-            //Use the default internal stream buffer size.
-            const int BUFFER_SIZE = 4096;
-
             int bytes;
-            char[] buffer = new char[BUFFER_SIZE];
+
+            var buffer = ArrayPool<char>.Shared.Rent(BUFFER_SIZE);
             while ((bytes = await reader.ReadAsync(buffer, 0, BUFFER_SIZE).ConfigureAwait(false)) > 0)
             {
                 interceptAction?.Invoke(buffer, 0, bytes);
 
                 await writer.WriteAsync(buffer, 0, bytes).ConfigureAwait(false);
             }
+            ArrayPool<char>.Shared.Return(buffer);
         }
 
         /// <summary>
@@ -80,31 +83,25 @@ namespace Plethora.IO
         /// writes to <paramref name="writer"/> are performed on a separate thread.
         /// </remarks>
         [Obsolete("Prefer the async version of this function.")]
-        public static void CopyTo(this TextReader reader, TextWriter writer, Action<char[], int, int>?  interceptAction)
+        public static void CopyTo(this TextReader reader, TextWriter writer, Action<char[], int, int>? interceptAction)
         {
             //Validation
             ArgumentNullException.ThrowIfNull(reader);
             ArgumentNullException.ThrowIfNull(writer);
 
 
-            void CopyToDelegate()
+            ThreadPool.QueueUserWorkItem(_ =>
             {
-                //Use the default internal stream buffer size.
-                const int BUFFER_SIZE = 4096;
-
                 int bytes;
-                char[] buffer = new char[BUFFER_SIZE];
+                var buffer = ArrayPool<char>.Shared.Rent(BUFFER_SIZE);
                 while ((bytes = reader.Read(buffer, 0, BUFFER_SIZE)) > 0)
                 {
                     interceptAction?.Invoke(buffer, 0, bytes);
 
                     writer.Write(buffer, 0, bytes);
                 }
-            }
-
-            Thread thread = new(CopyToDelegate);
-            thread.IsBackground = true;
-            thread.Start();
+                ArrayPool<char>.Shared.Return(buffer);
+            });
         }
     }
 }

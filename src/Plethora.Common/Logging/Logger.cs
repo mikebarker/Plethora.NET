@@ -8,6 +8,8 @@ namespace Plethora.Logging
     /// </summary>
     public abstract class Logger : ILogger
     {
+        private static readonly string IsLoggedKey = "IsLogged";
+
         #region Static Methods
 
         private static ILoggerProvider? loggerProvider;
@@ -15,7 +17,10 @@ namespace Plethora.Logging
         {
             get
             {
-                return loggerProvider!;
+                if (loggerProvider is null)
+                    throw new InvalidOperationException("The LoggerProvider has not been set.");
+
+                return loggerProvider;
             }
             set
             {
@@ -28,12 +33,18 @@ namespace Plethora.Logging
 
         public static ILogger GetLogger(string name)
         {
-            return loggerProvider!.GetLogger(name);
+            if (loggerProvider is null)
+                throw new InvalidOperationException("The LoggerProvider has not been set.");
+
+            return loggerProvider.GetLogger(name);
         }
 
         public static ILogger GetLogger(Type type)
         {
-            return loggerProvider!.GetLogger(type);
+            if (loggerProvider is null)
+                throw new InvalidOperationException("The LoggerProvider has not been set.");
+
+            return loggerProvider.GetLogger(type);
         }
         #endregion
 
@@ -224,7 +235,7 @@ namespace Plethora.Logging
         protected virtual void Log(LogLevel logLevel, Exception? exception, Func<string> messageProvider)
         {
             //If the exception is logged then skip
-            if (IsLogged(exception))
+            if ((exception is not null) && IsLogged(exception))
                 return;
 
             //Test if logging is enabled
@@ -236,23 +247,25 @@ namespace Plethora.Logging
             this.ForceLog(logLevel, exception, message);
 
             //Mark the exception as logged (if required)
-            MarkAsLogged(exception);
+            if (exception is not null)
+                MarkAsLogged(exception);
         }
 
-        private static bool IsLogged(Exception? exception)
+        private static bool IsLogged(Exception exception)
         {
-            if (exception is not IsLoggedException isLoggedException)
+            if (!exception.Data.Contains(IsLoggedKey))
                 return false;
 
-            return isLoggedException.IsLogged;
+            object? value = exception.Data[IsLoggedKey];
+            if (value is not bool isLogged)
+                return false;
+
+            return isLogged;
         }
 
-        private static void MarkAsLogged(Exception? exception)
+        private static void MarkAsLogged(Exception exception)
         {
-            if (exception is not IsLoggedException isLoggedException)
-                return;
-
-            isLoggedException.IsLogged = true;
+            exception.Data[IsLoggedKey] = true;
         }
         #endregion
     }

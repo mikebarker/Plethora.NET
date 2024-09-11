@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Plethora.Collections.Trees
 {
@@ -46,8 +47,8 @@ namespace Plethora.Collections.Trees
 
             if (rebalanceRequired)
             {
-                if (parent == null)
-                    this.BalanceNodeAfterDelete(this.Root!);
+                if (parent is null)
+                    this.BalanceNodeAfterDelete(this.Root!); // Root can't be null if we are deleting a node.
                 else
                     this.BalanceNodeAfterDelete(parent);
             }
@@ -67,19 +68,22 @@ namespace Plethora.Collections.Trees
         private void BalanceNodeAfterAdd(Node node)
         {
             Node? _node = node;
+
             while (_node is not null)
             {
                 //Test for balance
                 int balanceFactor = BalanceFactor(_node);
                 if (balanceFactor == 2)
                 {
+                    Debug.Assert(_node.Right is not null);
+
                     if (BalanceFactor(_node.Right) == 1)
                     {
                         this.Rotate(_node, RotationDirection.Left);
                     }
                     else
                     {
-                        this.Rotate(_node.Right!, RotationDirection.Right);
+                        this.Rotate(_node.Right, RotationDirection.Right);
                         this.Rotate(_node, RotationDirection.Left);
                     }
 
@@ -88,13 +92,15 @@ namespace Plethora.Collections.Trees
                 }
                 else if (balanceFactor == -2)
                 {
+                    Debug.Assert(_node.Left is not null);
+
                     if (BalanceFactor(_node.Left) == -1)
                     {
                         this.Rotate(_node, RotationDirection.Right);
                     }
                     else
                     {
-                        this.Rotate(_node.Left!, RotationDirection.Left);
+                        this.Rotate(_node.Left, RotationDirection.Left);
                         this.Rotate(_node, RotationDirection.Right);
                     }
 
@@ -109,19 +115,22 @@ namespace Plethora.Collections.Trees
         private void BalanceNodeAfterDelete(Node node)
         {
             Node? _node = node;
+
             while (_node is not null)
             {
                 //Test for balance
                 int balanceFactor = BalanceFactor(_node);
                 if (balanceFactor == 2)
                 {
+                    Debug.Assert(_node.Right is not null);
+
                     if (BalanceFactor(_node.Right) >= 0)
                     {
                         this.Rotate(_node, RotationDirection.Left);
                     }
                     else
                     {
-                        this.Rotate(_node.Right!, RotationDirection.Right);
+                        this.Rotate(_node.Right, RotationDirection.Right);
                         this.Rotate(_node, RotationDirection.Left);
                     }
 
@@ -129,13 +138,15 @@ namespace Plethora.Collections.Trees
                 }
                 else if (balanceFactor == -2)
                 {
+                    Debug.Assert(_node.Left is not null);
+
                     if (BalanceFactor(_node.Left) <= 0)
                     {
                         this.Rotate(_node, RotationDirection.Right);
                     }
                     else
                     {
-                        this.Rotate(_node.Left!, RotationDirection.Left);
+                        this.Rotate(_node.Left, RotationDirection.Left);
                         this.Rotate(_node, RotationDirection.Right);
                     }
 

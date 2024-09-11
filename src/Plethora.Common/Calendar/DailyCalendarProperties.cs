@@ -15,21 +15,20 @@ namespace Plethora.Calendar
         /// <summary>
         /// Initialise a new instance of the <see cref="DailyCalendarProperties"/> class.
         /// </summary>
-        /// <param name="nDaily">The number of days between occurances in this calendar.</param>
+        /// <param name="nDaily">The number of days between occurrences in this calendar.</param>
         /// <param name="dailyType">The type of days to be represented in the calendar.</param>
         public DailyCalendarProperties(int nDaily, DailyType dailyType)
         {
-            if (nDaily <= 0)
-                throw new ArgumentOutOfRangeException(nameof(nDaily), nDaily, ResourceProvider.ArgMustBeGreaterThanZero(nameof(nDaily)));
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(nDaily, 0);
 
             DailyType[] validDailyTypes =
-            {
+            [
                 DailyType.Day,
                 DailyType.WeekDay,
                 DailyType.WeekendDay,
                 DailyType.BusinessDay,
                 DailyType.NonBusinessDay,
-            };
+            ];
 
             if (!validDailyTypes.Contains(dailyType))
             {
@@ -50,17 +49,14 @@ namespace Plethora.Calendar
             IEnumerable<DayOfWeek> weekendDays,
             IEnumerable<DateTime> holidays)
         {
-            if (weekendDays == null)
-                throw new ArgumentNullException(nameof(weekendDays));
-
-            if (holidays == null)
-                throw new ArgumentNullException(nameof(holidays));
+            ArgumentNullException.ThrowIfNull(weekendDays);
+            ArgumentNullException.ThrowIfNull(holidays);
 
 
             weekendDays = weekendDays.Distinct().ToArray();
 
             //Avoid constructing a new hash set if not required.
-            if (!(holidays is HashSet<DateTime>))
+            if (holidays is not HashSet<DateTime>)
                 holidays = new HashSet<DateTime>(holidays);
 
             int count = 0;
@@ -101,7 +97,7 @@ namespace Plethora.Calendar
                         yield return date;
 
                     count++;
-                    count = count % this.nDaily;
+                    count %= this.nDaily;
                 }
 
                 date = date.AddDays(1);

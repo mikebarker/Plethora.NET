@@ -53,23 +53,23 @@ namespace Plethora
             {
                 if (returnType.IsEnum)
                 {
-                    if (value is string)
-                        return Enum.Parse(returnType, (string)value);
+                    if (value is string strEnumValue)
+                        return Enum.Parse(returnType, strEnumValue);
 
                     object? underlyingValue = AsType(value, returnType.GetEnumUnderlyingType());
                     object enumValue = Enum.ToObject(returnType, underlyingValue!);
                     return enumValue;
                 }
 
-                if ((returnType == typeof(Guid)) && (value is string strValue))
+                if ((returnType == typeof(Guid)) && (value is string strGuidValue))
                 {
-                    Guid guidValue = Guid.Parse(strValue);
+                    Guid guidValue = Guid.Parse(strGuidValue);
                     return guidValue;
                 }
 
                 if (returnType.IsNullable())
                 {
-                    if (value == null)
+                    if (value is null)
                         return null; //Unboxing will take care of type conversion.
 
                     Type? underlyingType = Nullable.GetUnderlyingType(returnType);

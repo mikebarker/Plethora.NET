@@ -25,7 +25,7 @@ namespace Plethora.Threading
                 int count = this.waitHandles.Length - i;
                 count = Math.Min(count, MaxWaitHandles);
 
-                if ((currentHandles == null) || (currentHandles.Length != count))
+                if ((currentHandles is null) || (currentHandles.Length != count))
                     currentHandles = new WaitHandle[count];
 
                 Array.Copy(this.waitHandles, i, currentHandles, 0, count);

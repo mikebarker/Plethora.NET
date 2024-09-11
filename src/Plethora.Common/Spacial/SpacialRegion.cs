@@ -1,6 +1,5 @@
-﻿using System;
-
-using Plethora.Collections.Sets;
+﻿using Plethora.Collections.Sets;
+using System;
 
 namespace Plethora.Spacial
 {
@@ -10,14 +9,12 @@ namespace Plethora.Spacial
 
         public SpaceRegion(params ISetCore[] dimensions)
         {
-            if (dimensions == null)
-                throw new ArgumentNullException(nameof(dimensions));
+            ArgumentNullException.ThrowIfNull(dimensions);
 
 
             this.dimensions = (ISetCore[])dimensions.Clone();
         }
 
-        
         public ISetCore[] Dimensions => this.dimensions;
 
         public bool IsEmpty

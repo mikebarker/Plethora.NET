@@ -191,8 +191,7 @@ namespace Plethora.Collections
         /// <param name="item">The object to locate in the <see cref="ICollection{T}"/>.</param>
         bool ICollection<T>.Contains(T item)
         {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
             TKey key = this.getKeyFunc(item);
             return this.Contains(key);
@@ -253,8 +252,7 @@ namespace Plethora.Collections
         public bool Remove(T item)
         {
             //Validation
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
+            ArgumentNullException.ThrowIfNull(item);
 
 
             TKey key = this.getKeyFunc(item);
@@ -406,17 +404,13 @@ namespace Plethora.Collections
         public int BinarySearch(int index, int count, TKey searchKey)
         {
             //Validation
-            if (index < 0)
-                throw new ArgumentOutOfRangeException(nameof(index), index, ResourceProvider.ArgMustBeGreaterThanZero(nameof(index)));
-
-            if (count < 0)
-                throw new ArgumentOutOfRangeException(nameof(count), count, ResourceProvider.ArgMustBeGreaterThanZero(nameof(count)));
+            ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
+            ArgumentOutOfRangeException.ThrowIfLessThan(count, 0);
 
             if ((this.innerList.Count - index) < count)
                 throw new ArgumentException(ResourceProvider.ArgInvalidOffsetLength(nameof(index), nameof(count)));
             
-            if (searchKey == null)
-                throw new ArgumentNullException(nameof(searchKey));
+            ArgumentNullException.ThrowIfNull(searchKey);
 
 
             int low = index;

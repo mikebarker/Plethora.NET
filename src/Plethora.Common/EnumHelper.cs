@@ -71,7 +71,7 @@ namespace Plethora
         /// <param name="value">The Enum value for which the description is required.</param>
         /// <param name="separator">The string used to interleave multiple values if required.</param>
         /// <param name="attributeType">The attribute type which contains the enum's description.</param>
-        /// <param name="attributeProperty">The attribute property which returns the enums description.</param>
+        /// <param name="attributeProperty">The attribute property which returns the enum's description.</param>
         /// <returns>
         /// The description for an enum. If the enum has the FlagAttribute set
         /// multiple values are return separated by 'separator', if required.
@@ -153,6 +153,9 @@ namespace Plethora
         private static Func<Enum, string> CreateEnumToDescriptionFunc(Type attributeType, string attributeProperty)
         {
             PropertyInfo? propertyInfo = attributeType.GetProperty(attributeProperty, BindingFlags.Instance | BindingFlags.Public);
+            if (propertyInfo is null)
+                throw new InvalidOperationException("Property not found");
+
             string EnumToDescriptionFunc(Enum value)
             {
                 Type enumType = value.GetType();
@@ -167,8 +170,11 @@ namespace Plethora
                 if (attributes.Length == 0)
                     return enumString;
 
-                var description = propertyInfo!.GetValue(attributes[0], null);
-                return description!.ToString()!;
+                var description = propertyInfo.GetValue(attributes[0], null);
+                if (description is null)
+                    throw new InvalidOperationException("Description not found");
+
+                return description.ToString()!;
             }
 
             return EnumToDescriptionFunc;

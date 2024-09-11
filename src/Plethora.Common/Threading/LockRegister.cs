@@ -66,7 +66,7 @@ namespace Plethora.Threading
                     .ToArray();
             }
 
-            var e = new LongWaitDetectedEventArgs(lockContext, otherLockContexts);
+            LongWaitDetectedEventArgs e = new(lockContext, otherLockContexts);
             this.OnLongWaitDetected(e);
         }
 
@@ -97,7 +97,7 @@ namespace Plethora.Threading
             string originSourceFilePath,
             int originSourceLineNumber)
         {
-            var lockContext = new LockContext(
+            LockContext lockContext = new(
                 @lock,
                 LockRequestStatus.Awaiting,
                 originMemberName,
@@ -109,7 +109,7 @@ namespace Plethora.Threading
                 this.lockContexts.Add(lockContext);
             }
 
-            var cts = new CancellationTokenSource();
+            CancellationTokenSource cts = new();
 
             var token = cts.Token;
             _ = Task.Run(async () =>
@@ -151,7 +151,7 @@ namespace Plethora.Threading
             string originSourceFilePath,
             int originSourceLineNumber)
         {
-            var lockContext = new LockContext(
+            LockContext lockContext = new(
                 @lock,
                 LockRequestStatus.Acquired,
                 originMemberName,

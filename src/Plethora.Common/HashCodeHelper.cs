@@ -168,11 +168,10 @@ namespace Plethora
             public readonly int Num => this.num;
 
             public readonly HashCodeElement Then<T>(T value)
-                where T : notnull
             {
                 unchecked
                 {
-                    int nextNum = (HASHCODE_ELEMENT * this.num) + EqualityComparer<T>.Default.GetHashCode(value);
+                    int nextNum = (HASHCODE_ELEMENT * this.num) + HashCodeHelper.GetHashCode(value);
                     return new HashCodeElement(nextNum);
                 }
             }
@@ -181,12 +180,11 @@ namespace Plethora
         }
 
         public static HashCodeElement Generate<T>(T value)
-                where T : notnull
         {
             unchecked
             {
                 int num = HASHCODE_INITIAL;
-                num = (HASHCODE_ELEMENT * num) + EqualityComparer<T>.Default.GetHashCode(value);
+                num = (HASHCODE_ELEMENT * num) + HashCodeHelper.GetHashCode(value);
                 return new HashCodeElement(num);
             }
         }

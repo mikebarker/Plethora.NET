@@ -20,7 +20,6 @@ namespace Plethora.Collections
     public class ReadOnlyCollectionWrapper<T> : IEnumerable<T>, IReadOnlyCollection<T>, ICollection<T>, ICollection
     {
         private readonly ICollection<T> innerCollection;
-        [NonSerialized]
         private object? syncRoot;
 
         /// <summary>
@@ -162,7 +161,7 @@ namespace Plethora.Collections
         {
             get
             {
-                if (this.syncRoot == null)
+                if (this.syncRoot is null)
                 {
                     if (this.innerCollection is ICollection collection)
                         this.syncRoot = collection.SyncRoot;

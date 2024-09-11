@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Plethora.Collections.Trees
 {
@@ -57,7 +58,7 @@ namespace Plethora.Collections.Trees
             /// </exception>
             public virtual bool MoveNext()
             {
-                if (this.currentNode == null)
+                if (this.currentNode is null)
                 {
                     //Begin enumeration at left most node.
 
@@ -65,7 +66,7 @@ namespace Plethora.Collections.Trees
                 }
                 else
                 {
-                    if (this.currentNode.Right != null)
+                    if (this.currentNode.Right is not null)
                     {
                         this.currentNode = LeftMostSubNode(this.currentNode.Right);
                     }
@@ -89,7 +90,7 @@ namespace Plethora.Collections.Trees
                 }
 
                 // null indicates the end of the enumeration
-                bool result = (this.currentNode != null);
+                bool result = (this.currentNode is not null);
                 if (result && this.hasStop)
                     result &= (this.tree.comparer.Compare(this.currentNode!.Key, this.stop) <= 0);
 
@@ -129,9 +130,15 @@ namespace Plethora.Collections.Trees
             /// -or-
             /// The collection was modified after the enumerator was created.
             /// </exception>
-            object? IEnumerator.Current
+            object IEnumerator.Current
             {
-                get { return this.Current; }
+                get
+                {
+                    if (this.Current is null)
+                        throw new InvalidOperationException("Enumeration has not started or already completed.");
+
+                    return this.Current;
+                }
             }
             #endregion
 
@@ -151,6 +158,8 @@ namespace Plethora.Collections.Trees
                 }
                 set
                 {
+                    ArgumentNullException.ThrowIfNull(value);
+
                     this.hasStart = true;
                     this.start = value;
                 }
@@ -170,6 +179,8 @@ namespace Plethora.Collections.Trees
                 }
                 set
                 {
+                    ArgumentNullException.ThrowIfNull(value);
+
                     this.hasStop = true;
                     this.stop = value;
                 }
@@ -190,7 +201,7 @@ namespace Plethora.Collections.Trees
             {
                 if (!this.hasStart)
                 {
-                    if (this.tree.Root == null)
+                    if (this.tree.Root is null)
                         return null;
 
                     return LeftMostSubNode(this.tree.Root);
@@ -200,7 +211,7 @@ namespace Plethora.Collections.Trees
                     Node? n = this.tree.Root;
                     Node? startNode = null;
 
-                    while (n != null)
+                    while (n is not null)
                     {
                         int result = this.tree.comparer.Compare(n.Key, this.start);
                         if (result == 0) // n.Key == this.start
@@ -225,7 +236,7 @@ namespace Plethora.Collections.Trees
             private static Node LeftMostSubNode(Node node)
             {
                 //Search down to the left most sub-node
-                while (node.Left != null)
+                while (node.Left is not null)
                 {
                     node = node.Left;
                 }
@@ -234,15 +245,17 @@ namespace Plethora.Collections.Trees
 
             private static Node? FirstRightParent(Node node)
             {
-                Node? _node = node;
-                while (_node?.RelationToParent == Edge.Right)
+                ArgumentNullException.ThrowIfNull(node);
+
+
+                while (node.RelationToParent == Edge.Right)
                 {
-                    _node = _node?.Parent;
+                    node = node.Parent!;
                 }
 
-                return (_node?.RelationToParent == null)
+                return (node.RelationToParent == null)
                     ? null
-                    : _node.Parent;
+                    : node.Parent;
             }
             #endregion
         }
@@ -263,7 +276,16 @@ namespace Plethora.Collections.Trees
 
             #region BaseEnumerator Overrides
 
-            public override TValue Current => this.CurrentNode!.Value;
+            public override TValue Current
+            {
+                get
+                {
+                    if (this.CurrentNode is null)
+                        throw new InvalidOperationException("Enumeration has not started or already completed.");
+
+                    return this.CurrentNode.Value;
+                }
+            }
             #endregion
         }
 
@@ -285,7 +307,13 @@ namespace Plethora.Collections.Trees
 
             public override TKey Current
             {
-                get { return this.CurrentNode!.Key; }
+                get
+                {
+                    if (this.CurrentNode is null)
+                        throw new InvalidOperationException("Enumeration has not started or already completed.");
+
+                    return this.CurrentNode.Key;
+                }
             }
             #endregion
         }
@@ -308,10 +336,15 @@ namespace Plethora.Collections.Trees
 
             public override KeyValuePair<TKey, TValue> Current
             {
-                get { return new KeyValuePair<TKey, TValue>(this.CurrentNode!.Key, this.CurrentNode!.Value); }
+                get
+                {
+                    if (this.CurrentNode is null)
+                        throw new InvalidOperationException("Enumeration has not started or already completed.");
+
+                    return new KeyValuePair<TKey, TValue>(this.CurrentNode.Key, this.CurrentNode.Value);
+                }
             }
             #endregion
         }
-
     }
 }

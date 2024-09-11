@@ -48,7 +48,7 @@ namespace Plethora.Collections
             if (maxEntries < 2)
                 throw new ArgumentOutOfRangeException(nameof(maxEntries), maxEntries, ResourceProvider.ArgMustBeGreaterThan(nameof(maxEntries), 2));
 
-            if (watermark != null)
+            if (watermark is not null)
             {
                 if ((watermark < 1) || (watermark >= maxEntries))
                     throw new ArgumentOutOfRangeException(nameof(watermark));
@@ -232,7 +232,7 @@ namespace Plethora.Collections
             if (maxEntries < 2)
                 throw new ArgumentOutOfRangeException(nameof(maxEntries), maxEntries, ResourceProvider.ArgMustBeGreaterThan(nameof(maxEntries), 2));
 
-            if (watermark != null)
+            if (watermark is not null)
             {
                 if ((watermark < 1) || (watermark >= maxEntries))
                     throw new ArgumentOutOfRangeException(nameof(watermark));
@@ -271,7 +271,7 @@ namespace Plethora.Collections
             if ((this.Count + additionalEntries) <= this.maxEntries)
                 return;
 
-            int watermarkCount = (this.Watermark != null)
+            int watermarkCount = (this.Watermark is not null)
                 ? this.Watermark.Value
                 : Math.Max(1, (int)Math.Floor(this.maxEntries * MruDictionary.DefaultWatermarkPercent));
 

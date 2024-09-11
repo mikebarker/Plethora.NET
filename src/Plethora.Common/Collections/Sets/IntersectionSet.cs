@@ -22,11 +22,8 @@ namespace Plethora.Collections.Sets
         public IntersectionSet(ISetCore<T> a, ISetCore<T> b)
         {
             //Validation
-            if (a == null)
-                throw new ArgumentNullException(nameof(a));
-
-            if (b == null)
-                throw new ArgumentNullException(nameof(b));
+            ArgumentNullException.ThrowIfNull(a);
+            ArgumentNullException.ThrowIfNull(b);
 
 
             this.a = a;

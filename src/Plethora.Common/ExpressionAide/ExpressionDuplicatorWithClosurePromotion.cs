@@ -30,8 +30,8 @@ namespace Plethora.ExpressionAide
     ///  </example>
     ///  </para>
     ///  <para>
-    ///   If an expression tree is duplicated without promoting closures to paramaters the resulting
-    ///   delegate will always reference the orginal closure regardless of the context in which it is
+    ///   If an expression tree is duplicated without promoting closures to parameters the resulting
+    ///   delegate will always reference the original closure regardless of the context in which it is
     ///   invoked.
     ///  </para>
     /// </remarks>
@@ -46,48 +46,42 @@ namespace Plethora.ExpressionAide
 
         public LambdaExecutor PromoteClosures(LambdaExpression expr)
         {
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out var parameters);
 
             return new LambdaExecutor(dupe, parameters);
         }
 
         public LambdaExecutor<TResult> PromoteClosures<TResult>(Expression<Func<TResult>> expr)
         {
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out var parameters);
 
             return new LambdaExecutor<TResult>(dupe, parameters);
         }
 
         public LambdaExecutor<T, TResult> PromoteClosures<T, TResult>(Expression<Func<T, TResult>> expr)
         {
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out var parameters);
 
             return new LambdaExecutor<T, TResult>(dupe, parameters);
         }
 
         public LambdaExecutor<T1, T2, TResult> PromoteClosures<T1, T2, TResult>(Expression<Func<T1, T2, TResult>> expr)
         {
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out var parameters);
 
             return new LambdaExecutor<T1, T2, TResult>(dupe, parameters);
         }
 
         public LambdaExecutor<T1, T2, T3, TResult> PromoteClosures<T1, T2, T3, TResult>(Expression<Func<T1, T2, T3, TResult>> expr)
         {
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out var parameters);
 
             return new LambdaExecutor<T1, T2, T3, TResult>(dupe, parameters);
         }
 
         public LambdaExecutor<T1, T2, T3, T4, TResult> PromoteClosures<T1, T2, T3, T4, TResult>(Expression<Func<T1, T2, T3, T4, TResult>> expr)
         {
-            IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters;
-            var dupe = this.DuplicateWithClosurePromotion(expr, out parameters);
+            var dupe = this.DuplicateWithClosurePromotion(expr, out var parameters);
 
             return new LambdaExecutor<T1, T2, T3, T4, TResult>(dupe, parameters);
         }
@@ -99,7 +93,7 @@ namespace Plethora.ExpressionAide
         {
             ParamDictionary parametersDic = new();
             List<Step> path = new();
-            var dupe = (LambdaExpression)this.Duplicate(expr, new Step(Direction.This), parametersDic, path)!;
+            var dupe = (LambdaExpression)this.Duplicate(expr, new Step(Direction.This), parametersDic, path);
 
             parameters = parametersDic;
             return dupe;
@@ -110,7 +104,7 @@ namespace Plethora.ExpressionAide
 
         protected override Expression DuplicateConstant(ConstantExpression expression, ParamDictionary parameters, IEnumerable<Step> path)
         {
-            if ((expression is not null) && expression.Type.Name.StartsWith(CLOSURE_CONSTANT_NAME))
+            if (expression.Type.Name.StartsWith(CLOSURE_CONSTANT_NAME))
             {
                 ParameterExpression? rtn = null;
 
@@ -125,7 +119,7 @@ namespace Plethora.ExpressionAide
                     }
                 }
 
-                if (rtn == null)
+                if (rtn is null)
                 {
                     //The constant has not been encountered before. Duplicate it.
                     rtn = Expression.Parameter(expression.Type, expression.Type.Name);
@@ -135,7 +129,7 @@ namespace Plethora.ExpressionAide
                 return rtn;
             }
 
-            return base.DuplicateConstant(expression!, parameters, path);
+            return base.DuplicateConstant(expression, parameters, path);
         }
         #endregion
     }

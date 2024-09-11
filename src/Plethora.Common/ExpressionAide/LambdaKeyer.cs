@@ -13,10 +13,9 @@ namespace Plethora.ExpressionAide
         /// </summary>
         public static string GetKey(Expression expression)
         {
-            if (expression == null)
-                throw new ArgumentNullException(nameof(expression));
+            ArgumentNullException.ThrowIfNull(expression);
 
-            StringBuilder sb = new StringBuilder(1024);
+            StringBuilder sb = new(1024);
             BuildString(expression, sb);
             string str = sb.ToString();
             return str;
@@ -69,7 +68,7 @@ namespace Plethora.ExpressionAide
             else
             {
                 string? @operator = GetOperator(expression);
-                if (@operator is null)
+                if (@operator is not null)
                 {
                     BuildString(expression.Left, builder);
                     builder.Append(@operator);
@@ -86,7 +85,7 @@ namespace Plethora.ExpressionAide
 
         private static void BuildString(ConstantExpression expression, StringBuilder builder)
         {
-            if (expression.Value == null)
+            if (expression.Value is null)
                 builder.Append("null");
             else
                 builder.Append(expression.Value);
@@ -141,7 +140,7 @@ namespace Plethora.ExpressionAide
 
         private static void BuildString(MemberExpression expression, StringBuilder builder)
         {
-            if (expression.Expression != null)
+            if (expression.Expression is not null)
             {
                 BuildString(expression.Expression, builder);
             }
@@ -173,11 +172,11 @@ namespace Plethora.ExpressionAide
         private static void BuildString(MethodCallExpression expression, StringBuilder builder)
         {
             Expression @object = expression.Object!;
-            if (Attribute.GetCustomAttribute(expression.Method, typeof(ExtensionAttribute)) != null)
+            if (Attribute.GetCustomAttribute(expression.Method, typeof(ExtensionAttribute)) is not null)
             {
                 @object = expression.Arguments[0];
             }
-            if (@object != null)
+            if (@object is not null)
             {
                 BuildString(@object, builder);
             }
@@ -220,11 +219,11 @@ namespace Plethora.ExpressionAide
             {
                 for (int i = 0; i < count; i++)
                 {
-                    if (expression.Members != null)
+                    if (expression.Members is not null)
                     {
                         PropertyInfo? info;
                         MemberInfo member = expression.Members[i];
-                        if ((member.MemberType == MemberTypes.Method) && ((info = GetPropertyNoThrow((MethodInfo)member)) != null))
+                        if ((member.MemberType == MemberTypes.Method) && ((info = GetPropertyNoThrow((MethodInfo)member)) is not null))
                         {
                             builder.Append(info.Name);
                         }
@@ -444,7 +443,7 @@ namespace Plethora.ExpressionAide
 
         private static PropertyInfo? GetPropertyNoThrow(MethodBase method)
         {
-            if (method != null)
+            if (method is not null)
             {
                 Type declaringType = method.DeclaringType!;
                 BindingFlags bindingAttr = BindingFlags.NonPublic | BindingFlags.Public;

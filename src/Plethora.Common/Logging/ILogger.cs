@@ -67,7 +67,7 @@ namespace Plethora.Logging
         #endregion
 
         #region Error
-        
+
         void Error(string message);
 
         void Error(string format, params object[] args);
