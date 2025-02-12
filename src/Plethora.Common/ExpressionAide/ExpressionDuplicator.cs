@@ -18,15 +18,23 @@ namespace Plethora.ExpressionAide
             ArgumentNullException.ThrowIfNull(expr);
 
 
-            ParamDictionary parameters = new();
-            List<Step> path = new();
-            return (T)this.Duplicate(expr, new(Direction.This), parameters, path)!;
+            return this.Duplicate(expr, new(Direction.This), new(), [])!;
         }
         #endregion
 
         #region Protected Methods
 
-        protected Expression? Duplicate(Expression? expression, Step step, ParamDictionary parameters, IEnumerable<Step> path)
+        protected TExpression Duplicate<TExpression>(TExpression expression, Step step, ParamDictionary parameters, IEnumerable<Step> path)
+            where TExpression : Expression?
+        {
+#pragma warning disable CS8603 // Possible null reference return.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+            return (TExpression)InnerDuplicate(expression, step, parameters, path);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        protected Expression? InnerDuplicate(Expression? expression, Step step, ParamDictionary parameters, IEnumerable<Step> path)
         {
             if (expression is null)
                 return null;
@@ -452,8 +460,8 @@ namespace Plethora.ExpressionAide
         {
             var expTest = this.DuplicateChild(expression, Direction.Test, parameters, path).Single();
             Debug.Assert(expTest is not null);
-            var expIfTrue = this.DuplicateChild(expression, Direction.IfTrue, parameters, path).Single();
 
+            var expIfTrue = this.DuplicateChild(expression, Direction.IfTrue, parameters, path).Single();
             Debug.Assert(expIfTrue is not null);
 
             var expIfFalse = this.DuplicateChild(expression, Direction.IfFalse, parameters, path).Single();

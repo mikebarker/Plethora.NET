@@ -53,7 +53,7 @@ namespace Plethora.Threading
     /// </example>
     public class AsyncLock : IDisposable
     {
-        private readonly SemaphoreSlim semaphore = new(1, 1);
+        private SemaphoreSlim semaphore = new(1, 1);
         private readonly string name;
         private readonly LockRegister? register;
         private readonly CancellationTokenSource disposedCancellationTokenSource = new();
@@ -154,9 +154,11 @@ namespace Plethora.Threading
 
             if (disposing)
             {
-                // Dispose the semaphore after cancelling the disposedCancellationTokenSource,
-                // otherwise a deadlock results.
-                this.semaphore.Dispose();
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                // Disposing the semaphore whilst a thread is waiting on it causes a deadlock.
+                // The best solution is to release the reference to the semaphore and allow it to be disposed by the GC.
+                this.semaphore = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             }
 
             this.disposed = true;

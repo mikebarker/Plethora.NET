@@ -674,12 +674,21 @@ namespace Plethora.Collections.Trees
             //Validation
             ArgumentNullException.ThrowIfNull(key);
 
+            if (this.Find(key, out var node, out var edge))
+            {
+                Debug.Assert(node is not null);
+                Debug.Assert(edge is not null);
 
-            bool result = this.Find(key, out var node, out var edge);
-
-            info = new LocationInfo(node, edge);
-            value = (!result) ? default : node!.Value;
-            return result;
+                info = new LocationInfo(node, edge);
+                value = node.Value;
+                return true;
+            }
+            else
+            {
+                info = new LocationInfo(node, edge);
+                value = default;
+                return false;
+            }
         }
 
         /// <summary>

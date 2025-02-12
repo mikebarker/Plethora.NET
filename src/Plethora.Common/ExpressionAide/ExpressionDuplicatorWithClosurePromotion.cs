@@ -91,11 +91,10 @@ namespace Plethora.ExpressionAide
 
         public LambdaExpression DuplicateWithClosurePromotion(LambdaExpression expr, out IEnumerable<KeyValuePair<ParameterExpression, Step[]>> parameters)
         {
-            ParamDictionary parametersDic = new();
-            List<Step> path = new();
-            var dupe = (LambdaExpression)this.Duplicate(expr, new Step(Direction.This), parametersDic, path);
+            ParamDictionary parametersDictionary = new();
+            var dupe = this.Duplicate(expr, new Step(Direction.This), parametersDictionary, []);
 
-            parameters = parametersDic;
+            parameters = parametersDictionary;
             return dupe;
         }
         #endregion
