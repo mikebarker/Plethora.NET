@@ -1,0 +1,67 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Common/">
+    <File Path="../license.md" />
+    <File Path="JetBrains.Annotations.cs" />
+  </Folder>
+  <Folder Name="/Sample/">
+    <Project Path="Sample/Plethora.Cache.Sample/Plethora.Cache.Sample.csproj" />
+    <Project Path="Sample/Plethora.Context.Xaml.Uwp.Sample/Plethora.Context.Xaml.Uwp.Sample.csproj" Id="38b21ab4-6637-4851-bc54-87f3f7a2f4db">
+      <Platform Solution="*|Any CPU" Project="x86" />
+      <Platform Solution="*|ARM" Project="ARM" />
+      <Platform Solution="*|ARM64" Project="ARM64" />
+      <Platform Solution="*|x64" Project="x64" />
+      <Platform Solution="*|x86" Project="x86" />
+      <Build Solution="*|Any CPU" Project="false" />
+      <Deploy Solution="*|ARM" />
+      <Deploy Solution="*|ARM64" />
+      <Deploy Solution="*|x64" />
+      <Deploy Solution="*|x86" />
+    </Project>
+    <Project Path="Sample/Plethora.Context.Xaml.Wpf.Sample/Plethora.Context.Xaml.Wpf.Sample.csproj" />
+    <Project Path="Sample/Plethora.fqi.Sample/Plethora.fqi.Sample.csproj" />
+    <Project Path="Sample/Plethora.Workflow.Sample/Plethora.Workflow.Sample.csproj" />
+  </Folder>
+  <Folder Name="/Test/">
+    <Project Path="Test/Plethora.Test.Cache/Plethora.Test.Cache.csproj" />
+    <Project Path="Test/Plethora.Test.Common/Plethora.Test.Common.csproj" />
+    <Project Path="Test/Plethora.Test.Context/Plethora.Test.Context.csproj" />
+    <Project Path="Test/Plethora.Test.Data/Plethora.Test.Data.csproj" />
+    <Project Path="Test/Plethora.Test.Finance/Plethora.Test.Finance.csproj" />
+    <Project Path="Test/Plethora.Test.fqi/Plethora.Test.fqi.csproj" />
+    <Project Path="Test/Plethora.Test.Mvvm/Plethora.Test.Mvvm.csproj" />
+    <Project Path="Test/Plethora.Test.Xaml.Wpf/Plethora.Test.Xaml.Wpf.csproj" />
+  </Folder>
+  <Project Path="Plethora.Cache/Plethora.Cache.csproj" />
+  <Project Path="Plethora.Common/Plethora.Common.csproj" />
+  <Project Path="Plethora.Context.Xaml.Uwp/Plethora.Context.Xaml.Uwp.csproj" Id="54c0bbac-bbee-47e7-9b10-4fa1d3026bce">
+    <Platform Solution="*|ARM" Project="ARM" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="Plethora.Context.Xaml.Wpf/Plethora.Context.Xaml.Wpf.csproj" />
+  <Project Path="Plethora.Context/Plethora.Context.csproj" />
+  <Project Path="Plethora.Data.SqlClient/Plethora.Data.SqlClient.csproj" />
+  <Project Path="Plethora.Data/Plethora.Data.csproj" />
+  <Project Path="Plethora.Finance/Plethora.Finance.csproj" />
+  <Project Path="Plethora.fqi/Plethora.fqi.csproj" />
+  <Project Path="Plethora.Logging.log4net/Plethora.Logging.log4net.csproj" />
+  <Project Path="Plethora.Mvvm/Plethora.Mvvm.csproj" />
+  <Project Path="Plethora.Workflow.SqlClient/Plethora.Workflow.SqlClient.csproj" />
+  <Project Path="Plethora.Workflow/Plethora.Workflow.csproj" />
+  <Project Path="Plethora.Xaml.Common/Plethora.Xaml.Common.csproj" />
+  <Project Path="Plethora.Xaml.Uwp/Plethora.Xaml.Uwp.csproj" Id="11d071a5-2fe1-49d2-9370-8111833b7235">
+    <Platform Solution="*|ARM" Project="ARM" />
+    <Platform Solution="*|ARM64" Project="ARM64" />
+    <Platform Solution="*|x64" Project="x64" />
+    <Platform Solution="*|x86" Project="x86" />
+  </Project>
+  <Project Path="Plethora.Xaml.Wpf/Plethora.Xaml.Wpf.csproj" />
+</Solution>

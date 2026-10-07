@@ -4,248 +4,253 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Collections.Trees;
 
-namespace Plethora.Test.Collections.Trees
+namespace Plethora.Test.Collections.Trees;
+
+[TestClass]
+public class BinaryTree_Test
 {
-    [TestClass]
-    public class BinaryTree_Test
+    [TestMethod]
+    public void Add()
     {
-        private readonly BinaryTree<string, int> tree = new BinaryTree<string, int>();
+        // Arrange
+        BinaryTree<string, int> tree = new();
 
-        [TestMethod]
-        public void Add()
+        const string key = "Harry";
+        const int value = 7;
+
+        // Action
+        tree.Add(key, value);
+
+        // Assert
+        Assert.HasCount(1, tree);
+        Assert.AreEqual(value, tree[key]);
+    }
+
+    [TestMethod]
+    public void AddDuplicate()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new();
+
+        const string key = "Harry";
+        const int value = 7;
+
+        // Action
+        tree.Add(key, value);
+        Assert.Throws<ArgumentException>(() => tree.Add(key, value + 1));
+    }
+
+    [TestMethod]
+    public void Itterate()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new();
+
+        List<string> keys = ["Harry", "Mark", "Jeff"];
+        List<int> values = [7, 12, 14];
+
+        tree.Add(keys[0], values[0]);
+        tree.Add(keys[1], values[1]);
+        tree.Add(keys[2], values[2]);
+
+        // Assert
+        Assert.HasCount(3, tree);
+        foreach (KeyValuePair<string, int> pair in tree)
         {
-            // Arrange
-            const string key = "Harry";
-            const int value = 7;
-
-            // Action
-            this.tree.Add(key, value);
-
-            // Assert
-            Assert.AreEqual(this.tree.Count, 1);
-            Assert.AreEqual(this.tree[key], value);
+            Assert.Contains(pair.Key, keys);
+            Assert.Contains(pair.Value, values);
         }
+    }
 
-        [TestMethod]
-        public void AddDuplicate()
+    [TestMethod]
+    public void Clear()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            const string key = "Harry";
-            const int value = 7;
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            // Action
-            this.tree.Add(key, value);
-            Assert.ThrowsException<ArgumentException>(() => this.tree.Add(key, value + 1));
-        }
+        Assert.HasCount(3, tree);
 
-        [TestMethod]
-        public void Itterate()
+        // Action
+        tree.Clear();
+
+        // Assert
+        Assert.IsEmpty(tree);
+    }
+
+    [TestMethod]
+    public void ContainsKey()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> {"Harry", "Mark", "Jeff"};
-            IList<int> values = new List<int> {7, 12, 14};
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Assert
+        Assert.IsTrue(tree.ContainsKey("Mark"));
+    }
 
-            // Assert
-            Assert.AreEqual(this.tree.Count, 3);
-            foreach (KeyValuePair<string, int> pair in this.tree)
-            {
-                Assert.IsTrue(keys.Contains(pair.Key));
-                Assert.IsTrue(values.Contains(pair.Value));
-            }
-        }
-
-        [TestMethod]
-        public void Clear()
+    [TestMethod]
+    public void Remove()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> {"Harry", "Mark", "Jeff"};
-            IList<int> values = new List<int> {7, 12, 14};
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Assert
+        bool result = tree.Remove("Mark");
+        Assert.IsTrue(result);
+        Assert.HasCount(2, tree);
 
-            Assert.AreEqual(this.tree.Count, 3);
+        result = tree.Remove("Mark");
+        Assert.IsFalse(result);
+        Assert.HasCount(2, tree);
+    }
 
-            // Action
-            this.tree.Clear();
-
-            // Assert
-            Assert.AreEqual(this.tree.Count, 0);
-        }
-
-        [TestMethod]
-        public void ContainsKey()
+    [TestMethod]
+    public void TryGetValue_Exists()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> {"Harry", "Mark", "Jeff"};
-            IList<int> values = new List<int> {7, 12, 14};
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Action
+        int value;
+        bool result = tree.TryGetValue("Mark", out value);
 
-            // Assert
-            Assert.IsTrue(this.tree.ContainsKey("Mark"));
-        }
+        // Assert
+        Assert.IsTrue(result);
+        Assert.AreEqual(12, value);
+    }
 
-        [TestMethod]
-        public void Remove()
+    [TestMethod]
+    public void TryGetValue_NotExists()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> {"Harry", "Mark", "Jeff"};
-            IList<int> values = new List<int> {7, 12, 14};
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Action
+        int value;
+        bool result = tree.TryGetValue("Xylophone", out value);
 
-            // Assert
-            bool result = this.tree.Remove("Mark");
-            Assert.IsTrue(result);
-            Assert.AreEqual(this.tree.Count, 2);
+        // Assert
+        Assert.IsFalse(result);
+        Assert.AreEqual(default, value);
+    }
 
-            result = this.tree.Remove("Mark");
-            Assert.IsFalse(result);
-            Assert.AreEqual(this.tree.Count, 2);
-        }
-
-        [TestMethod]
-        public void TryGetValue_Exists()
+    [TestMethod]
+    public void TryGetValueEx_Exists()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> {"Harry", "Mark", "Jeff"};
-            IList<int> values = new List<int> {7, 12, 14};
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Action
+        int value;
+        object locationInfo;
+        bool result = tree.TryGetValueEx("Mark", out value, out locationInfo);
 
-            // Action
-            int value;
-            bool result = this.tree.TryGetValue("Mark", out value);
+        // Assert
+        Assert.IsTrue(result);
+        Assert.IsNotNull(locationInfo);
+        Assert.AreEqual(12, value);
+    }
 
-            // Assert
-            Assert.IsTrue(result);
-            Assert.AreEqual(value, 12);
-        }
-
-        [TestMethod]
-        public void TryGetValue_NotExists()
+    [TestMethod]
+    public void TryGetValueEx_NotExists()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> {"Harry", "Mark", "Jeff"};
-            IList<int> values = new List<int> {7, 12, 14};
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Action
+        int value;
+        object locationInfo;
+        bool result = tree.TryGetValueEx("Xylophone", out value, out locationInfo);
 
-            // Action
-            int value;
-            bool result = this.tree.TryGetValue("Xylophone", out value);
+        // Assert
+        Assert.IsFalse(result);
+        Assert.IsNotNull(locationInfo);
+        Assert.AreEqual(default(int), value);
+    }
 
-            // Assert
-            Assert.IsFalse(result);
-            Assert.AreEqual(value, default(int));
-        }
-
-        [TestMethod]
-        public void TryGetValueEx_Exists()
+    [TestMethod]
+    public void TryGetValueEx_AddEx()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
-            IList<int> values = new List<int> { 7, 12, 14 };
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Action
+        const string key = "Xylophone";
+        int value;
+        object locationInfo;
+        bool result = tree.TryGetValueEx(key, out value, out locationInfo);
 
-            // Action
-            int value;
-            object locationInfo;
-            bool result = this.tree.TryGetValueEx("Mark", out value, out locationInfo);
+        Assert.IsFalse(result);
+        Assert.IsNotNull(locationInfo);
 
-            // Assert
-            Assert.IsTrue(result);
-            Assert.IsNotNull(locationInfo);
-            Assert.AreEqual(value, 12);
-        }
+        tree.AddEx(key, 42, locationInfo);
 
-        [TestMethod]
-        public void TryGetValueEx_NotExists()
+        // Assert
+        Assert.AreEqual(42, tree[key]);
+    }
+
+    [TestMethod]
+    public void GetValueEnumerator()
+    {
+        // Arrange
+        BinaryTree<string, int> tree = new()
         {
-            // Arrange
-            IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
-            IList<int> values = new List<int> { 7, 12, 14 };
+            { "Harry", 7 },
+            { "Mark", 12 },
+            { "Jeff", 14 },
+        };
 
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
+        // Action
+        IKeyLimitedEnumerator<string, KeyValuePair<string, int>> enumerator = tree.GetPairEnumerator();
 
-            // Action
-            int value;
-            object locationInfo;
-            bool result = this.tree.TryGetValueEx("Xylophone", out value, out locationInfo);
+        // Assert
+        Assert.IsNotNull(enumerator);
+    }
 
-            // Assert
-            Assert.IsFalse(result);
-            Assert.IsNotNull(locationInfo);
-            Assert.AreEqual(value, default(int));
-        }
+    [TestMethod]
+    public void AreDuplicatesAllowed()
+    {
+        BinaryTree<string, int> tree = new();
 
-        [TestMethod]
-        public void TryGetValueEx_AddEx()
-        {
-            // Arrange
-            IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
-            IList<int> values = new List<int> { 7, 12, 14 };
-
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
-
-            // Action
-            const string key = "Xylophone";
-            int value;
-            object locationInfo;
-            bool result = this.tree.TryGetValueEx(key, out value, out locationInfo);
-
-            Assert.IsFalse(result);
-            Assert.IsNotNull(locationInfo);
-
-            this.tree.AddEx(key, 42, locationInfo);
-
-            // Assert
-            Assert.AreEqual(this.tree[key], 42);
-        }
-
-        [TestMethod]
-        public void GetValueEnumerator()
-        {
-            // Arrange
-            IList<string> keys = new List<string> { "Harry", "Mark", "Jeff" };
-            IList<int> values = new List<int> { 7, 12, 14 };
-
-            this.tree.Add(keys[0], values[0]);
-            this.tree.Add(keys[1], values[1]);
-            this.tree.Add(keys[2], values[2]);
-
-            // Action
-            IKeyLimitedEnumerator<string, KeyValuePair<string, int>> enumerator = this.tree.GetPairEnumerator();
-
-            // Assert
-            Assert.IsNotNull(enumerator);
-        }
-
-        [TestMethod]
-        public void AreDuplicatesAllowed()
-        {
-            Assert.IsFalse(this.tree.AreDuplicatesAllowed);
-        }
+        Assert.IsFalse(tree.AreDuplicatesAllowed);
     }
 }

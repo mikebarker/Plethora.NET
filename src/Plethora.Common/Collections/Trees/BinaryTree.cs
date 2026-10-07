@@ -677,7 +677,6 @@ namespace Plethora.Collections.Trees
             if (this.Find(key, out var node, out var edge))
             {
                 Debug.Assert(node is not null);
-                Debug.Assert(edge is not null);
 
                 info = new LocationInfo(node, edge);
                 value = node.Value;
