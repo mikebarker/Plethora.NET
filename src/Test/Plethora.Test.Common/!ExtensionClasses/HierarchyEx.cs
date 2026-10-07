@@ -1,29 +1,22 @@
 ﻿using Plethora.Collections;
 using Plethora.Test.UtilityClasses;
 
-namespace Plethora.Test.ExtensionClasses
+namespace Plethora.Test.ExtensionClasses;
+
+class HierarchyEx(params IStyle[] styles) : Hierarchy<IStyle>(styles), IStyle
 {
-    class HierarchyEx : Hierarchy<IStyle>, IStyle
+    public string FontName
     {
-        public HierarchyEx(params IStyle[] styles)
-            : base(styles)
-        {
-        }
+        get { return GetValue(style => style.FontName); }
+    }
 
+    public int? FontSize
+    {
+        get { return GetValue(style => style.FontSize); }
+    }
 
-        public string FontName
-        {
-            get { return GetValue(style => style.FontName); }
-        }
-
-        public int? FontSize
-        {
-            get { return GetValue(style => style.FontSize); }
-        }
-
-        public FontProperty FontProperty
-        {
-            get { return GetValue(style => style.FontProperty, FontProperty.None); }
-        }
+    public FontProperty FontProperty
+    {
+        get { return GetValue(style => style.FontProperty, FontProperty.None); }
     }
 }

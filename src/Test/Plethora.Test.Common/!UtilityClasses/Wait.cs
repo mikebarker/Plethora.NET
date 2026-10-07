@@ -2,26 +2,25 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace Plethora.Test._UtilityClasses
+namespace Plethora.Test._UtilityClasses;
+
+public static class Wait
 {
-    public static class Wait
+    public static bool For(Func<bool> prediciate, TimeSpan timeout)
     {
-        public static bool For(Func<bool> prediciate, TimeSpan timeout)
+        Stopwatch sw = new();
+        sw.Start();
+
+        while (!prediciate())
         {
-            Stopwatch sw = new Stopwatch();
-            sw.Start();
+            Thread.Sleep(1);
 
-            while (!prediciate())
+            if (sw.Elapsed > timeout)
             {
-                Thread.Sleep(1);
-
-                if (sw.Elapsed > timeout)
-                {
-                    return false;
-                }
+                return false;
             }
-
-            return true;
         }
+
+        return true;
     }
 }

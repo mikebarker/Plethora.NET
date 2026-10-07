@@ -1,18 +1,17 @@
-﻿namespace Plethora.Threading
+﻿namespace Plethora.Threading;
+
+/// <summary>
+/// Gets the status of a lock request.
+/// </summary>
+public enum LockRequestStatus
 {
     /// <summary>
-    /// Gets the status of a lock request.
+    /// The caller is currently awaiting to acquire the lock.
     /// </summary>
-    public enum LockRequestStatus
-    {
-        /// <summary>
-        /// The caller is currently awaiting to acquire the lock.
-        /// </summary>
-        Awaiting,
+    Awaiting,
 
-        /// <summary>
-        /// The caller has acquired the lock.
-        /// </summary>
-        Acquired,
-    }
+    /// <summary>
+    /// The caller has acquired the lock.
+    /// </summary>
+    Acquired,
 }

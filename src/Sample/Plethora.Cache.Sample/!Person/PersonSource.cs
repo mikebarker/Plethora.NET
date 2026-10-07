@@ -7,7 +7,7 @@ namespace Plethora.Cache.Sample
 {
     class PersonSource
     {
-        private readonly KeyedCollection<long, Person> people = new KeyedCollection<long, Person>(p => p.Id)
+        private readonly KeyedCollection<long, Person> people = new(p => p.Id)
         {
             new Person(0, "Bob"),
             new Person(1, "Fred"),

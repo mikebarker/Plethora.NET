@@ -1,369 +1,368 @@
 ﻿using System;
 
-namespace Plethora
+namespace Plethora;
+
+/// <summary>
+/// Stores numbers in their rational representation.
+/// </summary>
+/// <remarks>
+/// The rational number is stored in its canonical form.
+/// <example>
+/// Thus 2/(-4) will be reduced and stored as (-1)/2.
+/// </example>
+/// </remarks>
+[System.Diagnostics.DebuggerDisplay("Rational [{" + nameof(numerator) + "} / {" + nameof(denominator) + "}]")]
+public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable<Rational>
 {
+    private readonly int numerator;
+    private readonly int denominator;
+
     /// <summary>
-    /// Stores numbers in their rational representation.
+    /// Initializes a new <seealso cref="Rational"/>, providing the numerator and denominator.
     /// </summary>
-    /// <remarks>
-    /// The rational number is stored in its canonical form.
-    /// <example>
-    /// Thus 2/(-4) will be reduced and stored as (-1)/2.
-    /// </example>
-    /// </remarks>
-    [System.Diagnostics.DebuggerDisplay("Rational [{" + nameof(numerator) + "} / {" + nameof(denominator) + "}]")]
-    public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable<Rational>
+    /// <param name="numerator">The numerator.</param>
+    /// <param name="denominator">The denominator.</param>
+    public Rational(int numerator, int denominator)
+        : this(numerator, denominator, true)
     {
-        private readonly int numerator;
-        private readonly int denominator;
+    }
 
-        /// <summary>
-        /// Initializes a new <seealso cref="Rational"/>, providing the numerator and denominator.
-        /// </summary>
-        /// <param name="numerator">The numerator.</param>
-        /// <param name="denominator">The denominator.</param>
-        public Rational(int numerator, int denominator)
-            : this(numerator, denominator, true)
+    /// <summary>
+    /// Initializes a new <seealso cref="Rational"/>, providing the numerator, denominator, and a flag indicating whether the rational must be reduced to its canonical form.
+    /// </summary>
+    /// <param name="numerator">The numerator.</param>
+    /// <param name="denominator">The denominator.</param>
+    /// <param name="reduce">true if the numerator and denominator must be reduced to the canonical form; otherwise false.</param>
+    private Rational(int numerator, int denominator, bool reduce)
+    {
+        if (denominator == 0m)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
+
+        if (reduce)
         {
+            int gcd = MathEx.GreatestCommonDivisor(numerator, denominator);
+
+            numerator /= gcd;
+            denominator /= gcd;
         }
 
-        /// <summary>
-        /// Initializes a new <seealso cref="Rational"/>, providing the numerator, denominator, and a flag indicating whether the rational must be reduced to its canonical form.
-        /// </summary>
-        /// <param name="numerator">The numerator.</param>
-        /// <param name="denominator">The denominator.</param>
-        /// <param name="reduce">true if the numerator and denominator must be reduced to the canonical form; otherwise false.</param>
-        private Rational(int numerator, int denominator, bool reduce)
+        if (denominator < 0)
         {
-            if (denominator == 0m)
-                throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
-
-            if (reduce)
-            {
-                int gcd = MathEx.GreatestCommonDivisor(numerator, denominator);
-
-                numerator /= gcd;
-                denominator /= gcd;
-            }
-
-            if (denominator < 0)
-            {
-                numerator = -numerator;
-                denominator = -denominator;
-            }
-
-            this.numerator = numerator;
-            this.denominator = denominator;
+            numerator = -numerator;
+            denominator = -denominator;
         }
 
-        /// <summary>
-        /// Gets the numerator.
-        /// </summary>
-        public int Numerator
-        {
-            get { return this.numerator; }
-        }
+        this.numerator = numerator;
+        this.denominator = denominator;
+    }
 
-        /// <summary>
-        /// Gets the denominator.
-        /// </summary>
-        public int Denominator
-        {
-            get { return this.denominator; }
-        }
+    /// <summary>
+    /// Gets the numerator.
+    /// </summary>
+    public int Numerator
+    {
+        get { return this.numerator; }
+    }
 
-        #region Equality
+    /// <summary>
+    /// Gets the denominator.
+    /// </summary>
+    public int Denominator
+    {
+        get { return this.denominator; }
+    }
 
-        public readonly bool Equals(Rational other)
-        {
-            return
-                (this.numerator == other.numerator) &&
-                (this.denominator == other.denominator);
-        }
+    #region Equality
 
-        public override bool Equals(object? obj)
-        {
-            if (obj is null)
-                return false;
+    public readonly bool Equals(Rational other)
+    {
+        return
+            (this.numerator == other.numerator) &&
+            (this.denominator == other.denominator);
+    }
 
-            if (obj is not Rational)
-                return false;
+    public override bool Equals(object? obj)
+    {
+        if (obj is null)
+            return false;
 
-            return this.Equals((Rational)obj);
-        }
+        if (obj is not Rational)
+            return false;
 
-        public override readonly int GetHashCode()
-        {
-            unchecked
-            {
-                return
-                    (this.numerator.GetHashCode() * 397) ^
-                    this.denominator.GetHashCode();
-            }
-        }
+        return this.Equals((Rational)obj);
+    }
 
-        #endregion
-
-        #region ToString
-
-        public override string ToString()
-        {
-            return this.numerator.ToString() + " / " + this.denominator.ToString();
-        }
-
-        public string ToString(IFormatProvider formatProvider)
-        {
-            return this.numerator.ToString(formatProvider) + " / " + this.denominator.ToString(formatProvider);
-        }
-
-        public string ToString(string format)
-        {
-            return this.numerator.ToString(format) + " / " + this.denominator.ToString(format);
-        }
-
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            return this.numerator.ToString(format, formatProvider) + " / " + this.denominator.ToString(format, formatProvider);
-        }
-
-        #endregion
-
-        #region Implementation of IComparable<Rational>
-
-        int IComparable.CompareTo(object? obj)
-        {
-            if (obj is null)
-                return 1;
-
-            if (obj is not Rational)
-                throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(obj), typeof(Rational)), nameof(obj));
-
-            return this.CompareTo((Rational)obj);
-        }
-
-        public int CompareTo(Rational other)
-        {
-            double thisDouble = this.ToDouble();
-            double otherDouble = other.ToDouble();
-
-            return thisDouble.CompareTo(otherDouble);
-        }
-
-        #endregion
-
-        #region Convertion
-
-        public static explicit operator double(Rational rational)
-        {
-            return rational.ToDouble();
-        }
-
-        public static explicit operator decimal(Rational rational)
-        {
-            return rational.ToDecimal();
-        }
-
-        public double ToDouble()
+    public override readonly int GetHashCode()
+    {
+        unchecked
         {
             return
-                (double)this.numerator /
-                (double)this.denominator;
+                (this.numerator.GetHashCode() * 397) ^
+                this.denominator.GetHashCode();
         }
+    }
 
-        public decimal ToDecimal()
-        {
-            return
-                (decimal)this.numerator /
-                (decimal)this.denominator;
-        }
+    #endregion
 
-        #endregion
+    #region ToString
 
-        #region Operators
+    public override string ToString()
+    {
+        return this.numerator.ToString() + " / " + this.denominator.ToString();
+    }
 
-        #region Logical operators
+    public string ToString(IFormatProvider formatProvider)
+    {
+        return this.numerator.ToString(formatProvider) + " / " + this.denominator.ToString(formatProvider);
+    }
 
-        public static bool operator ==(Rational x, Rational y)
-        {
-            return x.Equals(y);
-        }
+    public string ToString(string format)
+    {
+        return this.numerator.ToString(format) + " / " + this.denominator.ToString(format);
+    }
 
-        public static bool operator !=(Rational x, Rational y)
-        {
-            return (!(x == y));
-        }
+    public string ToString(string format, IFormatProvider formatProvider)
+    {
+        return this.numerator.ToString(format, formatProvider) + " / " + this.denominator.ToString(format, formatProvider);
+    }
 
-        public static bool operator <(Rational x, Rational y)
-        {
-            return
-                x.CompareTo(y) < 0;
-        }
+    #endregion
 
-        public static bool operator >(Rational x, Rational y)
-        {
-            return
-                x.CompareTo(y) > 0;
-        }
+    #region Implementation of IComparable<Rational>
 
-        public static bool operator <=(Rational x, Rational y)
-        {
-            return
-                x.CompareTo(y) <= 0;
-        }
+    int IComparable.CompareTo(object? obj)
+    {
+        if (obj is null)
+            return 1;
 
-        public static bool operator >=(Rational x, Rational y)
-        {
-            return
-                x.CompareTo(y) >= 0;
-        }
+        if (obj is not Rational)
+            throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(obj), typeof(Rational)), nameof(obj));
 
-        #endregion
+        return this.CompareTo((Rational)obj);
+    }
 
-        #region Algebraic operators
+    public int CompareTo(Rational other)
+    {
+        double thisDouble = this.ToDouble();
+        double otherDouble = other.ToDouble();
 
-        #region Additive operators
+        return thisDouble.CompareTo(otherDouble);
+    }
 
-        public static Rational operator +(Rational x, Rational y)
-        {
-            int numerator =
-                (x.numerator * y.denominator) +
-                (y.numerator * x.denominator);
+    #endregion
 
-            int denominator =
-                (x.denominator * y.denominator);
+    #region Convertion
 
-            return new Rational(numerator, denominator, true);
-        }
+    public static explicit operator double(Rational rational)
+    {
+        return rational.ToDouble();
+    }
 
-        public static Rational operator +(int x, Rational y)
-        {
-            return new Rational(x, 1, false) + y;
-        }
+    public static explicit operator decimal(Rational rational)
+    {
+        return rational.ToDecimal();
+    }
 
-        public static Rational operator +(Rational x, int y)
-        {
-            return x + new Rational(y, 1, false);
-        }
+    public double ToDouble()
+    {
+        return
+            (double)this.numerator /
+            (double)this.denominator;
+    }
 
-        public static Rational operator -(Rational x, Rational y)
-        {
-            int numerator =
-                (x.numerator * y.denominator) -
-                (y.numerator * x.denominator);
+    public decimal ToDecimal()
+    {
+        return
+            (decimal)this.numerator /
+            (decimal)this.denominator;
+    }
 
-            int denominator =
-                (x.denominator * y.denominator);
+    #endregion
 
-            return new Rational(numerator, denominator, true);
-        }
+    #region Operators
 
-        public static Rational operator -(int x, Rational y)
-        {
-            return new Rational(x, 1, false) - y;
-        }
+    #region Logical operators
 
-        public static Rational operator -(Rational x, int y)
-        {
-            return x - new Rational(y, 1, false);
-        }
+    public static bool operator ==(Rational x, Rational y)
+    {
+        return x.Equals(y);
+    }
 
-        #endregion
+    public static bool operator !=(Rational x, Rational y)
+    {
+        return (!(x == y));
+    }
 
-        #region Multiplicative operators
+    public static bool operator <(Rational x, Rational y)
+    {
+        return
+            x.CompareTo(y) < 0;
+    }
 
-        public static Rational operator *(Rational x, Rational y)
-        {
-            // By applying the reduction before multiplying we reduce the likely-hood of
-            // arithmetic overflows, and ensure the numbers are stored in their canonical form.
-            int gcd1 = MathEx.GreatestCommonDivisor(x.numerator, y.denominator);
-            int numerator1 = x.numerator / gcd1;
-            int denominator2 = y.denominator / gcd1;
+    public static bool operator >(Rational x, Rational y)
+    {
+        return
+            x.CompareTo(y) > 0;
+    }
 
-            int gcd2 = MathEx.GreatestCommonDivisor(y.numerator, x.denominator);
-            int numerator2 = y.numerator / gcd2;
-            int denominator1 = x.denominator / gcd2;
+    public static bool operator <=(Rational x, Rational y)
+    {
+        return
+            x.CompareTo(y) <= 0;
+    }
 
-            int numerator =
-                (numerator1 * numerator2);
+    public static bool operator >=(Rational x, Rational y)
+    {
+        return
+            x.CompareTo(y) >= 0;
+    }
 
-            int denominator =
-                (denominator1 * denominator2);
+    #endregion
 
-            return new Rational(numerator, denominator, false);
-        }
+    #region Algebraic operators
 
-        public static Rational operator *(Rational x, int y)
-        {
-            // By applying the reduction before multiplying we reduce the likely-hood of
-            // arithmetic overflows, and ensure the numbers are stored in their canonical form.
-            int gcd = MathEx.GreatestCommonDivisor(y, x.denominator);
-            y /= gcd;
-            int denominator = x.denominator / gcd;
+    #region Additive operators
 
-            int numerator = (x.numerator * y);
+    public static Rational operator +(Rational x, Rational y)
+    {
+        int numerator =
+            (x.numerator * y.denominator) +
+            (y.numerator * x.denominator);
 
-            return new Rational(numerator, denominator, false);
-        }
+        int denominator =
+            (x.denominator * y.denominator);
 
-        public static Rational operator *(int x, Rational y)
-        {
-            return y * x;
-        }
+        return new Rational(numerator, denominator, true);
+    }
 
-        public static Rational operator /(Rational x, Rational y)
-        {
-            Rational result = x * y.Invert();
-            return result;
-        }
+    public static Rational operator +(int x, Rational y)
+    {
+        return new Rational(x, 1, false) + y;
+    }
 
-        public static Rational operator /(Rational x, int y)
-        {
-            return x * new Rational(1, y, false);
-        }
+    public static Rational operator +(Rational x, int y)
+    {
+        return x + new Rational(y, 1, false);
+    }
 
-        public static Rational operator /(int x, Rational y)
-        {
-            return new Rational(x, 1, false) / y;
-        }
+    public static Rational operator -(Rational x, Rational y)
+    {
+        int numerator =
+            (x.numerator * y.denominator) -
+            (y.numerator * x.denominator);
 
-        public static int operator %(Rational x, Rational y)
-        {
-            Rational f = x / y;
+        int denominator =
+            (x.denominator * y.denominator);
 
-            int remainder;
-            Math.DivRem(
-                f.numerator,
-                f.denominator,
-                out remainder);
+        return new Rational(numerator, denominator, true);
+    }
 
-            return remainder;
-        }
+    public static Rational operator -(int x, Rational y)
+    {
+        return new Rational(x, 1, false) - y;
+    }
 
-        public static int operator %(int x, Rational y)
-        {
-            return new Rational(x, 1, false) % y;
-        }
+    public static Rational operator -(Rational x, int y)
+    {
+        return x - new Rational(y, 1, false);
+    }
 
-        public static int operator %(Rational x, int y)
-        {
-            return x % new Rational(y, 1, false);
-        }
+    #endregion
 
-        #endregion
+    #region Multiplicative operators
 
-        #endregion
+    public static Rational operator *(Rational x, Rational y)
+    {
+        // By applying the reduction before multiplying we reduce the likely-hood of
+        // arithmetic overflows, and ensure the numbers are stored in their canonical form.
+        int gcd1 = MathEx.GreatestCommonDivisor(x.numerator, y.denominator);
+        int numerator1 = x.numerator / gcd1;
+        int denominator2 = y.denominator / gcd1;
 
-        #endregion
+        int gcd2 = MathEx.GreatestCommonDivisor(y.numerator, x.denominator);
+        int numerator2 = y.numerator / gcd2;
+        int denominator1 = x.denominator / gcd2;
 
-        /// <summary>
-        /// Inverts a rational number.
-        /// </summary>
-        /// <returns>
-        /// The inverted rational number.
-        /// </returns>
-        public Rational Invert()
-        {
-            return new Rational(this.denominator, this.numerator, false);
-        }
+        int numerator =
+            (numerator1 * numerator2);
+
+        int denominator =
+            (denominator1 * denominator2);
+
+        return new Rational(numerator, denominator, false);
+    }
+
+    public static Rational operator *(Rational x, int y)
+    {
+        // By applying the reduction before multiplying we reduce the likely-hood of
+        // arithmetic overflows, and ensure the numbers are stored in their canonical form.
+        int gcd = MathEx.GreatestCommonDivisor(y, x.denominator);
+        y /= gcd;
+        int denominator = x.denominator / gcd;
+
+        int numerator = (x.numerator * y);
+
+        return new Rational(numerator, denominator, false);
+    }
+
+    public static Rational operator *(int x, Rational y)
+    {
+        return y * x;
+    }
+
+    public static Rational operator /(Rational x, Rational y)
+    {
+        Rational result = x * y.Invert();
+        return result;
+    }
+
+    public static Rational operator /(Rational x, int y)
+    {
+        return x * new Rational(1, y, false);
+    }
+
+    public static Rational operator /(int x, Rational y)
+    {
+        return new Rational(x, 1, false) / y;
+    }
+
+    public static int operator %(Rational x, Rational y)
+    {
+        Rational f = x / y;
+
+        int remainder;
+        Math.DivRem(
+            f.numerator,
+            f.denominator,
+            out remainder);
+
+        return remainder;
+    }
+
+    public static int operator %(int x, Rational y)
+    {
+        return new Rational(x, 1, false) % y;
+    }
+
+    public static int operator %(Rational x, int y)
+    {
+        return x % new Rational(y, 1, false);
+    }
+
+    #endregion
+
+    #endregion
+
+    #endregion
+
+    /// <summary>
+    /// Inverts a rational number.
+    /// </summary>
+    /// <returns>
+    /// The inverted rational number.
+    /// </returns>
+    public Rational Invert()
+    {
+        return new Rational(this.denominator, this.numerator, false);
     }
 }

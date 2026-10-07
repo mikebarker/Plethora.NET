@@ -2,24 +2,23 @@
 using System.Linq.Expressions;
 using Plethora.ExpressionAide;
 
-namespace Plethora.Test.ExtensionClasses
+namespace Plethora.Test.ExtensionClasses;
+
+class ExpressionDuplicatorEx
 {
-    class ExpressionDuplicatorEx
+    private readonly MirrorClass mirrorClass;
+
+    public ExpressionDuplicatorEx()
     {
-        private readonly MirrorClass mirrorClass;
+        Type cachedExecutorType = typeof(CachedExecutor);
+        string lambdaKeyerName = cachedExecutorType.Namespace + ".ExpressionDuplicator";
 
-        public ExpressionDuplicatorEx()
-        {
-            Type cachedExecutorType = typeof(CachedExecutor);
-            string lambdaKeyerName = cachedExecutorType.Namespace + ".ExpressionDuplicator";
+        this.mirrorClass = MirrorClass.Create(cachedExecutorType.Assembly, lambdaKeyerName);
+    }
 
-            this.mirrorClass = MirrorClass.Create(cachedExecutorType.Assembly, lambdaKeyerName);
-        }
-
-        public T Duplicate<T>(T expr)
-            where T : LambdaExpression
-        {
-            return (T)mirrorClass.Exec(new[] { typeof(T) }, expr);
-        }
+    public T Duplicate<T>(T expr)
+        where T : LambdaExpression
+    {
+        return (T)mirrorClass.Exec(new[] { typeof(T) }, expr);
     }
 }

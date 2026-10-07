@@ -2,121 +2,120 @@
 using Plethora.Linq.Expressions;
 using Plethora.Test.UtilityClasses;
 
-namespace Plethora.Test.Linq.Expressions
+namespace Plethora.Test.Linq.Expressions;
+
+[TestClass]
+public class ExpressionHelper_Test
 {
-    [TestClass]
-    public class ExpressionHelper_Test
+    [TestMethod]
+    public void GetPropertyName()
     {
-        [TestMethod]
-        public void GetPropertyName()
-        {
-            // Arrange
-            Person p = default;
+        // Arrange
+        Person p = default;
 
-            // Action
-            var result = ExpressionHelper.GetPropertyName(() => p.FamilyName);
+        // Action
+        var result = ExpressionHelper.GetPropertyName(() => p.FamilyName);
 
-            // Assert
-            Assert.AreEqual("FamilyName", result);
-        }
+        // Assert
+        Assert.AreEqual("FamilyName", result);
+    }
 
-        [TestMethod]
-        public void GetPropertyName_NestedProperty()
-        {
-            // Arrange
-            Person p = default;
+    [TestMethod]
+    public void GetPropertyName_NestedProperty()
+    {
+        // Arrange
+        Person p = default;
 
-            // Action
-            var result = ExpressionHelper.GetPropertyName(() => p.DateOfBirth.Year);
+        // Action
+        var result = ExpressionHelper.GetPropertyName(() => p.DateOfBirth.Year);
 
-            // Assert
-            Assert.AreEqual("Year", result);
-        }
+        // Assert
+        Assert.AreEqual("Year", result);
+    }
 
-        [TestMethod]
-        public void GetPropertyName_IndirectType()
-        {
-            // Arrange
+    [TestMethod]
+    public void GetPropertyName_IndirectType()
+    {
+        // Arrange
 
-            // Action
-            var result = ExpressionHelper.GetPropertyName<Person, string>(person => person.FamilyName);
+        // Action
+        var result = ExpressionHelper.GetPropertyName<Person, string>(person => person.FamilyName);
 
-            // Assert
-            Assert.AreEqual("FamilyName", result);
-        }
+        // Assert
+        Assert.AreEqual("FamilyName", result);
+    }
 
 
-        [TestMethod]
-        public void GetFieldName()
-        {
-            // Arrange
-            Record r = default;
+    [TestMethod]
+    public void GetFieldName()
+    {
+        // Arrange
+        Record r = default;
 
-            // Action
-            var result = ExpressionHelper.GetFieldName(() => r.Name);
+        // Action
+        var result = ExpressionHelper.GetFieldName(() => r.Name);
 
-            // Assert
-            Assert.AreEqual("Name", result);
-        }
-
-
-        [TestMethod]
-        public void GetPropertyOrFieldName_Property()
-        {
-            // Arrange
-            Person p = default;
-
-            // Action
-            var result = ExpressionHelper.GetPropertyOrFieldName(() => p.FamilyName);
-
-            // Assert
-            Assert.AreEqual("FamilyName", result);
-        }
-
-        [TestMethod]
-        public void GetPropertyOrFieldName_Field()
-        {
-            // Arrange
-            Record r = default;
-
-            // Action
-            var result = ExpressionHelper.GetPropertyOrFieldName(() => r.Name);
-
-            // Assert
-            Assert.AreEqual("Name", result);
-        }
-
-        [TestMethod]
-        public void GetPropertyOrFieldName_Property_NestedProperty()
-        {
-            // Arrange
-            Person p = default;
-
-            // Action
-            var result = ExpressionHelper.GetPropertyOrFieldName(() => p.DateOfBirth.Year);
-
-            // Assert
-            Assert.AreEqual("Year", result);
-        }
-
-        [TestMethod]
-        public void GetPropertyOrFieldName_Property_IndirectType()
-        {
-            // Arrange
-
-            // Action
-            var result = ExpressionHelper.GetPropertyOrFieldName<Person, string>(person => person.FamilyName);
-
-            // Assert
-            Assert.AreEqual("FamilyName", result);
-        }
+        // Assert
+        Assert.AreEqual("Name", result);
+    }
 
 
-        private class Record
-        {
+    [TestMethod]
+    public void GetPropertyOrFieldName_Property()
+    {
+        // Arrange
+        Person p = default;
+
+        // Action
+        var result = ExpressionHelper.GetPropertyOrFieldName(() => p.FamilyName);
+
+        // Assert
+        Assert.AreEqual("FamilyName", result);
+    }
+
+    [TestMethod]
+    public void GetPropertyOrFieldName_Field()
+    {
+        // Arrange
+        Record r = default;
+
+        // Action
+        var result = ExpressionHelper.GetPropertyOrFieldName(() => r.Name);
+
+        // Assert
+        Assert.AreEqual("Name", result);
+    }
+
+    [TestMethod]
+    public void GetPropertyOrFieldName_Property_NestedProperty()
+    {
+        // Arrange
+        Person p = default;
+
+        // Action
+        var result = ExpressionHelper.GetPropertyOrFieldName(() => p.DateOfBirth.Year);
+
+        // Assert
+        Assert.AreEqual("Year", result);
+    }
+
+    [TestMethod]
+    public void GetPropertyOrFieldName_Property_IndirectType()
+    {
+        // Arrange
+
+        // Action
+        var result = ExpressionHelper.GetPropertyOrFieldName<Person, string>(person => person.FamilyName);
+
+        // Assert
+        Assert.AreEqual("FamilyName", result);
+    }
+
+
+    private class Record
+    {
 #pragma warning disable CS0649 // Field 'ExpressionHelper_Test.Record.Name' is never assigned to, and will always have its default value null
-            public string Name;
+        public string Name;
 #pragma warning restore CS0649 // Field 'ExpressionHelper_Test.Record.Name' is never assigned to, and will always have its default value null
-        }
     }
 }

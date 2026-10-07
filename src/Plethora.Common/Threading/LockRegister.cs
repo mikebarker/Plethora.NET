@@ -4,190 +4,189 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Plethora.Threading
+namespace Plethora.Threading;
+
+/// <summary>
+/// Represents a register of awaited and acquired locks.
+/// </summary>
+public class LockRegister
 {
     /// <summary>
-    /// Represents a register of awaited and acquired locks.
+    /// Gets and sets the default instance of the <see cref="LockRegister"/>.
     /// </summary>
-    public class LockRegister
+    /// <remarks>
+    /// By default, the <see cref="DefaultInstance"/> is null, and so no locks will
+    /// participate in long-wait detection. Setting the <see cref="DefaultInstance"/>
+    /// prior to creating locks will allow all instances to participate in long-wait
+    /// detection.
+    /// </remarks>
+    public static LockRegister? DefaultInstance { get; set; } = null;
+
+    private readonly HashSet<LockContext> lockContexts = new();
+    private readonly TimeSpan longWaitDetectionTimeout;
+
+    /// <summary>
+    /// Initialise a new instance of the <see cref="LockRegister"/> class.
+    /// </summary>
+    /// <param name="longWaitDetectionTimeout">The amount of time to elapse before a long-wait detection is triggered.</param>
+    public LockRegister(TimeSpan longWaitDetectionTimeout)
     {
-        /// <summary>
-        /// Gets and sets the default instance of the <see cref="LockRegister"/>.
-        /// </summary>
-        /// <remarks>
-        /// By default, the <see cref="DefaultInstance"/> is null, and so no locks will
-        /// participate in long-wait detection. Setting the <see cref="DefaultInstance"/>
-        /// prior to creating locks will allow all instances to participate in long-wait
-        /// detection.
-        /// </remarks>
-        public static LockRegister? DefaultInstance { get; set; } = null;
+        long totalMilliseconds = (long)longWaitDetectionTimeout.TotalMilliseconds;
+        if (totalMilliseconds < -1L || totalMilliseconds > (long)int.MaxValue)
+            throw new ArgumentOutOfRangeException(nameof(longWaitDetectionTimeout), (object)longWaitDetectionTimeout, ResourceProvider.TimeoutInvalid());
 
-        private readonly HashSet<LockContext> lockContexts = new();
-        private readonly TimeSpan longWaitDetectionTimeout;
+        this.longWaitDetectionTimeout = longWaitDetectionTimeout;
+    }
 
-        /// <summary>
-        /// Initialise a new instance of the <see cref="LockRegister"/> class.
-        /// </summary>
-        /// <param name="longWaitDetectionTimeout">The amount of time to elapse before a long-wait detection is triggered.</param>
-        public LockRegister(TimeSpan longWaitDetectionTimeout)
+    #region LongWaitDetected event
+
+    /// <summary>
+    /// Event raised when a long-wait is detected.
+    /// </summary>
+    /// <remarks>
+    /// A long-wait is a defined by the value of the longWaitDetectionTimeout
+    /// parameter during construction.
+    /// </remarks>
+    public event EventHandler<LongWaitDetectedEventArgs>? LongWaitDetected;
+
+    /// <summary>
+    /// Triggers the <see cref="LongWaitDetected"/> event.
+    /// </summary>
+    /// <param name="lockContext">
+    /// The <see cref="LockContext"/> for which the long-wait was detected.
+    /// </param>
+    protected void OnLongWaitDetected(LockContext lockContext)
+    {
+        // Raise the LongWaitDetected 
+        LockContext[] otherLockContexts;
+        lock (this.lockContexts)
         {
-            long totalMilliseconds = (long)longWaitDetectionTimeout.TotalMilliseconds;
-            if (totalMilliseconds < -1L || totalMilliseconds > (long)int.MaxValue)
-                throw new ArgumentOutOfRangeException(nameof(longWaitDetectionTimeout), (object)longWaitDetectionTimeout, ResourceProvider.TimeoutInvalid());
-
-            this.longWaitDetectionTimeout = longWaitDetectionTimeout;
+            otherLockContexts = this.lockContexts
+                .Where(c => !ReferenceEquals(lockContext, c))
+                .ToArray();
         }
 
-        #region LongWaitDetected event
+        LongWaitDetectedEventArgs e = new(lockContext, otherLockContexts);
+        this.OnLongWaitDetected(e);
+    }
 
-        /// <summary>
-        /// Event raised when a long-wait is detected.
-        /// </summary>
-        /// <remarks>
-        /// A long-wait is a defined by the value of the longWaitDetectionTimeout
-        /// parameter during construction.
-        /// </remarks>
-        public event EventHandler<LongWaitDetectedEventArgs>? LongWaitDetected;
+    /// <summary>
+    /// Triggers the <see cref="LongWaitDetected"/> event.
+    /// </summary>
+    /// <param name="e">The <see cref="LongWaitDetectedEventArgs"/> event arguments.</param>
+    protected virtual void OnLongWaitDetected(LongWaitDetectedEventArgs e)
+    {
+        this.LongWaitDetected?.Invoke(this, e);
+    }
 
-        /// <summary>
-        /// Triggers the <see cref="LongWaitDetected"/> event.
-        /// </summary>
-        /// <param name="lockContext">
-        /// The <see cref="LockContext"/> for which the long-wait was detected.
-        /// </param>
-        protected void OnLongWaitDetected(LockContext lockContext)
+    #endregion
+
+    /// <summary>
+    /// Register an await on a lock.
+    /// </summary>
+    /// <param name="lock">The lock being awaited.</param>
+    /// <param name="originMemberName">The caller member name of the original wait.</param>
+    /// <param name="originSourceFilePath">The caller source file path of the original wait.</param>
+    /// <param name="originSourceLineNumber">The caller source line number of the original wait.</param>
+    /// <returns>
+    /// An <see cref="IDisposable"/> which will deregister the await when disposed.
+    /// </returns>
+    public IDisposable RegisterAwaitingLock(
+        object @lock,
+        string originMemberName,
+        string originSourceFilePath,
+        int originSourceLineNumber)
+    {
+        LockContext lockContext = new(
+            @lock,
+            LockRequestStatus.Awaiting,
+            originMemberName,
+            originSourceFilePath,
+            originSourceLineNumber);
+
+        lock (this.lockContexts)
         {
-            // Raise the LongWaitDetected 
-            LockContext[] otherLockContexts;
+            this.lockContexts.Add(lockContext);
+        }
+
+        CancellationTokenSource cts = new();
+
+        var token = cts.Token;
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(this.longWaitDetectionTimeout).ConfigureAwait(false);
+
+            if (!token.IsCancellationRequested)
+            {
+                // Raise the LongWaitDetected event
+                this.OnLongWaitDetected(lockContext);
+            }
+        });
+
+        return new ActionOnDispose(() =>
+        {
             lock (this.lockContexts)
             {
-                otherLockContexts = this.lockContexts
-                    .Where(c => !ReferenceEquals(lockContext, c))
-                    .ToArray();
+                this.lockContexts.Remove(lockContext);
             }
 
-            LongWaitDetectedEventArgs e = new(lockContext, otherLockContexts);
-            this.OnLongWaitDetected(e);
+            cts.Cancel();
+            cts.Dispose();
+        });
+    }
+
+    /// <summary>
+    /// Register an acquired on a lock.
+    /// </summary>
+    /// <param name="lock">The lock acquired.</param>
+    /// <param name="originMemberName">The caller member name of the original acquisition.</param>
+    /// <param name="originSourceFilePath">The caller source file path of the original acquisition.</param>
+    /// <param name="originSourceLineNumber">The caller source line number of the original acquisition.</param>
+    /// <returns>
+    /// An <see cref="IDisposable"/> which will deregister the acquisition when disposed.
+    /// </returns>
+    public IDisposable RegisterAcquiredLock(
+        object @lock,
+        string originMemberName,
+        string originSourceFilePath,
+        int originSourceLineNumber)
+    {
+        LockContext lockContext = new(
+            @lock,
+            LockRequestStatus.Acquired,
+            originMemberName,
+            originSourceFilePath,
+            originSourceLineNumber);
+
+        lock (this.lockContexts)
+        {
+            this.lockContexts.Add(lockContext);
         }
 
-        /// <summary>
-        /// Triggers the <see cref="LongWaitDetected"/> event.
-        /// </summary>
-        /// <param name="e">The <see cref="LongWaitDetectedEventArgs"/> event arguments.</param>
-        protected virtual void OnLongWaitDetected(LongWaitDetectedEventArgs e)
+        return new ActionOnDispose(() =>
         {
-            this.LongWaitDetected?.Invoke(this, e);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// Register an await on a lock.
-        /// </summary>
-        /// <param name="lock">The lock being awaited.</param>
-        /// <param name="originMemberName">The caller member name of the original wait.</param>
-        /// <param name="originSourceFilePath">The caller source file path of the original wait.</param>
-        /// <param name="originSourceLineNumber">The caller source line number of the original wait.</param>
-        /// <returns>
-        /// An <see cref="IDisposable"/> which will deregister the await when disposed.
-        /// </returns>
-        public IDisposable RegisterAwaitingLock(
-            object @lock,
-            string originMemberName,
-            string originSourceFilePath,
-            int originSourceLineNumber)
-        {
-            LockContext lockContext = new(
-                @lock,
-                LockRequestStatus.Awaiting,
-                originMemberName,
-                originSourceFilePath,
-                originSourceLineNumber);
-
             lock (this.lockContexts)
             {
-                this.lockContexts.Add(lockContext);
+                this.lockContexts.Remove(lockContext);
             }
+        });
+    }
 
-            CancellationTokenSource cts = new();
-
-            var token = cts.Token;
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(this.longWaitDetectionTimeout).ConfigureAwait(false);
-
-                if (!token.IsCancellationRequested)
-                {
-                    // Raise the LongWaitDetected event
-                    this.OnLongWaitDetected(lockContext);
-                }
-            });
-
-            return new ActionOnDispose(() =>
-            {
-                lock (this.lockContexts)
-                {
-                    this.lockContexts.Remove(lockContext);
-                }
-
-                cts.Cancel();
-                cts.Dispose();
-            });
-        }
-
-        /// <summary>
-        /// Register an acquired on a lock.
-        /// </summary>
-        /// <param name="lock">The lock acquired.</param>
-        /// <param name="originMemberName">The caller member name of the original acquisition.</param>
-        /// <param name="originSourceFilePath">The caller source file path of the original acquisition.</param>
-        /// <param name="originSourceLineNumber">The caller source line number of the original acquisition.</param>
-        /// <returns>
-        /// An <see cref="IDisposable"/> which will deregister the acquisition when disposed.
-        /// </returns>
-        public IDisposable RegisterAcquiredLock(
-            object @lock,
-            string originMemberName,
-            string originSourceFilePath,
-            int originSourceLineNumber)
+    /// <summary>
+    /// Gets a collection of the currently registered lock contexts.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="IReadOnlyCollection{LockContext}"/> of the currently registered lock contexts.
+    /// </returns>
+    public IReadOnlyCollection<LockContext> GetLockContexts()
+    {
+        LockContext[] array;
+        lock (this.lockContexts)
         {
-            LockContext lockContext = new(
-                @lock,
-                LockRequestStatus.Acquired,
-                originMemberName,
-                originSourceFilePath,
-                originSourceLineNumber);
-
-            lock (this.lockContexts)
-            {
-                this.lockContexts.Add(lockContext);
-            }
-
-            return new ActionOnDispose(() =>
-            {
-                lock (this.lockContexts)
-                {
-                    this.lockContexts.Remove(lockContext);
-                }
-            });
+            array = new LockContext[this.lockContexts.Count];
+            this.lockContexts.CopyTo(array);
         }
 
-        /// <summary>
-        /// Gets a collection of the currently registered lock contexts.
-        /// </summary>
-        /// <returns>
-        /// A <see cref="IReadOnlyCollection{LockContext}"/> of the currently registered lock contexts.
-        /// </returns>
-        public IReadOnlyCollection<LockContext> GetLockContexts()
-        {
-            LockContext[] array;
-            lock (this.lockContexts)
-            {
-                array = new LockContext[this.lockContexts.Count];
-                this.lockContexts.CopyTo(array);
-            }
-
-            return array;
-        }
+        return array;
     }
 }

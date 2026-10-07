@@ -1,14 +1,13 @@
 ﻿using System;
 
-namespace Plethora.Logging
-{
-    /// <summary>
-    /// Interface for providing an <see cref="ILogger"/>.
-    /// </summary>
-    public interface ILoggerProvider
-    {
-        ILogger GetLogger(string name);
+namespace Plethora.Logging;
 
-        ILogger GetLogger(Type type);
-    }
+/// <summary>
+/// Interface for providing an <see cref="ILogger"/>.
+/// </summary>
+public interface ILoggerProvider
+{
+    ILogger GetLogger(string name);
+
+    ILogger GetLogger(Type type);
 }

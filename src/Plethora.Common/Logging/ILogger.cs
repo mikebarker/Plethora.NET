@@ -1,91 +1,90 @@
 ﻿using System;
 
-namespace Plethora.Logging
+namespace Plethora.Logging;
+
+/// <summary>
+/// Interface for providing logging functionality.
+/// </summary>
+public interface ILogger
 {
-    /// <summary>
-    /// Interface for providing logging functionality.
-    /// </summary>
-    public interface ILogger
-    {
-        #region Properties
+    #region Properties
 
-        bool IsVerboseEnabled { get; }
+    bool IsVerboseEnabled { get; }
 
-        bool IsDebugEnabled { get; }
+    bool IsDebugEnabled { get; }
 
-        bool IsInfoEnabled { get; }
+    bool IsInfoEnabled { get; }
 
-        bool IsWarnEnabled { get; }
+    bool IsWarnEnabled { get; }
 
-        bool IsErrorEnabled { get; }
+    bool IsErrorEnabled { get; }
 
-        bool IsFatalEnabled { get; }
-        #endregion
+    bool IsFatalEnabled { get; }
+    #endregion
 
-        #region Verbose
+    #region Verbose
 
-        void Verbose(string message);
+    void Verbose(string message);
 
-        void Verbose(string format, params object[] args);
+    void Verbose(string format, params object[] args);
 
-        void Verbose(Exception exception, string message);
+    void Verbose(Exception exception, string message);
 
-        void Verbose(Exception exception, string format, params object[] args);
-        #endregion
+    void Verbose(Exception exception, string format, params object[] args);
+    #endregion
 
-        #region Debug
+    #region Debug
 
-        void Debug(string message);
+    void Debug(string message);
 
-        void Debug(string format, params object[] args);
+    void Debug(string format, params object[] args);
 
-        void Debug(Exception exception, string message);
+    void Debug(Exception exception, string message);
 
-        void Debug(Exception exception, string format, params object[] args);
-        #endregion
+    void Debug(Exception exception, string format, params object[] args);
+    #endregion
 
-        #region Info
+    #region Info
 
-        void Info(string message);
+    void Info(string message);
 
-        void Info(string format, params object[] args);
+    void Info(string format, params object[] args);
 
-        void Info(Exception exception, string message);
+    void Info(Exception exception, string message);
 
-        void Info(Exception exception, string format, params object[] args);
-        #endregion
+    void Info(Exception exception, string format, params object[] args);
+    #endregion
 
-        #region Warn
+    #region Warn
 
-        void Warn(string message);
+    void Warn(string message);
 
-        void Warn(string format, params object[] args);
+    void Warn(string format, params object[] args);
 
-        void Warn(Exception exception, string message);
+    void Warn(Exception exception, string message);
 
-        void Warn(Exception exception, string format, params object[] args);
-        #endregion
+    void Warn(Exception exception, string format, params object[] args);
+    #endregion
 
-        #region Error
+    #region Error
 
-        void Error(string message);
+    void Error(string message);
 
-        void Error(string format, params object[] args);
+    void Error(string format, params object[] args);
 
-        void Error(Exception exception, string message);
+    void Error(Exception exception, string message);
 
-        void Error(Exception exception, string format, params object[] args);
-        #endregion
+    void Error(Exception exception, string format, params object[] args);
+    #endregion
 
-        #region Fatal
+    #region Fatal
 
-        void Fatal(string message);
+    void Fatal(string message);
 
-        void Fatal(string format, params object[] args);
+    void Fatal(string format, params object[] args);
 
-        void Fatal(Exception exception, string message);
+    void Fatal(Exception exception, string message);
 
-        void Fatal(Exception exception, string format, params object[] args);
-        #endregion
-    }
+    void Fatal(Exception exception, string format, params object[] args);
+    #endregion
 }

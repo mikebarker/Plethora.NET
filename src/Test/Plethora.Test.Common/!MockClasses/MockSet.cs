@@ -1,30 +1,21 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Plethora.Collections.Sets;
 
-namespace Plethora.Test.MockClasses
+namespace Plethora.Test.MockClasses;
+
+class MockSetCore<T>(params T[] elements) : BaseSetImpl<T>
 {
-    class MockSetCore<T> : BaseSetImpl<T>
+    #region Implementation of ISetCore<T>
+
+    public override bool Contains(T element)
     {
-        private readonly IEnumerable<T> elements;
-
-        public MockSetCore(params T[] elements)
-        {
-            this.elements = elements;
-        }
-
-        #region Implementation of ISetCore<T>
-
-        public override bool Contains(T element)
-        {
-            return this.elements.Contains(element);
-        }
-
-        public override bool? IsEmpty
-        {
-            get { return !elements.Any(); }
-        }
-
-        #endregion
+        return elements.Contains(element);
     }
+
+    public override bool? IsEmpty
+    {
+        get { return !elements.Any(); }
+    }
+
+    #endregion
 }

@@ -2,32 +2,31 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Plethora.Test.MockClasses
+namespace Plethora.Test.MockClasses;
+
+class MockTextWriter : TextWriter
 {
-    class MockTextWriter : TextWriter
+    private readonly StringBuilder sb = new();
+
+    public override Encoding Encoding
     {
-        private readonly StringBuilder sb = new StringBuilder();
+        get { return Encoding.Unicode; }
+    }
 
-        public override Encoding Encoding
-        {
-            get { return Encoding.Unicode; }
-        }
+    public override void Write(char value)
+    {
+        sb.Append(value);
+    }
 
-        public override void Write(char value)
-        {
-            sb.Append(value);
-        }
-
-        public override Task WriteAsync(char value)
-        {
-            sb.Append(value);
-            return Task.CompletedTask;
-        }
+    public override Task WriteAsync(char value)
+    {
+        sb.Append(value);
+        return Task.CompletedTask;
+    }
 
 
-        public string CurrentText
-        {
-            get { return sb.ToString(); }
-        }
+    public string CurrentText
+    {
+        get { return sb.ToString(); }
     }
 }

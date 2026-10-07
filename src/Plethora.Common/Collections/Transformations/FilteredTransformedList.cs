@@ -1,191 +1,190 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Plethora.Collections.Transformations
+namespace Plethora.Collections.Transformations;
+
+/// <summary>
+/// Represents a filtered view of a source collection.
+/// </summary>
+/// <typeparam name="T">The type of objects to in the collection.</typeparam>
+public class FilteredTransformedList<T> : TransformedList<T>, IList<T>
 {
+    private readonly Func<T, bool> filterBy;
+
+    private readonly IndexItemPairList filteredList = new();
+
     /// <summary>
-    /// Represents a filtered view of a source collection.
+    /// Initializes a new instance of the <see cref="FilteredTransformedList{T}"/> class with its
+    /// source.
     /// </summary>
-    /// <typeparam name="T">The type of objects to in the collection.</typeparam>
-    public class FilteredTransformedList<T> : TransformedList<T>, IList<T>
+    /// <param name="source">
+    /// The underlying source, for which this instance presents a view of the contained data.
+    /// </param>
+    /// <param name="filterBy">
+    /// The predicate which filters items from the source collection.
+    /// </param>
+    public FilteredTransformedList(
+        IEnumerable<T> source,
+        Func<T, bool> filterBy)
+        : base(source)
     {
-        private readonly Func<T, bool> filterBy;
+        this.filterBy = filterBy;
 
-        private readonly IndexItemPairList filteredList = new();
+        this.ResetSource();
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FilteredTransformedList{T}"/> class with its
-        /// source.
-        /// </summary>
-        /// <param name="source">
-        /// The underlying source, for which this instance presents a view of the contained data.
-        /// </param>
-        /// <param name="filterBy">
-        /// The predicate which filters items from the source collection.
-        /// </param>
-        public FilteredTransformedList(
-            IEnumerable<T> source,
-            Func<T, bool> filterBy)
-            : base(source)
+    /// <inheritdoc/>
+    public override int Count => this.filteredList.Count;
+
+    public override T this[int index] => this.filteredList.ItemAt(index);
+
+    /// <inheritdoc/>
+    public override IEnumerator<T> GetEnumerator() => this.filteredList.GetItemsEnumerator();
+
+    /// <inheritdoc/>
+    public override bool Contains(T item)
+    {
+        return this.filteredList.ContainsItem(item);
+    }
+
+    /// <inheritdoc/>
+    public override void CopyTo(T[] array, int arrayIndex)
+    {
+        this.filteredList.CopyTo(array, arrayIndex);
+    }
+
+    /// <inheritdoc/>
+    protected override CollectionModifiedResult AddFromSource(int sourceIndex, T item)
+    {
+        int insertTargetIndex = this.filteredList.BinarySearchSourceIndex(sourceIndex);
+        if (insertTargetIndex < 0)
         {
-            this.filterBy = filterBy;
-
-            this.ResetSource();
+            insertTargetIndex = ~insertTargetIndex;
         }
 
-        /// <inheritdoc/>
-        public override int Count => this.filteredList.Count;
-
-        public override T this[int index] => this.filteredList.ItemAt(index);
-
-        /// <inheritdoc/>
-        public override IEnumerator<T> GetEnumerator() => this.filteredList.GetItemsEnumerator();
-
-        /// <inheritdoc/>
-        public override bool Contains(T item)
+        // Add if required
+        CollectionModifiedResult result;
+        if (!this.filterBy(item))
         {
-            return this.filteredList.ContainsItem(item);
+            result = CollectionModifiedResult.Unmodified();
+        }
+        else
+        {
+            this.filteredList.Insert(insertTargetIndex, sourceIndex, item);
+            result = CollectionModifiedResult.Modified(insertTargetIndex);
+
+            insertTargetIndex++;
         }
 
-        /// <inheritdoc/>
-        public override void CopyTo(T[] array, int arrayIndex)
+        // Update indices
+        this.filteredList.IncrementSourceIndexFrom(insertTargetIndex);
+
+        return result;
+    }
+
+    /// <inheritdoc/>
+    protected override CollectionModifiedResult RemoveFromSource(int sourceIndex, T item)
+    {
+        CollectionModifiedResult result;
+
+        // Remove if required
+        int removeTargetIndex = this.filteredList.BinarySearchSourceIndex(sourceIndex);
+        if (removeTargetIndex < 0)
         {
-            this.filteredList.CopyTo(array, arrayIndex);
+            result = CollectionModifiedResult.Unmodified();
+            removeTargetIndex = ~removeTargetIndex;
+        }
+        else
+        {
+            this.filteredList.RemoveAt(removeTargetIndex);
+            result = CollectionModifiedResult.Modified(removeTargetIndex);
         }
 
-        /// <inheritdoc/>
-        protected override CollectionModifiedResult AddFromSource(int sourceIndex, T item)
+        // Update indices
+        this.filteredList.DecrementSourceIndexFrom(removeTargetIndex);
+
+        return result;
+    }
+
+    /// <inheritdoc/>
+    protected override void ResetSource()
+    {
+        this.filteredList.Clear();
+
+        int sourceIndex = 0;
+        foreach (var item in this.Source)
         {
-            int insertTargetIndex = this.filteredList.BinarySearchSourceIndex(sourceIndex);
-            if (insertTargetIndex < 0)
+            if (this.filterBy(item))
             {
-                insertTargetIndex = ~insertTargetIndex;
+                this.filteredList.Add(sourceIndex, item);
             }
 
-            // Add if required
-            CollectionModifiedResult result;
-            if (!this.filterBy(item))
-            {
-                result = CollectionModifiedResult.Unmodified();
-            }
-            else
-            {
-                this.filteredList.Insert(insertTargetIndex, sourceIndex, item);
-                result = CollectionModifiedResult.Modified(insertTargetIndex);
+            sourceIndex++;
+        }
+    }
 
-                insertTargetIndex++;
-            }
+    public override int IndexOf(T item)
+    {
+        return this.filteredList.IndexOf(item);
+    }
 
-            // Update indices
-            this.filteredList.IncrementSourceIndexFrom(insertTargetIndex);
+    private sealed class IndexItemPairList
+    {
+        private readonly List<T> filteredItems = new();
+        private readonly List<int> filteredIndices = new();
 
-            return result;
+        public int Count => this.filteredItems.Count;
+
+        public int BinarySearchSourceIndex(int sourceIndex) => this.filteredIndices.BinarySearch(sourceIndex);
+
+        public bool ContainsItem(T item) => this.filteredItems.Contains(item);
+
+        public void CopyTo(T[] array, int arrayIndex) => this.filteredItems.CopyTo(array, arrayIndex);
+
+        public IEnumerator<T> GetItemsEnumerator() => this.filteredItems.GetEnumerator();
+
+        public T ItemAt(int index) => this.filteredItems[index];
+
+        public void Clear()
+        {
+            this.filteredIndices.Clear();
+            this.filteredItems.Clear();
         }
 
-        /// <inheritdoc/>
-        protected override CollectionModifiedResult RemoveFromSource(int sourceIndex, T item)
+        public void Add(int sourceIndex, T item)
         {
-            CollectionModifiedResult result;
-
-            // Remove if required
-            int removeTargetIndex = this.filteredList.BinarySearchSourceIndex(sourceIndex);
-            if (removeTargetIndex < 0)
-            {
-                result = CollectionModifiedResult.Unmodified();
-                removeTargetIndex = ~removeTargetIndex;
-            }
-            else
-            {
-                this.filteredList.RemoveAt(removeTargetIndex);
-                result = CollectionModifiedResult.Modified(removeTargetIndex);
-            }
-
-            // Update indices
-            this.filteredList.DecrementSourceIndexFrom(removeTargetIndex);
-
-            return result;
+            this.filteredIndices.Add(sourceIndex);
+            this.filteredItems.Add(item);
         }
 
-        /// <inheritdoc/>
-        protected override void ResetSource()
+
+        public void Insert(int index, int sourceIndex, T item)
         {
-            this.filteredList.Clear();
+            this.filteredIndices.Insert(index, sourceIndex);
+            this.filteredItems.Insert(index, item);
+        }
 
-            int sourceIndex = 0;
-            foreach (var item in this.Source)
+        public int IndexOf(T item) => this.filteredItems.IndexOf(item);
+
+        public void RemoveAt(int index)
+        {
+            this.filteredIndices.RemoveAt(index);
+            this.filteredItems.RemoveAt(index);
+        }
+
+        public void IncrementSourceIndexFrom(int index)
+        {
+            for (int targetIndex = index; targetIndex < this.filteredIndices.Count; targetIndex++)
             {
-                if (this.filterBy(item))
-                {
-                    this.filteredList.Add(sourceIndex, item);
-                }
-
-                sourceIndex++;
+                this.filteredIndices[targetIndex]++;
             }
         }
 
-        public override int IndexOf(T item)
+        public void DecrementSourceIndexFrom(int index)
         {
-            return this.filteredList.IndexOf(item);
-        }
-
-        private sealed class IndexItemPairList
-        {
-            private readonly List<T> filteredItems = new();
-            private readonly List<int> filteredIndices = new();
-
-            public int Count => this.filteredItems.Count;
-
-            public int BinarySearchSourceIndex(int sourceIndex) => this.filteredIndices.BinarySearch(sourceIndex);
-
-            public bool ContainsItem(T item) => this.filteredItems.Contains(item);
-
-            public void CopyTo(T[] array, int arrayIndex) => this.filteredItems.CopyTo(array, arrayIndex);
-
-            public IEnumerator<T> GetItemsEnumerator() => this.filteredItems.GetEnumerator();
-
-            public T ItemAt(int index) => this.filteredItems[index];
-
-            public void Clear()
+            for (int targetIndex = index; targetIndex < this.filteredIndices.Count; targetIndex++)
             {
-                this.filteredIndices.Clear();
-                this.filteredItems.Clear();
-            }
-
-            public void Add(int sourceIndex, T item)
-            {
-                this.filteredIndices.Add(sourceIndex);
-                this.filteredItems.Add(item);
-            }
-
-
-            public void Insert(int index, int sourceIndex, T item)
-            {
-                this.filteredIndices.Insert(index, sourceIndex);
-                this.filteredItems.Insert(index, item);
-            }
-
-            public int IndexOf(T item) => this.filteredItems.IndexOf(item);
-
-            public void RemoveAt(int index)
-            {
-                this.filteredIndices.RemoveAt(index);
-                this.filteredItems.RemoveAt(index);
-            }
-
-            public void IncrementSourceIndexFrom(int index)
-            {
-                for (int targetIndex = index; targetIndex < this.filteredIndices.Count; targetIndex++)
-                {
-                    this.filteredIndices[targetIndex]++;
-                }
-            }
-
-            public void DecrementSourceIndexFrom(int index)
-            {
-                for (int targetIndex = index; targetIndex < this.filteredIndices.Count; targetIndex++)
-                {
-                    this.filteredIndices[targetIndex]--;
-                }
+                this.filteredIndices[targetIndex]--;
             }
         }
     }

@@ -69,7 +69,7 @@ namespace Plethora.Test.Collections.Transformations
                 Person.Katherine_Harold,
             };
 
-            Assert.IsTrue(source.Contains(Person.Jane_Doe));
+            Assert.Contains(Person.Jane_Doe, source);
             Assert.IsTrue(orderedList.SequenceEqual(expectedResults));
         }
 
@@ -95,7 +95,7 @@ namespace Plethora.Test.Collections.Transformations
                 Person.Katherine_Harold,
             };
 
-            Assert.IsTrue(source.Contains(Person.Jane_Doe));
+            Assert.Contains(Person.Jane_Doe, source);
             Assert.IsTrue(orderedList.SequenceEqual(expectedResults));
         }
 
@@ -110,8 +110,8 @@ namespace Plethora.Test.Collections.Transformations
             source.Clear();
 
             // Assert
-            Assert.IsTrue(source.SequenceEqual(Array.Empty<Person>()));
-            Assert.IsTrue(orderedList.SequenceEqual(Array.Empty<Person>()));
+            Assert.AreSequenceEqual([], source);
+            Assert.AreSequenceEqual([], orderedList);
 
             Assert.AreEqual(0, orderedList.Count);
         }
@@ -127,8 +127,8 @@ namespace Plethora.Test.Collections.Transformations
             orderedList.Clear();
 
             // Assert
-            Assert.IsTrue(source.SequenceEqual(Array.Empty<Person>()));
-            Assert.IsTrue(orderedList.SequenceEqual(Array.Empty<Person>()));
+            Assert.AreSequenceEqual([], source);
+            Assert.AreSequenceEqual([], orderedList);
 
             Assert.AreEqual(0, orderedList.Count);
         }
@@ -181,8 +181,8 @@ namespace Plethora.Test.Collections.Transformations
                 Person.Katherine_Harold,
             };
 
-            Assert.IsFalse(source.Contains(Person.Jill_Dorrman));
-            Assert.IsTrue(orderedList.SequenceEqual(expectedResults));
+            Assert.DoesNotContain(Person.Jill_Dorrman, source);
+            Assert.AreSequenceEqual(expectedResults, orderedList);
         }
 
         [TestMethod]
@@ -205,8 +205,8 @@ namespace Plethora.Test.Collections.Transformations
                 Person.Katherine_Harold,
             };
 
-            Assert.IsFalse(source.Contains(Person.Jill_Dorrman));
-            Assert.IsTrue(orderedList.SequenceEqual(expectedResults));
+            Assert.DoesNotContain(Person.Jill_Dorrman, source);
+            Assert.AreSequenceEqual(expectedResults, orderedList);
         }
     }
 }

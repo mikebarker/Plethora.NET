@@ -6,124 +6,123 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using Plethora.Calendar;
 
-namespace Plethora.Test.Calendar
+namespace Plethora.Test.Calendar;
+
+[TestClass]
+public class WeeklyCalendarProperties_Test
 {
-    [TestClass]
-    public class WeeklyCalendarProperties_Test
+    [TestMethod]
+    public void Generate_Weekly_Monday()
     {
-        [TestMethod]
-        public void Generate_Weekly_Monday()
-        {
-            // Arrange
-            ICalendarProperties calendarProperties = new WeeklyCalendarProperties(1, new[] { DayOfWeek.Monday });
+        // Arrange
+        ICalendarProperties calendarProperties = new WeeklyCalendarProperties(1, [DayOfWeek.Monday]);
 
-            // Action
-            IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), new DayOfWeek[0], new DateTime[0]);
-            DateTime[] calendarArray = calendar.Take(10).ToArray();
+        // Action
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), [], []);
+        DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            // Assert
-            Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
-            Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[1]);
-            Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[2]);
-            Assert.AreEqual(new DateTime(2000, 01, 24), calendarArray[3]);
-            Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[4]);
-            Assert.AreEqual(new DateTime(2000, 02, 07), calendarArray[5]);
-            Assert.AreEqual(new DateTime(2000, 02, 14), calendarArray[6]);
-            Assert.AreEqual(new DateTime(2000, 02, 21), calendarArray[7]);
-            Assert.AreEqual(new DateTime(2000, 02, 28), calendarArray[8]);
-            Assert.AreEqual(new DateTime(2000, 03, 06), calendarArray[9]);
-        }
+        // Assert
+        Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
+        Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[1]);
+        Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[2]);
+        Assert.AreEqual(new DateTime(2000, 01, 24), calendarArray[3]);
+        Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[4]);
+        Assert.AreEqual(new DateTime(2000, 02, 07), calendarArray[5]);
+        Assert.AreEqual(new DateTime(2000, 02, 14), calendarArray[6]);
+        Assert.AreEqual(new DateTime(2000, 02, 21), calendarArray[7]);
+        Assert.AreEqual(new DateTime(2000, 02, 28), calendarArray[8]);
+        Assert.AreEqual(new DateTime(2000, 03, 06), calendarArray[9]);
+    }
 
-        [TestMethod]
-        public void Generate_Weekly_Monday_Thursday()
-        {
-            // Arrange
-            ICalendarProperties calendarProperties = new WeeklyCalendarProperties(1, new[] { DayOfWeek.Monday, DayOfWeek.Thursday });
+    [TestMethod]
+    public void Generate_Weekly_Monday_Thursday()
+    {
+        // Arrange
+        ICalendarProperties calendarProperties = new WeeklyCalendarProperties(1, [DayOfWeek.Monday, DayOfWeek.Thursday]);
 
-            // Action
-            IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), new DayOfWeek[0], new DateTime[0]);
-            DateTime[] calendarArray = calendar.Take(10).ToArray();
+        // Action
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), [], []);
+        DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            // Assert
-            Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
-            Assert.AreEqual(new DateTime(2000, 01, 06), calendarArray[1]);
-            Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[2]);
-            Assert.AreEqual(new DateTime(2000, 01, 13), calendarArray[3]);
-            Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[4]);
-            Assert.AreEqual(new DateTime(2000, 01, 20), calendarArray[5]);
-            Assert.AreEqual(new DateTime(2000, 01, 24), calendarArray[6]);
-            Assert.AreEqual(new DateTime(2000, 01, 27), calendarArray[7]);
-            Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[8]);
-            Assert.AreEqual(new DateTime(2000, 02, 03), calendarArray[9]);
-        }
+        // Assert
+        Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
+        Assert.AreEqual(new DateTime(2000, 01, 06), calendarArray[1]);
+        Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[2]);
+        Assert.AreEqual(new DateTime(2000, 01, 13), calendarArray[3]);
+        Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[4]);
+        Assert.AreEqual(new DateTime(2000, 01, 20), calendarArray[5]);
+        Assert.AreEqual(new DateTime(2000, 01, 24), calendarArray[6]);
+        Assert.AreEqual(new DateTime(2000, 01, 27), calendarArray[7]);
+        Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[8]);
+        Assert.AreEqual(new DateTime(2000, 02, 03), calendarArray[9]);
+    }
 
-        [TestMethod]
-        public void Generate_BiWeekly_Monday()
-        {
-            // Arrange
-            ICalendarProperties calendarProperties = new WeeklyCalendarProperties(2, new[] { DayOfWeek.Monday });
+    [TestMethod]
+    public void Generate_BiWeekly_Monday()
+    {
+        // Arrange
+        ICalendarProperties calendarProperties = new WeeklyCalendarProperties(2, [DayOfWeek.Monday]);
 
-            // Action
-            IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), new DayOfWeek[0], new DateTime[0]);
-            DateTime[] calendarArray = calendar.Take(10).ToArray();
+        // Action
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 01), [], []);
+        DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            // Assert
-            Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
-            Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[1]);
-            Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[2]);
-            Assert.AreEqual(new DateTime(2000, 02, 14), calendarArray[3]);
-            Assert.AreEqual(new DateTime(2000, 02, 28), calendarArray[4]);
-            Assert.AreEqual(new DateTime(2000, 03, 13), calendarArray[5]);
-            Assert.AreEqual(new DateTime(2000, 03, 27), calendarArray[6]);
-            Assert.AreEqual(new DateTime(2000, 04, 10), calendarArray[7]);
-            Assert.AreEqual(new DateTime(2000, 04, 24), calendarArray[8]);
-            Assert.AreEqual(new DateTime(2000, 05, 08), calendarArray[9]);
-        }
+        // Assert
+        Assert.AreEqual(new DateTime(2000, 01, 03), calendarArray[0]);
+        Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[1]);
+        Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[2]);
+        Assert.AreEqual(new DateTime(2000, 02, 14), calendarArray[3]);
+        Assert.AreEqual(new DateTime(2000, 02, 28), calendarArray[4]);
+        Assert.AreEqual(new DateTime(2000, 03, 13), calendarArray[5]);
+        Assert.AreEqual(new DateTime(2000, 03, 27), calendarArray[6]);
+        Assert.AreEqual(new DateTime(2000, 04, 10), calendarArray[7]);
+        Assert.AreEqual(new DateTime(2000, 04, 24), calendarArray[8]);
+        Assert.AreEqual(new DateTime(2000, 05, 08), calendarArray[9]);
+    }
 
-        [TestMethod]
-        public void Generate_BiWeekly_Monday_StartWednesday()
-        {
-            // Arrange
-            ICalendarProperties calendarProperties = new WeeklyCalendarProperties(2, new[] { DayOfWeek.Monday, });
+    [TestMethod]
+    public void Generate_BiWeekly_Monday_StartWednesday()
+    {
+        // Arrange
+        ICalendarProperties calendarProperties = new WeeklyCalendarProperties(2, [DayOfWeek.Monday]);
 
-            // Action
-            IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 05), new DayOfWeek[0], new DateTime[0]);
-            DateTime[] calendarArray = calendar.Take(10).ToArray();
+        // Action
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 05), [], []);
+        DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            // Assert
-            Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[0]);
-            Assert.AreEqual(new DateTime(2000, 01, 24), calendarArray[1]);
-            Assert.AreEqual(new DateTime(2000, 02, 07), calendarArray[2]);
-            Assert.AreEqual(new DateTime(2000, 02, 21), calendarArray[3]);
-            Assert.AreEqual(new DateTime(2000, 03, 06), calendarArray[4]);
-            Assert.AreEqual(new DateTime(2000, 03, 20), calendarArray[5]);
-            Assert.AreEqual(new DateTime(2000, 04, 03), calendarArray[6]);
-            Assert.AreEqual(new DateTime(2000, 04, 17), calendarArray[7]);
-            Assert.AreEqual(new DateTime(2000, 05, 01), calendarArray[8]);
-            Assert.AreEqual(new DateTime(2000, 05, 15), calendarArray[9]);
-        }
+        // Assert
+        Assert.AreEqual(new DateTime(2000, 01, 10), calendarArray[0]);
+        Assert.AreEqual(new DateTime(2000, 01, 24), calendarArray[1]);
+        Assert.AreEqual(new DateTime(2000, 02, 07), calendarArray[2]);
+        Assert.AreEqual(new DateTime(2000, 02, 21), calendarArray[3]);
+        Assert.AreEqual(new DateTime(2000, 03, 06), calendarArray[4]);
+        Assert.AreEqual(new DateTime(2000, 03, 20), calendarArray[5]);
+        Assert.AreEqual(new DateTime(2000, 04, 03), calendarArray[6]);
+        Assert.AreEqual(new DateTime(2000, 04, 17), calendarArray[7]);
+        Assert.AreEqual(new DateTime(2000, 05, 01), calendarArray[8]);
+        Assert.AreEqual(new DateTime(2000, 05, 15), calendarArray[9]);
+    }
 
-        [TestMethod]
-        public void Generate_BiWeekly_Monday_Thursday_StartWednesday()
-        {
-            // Arrange
-            ICalendarProperties calendarProperties = new WeeklyCalendarProperties(2, new[] { DayOfWeek.Monday, DayOfWeek.Thursday, });
+    [TestMethod]
+    public void Generate_BiWeekly_Monday_Thursday_StartWednesday()
+    {
+        // Arrange
+        ICalendarProperties calendarProperties = new WeeklyCalendarProperties(2, [DayOfWeek.Monday, DayOfWeek.Thursday]);
 
-            // Action
-            IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 05), new DayOfWeek[0], new DateTime[0]);
-            DateTime[] calendarArray = calendar.Take(10).ToArray();
+        // Action
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2000, 01, 05), [], []);
+        DateTime[] calendarArray = calendar.Take(10).ToArray();
 
-            // Assert
-            Assert.AreEqual(new DateTime(2000, 01, 06), calendarArray[0]);
-            Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[1]);
-            Assert.AreEqual(new DateTime(2000, 01, 20), calendarArray[2]);
-            Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[3]);
-            Assert.AreEqual(new DateTime(2000, 02, 03), calendarArray[4]);
-            Assert.AreEqual(new DateTime(2000, 02, 14), calendarArray[5]);
-            Assert.AreEqual(new DateTime(2000, 02, 17), calendarArray[6]);
-            Assert.AreEqual(new DateTime(2000, 02, 28), calendarArray[7]);
-            Assert.AreEqual(new DateTime(2000, 03, 02), calendarArray[8]);
-            Assert.AreEqual(new DateTime(2000, 03, 13), calendarArray[9]);
-        }
+        // Assert
+        Assert.AreEqual(new DateTime(2000, 01, 06), calendarArray[0]);
+        Assert.AreEqual(new DateTime(2000, 01, 17), calendarArray[1]);
+        Assert.AreEqual(new DateTime(2000, 01, 20), calendarArray[2]);
+        Assert.AreEqual(new DateTime(2000, 01, 31), calendarArray[3]);
+        Assert.AreEqual(new DateTime(2000, 02, 03), calendarArray[4]);
+        Assert.AreEqual(new DateTime(2000, 02, 14), calendarArray[5]);
+        Assert.AreEqual(new DateTime(2000, 02, 17), calendarArray[6]);
+        Assert.AreEqual(new DateTime(2000, 02, 28), calendarArray[7]);
+        Assert.AreEqual(new DateTime(2000, 03, 02), calendarArray[8]);
+        Assert.AreEqual(new DateTime(2000, 03, 13), calendarArray[9]);
     }
 }

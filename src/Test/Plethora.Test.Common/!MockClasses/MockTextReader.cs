@@ -3,42 +3,41 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Plethora.Test.MockClasses
+namespace Plethora.Test.MockClasses;
+
+class MockTextReader : TextReader
 {
-    class MockTextReader : TextReader
+    private readonly StringBuilder sb = new();
+    private readonly AutoResetEvent textReadyEvent = new(false);
+    private int currentIndex = 0;
+
+    public void AppendText(string str)
     {
-        private readonly StringBuilder sb = new StringBuilder();
-        private readonly AutoResetEvent textReadyEvent = new AutoResetEvent(false);
-        private int currentIndex = 0;
+        sb.Append(str);
+        textReadyEvent.Set();
+    }
 
-        public void AppendText(string str)
+    public override int Read(char[] buffer, int index, int count)
+    {
+        var actualCount = 0;
+
+        if (!(this.currentIndex < this.sb.Length))
         {
-            sb.Append(str);
-            textReadyEvent.Set();
+            textReadyEvent.WaitOne();
         }
 
-        public override int Read(char[] buffer, int index, int count)
+        int i = 0;
+        while ((actualCount < count) && (this.currentIndex < this.sb.Length))
         {
-            var actualCount = 0;
-
-            if (!(this.currentIndex < this.sb.Length))
-            {
-                textReadyEvent.WaitOne();
-            }
-
-            int i = 0;
-            while ((actualCount < count) && (this.currentIndex < this.sb.Length))
-            {
-                buffer[i++] = this.sb[this.currentIndex++];
-                actualCount++;
-            }
-
-            return actualCount;
+            buffer[i++] = this.sb[this.currentIndex++];
+            actualCount++;
         }
 
-        public override Task<int> ReadAsync(char[] buffer, int index, int count)
-        {
-            return Task.Run(() => this.Read(buffer, index, count));
-        }
+        return actualCount;
+    }
+
+    public override Task<int> ReadAsync(char[] buffer, int index, int count)
+    {
+        return Task.Run(() => this.Read(buffer, index, count));
     }
 }

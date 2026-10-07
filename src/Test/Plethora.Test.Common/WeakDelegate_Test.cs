@@ -12,7 +12,7 @@ namespace Plethora.Test
             // Arrange
             int callbackCount = 0;
             bool targetCollected = false;
-            Subscriber subscriber = new Subscriber(() => callbackCount++);
+            Subscriber subscriber = new(() => callbackCount++);
 
             // Action
             var weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
@@ -24,7 +24,7 @@ namespace Plethora.Test
 
             // Assert
             Assert.AreEqual(2, callbackCount);
-            Assert.AreEqual(false, targetCollected);
+            Assert.IsFalse(targetCollected);
 
             GC.KeepAlive(subscriber);
         }
@@ -35,7 +35,7 @@ namespace Plethora.Test
             // Arrange
             int callbackCount = 0;
             bool targetCollected = false;
-            FuncSubscriber subscriber = new FuncSubscriber(() => callbackCount++);
+            FuncSubscriber subscriber = new(() => callbackCount++);
 
             // Action
             var weakDelegate = WeakDelegate.CreateWeakDelegate<FuncEventHandler, long>(
@@ -49,7 +49,7 @@ namespace Plethora.Test
             Assert.AreEqual(0, result1);
             Assert.AreEqual(1, result2);
             Assert.AreEqual(2, callbackCount);
-            Assert.AreEqual(false, targetCollected);
+            Assert.IsFalse(targetCollected);
 
             GC.KeepAlive(subscriber);
         }
@@ -58,14 +58,14 @@ namespace Plethora.Test
         public void TargetCollected_Action()
         {
             // Arrange
-            Publisher publisher = new Publisher();
+            Publisher publisher = new();
 
             int callbackCount = 0;
             bool targetCollected = false;
 
             Action setup = delegate () // .NET Core GC requires the value be out of scope, to be eligable for collection
             {
-                Subscriber subscriber = new Subscriber(() => callbackCount++);
+                Subscriber subscriber = new(() => callbackCount++);
 
                 // Action
                 publisher.Event += WeakDelegate.CreateWeakDelegate<EventHandler>(
@@ -78,7 +78,7 @@ namespace Plethora.Test
 
                 GC.KeepAlive(subscriber);
                 Assert.AreEqual(2, callbackCount);
-                Assert.AreEqual(false, targetCollected);
+                Assert.IsFalse(targetCollected);
 
                 subscriber = null;
             };
@@ -90,21 +90,21 @@ namespace Plethora.Test
             publisher.TriggerEvent();
 
             Assert.AreEqual(2, callbackCount);  // unchanged from above
-            Assert.AreEqual(true, targetCollected);
+            Assert.IsTrue(targetCollected);
         }
 
         [TestMethod]
         public void TargetCollected_Func()
         {
             // Arrange
-            FuncPublisher publisher = new FuncPublisher();
+            FuncPublisher publisher = new();
 
             int callbackCount = 0;
             bool targetCollected = false;
 
             Action setup = delegate () // .NET Core GC requires the value be out of scope, to be eligable for collection
             {
-                FuncSubscriber subscriber = new FuncSubscriber(() => callbackCount++);
+                FuncSubscriber subscriber = new(() => callbackCount++);
 
                 // Action
                 publisher.Event += WeakDelegate.CreateWeakDelegate<FuncEventHandler, long>(
@@ -117,7 +117,7 @@ namespace Plethora.Test
 
                 GC.KeepAlive(subscriber);
                 Assert.AreEqual(2, callbackCount);
-                Assert.AreEqual(false, targetCollected);
+                Assert.IsFalse(targetCollected);
 
                 subscriber = null;
             };
@@ -129,20 +129,20 @@ namespace Plethora.Test
             publisher.TriggerEvent();
 
             Assert.AreEqual(2, callbackCount);  // unchanged from above
-            Assert.AreEqual(true, targetCollected);
+            Assert.IsTrue(targetCollected);
         }
 
         [TestMethod]
         public void TargetCollectedDelegateRemoved()
         {
             // Arrange
-            Publisher publisher = new Publisher();
+            Publisher publisher = new();
 
             int callbackCount = 0;
 
             Action setup = delegate () // .NET Core GC requires the value be out of scope, to be eligable for collection
             {
-                Subscriber subscriber = new Subscriber(() => callbackCount++);
+                Subscriber subscriber = new(() => callbackCount++);
 
                 // Action
                 publisher.Event += WeakDelegate.CreateWeakDelegate<EventHandler>(
@@ -155,11 +155,11 @@ namespace Plethora.Test
             GC.Collect(2);
 
             // Assert
-            Assert.AreEqual(false, publisher.EventIsEmpty);
+            Assert.IsFalse(publisher.EventIsEmpty);
 
             publisher.TriggerEvent();
 
-            Assert.AreEqual(true, publisher.EventIsEmpty);
+            Assert.IsTrue(publisher.EventIsEmpty);
         }
 
         [TestMethod]
@@ -193,29 +193,29 @@ namespace Plethora.Test
                 handler => { });
 
             // Assert
-            Assert.AreEqual(true, weakDelegate.IsTargetAlive());
+            Assert.IsTrue(weakDelegate.IsTargetAlive());
         }
 
         [TestMethod]
         public void Helper_IsTargetAlive_NotWeakDelegate()
         {
             // Arrange
-            Publisher publisher = new Publisher();
+            Publisher publisher = new();
 
             // Action
             Action @delegate = publisher.TriggerEvent;
 
             // Assert
-            Assert.AreEqual(true, @delegate.IsTargetAlive());
+            Assert.IsTrue(@delegate.IsTargetAlive());
         }
 
         [TestMethod]
         public void Helper_IsTargetAlive_TargetKeptAlive()
         {
             // Arrange
-            Publisher publisher = new Publisher();
+            Publisher publisher = new();
 
-            Subscriber subscriber = new Subscriber(() => { });
+            Subscriber subscriber = new(() => { });
 
             // Action
             var weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
@@ -224,7 +224,7 @@ namespace Plethora.Test
             publisher.Event += weakDelegate;
 
             // Assert
-            Assert.AreEqual(true, weakDelegate.IsTargetAlive());
+            Assert.IsTrue(weakDelegate.IsTargetAlive());
 
             GC.KeepAlive(subscriber);
         }
@@ -233,14 +233,14 @@ namespace Plethora.Test
         public void Helper_IsTargetAlive_TargetCollected()
         {
             // Arrange
-            Publisher publisher = new Publisher();
+            Publisher publisher = new();
 
             EventHandler weakDelegate = null;
             int callbackCount = 0;
 
             Action setup = delegate () // .NET Core GC requires the value be out of scope, to be eligable for collection
             {
-                Subscriber subscriber = new Subscriber(() => callbackCount++);
+                Subscriber subscriber = new(() => callbackCount++);
 
                 // Action
                 weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
@@ -255,7 +255,7 @@ namespace Plethora.Test
             GC.Collect(2);
 
             // Assert
-            Assert.AreEqual(false, weakDelegate.IsTargetAlive());
+            Assert.IsFalse(weakDelegate.IsTargetAlive());
         }
 
 
@@ -275,18 +275,11 @@ namespace Plethora.Test
             }
         }
 
-        private class Subscriber
+        private class Subscriber(Action action)
         {
-            private readonly Action action;
-
-            public Subscriber(Action action)
-            {
-                this.action = action;
-            }
-
             public void Callback(object o, EventArgs e)
             {
-                this.action();
+                action();
             }
         }
 
@@ -296,31 +289,22 @@ namespace Plethora.Test
 
             public void TriggerEvent()
             {
-                var handler = Event;
-                if (handler != null)
-                    handler(this, EventArgs.Empty);
+                Event?.Invoke(this, EventArgs.Empty);
             }
 
             public bool EventIsEmpty
             {
-                get { return (Event == null); }
+                get { return Event == null; }
             }
         }
 
         private delegate long FuncEventHandler(object sender, EventArgs e);
 
-        private class FuncSubscriber
+        private class FuncSubscriber(Func<long> func)
         {
-            private readonly Func<long> func;
-
-            public FuncSubscriber(Func<long> func)
-            {
-                this.func = func;
-            }
-
             public long Callback(object o, EventArgs e)
             {
-                return this.func();
+                return func();
             }
         }
 
@@ -330,14 +314,12 @@ namespace Plethora.Test
 
             public void TriggerEvent()
             {
-                var handler = Event;
-                if (handler != null)
-                    handler(this, EventArgs.Empty);
+                Event?.Invoke(this, EventArgs.Empty);
             }
 
             public bool EventIsEmpty
             {
-                get { return (Event == null); }
+                get { return Event == null; }
             }
         }
 

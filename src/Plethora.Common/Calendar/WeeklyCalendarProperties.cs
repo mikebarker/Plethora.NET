@@ -2,62 +2,61 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Plethora.Calendar
+namespace Plethora.Calendar;
+
+/// <summary>
+/// Represents a calendar which specifies dates which occur every n months.
+/// </summary>
+public sealed class WeeklyCalendarProperties : ICalendarProperties
 {
+    private readonly int nWeekly;
+    private readonly DayOfWeek[] daysOfWeek;
+
+
     /// <summary>
-    /// Represents a calendar which specifies dates which occur every n months.
+    /// Initialise a new instance of the <see cref="WeeklyCalendarProperties"/> class.
     /// </summary>
-    public sealed class WeeklyCalendarProperties : ICalendarProperties
+    /// <param name="nWeekly">The number of weeks between occurrences in this calendar.</param>
+    public WeeklyCalendarProperties(int nWeekly, IEnumerable<DayOfWeek> daysOfWeek)
     {
-        private readonly int nWeekly;
-        private readonly DayOfWeek[] daysOfWeek;
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(nWeekly, 0);
+        ArgumentNullException.ThrowIfNull(daysOfWeek);
 
 
-        /// <summary>
-        /// Initialise a new instance of the <see cref="WeeklyCalendarProperties"/> class.
-        /// </summary>
-        /// <param name="nWeekly">The number of weeks between occurrences in this calendar.</param>
-        public WeeklyCalendarProperties(int nWeekly, IEnumerable<DayOfWeek> daysOfWeek)
+        this.nWeekly = nWeekly;
+        this.daysOfWeek = daysOfWeek.Distinct().OrderBy(dow => dow).ToArray();
+
+        if (this.daysOfWeek.Length == 0)
+            throw new ArgumentException(ResourceProvider.AtLeastOneDayOfWeek(), nameof(daysOfWeek));
+    }
+
+    /// <inheritdoc/>
+    public IEnumerable<DateTime> GenerateCalendar(
+        DateTime startDate,
+        IEnumerable<DayOfWeek> weekendDays,
+        IEnumerable<DateTime> holidays)
+    {
+        while (!((IList<DayOfWeek>)this.daysOfWeek).Contains(startDate.DayOfWeek))
         {
-            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(nWeekly, 0);
-            ArgumentNullException.ThrowIfNull(daysOfWeek);
-
-
-            this.nWeekly = nWeekly;
-            this.daysOfWeek = daysOfWeek.Distinct().OrderBy(dow => dow).ToArray();
-
-            if (this.daysOfWeek.Length == 0)
-                throw new ArgumentException(ResourceProvider.AtLeastOneDayOfWeek(), nameof(daysOfWeek));
+            startDate = startDate.AddDays(1);
         }
 
-        /// <inheritdoc/>
-        public IEnumerable<DateTime> GenerateCalendar(
-            DateTime startDate,
-            IEnumerable<DayOfWeek> weekendDays,
-            IEnumerable<DateTime> holidays)
+        DateTime firstDateOfWeek = startDate;
+        firstDateOfWeek = firstDateOfWeek.AddDays(-(int)firstDateOfWeek.DayOfWeek);
+
+        while (true)
         {
-            while (!((IList<DayOfWeek>)this.daysOfWeek).Contains(startDate.DayOfWeek))
+            foreach (DayOfWeek dayOfWeek in this.daysOfWeek)
             {
-                startDate = startDate.AddDays(1);
-            }
+                DateTime date = firstDateOfWeek.AddDays((int)dayOfWeek);
 
-            DateTime firstDateOfWeek = startDate;
-            firstDateOfWeek = firstDateOfWeek.AddDays(-(int)firstDateOfWeek.DayOfWeek);
-
-            while (true)
-            {
-                foreach (DayOfWeek dayOfWeek in this.daysOfWeek)
+                if (startDate <= date)
                 {
-                    DateTime date = firstDateOfWeek.AddDays((int)dayOfWeek);
-
-                    if (startDate <= date)
-                    {
-                        yield return date;
-                    }
+                    yield return date;
                 }
-
-                firstDateOfWeek = firstDateOfWeek.AddDays(7 * this.nWeekly);
             }
+
+            firstDateOfWeek = firstDateOfWeek.AddDays(7 * this.nWeekly);
         }
     }
 }

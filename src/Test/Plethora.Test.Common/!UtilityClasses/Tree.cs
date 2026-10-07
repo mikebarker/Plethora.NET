@@ -2,43 +2,36 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Plethora.Test.UtilityClasses
+namespace Plethora.Test.UtilityClasses;
+
+class Tree(TreeElement root) : IEnumerable<TreeElement>
 {
-    class Tree : IEnumerable<TreeElement>
+
+    #region Implementation of IEnumerable<TreeElement>
+
+    public IEnumerator<TreeElement> GetEnumerator()
     {
-        private readonly TreeElement root;
-
-        public Tree(TreeElement root)
-        {
-            this.root = root;
-        }
-
-        #region Implementation of IEnumerable<TreeElement>
-
-        public IEnumerator<TreeElement> GetEnumerator()
-        {
-            return Enumerable.Repeat(root, 1).GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        #endregion
+        return Enumerable.Repeat(root, 1).GetEnumerator();
     }
 
-    class TreeElement
+    IEnumerator IEnumerable.GetEnumerator()
     {
-        private readonly List<TreeElement> children = new List<TreeElement>();
+        return GetEnumerator();
+    }
+    #endregion
+}
 
-        public void AddChild(TreeElement element)
-        {
-            children.Add(element);
-        }
+class TreeElement
+{
+    private readonly List<TreeElement> children = new List<TreeElement>();
 
-        public IEnumerable<TreeElement> Children
-        {
-            get { return children; }
-        }
+    public void AddChild(TreeElement element)
+    {
+        children.Add(element);
+    }
+
+    public IEnumerable<TreeElement> Children
+    {
+        get { return children; }
     }
 }
