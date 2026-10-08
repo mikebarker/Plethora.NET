@@ -82,14 +82,9 @@ public sealed class MonthlyCalendarProperties : ICalendarProperties
                 }
             }
 
-            month += this.nMonthly;
-            if (month >= 13)
-            {
-                int quotient = Math.DivRem(month, 12, out var remainder);
-
-                month = remainder;
-                year += quotient;
-            }
+            var monthOffset = (month - 1) + this.nMonthly; // - 1 to ensure months are zero-indexed (e.g. January -> 0)
+            year += (int)(monthOffset / 12);
+            month = (int)(monthOffset % 12) + 1; // + 1 to ensure months are 1-indexed (e.g. January -> 1)
         }
     }
 }

@@ -140,6 +140,21 @@ public class MonthlyCalendarProperties_Test
     }
 
     [TestMethod]
+    public void Generate_YearlyInterval_FromDecember()
+    {
+        // Arrange
+        ICalendarProperties calendarProperties = new MonthlyCalendarProperties(12, [1]);
+
+        // Action
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(new DateTime(2020, 12, 1), [], []);
+        DateTime[] calendarArray = calendar.Take(2).ToArray();
+
+        // Assert
+        Assert.AreEqual(new DateTime(2020, 12, 1), calendarArray[0]);
+        Assert.AreEqual(new DateTime(2021, 12, 1), calendarArray[1]);
+    }
+
+    [TestMethod]
     public void Generate_Monthly_EndOfMonth()
     {
         // Arrange
