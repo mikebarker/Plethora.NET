@@ -43,16 +43,22 @@ public static class TextReaderHelper
         ArgumentNullException.ThrowIfNull(reader);
         ArgumentNullException.ThrowIfNull(writer);
 
-        int bytes;
 
         var buffer = ArrayPool<char>.Shared.Rent(BUFFER_SIZE);
-        while ((bytes = await reader.ReadAsync(buffer, 0, BUFFER_SIZE).ConfigureAwait(false)) > 0)
+        try
         {
-            interceptAction?.Invoke(buffer, 0, bytes);
+            int bytes;
+            while ((bytes = await reader.ReadAsync(buffer, 0, BUFFER_SIZE).ConfigureAwait(false)) > 0)
+            {
+                interceptAction?.Invoke(buffer, 0, bytes);
 
-            await writer.WriteAsync(buffer, 0, bytes).ConfigureAwait(false);
+                await writer.WriteAsync(buffer, 0, bytes).ConfigureAwait(false);
+            }
         }
-        ArrayPool<char>.Shared.Return(buffer);
+        finally
+        {
+            ArrayPool<char>.Shared.Return(buffer);
+        }
     }
 
     /// <summary>
