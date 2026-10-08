@@ -26,15 +26,15 @@ public static class EnumHelper
     /// <returns>
     /// An <see cref="IEnumerable{T}"/> containing the elements of the enum.
     /// </returns>
-    public static IEnumerable<T> GetValues<T>()
+    public static T[] GetValues<T>()
     {
         //Validation
-        if (typeof(T).IsSubclassOf(typeof(Enum)))
+        if (!typeof(T).IsSubclassOf(typeof(Enum)))
             throw new ArgumentException(ResourceProvider.ArgMustBeOfType(nameof(T), typeof(Enum)), nameof(T));
 
 
-        Array flagValues = Enum.GetValues(typeof(T));
-        return flagValues.OfType<T>();
+        var flagValues = Enum.GetValues(typeof(T));
+        return (T[])flagValues;
     }
 
     /// <summary>

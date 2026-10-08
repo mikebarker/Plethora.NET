@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
@@ -9,10 +10,43 @@ namespace Plethora.Test;
 [TestClass]
 public class EnumHelper_Test
 {
+    #region GetValues
+
+    [TestMethod]
+    public void GetValues_ReturnsAllValues()
+    {
+        // Action
+        var d = EnumHelper.GetValues<NoFlagsEnum>();
+
+        // Assert
+        Assert.HasCount(11, d);
+        Assert.AreEqual(NoFlagsEnum.Zero, d[0]);
+        Assert.AreEqual(NoFlagsEnum.One, d[1]);
+        Assert.AreEqual(NoFlagsEnum.Two, d[2]);
+        Assert.AreEqual(NoFlagsEnum.Three, d[3]);
+        Assert.AreEqual(NoFlagsEnum.Four, d[4]);
+        Assert.AreEqual(NoFlagsEnum.Five, d[5]);
+        Assert.AreEqual(NoFlagsEnum.Six, d[6]);
+        Assert.AreEqual(NoFlagsEnum.Seven, d[7]);
+        Assert.AreEqual(NoFlagsEnum.Eight, d[8]);
+        Assert.AreEqual(NoFlagsEnum.Nine, d[9]);
+        Assert.AreEqual(NoFlagsEnum.Ten, d[10]);
+    }
+
+    [TestMethod]
+    public void GetValues_NotAnEnum()
+    {
+        Assert.Throws<ArgumentException>(() => EnumHelper.GetValues<string>());
+    }
+
+    #endregion
+
+    #region Description
+
     #region NoFlags
 
     [TestMethod]
-    public void NoFlags_Zero()
+    public void Description_NoFlags_Zero()
     {
         // Arrange
         var enumValue = NoFlagsEnum.Zero;
@@ -25,7 +59,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void NoFlags_KnownElement()
+    public void Description_NoFlags_KnownElement()
     {
         // Arrange
         var enumValue = NoFlagsEnum.Four;
@@ -38,7 +72,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void NoFlags_KnownElementIsNotFlagged()
+    public void Description_NoFlags_KnownElementIsNotFlagged()
     {
         // Arrange
         var enumValue = NoFlagsEnum.Five;
@@ -51,7 +85,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void NoFlags_UnknownElement()
+    public void Description_NoFlags_UnknownElement()
     {
         // Arrange
         var enumValue = (NoFlagsEnum)87;
@@ -68,7 +102,7 @@ public class EnumHelper_Test
     #region NoFlagsWithDescription
 
     [TestMethod]
-    public void NoFlagsWithDescription_Zero()
+    public void Description_NoFlagsWithDescription_Zero()
     {
         // Arrange
         var enumValue = NoFlagsWithDescriptionEnum.Zero;
@@ -81,7 +115,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void NoFlagsWithDescription_KnownElement()
+    public void Description_NoFlagsWithDescription_KnownElement()
     {
         // Arrange
         var enumValue = NoFlagsWithDescriptionEnum.Four;
@@ -94,7 +128,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void NoFlagsWithDescription_KnownElementIsNotFlagged()
+    public void Description_NoFlagsWithDescription_KnownElementIsNotFlagged()
     {
         // Arrange
         var enumValue = NoFlagsWithDescriptionEnum.Five;
@@ -107,7 +141,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void NoFlagsWithDescription_UnknownElement()
+    public void Description_NoFlagsWithDescription_UnknownElement()
     {
         // Arrange
         var enumValue = (NoFlagsWithDescriptionEnum)87;
@@ -124,7 +158,7 @@ public class EnumHelper_Test
     #region Flags
 
     [TestMethod]
-    public void Flags_Zero()
+    public void Description_Flags_Zero()
     {
         // Arrange
         var enumValue = FlagsEnum.Nothing;
@@ -137,7 +171,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void Flags_SingleFlag()
+    public void Description_Flags_SingleFlag()
     {
         // Arrange
         var enumValue = FlagsEnum.Setting1;
@@ -150,7 +184,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void Flags_MultipleFlags()
+    public void Description_Flags_MultipleFlags()
     {
         // Arrange
         var enumValue = FlagsEnum.Setting1 | FlagsEnum.Setting2;
@@ -163,7 +197,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void Flags_CoveringFlags()
+    public void Description_Flags_CoveringFlags()
     {
         // Arrange
         var enumValue = FlagsEnum.AllSettings;
@@ -176,7 +210,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void Flags_Unknown()
+    public void Description_Flags_Unknown()
     {
         // Arrange
         var enumValue = ((FlagsEnum) 16);
@@ -193,7 +227,7 @@ public class EnumHelper_Test
     #region FlagsWithDescription
 
     [TestMethod]
-    public void FlagsWithDescription_Zero()
+    public void Description_FlagsWithDescription_Zero()
     {
         // Arrange
         var enumValue = FlagsWithDescriptionEnum.Nothing;
@@ -206,7 +240,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void FlagsWithDescription_SingleFlag()
+    public void Description_FlagsWithDescription_SingleFlag()
     {
         // Arrange
         var enumValue = FlagsWithDescriptionEnum.Setting1;
@@ -219,7 +253,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void FlagsWithDescription_MultipleFlags()
+    public void Description_FlagsWithDescription_MultipleFlags()
     {
         // Arrange
         var enumValue = FlagsWithDescriptionEnum.Setting1 | FlagsWithDescriptionEnum.Setting2;
@@ -232,7 +266,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void FlagsWithDescription_CoveringFlags()
+    public void Description_FlagsWithDescription_CoveringFlags()
     {
         // Arrange
         var enumValue = FlagsWithDescriptionEnum.AllSettings;
@@ -245,7 +279,7 @@ public class EnumHelper_Test
     }
 
     [TestMethod]
-    public void FlagsWithDescription_Unknown()
+    public void Description_FlagsWithDescription_Unknown()
     {
         // Arrange
         var enumValue = ((FlagsWithDescriptionEnum)16);
@@ -259,6 +293,7 @@ public class EnumHelper_Test
 
     #endregion
 
+    #endregion
 
 
 
