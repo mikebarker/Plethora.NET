@@ -51,6 +51,14 @@ public static class TypeHelper
 
         try
         {
+            if (returnType == typeof(string))
+            {
+                if (value is null)
+                    return null;
+
+                return value.ToString();
+            }
+
             if (returnType.IsEnum)
             {
                 if (value is string strEnumValue)
@@ -71,6 +79,9 @@ public static class TypeHelper
             {
                 if (value is null)
                     return null; //Unboxing will take care of type conversion.
+
+                if (returnType.IsClass)
+                    throw new InvalidCastException(ResourceProvider.InvalidCast());
 
                 Type? underlyingType = Nullable.GetUnderlyingType(returnType);
 

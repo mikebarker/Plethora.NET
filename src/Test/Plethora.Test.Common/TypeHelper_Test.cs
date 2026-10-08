@@ -111,6 +111,19 @@ public class TypeHelper_Test
     }
 
     [TestMethod]
+    public void GetAs_String_FromInt32()
+    {
+        //setup
+        int value = 134;
+
+        //exec
+        var result = TypeHelper.As<string>(value);
+
+        //test
+        Assert.AreEqual("134", result);
+    }
+
+    [TestMethod]
     public void GetAs_String_Null()
     {
         //setup
