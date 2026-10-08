@@ -330,11 +330,9 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     {
         Rational f = x / y;
 
-        int remainder;
-        Math.DivRem(
+        var (_, remainder) = Math.DivRem(
             f.numerator,
-            f.denominator,
-            out remainder);
+            f.denominator);
 
         return remainder;
     }
