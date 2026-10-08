@@ -99,6 +99,42 @@ public class SpacialOperations_Test
 
 
 
+    [TestMethod]
+    public void SpacialRegion_Subtract_OverlappingRegionExtendsBeyondRegionA()
+    {
+        // Arrange
+        var regionA = new SpaceRegion<int, int>(
+            new RangeInclusiveSet<int>(new Range<int>(0, true, 10, true)),
+            new RangeInclusiveSet<int>(new Range<int>(0, true, 10, true)));
+
+        var regionB = new SpaceRegion<int, int>(
+            new RangeInclusiveSet<int>(new Range<int>(5, true, 15, true)),
+            new RangeInclusiveSet<int>(new Range<int>(5, true, 15, true)));
+
+        // Action
+        var results = SpacialOperations.Subtract(regionA, regionB).ToArray();
+
+        // Assert
+        for (int x = -1; x <= 16; x++)
+        {
+            for (int y = -1; y <= 16; y++)
+            {
+                bool expected = SpacialOperations.IsPointInRegion(
+                    Tuple.Create(x, y),
+                    regionA) &&
+                    !SpacialOperations.IsPointInRegion(
+                        Tuple.Create(x, y),
+                        regionB);
+
+                bool actual = results.Any(region => SpacialOperations.IsPointInRegion(
+                    Tuple.Create(x, y),
+                    region));
+
+                Assert.AreEqual(expected, actual, $"Unexpected subtraction result at ({x}, {y}).");
+            }
+        }
+    }
+
     #region Helper Methods
 
     private static void AssertAreEqual(SpaceRegion expected, SpaceRegion actual)

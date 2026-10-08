@@ -22,7 +22,8 @@ public static class SpacialOperations
         {
             if (i > 0)
             {
-                remainingDimensions[i - 1] = regionB.Dimensions[i - 1];
+                remainingDimensions[i - 1] = regionA.Dimensions[i - 1]
+                    .Intersect(regionB.Dimensions[i - 1]);
             }
 
             var remainingDimensionSets = regionA.Dimensions[i].SubtractMulti(regionB.Dimensions[i]);
@@ -31,7 +32,9 @@ public static class SpacialOperations
                 if (remainingDim.IsEmpty != true)
                 {
                     remainingDimensions[i] = remainingDim;
-                    list.Add(ctorFunc(remainingDimensions));
+                    var remainingRegion = ctorFunc(remainingDimensions);
+                    if (!remainingRegion.IsEmpty)
+                        list.Add(remainingRegion);
                 }
             }
         }
