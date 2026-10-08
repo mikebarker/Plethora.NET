@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Plethora.IO;
@@ -157,6 +158,21 @@ public sealed class MulticastWriter : TextWriter
             return Task.CompletedTask;
 
         return this.ExecuteAsync(writer => writer.WriteAsync(value));
+    }
+
+    public override void Flush()
+    {
+        this.Execute(writer => writer.Flush());
+    }
+
+    public override Task FlushAsync()
+    {
+        return ExecuteAsync(writer => writer.FlushAsync());
+    }
+
+    public override Task FlushAsync(CancellationToken cancellationToken)
+    {
+        return ExecuteAsync(writer => writer.FlushAsync(cancellationToken));
     }
 
     #endregion
