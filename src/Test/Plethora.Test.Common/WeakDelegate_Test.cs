@@ -55,6 +55,24 @@ namespace Plethora.Test
         }
 
         [TestMethod]
+        public void CanCreate_CovariantFunc()
+        {
+            // Arrange
+            ReturningSubscriber subscriber = new();
+            Func<string> stringCallback = subscriber.Callback;
+            Func<object> callback = stringCallback;
+
+            // Action
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<Func<object>, object>(
+                callback,
+                _ => "collected");
+
+            // Assert
+            Assert.AreEqual("value", weakDelegate());
+            GC.KeepAlive(subscriber);
+        }
+
+        [TestMethod]
         public void TargetCollected_Action()
         {
             // Arrange
@@ -305,6 +323,14 @@ namespace Plethora.Test
             public long Callback(object o, EventArgs e)
             {
                 return func();
+            }
+        }
+
+        private class ReturningSubscriber
+        {
+            public string Callback()
+            {
+                return "value";
             }
         }
 

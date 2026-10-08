@@ -125,8 +125,8 @@ public static class WeakDelegate
             throw new ArgumentException(string.Format("The return type of {0} is 'void'. Use CreateWeakDelegate<{0}>({0}, Action<{0}>)",
                 typeof(TDelegate).Name));
 
-        if (!del.Method.ReturnType.IsAssignableFrom(typeof(TResult)))
-            throw new ArgumentException($"The return type of the {typeof(TDelegate).Name} is {del.Method.ReturnType.Name}, but this is not assignable from the type of TResult specified, {typeof(TResult).Name}.");
+        if (!typeof(TResult).IsAssignableFrom(del.Method.ReturnType))
+            throw new ArgumentException($"The return type of the {typeof(TDelegate).Name} is {del.Method.ReturnType.Name}, but this is not assignable to the type of TResult specified, {typeof(TResult).Name}.");
 
 
         /* ****************************
