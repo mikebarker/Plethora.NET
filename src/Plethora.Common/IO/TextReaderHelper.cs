@@ -100,13 +100,19 @@ public static class TextReaderHelper
         {
             int bytes;
             var buffer = ArrayPool<char>.Shared.Rent(BUFFER_SIZE);
-            while ((bytes = reader.Read(buffer, 0, BUFFER_SIZE)) > 0)
+            try
             {
-                interceptAction?.Invoke(buffer, 0, bytes);
+                while ((bytes = reader.Read(buffer, 0, BUFFER_SIZE)) > 0)
+                {
+                    interceptAction?.Invoke(buffer, 0, bytes);
 
-                writer.Write(buffer, 0, bytes);
+                    writer.Write(buffer, 0, bytes);
+                }
             }
-            ArrayPool<char>.Shared.Return(buffer);
+            finally
+            {
+                ArrayPool<char>.Shared.Return(buffer);
+            }
         });
     }
 }
