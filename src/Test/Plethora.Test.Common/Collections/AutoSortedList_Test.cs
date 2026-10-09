@@ -610,6 +610,41 @@ public class AutoSortedList_Test
     }
     #endregion
 
+    #region IndexOf and LastIndexOf
+
+    [TestMethod]
+    public void IndexOf_WithStartIndex_DoesNotFindEarlierItem()
+    {
+        // Arrange
+        var list = new AutoSortedList<int>(DuplicatesPolicy.Allow, Comparer<int>.Default);
+        list.Add(1);
+        list.Add(2);
+        list.Add(3);
+
+        // Action
+        int index = list.IndexOf(1, 1);
+
+        // Assert
+        Assert.AreEqual(-1, index);
+    }
+
+    [TestMethod]
+    public void LastIndexOf_DuplicateItemsAtEnd_DoesNotThrow()
+    {
+        // Arrange
+        var list = new AutoSortedList<int>(DuplicatesPolicy.Allow, Comparer<int>.Default);
+        list.Add(1);
+        list.Add(1);
+        list.Add(1);
+
+        // Action
+        int index = list.LastIndexOf(1);
+
+        // Assert
+        Assert.AreEqual(2, index);
+    }
+
+    #endregion
 
     #region Private Methods
 

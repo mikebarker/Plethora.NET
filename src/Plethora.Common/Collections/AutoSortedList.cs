@@ -429,21 +429,22 @@ public class AutoSortedList<T> : IList<T>
     public int IndexOf(T item, int index)
     {
         int count = this.innerList.Count - index;
-        return this.IndexOf(item, 0, count);
+        return this.IndexOf(item, index, count);
     }
 
     public int IndexOf(T item, int index, int count)
     {
         int indexOf = this.BinarySearch(index, count, item);
         if (indexOf < 0)
-            return indexOf;
+            return -1;
 
         if (this.IsUnique)
             return indexOf;
 
         //List not necessarily unique. Find first matching item using linear search
         int nextIndexOf = indexOf - 1;
-        while ((nextIndexOf >= index) && (this.comparer.Compare(item, this[nextIndexOf]) == 0))
+        int minIndex = index;
+        while ((nextIndexOf >= minIndex) && (this.comparer.Compare(item, this[nextIndexOf]) == 0))
         {
             indexOf = nextIndexOf;
             nextIndexOf--;
@@ -467,14 +468,14 @@ public class AutoSortedList<T> : IList<T>
     {
         int indexOf = this.BinarySearch(index, count, item);
         if (indexOf < 0)
-            return indexOf;
+            return -1;
 
         if (this.IsUnique)
             return indexOf;
 
         //List not necessarily unique. Find last matching item using linear search
         int nextIndexOf = indexOf + 1;
-        int maxIndex = index + count;
+        int maxIndex = index + count - 1;
         while ((nextIndexOf <= maxIndex) && (this.comparer.Compare(item, this[nextIndexOf]) == 0))
         {
             indexOf = nextIndexOf;
