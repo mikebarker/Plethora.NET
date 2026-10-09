@@ -5,13 +5,23 @@ using System.Threading.Tasks;
 
 namespace Plethora.Collections;
 
-public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>
+/// <summary>
+/// Provides a replayable view over a shared asynchronous source.
+/// </summary>
+/// <remarks>
+/// Dispose this instance when abandoning the source before it is fully enumerated.
+/// Disposing an individual enumerator does not dispose the shared source.
+/// </remarks>
+public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposable
 {
     private readonly IAsyncEnumerable<T> source;
     private readonly IAsyncEnumerator<T> sourceEnumerator;
     private readonly List<T> bufferedResults = new();
     private readonly SemaphoreSlim asyncLock = new(1, 1);
+    private readonly SemaphoreSlim sourceLock = new(1, 1);
     private bool isEnumerationComplete = false;
+    private bool isDisposed = false;
+    private bool isSourceEnumeratorDisposed = false;
     private Task<bool>? moveNextTask;
 
     public ReplayableAsyncEnumerable(
@@ -21,9 +31,37 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>
         this.sourceEnumerator = this.source.GetAsyncEnumerator();
     }
 
+    /// <inheritdoc/>
     public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
     {
         return new Enumerator(this, cancellationToken);
+    }
+
+    /// <inheritdoc/>
+    public async ValueTask DisposeAsync()
+    {
+        Task<bool>? moveNextTaskCopy;
+
+        await this.asyncLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            this.isDisposed = true;
+            moveNextTaskCopy = this.moveNextTask;
+        }
+        finally
+        {
+            this.asyncLock.Release();
+        }
+
+        try
+        {
+            if (moveNextTaskCopy is not null)
+                await moveNextTaskCopy.ConfigureAwait(false);
+        }
+        finally
+        {
+            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
+        }
     }
 
     private async Task<bool> MoveToAsync(int index)
@@ -33,6 +71,8 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>
         await this.asyncLock.WaitAsync();
         try
         {
+            ObjectDisposedException.ThrowIf(this.isDisposed, this);
+
             if (index < this.bufferedResults.Count)
             {
                 return true;
@@ -69,9 +109,29 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>
 
     private async Task<bool> MoveNextAsync()
     {
-        bool result = await this.sourceEnumerator.MoveNextAsync();
+        bool result;
+        try
+        {
+            await this.sourceLock.WaitAsync().ConfigureAwait(false);
+            try
+            {
+                if (this.isSourceEnumeratorDisposed)
+                    throw new ObjectDisposedException(nameof(ReplayableAsyncEnumerable<T>));
 
-        await this.asyncLock.WaitAsync();
+                result = await this.sourceEnumerator.MoveNextAsync().ConfigureAwait(false);
+            }
+            finally
+            {
+                this.sourceLock.Release();
+            }
+        }
+        catch
+        {
+            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
+            throw;
+        }
+
+        await this.asyncLock.WaitAsync().ConfigureAwait(false);
         try
         {
             if (result)
@@ -84,11 +144,32 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>
             }
 
             this.moveNextTask = null;
-            return result;
         }
         finally
         {
             this.asyncLock.Release();
+        }
+
+        if (!result)
+            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
+
+        return result;
+    }
+
+    private async ValueTask DisposeSourceEnumeratorAsync()
+    {
+        await this.sourceLock.WaitAsync().ConfigureAwait(false);
+        try
+        {
+            if (this.isSourceEnumeratorDisposed)
+                return;
+
+            this.isSourceEnumeratorDisposed = true;
+            await this.sourceEnumerator.DisposeAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            this.sourceLock.Release();
         }
     }
 
@@ -108,13 +189,16 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>
             this.currentIndex = -1;
         }
 
+        /// <inheritdoc/>
         public T Current => this.enumerable.bufferedResults[this.currentIndex];
 
+        /// <inheritdoc/>
         public ValueTask DisposeAsync()
         {
             return ValueTask.CompletedTask;
         }
 
+        /// <inheritdoc/>
         public async ValueTask<bool> MoveNextAsync()
         {
             this.cancellationToken.ThrowIfCancellationRequested();
