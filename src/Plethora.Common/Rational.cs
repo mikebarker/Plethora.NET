@@ -14,6 +14,8 @@ namespace Plethora;
 [System.Diagnostics.DebuggerDisplay("Rational [{" + nameof(numerator) + "} / {" + nameof(denominator) + "}]")]
 public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable<Rational>
 {
+    public static readonly Rational Zero = new(0, 1, false);
+
     private readonly int numerator;
     private readonly int denominator;
 
@@ -35,8 +37,15 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     /// <param name="reduce">true if the numerator and denominator must be reduced to the canonical form; otherwise false.</param>
     private Rational(int numerator, int denominator, bool reduce)
     {
-        if (denominator == 0m)
+        if (denominator == 0)
             throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
+
+        if (numerator == 0)
+        {
+            this.numerator = 0;
+            this.denominator = 1;
+            return;
+        }
 
         if (reduce)
         {
@@ -71,6 +80,8 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     {
         get { return this.denominator; }
     }
+
+    private bool IsDefault => ((this.numerator == 0) && (this.denominator == 0));
 
     #region Equality
 
@@ -143,15 +154,21 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public int CompareTo(Rational other)
     {
-        double thisDouble = this.ToDouble();
-        double otherDouble = other.ToDouble();
+        if (this.IsDefault && other.IsDefault)
+            return 0;
 
-        return thisDouble.CompareTo(otherDouble);
+        if (this.IsDefault || other.IsDefault)
+            throw new InvalidOperationException();
+
+        long left = (long)this.numerator * (long)other.denominator;
+        long right = (long)other.numerator * (long)this.denominator;
+
+        return left.CompareTo(right);
     }
 
     #endregion
 
-    #region Convertion
+    #region Conversion
 
     public static explicit operator double(Rational rational)
     {
@@ -165,6 +182,9 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public double ToDouble()
     {
+        if (this.IsDefault)
+            throw new InvalidOperationException();
+
         return
             (double)this.numerator /
             (double)this.denominator;
@@ -172,6 +192,9 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public decimal ToDecimal()
     {
+        if (this.IsDefault)
+            throw new InvalidOperationException();
+
         return
             (decimal)this.numerator /
             (decimal)this.denominator;
@@ -225,6 +248,12 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static Rational operator +(Rational x, Rational y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
         int numerator =
             (x.numerator * y.denominator) +
             (y.numerator * x.denominator);
@@ -237,16 +266,28 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static Rational operator +(int x, Rational y)
     {
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
         return new Rational(x, 1, false) + y;
     }
 
     public static Rational operator +(Rational x, int y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
         return x + new Rational(y, 1, false);
     }
 
     public static Rational operator -(Rational x, Rational y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
         int numerator =
             (x.numerator * y.denominator) -
             (y.numerator * x.denominator);
@@ -259,11 +300,17 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static Rational operator -(int x, Rational y)
     {
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
         return new Rational(x, 1, false) - y;
     }
 
     public static Rational operator -(Rational x, int y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
         return x - new Rational(y, 1, false);
     }
 
@@ -273,6 +320,18 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static Rational operator *(Rational x, Rational y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.numerator == 0)
+            return Rational.Zero;
+
+        if (x.numerator == 0)
+            return Rational.Zero;
+
         // By applying the reduction before multiplying we reduce the likely-hood of
         // arithmetic overflows, and ensure the numbers are stored in their canonical form.
         int gcd1 = MathEx.GreatestCommonDivisor(x.numerator, y.denominator);
@@ -294,6 +353,18 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static Rational operator *(Rational x, int y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y == 0)
+            return Rational.Zero;
+
+        if (y == 1)
+            return x;
+
+        if (x.numerator == 0)
+            return Rational.Zero;
+
         // By applying the reduction before multiplying we reduce the likely-hood of
         // arithmetic overflows, and ensure the numbers are stored in their canonical form.
         int gcd = MathEx.GreatestCommonDivisor(y, x.denominator);
@@ -307,27 +378,72 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static Rational operator *(int x, Rational y)
     {
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
         return y * x;
     }
 
     public static Rational operator /(Rational x, Rational y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.numerator == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
+        if (x.numerator == 0)
+            return Rational.Zero;
+
         Rational result = x * y.Invert();
         return result;
     }
 
     public static Rational operator /(Rational x, int y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
+        if (y == 1)
+            return x;
+
+        if (x.numerator == 0)
+            return Rational.Zero;
+
         return x * new Rational(1, y, false);
     }
 
     public static Rational operator /(int x, Rational y)
     {
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.numerator == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
+        if (x == 0)
+            return Rational.Zero;
+
         return new Rational(x, 1, false) / y;
     }
 
     public static int operator %(Rational x, Rational y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.numerator == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
         Rational f = x / y;
 
         var (_, remainder) = Math.DivRem(
@@ -339,11 +455,23 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     public static int operator %(int x, Rational y)
     {
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.numerator == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
         return new Rational(x, 1, false) % y;
     }
 
     public static int operator %(Rational x, int y)
     {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
         return x % new Rational(y, 1, false);
     }
 
@@ -361,6 +489,12 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     /// </returns>
     public Rational Invert()
     {
+        if (this.IsDefault)
+            throw new InvalidOperationException();
+
+        if (this.numerator == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(this.Denominator)));
+
         return new Rational(this.denominator, this.numerator, false);
     }
 }
