@@ -52,6 +52,11 @@ public class WorkQueue : IDisposable
             }
         }
 
+        public void Cancel()
+        {
+            this.Fail(new OperationCanceledException("The work item was cancelled because the queue was aborted."));
+        }
+
         public object? GetResult()
         {
             this.waitHandle.WaitOne();
@@ -132,12 +137,15 @@ public class WorkQueue : IDisposable
         #endregion
     }
 
+    private const int NOT_ABORTED = 0;
+    private const int ABORTED = 1;
+
     #region Fields
 
     private readonly List<Thread> threads;
     private readonly Queue<WorkItem> workQueue = new();
     private readonly ManualResetEventSlim workWaitHandle = new(false);
-    private bool exitDoLoop = false;
+    private int isAborted = NOT_ABORTED;
     private int availableThreadCount;
 
     #endregion
@@ -275,8 +283,11 @@ public class WorkQueue : IDisposable
         if (this.disposed)
             throw new InvalidOperationException(ResourceProvider.AlreadyDisposed());
 
+        if (this.IsAborted)
+            throw new InvalidOperationException("The work queue has been aborted.");
+
         WorkItem workItem = new(method, args);
-        lock(this.workQueue)
+        lock (this.workQueue)
         {
             this.workQueue.Enqueue(workItem);
             this.workWaitHandle.Set();
@@ -330,14 +341,18 @@ public class WorkQueue : IDisposable
     }
 
     /// <summary>
-    /// Removes all waiting work from the queue, and signals worker threads to end after they complete their current work.
+    /// Cancels waiting work, clears the work queue, and signals worker threads to end after they complete their current work.
     /// </summary>
     public void Abort()
     {
-        this.exitDoLoop = true;
+        Interlocked.Exchange(ref this.isAborted, ABORTED);
         lock (this.workQueue)
         {
-            this.workQueue.Clear();
+            while (this.workQueue.Count > 0)
+            {
+                this.workQueue.Dequeue().Cancel();
+            }
+
             this.workWaitHandle.Set();
         }
     }
@@ -356,12 +371,14 @@ public class WorkQueue : IDisposable
 
     #region Private Methods
 
+    private bool IsAborted =>  Interlocked.CompareExchange(ref this.isAborted, NOT_ABORTED, NOT_ABORTED) == ABORTED;
+
     private void DoLoop()
     {
         bool isThisThreadAvailable = true;
 
         //Semi-infinite loop
-        while (!this.exitDoLoop)
+        while (!this.IsAborted)
         {
             WorkItem? workItem = null;
             bool workComplete;
