@@ -46,6 +46,23 @@ public class MruDictionary_Test
     }
 
     [TestMethod]
+    public void IndexerAssignmentOverMaxEntries()
+    {
+        // Arrange
+        MruDictionary<int, string> mruDictionary = new(maxEntries: 3, watermark: 2);
+        mruDictionary[1] = "one";
+        mruDictionary[2] = "two";
+        mruDictionary[3] = "three";
+
+        // Action
+        mruDictionary[4] = "four";
+
+        // Assert
+        Assert.AreEqual(2, mruDictionary.Count);
+        Assert.IsTrue(mruDictionary.ContainsKey(4));
+    }
+
+    [TestMethod]
     public void DropLeastUsed()
     {
         // Arrange

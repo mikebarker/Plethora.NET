@@ -194,7 +194,7 @@ public class MruDictionary<TKey, TValue> : IDictionary<TKey, TValue>
             }
             else
             {
-                this.innerDictionary[key] = new(value);
+                this.Add(key, value);
             }
         }
     }
