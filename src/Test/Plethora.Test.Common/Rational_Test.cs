@@ -1159,6 +1159,22 @@ public class Rational_Test
 
 
     [TestMethod]
+    public void DivRem()
+    {
+        // Arrange
+        Rational x = new(1, 2);
+        Rational y = new(3, 5);
+
+        // Action
+        var result = Rational.DivRem(x, y);
+
+        // Assert
+        // 1/2 / 3/5 = 0 r 5/6
+        Assert.AreEqual(0, result.Quotient);
+        Assert.AreEqual(new(5, 6), result.Remainder);
+    }
+
+    [TestMethod]
     public void Op_Modulus_Rationals()
     {
         // Arrange
@@ -1166,11 +1182,11 @@ public class Rational_Test
         Rational y = new(3, 5);
 
         // Action
-        int result = (x % y);
+        var result = (x % y);
 
         // Assert
-        // 5 % 6 = 5
-        Assert.AreEqual(5, result);
+        // 1/2 % 3/5 = 5/6
+        Assert.AreEqual(new(5, 6), result);
     }
 
     [TestMethod]
@@ -1181,11 +1197,11 @@ public class Rational_Test
         int y = 5;
 
         // Action
-        int result = (x % y);
+        var result = (x % y);
 
         // Assert
-        // 43 % 20 = 3
-        Assert.AreEqual(3, result);
+        // 43/4 % 5/1 = 3/20 (quotient = 4)
+        Assert.AreEqual(new(3, 20), result);
     }
 
     [TestMethod]
@@ -1196,11 +1212,11 @@ public class Rational_Test
         Rational y = new(3, 4);
 
         // Action
-        int result = (x % y);
+        var result = (x % y);
 
         // Assert
-        // 15 % 4 = 2
-        Assert.AreEqual(2, result);
+        // 5/1 % 3/4 = 2/3 (quotient = 6)
+        Assert.AreEqual(new(2, 3), result);
     }
 
     #endregion

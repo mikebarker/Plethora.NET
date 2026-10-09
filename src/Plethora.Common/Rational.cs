@@ -35,7 +35,7 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     /// <param name="numerator">The numerator.</param>
     /// <param name="denominator">The denominator.</param>
     /// <param name="reduce">true if the numerator and denominator must be reduced to the canonical form; otherwise false.</param>
-    private Rational(int numerator, int denominator, bool reduce)
+    private Rational(long numerator, long denominator, bool reduce)
     {
         if (denominator == 0)
             throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
@@ -49,7 +49,7 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
         if (reduce)
         {
-            int gcd = MathEx.GreatestCommonDivisor(numerator, denominator);
+            var gcd = MathEx.GreatestCommonDivisor(numerator, denominator);
 
             numerator /= gcd;
             denominator /= gcd;
@@ -61,8 +61,14 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
             denominator = -denominator;
         }
 
-        this.numerator = numerator;
-        this.denominator = denominator;
+        if (numerator < int.MinValue || numerator > int.MaxValue)
+            throw new OverflowException();
+
+        if (denominator < int.MinValue || denominator > int.MaxValue)
+            throw new OverflowException();
+
+        this.numerator = (int)numerator;
+        this.denominator = (int)denominator;
     }
 
     /// <summary>
@@ -433,7 +439,7 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         return new Rational(x, 1, false) / y;
     }
 
-    public static int operator %(Rational x, Rational y)
+    public static Rational operator %(Rational x, Rational y)
     {
         if (x.IsDefault)
             throw new InvalidOperationException();
@@ -444,16 +450,11 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         if (y.numerator == 0)
             throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
 
-        Rational f = x / y;
-
-        var (_, remainder) = Math.DivRem(
-            f.numerator,
-            f.denominator);
-
+        var(_, remainder) = DivRem(x, y);
         return remainder;
     }
 
-    public static int operator %(int x, Rational y)
+    public static Rational operator %(int x, Rational y)
     {
         if (y.IsDefault)
             throw new InvalidOperationException();
@@ -464,7 +465,7 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         return new Rational(x, 1, false) % y;
     }
 
-    public static int operator %(Rational x, int y)
+    public static Rational operator %(Rational x, int y)
     {
         if (x.IsDefault)
             throw new InvalidOperationException();
@@ -473,6 +474,25 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
             throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
 
         return x % new Rational(y, 1, false);
+    }
+
+    public static (long Quotient, Rational Remainder) DivRem(Rational x, Rational y)
+    {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.IsDefault)
+            throw new InvalidOperationException();
+
+        if (y.numerator == 0)
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
+
+        var a = (long)x.numerator * (long)y.denominator;
+        var b = (long)x.denominator * (long)y.numerator;
+
+        var (quotient, remainder) = Math.DivRem(a, b);
+
+        return (quotient, new Rational(remainder, b, true));
     }
 
     #endregion
@@ -493,7 +513,7 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
             throw new InvalidOperationException();
 
         if (this.numerator == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(this.Denominator)));
+            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(this.Numerator)));
 
         return new Rational(this.denominator, this.numerator, false);
     }
