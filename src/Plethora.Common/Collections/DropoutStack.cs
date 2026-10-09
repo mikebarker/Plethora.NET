@@ -231,7 +231,7 @@ public class DropoutStack<T> : IEnumerable<T>, IReadOnlyCollection<T>
     /// </returns>
     public bool Contains(T item)
     {
-        foreach (var value in this.items)
+        foreach (var value in this)
         {
             if (Equals(item, value))
             {

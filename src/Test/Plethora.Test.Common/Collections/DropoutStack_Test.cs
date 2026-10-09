@@ -22,6 +22,19 @@ public class DropoutStack_Test
     }
 
     [TestMethod]
+    public void Contains_DefaultValue_WhenEmpty_ReturnsFalse()
+    {
+        // Arrange
+        var stack = new DropoutStack<int>(5);
+
+        // Action
+        bool containsDefault = stack.Contains(default);
+
+        // Assert
+        Assert.IsFalse(containsDefault);
+    }
+
+    [TestMethod]
     public void Push_BelowCapacity()
     {
         // Arrange
