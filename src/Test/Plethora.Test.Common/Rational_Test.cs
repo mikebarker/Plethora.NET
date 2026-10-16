@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Runtime.InteropServices.Marshalling;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test;
@@ -17,7 +17,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(1, rational.Numerator);
-        Assert.AreEqual(2, rational.Denominator);
+        Assert.AreEqual(2u, rational.Denominator);
     }
 
     [TestMethod]
@@ -28,7 +28,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(1, rational.Numerator);
-        Assert.AreEqual(2, rational.Denominator);
+        Assert.AreEqual(2u, rational.Denominator);
     }
 
     [TestMethod]
@@ -39,7 +39,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(-1, rational.Numerator);
-        Assert.AreEqual(2, rational.Denominator);
+        Assert.AreEqual(2u, rational.Denominator);
     }
 
     [TestMethod]
@@ -50,7 +50,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(-1, rational.Numerator);
-        Assert.AreEqual(2, rational.Denominator);
+        Assert.AreEqual(2u, rational.Denominator);
     }
 
     [TestMethod]
@@ -61,37 +61,21 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(0, rational.Numerator);
-        Assert.AreEqual(1, rational.Denominator);
+        Assert.AreEqual(1u, rational.Denominator);
     }
 
     [TestMethod]
     public void Constructor_Error_DenominatorZero()
     {
-        // Action
-        try
-        {
-            Rational rational = new(1, 0);
-
-            Assert.Fail();
-        }
-        catch (DivideByZeroException)
-        {
-        }
+        // Action & Assert
+        Assert.Throws<ArgumentOutOfRangeException>(() => new Rational(1, 0));
     }
 
     [TestMethod]
     public void Constructor_Error_DenominatorNegativeMaximum()
     {
-        // Action
-        try
-        {
-            Rational rational = new(1, int.MinValue);
-
-            Assert.Fail();
-        }
-        catch (OverflowException)
-        {
-        }
+        // Action & Assert
+        Assert.Throws<OverflowException>(() => new Rational(1, int.MinValue));
     }
 
     #endregion
@@ -392,15 +376,7 @@ public class Rational_Test
         Rational x = new(1, 2);
 
         // Action
-        try
-        {
-            int result = ((IComparable)x).CompareTo("test");
-
-            Assert.Fail();
-        }
-        catch (ArgumentException)
-        {
-        }
+        Assert.Throws<ArgumentException>(() => ((IComparable)x).CompareTo("test"));
     }
 
     #endregion
@@ -983,7 +959,29 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(11, result.Numerator);
-        Assert.AreEqual(10, result.Denominator);
+        Assert.AreEqual(10u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Op_Addition_Rationals_ReducesBeforeNarrowing()
+    {
+        // Arrange
+        Rational x = new Rational(1, int.MaxValue);
+
+        // Action
+        Rational result = x + x;
+
+        // Assert
+        Rational expected = new Rational(2, int.MaxValue);
+        Assert.AreEqual(expected, result);
+    }
+
+    [TestMethod]
+    public void Op_Addition_Rationals_ThrowsWhenResultCannotBeRepresented()
+    {
+        Rational x = new Rational(int.MaxValue, 1);
+
+        Assert.Throws<OverflowException>(() => x + 1);
     }
 
     [TestMethod]
@@ -998,7 +996,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(11, result.Numerator);
-        Assert.AreEqual(2, result.Denominator);
+        Assert.AreEqual(2u, result.Denominator);
     }
 
     [TestMethod]
@@ -1013,7 +1011,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(11, result.Numerator);
-        Assert.AreEqual(2, result.Denominator);
+        Assert.AreEqual(2u, result.Denominator);
     }
 
 
@@ -1029,7 +1027,29 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(-1, result.Numerator);
-        Assert.AreEqual(10, result.Denominator);
+        Assert.AreEqual(10u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Op_Subtraction_Rationals_ReducesBeforeNarrowing()
+    {
+        // Arrange
+        Rational x = new(2, int.MaxValue);
+        Rational y = new(1, int.MaxValue);
+
+        // Action
+        Rational result = x - y;
+
+        // Assert
+        Assert.AreEqual(new Rational(1, int.MaxValue), result);
+    }
+
+    [TestMethod]
+    public void Op_Subtraction_Rationals_ThrowsWhenResultCannotBeRepresented()
+    {
+        Rational x = new(int.MinValue, 1);
+
+        Assert.Throws<OverflowException>(() => x - 1);
     }
 
     [TestMethod]
@@ -1044,7 +1064,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(-9, result.Numerator);
-        Assert.AreEqual(2, result.Denominator);
+        Assert.AreEqual(2u, result.Denominator);
     }
 
     [TestMethod]
@@ -1059,7 +1079,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(9, result.Numerator);
-        Assert.AreEqual(2, result.Denominator);
+        Assert.AreEqual(2u, result.Denominator);
     }
 
     #endregion
@@ -1078,7 +1098,23 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(3, result.Numerator);
-        Assert.AreEqual(10, result.Denominator);
+        Assert.AreEqual(10u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Op_Multiply_Rationals_ThrowsWhenResultCannotBeRepresented()
+    {
+        Rational x = new(50_000, 1);
+
+        Assert.Throws<OverflowException>(() => x * x);
+    }
+
+    [TestMethod]
+    public void Op_Multiply_Integer_ThrowsWhenResultCannotBeRepresented()
+    {
+        Rational x = new(50_000, 1);
+
+        Assert.Throws<OverflowException>(() => x * 50_000);
     }
 
     [TestMethod]
@@ -1093,7 +1129,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(5, result.Numerator);
-        Assert.AreEqual(2, result.Denominator);
+        Assert.AreEqual(2u, result.Denominator);
     }
 
     [TestMethod]
@@ -1108,7 +1144,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(5, result.Numerator);
-        Assert.AreEqual(2, result.Denominator);
+        Assert.AreEqual(2u, result.Denominator);
     }
 
 
@@ -1124,7 +1160,47 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(5, result.Numerator);
-        Assert.AreEqual(6, result.Denominator);
+        Assert.AreEqual(6u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Op_Division_Rationals_ReducesBeforeNarrowing()
+    {
+        // Arrange
+        Rational x = new(2, 1);
+        Rational y = new(int.MinValue, 1);
+
+        // Action
+        Rational result = x / y;
+
+        // Assert
+        Assert.AreEqual(new Rational(-1, 1_073_741_824), result);
+    }
+
+    [TestMethod]
+    public void Op_Division_Rational_Integer_ReducesBeforeNarrowing()
+    {
+        Rational x = new(2, 1);
+
+        Rational result = x / int.MinValue;
+
+        Assert.AreEqual(new Rational(-1, 1_073_741_824), result);
+    }
+
+    [TestMethod]
+    public void Op_Division_Integer_Rational_ReducesBeforeNarrowing()
+    {
+        Rational result = int.MinValue / new Rational(-2, 1);
+
+        Assert.AreEqual(new Rational(1_073_741_824, 1), result);
+    }
+
+    [TestMethod]
+    public void Op_Division_Rationals_ThrowsWhenResultCannotBeRepresented()
+    {
+        Rational x = new(int.MinValue, 1);
+
+        Assert.Throws<OverflowException>(() => x / new Rational(-1, 1));
     }
 
     [TestMethod]
@@ -1139,7 +1215,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(1, result.Numerator);
-        Assert.AreEqual(10, result.Denominator);
+        Assert.AreEqual(10u, result.Denominator);
     }
 
     [TestMethod]
@@ -1154,7 +1230,7 @@ public class Rational_Test
 
         // Assert
         Assert.AreEqual(10, result.Numerator);
-        Assert.AreEqual(1, result.Denominator);
+        Assert.AreEqual(1u, result.Denominator);
     }
 
 
@@ -1234,11 +1310,83 @@ public class Rational_Test
         Rational x = new(1, 2);
 
         // Action
-        Rational y = x.Invert();
+        Rational result = x.Invert();
 
         // Assert
-        Assert.AreEqual(2, y.Numerator);
-        Assert.AreEqual(1, y.Denominator);
+        Assert.AreEqual(2, result.Numerator);
+        Assert.AreEqual(1u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Invert_Overflow()
+    {
+        // Arrange
+        Rational x = new(1, uint.MaxValue);
+
+        // Action & Assert
+        Assert.Throws<OverflowException>(() => x.Invert());
+    }
+
+    [TestMethod]
+    public void Invert_Overflow2()
+    {
+        // Arrange
+        Rational x = new(-1, int.MaxValue + 2u);
+
+        // Action & Assert
+        Assert.Throws<OverflowException>(() => x.Invert());
+    }
+
+    [TestMethod]
+    public void Invert_Denominator_IntMinValue_Negative()
+    {
+        // Arrange
+        Rational x = new(-1, int.MaxValue + 1u);
+
+        // Action
+        Rational result = x.Invert();
+
+        // Assert
+        Assert.AreEqual(int.MinValue, (long)result.Numerator);
+        Assert.AreEqual(1u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Invert_Denominator_IntMinValue_Positive()
+    {
+        // Arrange
+        Rational x = new(1, int.MaxValue + 1u);
+
+        // Action & Assert
+        Assert.Throws<OverflowException>(() => x.Invert());
+    }
+
+    [TestMethod]
+    public void Invert_Negative()
+    {
+        // Arrange
+        Rational x = new(-1, 2);
+
+        // Action
+        Rational result = x.Invert();
+
+        // Assert
+        Assert.AreEqual(-2, result.Numerator);
+        Assert.AreEqual(1u, result.Denominator);
+    }
+
+    [TestMethod]
+    public void Invert_Negative_DenominatorIntMinValue()
+    {
+        // Arrange
+        Rational x = new(-1, unchecked((uint)int.MinValue));
+
+        // Action
+        Rational result = x.Invert();
+
+        // Assert
+        Assert.AreEqual(-2147483648, result.Numerator);
+        Assert.AreEqual(1u, result.Denominator);
     }
 
     [TestMethod]
@@ -1247,16 +1395,8 @@ public class Rational_Test
         // Arrange
         Rational x = new(0, 2);
 
-        // Action
-        try
-        {
-            Rational y = x.Invert();
-
-            Assert.Fail();
-        }
-        catch (DivideByZeroException)
-        {
-        }
+        // Action & Assert
+        Assert.Throws<DivideByZeroException>(() => x.Invert());
     }
 
     #endregion

@@ -128,4 +128,195 @@ public class MathEx_Test
     }
 
     #endregion
+
+    #region Reduce
+
+    [TestMethod]
+    public void Reduce_CommonElement()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(4, 2);
+
+        // Assert
+        Assert.AreEqual(2, numerator);
+        Assert.AreEqual(1, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_PrimeMultiple()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(45, 20);
+
+        // Assert
+        Assert.AreEqual(9, numerator);
+        Assert.AreEqual(4, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_DoublePrimeMultiple()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(50, 20);
+
+        // Assert
+        Assert.AreEqual(5, numerator);
+        Assert.AreEqual(2, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_NoCommonDivisor()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(5, 2);
+
+        // Assert
+        Assert.AreEqual(5, numerator);
+        Assert.AreEqual(2, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_PowersOfTwo()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(1024, 512);
+
+        // Assert
+        Assert.AreEqual(2, numerator);
+        Assert.AreEqual(1, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_CommonFactorOfTwo()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(8, 12);
+
+        // Assert
+        Assert.AreEqual(2, numerator);
+        Assert.AreEqual(3, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_DenominatorIsOne()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(7, 1);
+
+        // Assert
+        Assert.AreEqual(7, numerator);
+        Assert.AreEqual(1, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_NumeratorIsOne()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(1, 7);
+
+        // Assert
+        Assert.AreEqual(1, numerator);
+        Assert.AreEqual(7, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_DenominatorDividesNumerator()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(12, 4);
+
+        // Assert
+        Assert.AreEqual(3, numerator);
+        Assert.AreEqual(1, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_NumeratorIsZero()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(0, 5);
+
+        // Assert
+        Assert.AreEqual(0, numerator);
+        Assert.AreEqual(1, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_AlreadyReduced()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(9, 4);
+
+        // Assert
+        Assert.AreEqual(9, numerator);
+        Assert.AreEqual(4, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_NegativeNumerator()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(-4, 6);
+
+        // Assert
+        Assert.AreEqual(-2, numerator);
+        Assert.AreEqual(3, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_NegativeDenominator()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(4, -6);
+
+        // Assert
+        Assert.AreEqual(2, numerator);
+        Assert.AreEqual(-3, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_NegativeNumeratorAndDenominator()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(-4, -6);
+
+        // Assert
+        Assert.AreEqual(-2, numerator);
+        Assert.AreEqual(-3, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Long()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(1_000_000L, 750_000L);
+
+        // Assert
+        Assert.AreEqual(4L, numerator);
+        Assert.AreEqual(3L, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_UnsignedInt()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(12u, 18u);
+
+        // Assert
+        Assert.AreEqual(2u, numerator);
+        Assert.AreEqual(3u, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_LargeValues()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(2147483646, 2);
+
+        // Assert
+        Assert.AreEqual(1073741823, numerator);
+        Assert.AreEqual(1, denominator);
+    }
+
+    #endregion
 }

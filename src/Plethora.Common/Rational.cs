@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Numerics;
 
 namespace Plethora;
 
@@ -14,10 +15,16 @@ namespace Plethora;
 [System.Diagnostics.DebuggerDisplay("Rational [{" + nameof(numerator) + "} / {" + nameof(denominator) + "}]")]
 public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable<Rational>
 {
-    public static readonly Rational Zero = new(0, 1, false);
+    private enum CtorFlag
+    {
+        Internal,
+    }
+
+    public static readonly Rational Zero = new(0, 1u, CtorFlag.Internal);
+    public static readonly Rational One = new(1, 1u, CtorFlag.Internal);
 
     private readonly int numerator;
-    private readonly int denominator;
+    private readonly uint denominator;
 
     /// <summary>
     /// Initializes a new <seealso cref="Rational"/>, providing the numerator and denominator.
@@ -25,50 +32,45 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     /// <param name="numerator">The numerator.</param>
     /// <param name="denominator">The denominator.</param>
     public Rational(int numerator, int denominator)
-        : this(numerator, denominator, true)
     {
+        if (denominator == 0)
+            throw new ArgumentOutOfRangeException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
+
+
+        var r = MathEx.Reduce(numerator, denominator);
+        r = NormalizeSign(r);
+        var p = GuardRange(r);
+
+        this.numerator = p.numerator;
+        this.denominator = p.denominator;
     }
 
     /// <summary>
-    /// Initializes a new <seealso cref="Rational"/>, providing the numerator, denominator, and a flag indicating whether the rational must be reduced to its canonical form.
+    /// Initializes a new <seealso cref="Rational"/>, providing the numerator and denominator.
     /// </summary>
     /// <param name="numerator">The numerator.</param>
     /// <param name="denominator">The denominator.</param>
-    /// <param name="reduce">true if the numerator and denominator must be reduced to the canonical form; otherwise false.</param>
-    private Rational(long numerator, long denominator, bool reduce)
+    public Rational(int numerator, uint denominator)
     {
         if (denominator == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
+            throw new ArgumentOutOfRangeException(ResourceProvider.ArgMustNotBeZero(nameof(denominator)));
 
-        if (numerator == 0)
-        {
-            this.numerator = 0;
-            this.denominator = 1;
-            return;
-        }
 
-        if (reduce)
-        {
-            var gcd = MathEx.GreatestCommonDivisor(numerator, denominator);
+        var r = MathEx.Reduce((long)numerator, denominator);
 
-            numerator /= gcd;
-            denominator /= gcd;
-        }
+        this.numerator = (int)r.numerator;
+        this.denominator = (uint)r.denominator;
+    }
 
-        if (denominator < 0)
-        {
-            numerator = -numerator;
-            denominator = -denominator;
-        }
-
-        if (numerator < int.MinValue || numerator > int.MaxValue)
-            throw new OverflowException();
-
-        if (denominator < int.MinValue || denominator > int.MaxValue)
-            throw new OverflowException();
-
-        this.numerator = (int)numerator;
-        this.denominator = (int)denominator;
+    /// <summary>
+    /// Initializes a new <seealso cref="Rational"/>, providing the numerator, denominator.
+    /// </summary>
+    /// <param name="numerator">The numerator.</param>
+    /// <param name="denominator">The denominator.</param>
+    private Rational(int numerator, uint denominator, CtorFlag _)
+    {
+        this.numerator = numerator;
+        this.denominator = denominator;
     }
 
     /// <summary>
@@ -82,7 +84,7 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
     /// <summary>
     /// Gets the denominator.
     /// </summary>
-    public int Denominator
+    public uint Denominator
     {
         get { return this.denominator; }
     }
@@ -250,6 +252,22 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
     #region Algebraic operators
 
+    public static Rational operator +(Rational x)
+    {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        return x;
+    }
+
+    public static Rational operator -(Rational x)
+    {
+        if (x.IsDefault)
+            throw new InvalidOperationException();
+
+        return new Rational(-x.numerator, x.denominator, CtorFlag.Internal);
+    }
+
     #region Additive operators
 
     public static Rational operator +(Rational x, Rational y)
@@ -260,64 +278,43 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         if (y.IsDefault)
             throw new InvalidOperationException();
 
-        int numerator =
-            (x.numerator * y.denominator) +
-            (y.numerator * x.denominator);
+        long numerator =
+            ((long)x.numerator * y.denominator) +
+            ((long)y.numerator * x.denominator);
 
-        int denominator =
-            (x.denominator * y.denominator);
+        ulong denominator =
+            (ulong)x.denominator * y.denominator;
 
-        return new Rational(numerator, denominator, true);
+        var r = MathEx.Reduce((Int128)numerator, (Int128)denominator);
+        r = NormalizeSign(r);
+        var p = GuardRange(r);
+
+        return new Rational(p.numerator, p.denominator, CtorFlag.Internal);
     }
 
     public static Rational operator +(int x, Rational y)
     {
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        return new Rational(x, 1, false) + y;
+        return new Rational(x, 1u, CtorFlag.Internal) + y;
     }
 
     public static Rational operator +(Rational x, int y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        return x + new Rational(y, 1, false);
+        return x + new Rational(y, 1u, CtorFlag.Internal);
     }
 
     public static Rational operator -(Rational x, Rational y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        int numerator =
-            (x.numerator * y.denominator) -
-            (y.numerator * x.denominator);
-
-        int denominator =
-            (x.denominator * y.denominator);
-
-        return new Rational(numerator, denominator, true);
+        return x + (-y);
     }
 
     public static Rational operator -(int x, Rational y)
     {
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        return new Rational(x, 1, false) - y;
+        return new Rational(x, 1u, CtorFlag.Internal) - y;
     }
 
     public static Rational operator -(Rational x, int y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        return x - new Rational(y, 1, false);
+        return x - new Rational(y, 1u, CtorFlag.Internal);
     }
 
     #endregion
@@ -338,56 +335,30 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         if (x.numerator == 0)
             return Rational.Zero;
 
-        // By applying the reduction before multiplying we reduce the likely-hood of
-        // arithmetic overflows, and ensure the numbers are stored in their canonical form.
-        int gcd1 = MathEx.GreatestCommonDivisor(x.numerator, y.denominator);
-        int numerator1 = x.numerator / gcd1;
-        int denominator2 = y.denominator / gcd1;
+        if (x == Rational.One)
+            return y;
 
-        int gcd2 = MathEx.GreatestCommonDivisor(y.numerator, x.denominator);
-        int numerator2 = y.numerator / gcd2;
-        int denominator1 = x.denominator / gcd2;
+        if (y == Rational.One)
+            return x;
 
-        int numerator =
-            (numerator1 * numerator2);
+        var numerator = (long)x.numerator * y.numerator;
+        var denominator = (ulong)x.denominator * y.denominator;
 
-        int denominator =
-            (denominator1 * denominator2);
+        var r = MathEx.Reduce((Int128)numerator, (Int128)denominator);
+        r = NormalizeSign(r);
+        var p = GuardRange(r);
 
-        return new Rational(numerator, denominator, false);
+        return new Rational(p.numerator, p.denominator, CtorFlag.Internal);
     }
 
     public static Rational operator *(Rational x, int y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y == 0)
-            return Rational.Zero;
-
-        if (y == 1)
-            return x;
-
-        if (x.numerator == 0)
-            return Rational.Zero;
-
-        // By applying the reduction before multiplying we reduce the likely-hood of
-        // arithmetic overflows, and ensure the numbers are stored in their canonical form.
-        int gcd = MathEx.GreatestCommonDivisor(y, x.denominator);
-        y /= gcd;
-        int denominator = x.denominator / gcd;
-
-        int numerator = (x.numerator * y);
-
-        return new Rational(numerator, denominator, false);
+        return x * new Rational(y, 1u, CtorFlag.Internal);
     }
 
     public static Rational operator *(int x, Rational y)
     {
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        return y * x;
+        return new Rational(x, 1u, CtorFlag.Internal) * y;
     }
 
     public static Rational operator /(Rational x, Rational y)
@@ -404,76 +375,46 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         if (x.numerator == 0)
             return Rational.Zero;
 
-        Rational result = x * y.Invert();
-        return result;
+        if (y == Rational.One)
+            return x;
+
+        if (x == Rational.One)
+            return y.Invert();
+
+        var numerator = x.numerator * y.denominator;
+        var denominator = x.denominator * y.numerator;
+
+        var r = MathEx.Reduce(numerator, denominator);
+        r = NormalizeSign(r);
+        var p = GuardRange(r);
+
+        return new Rational(p.numerator, p.denominator, CtorFlag.Internal);
     }
 
     public static Rational operator /(Rational x, int y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
-
-        if (y == 1)
-            return x;
-
-        if (x.numerator == 0)
-            return Rational.Zero;
-
-        return x * new Rational(1, y, false);
+        return x / new Rational(y, 1u, CtorFlag.Internal);
     }
 
     public static Rational operator /(int x, Rational y)
     {
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y.numerator == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
-
-        if (x == 0)
-            return Rational.Zero;
-
-        return new Rational(x, 1, false) / y;
+        return new Rational(x, 1u, CtorFlag.Internal) / y;
     }
 
     public static Rational operator %(Rational x, Rational y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y.numerator == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
-
         var(_, remainder) = DivRem(x, y);
         return remainder;
     }
 
     public static Rational operator %(int x, Rational y)
     {
-        if (y.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y.numerator == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
-
-        return new Rational(x, 1, false) % y;
+        return new Rational(x, 1u, CtorFlag.Internal) % y;
     }
 
     public static Rational operator %(Rational x, int y)
     {
-        if (x.IsDefault)
-            throw new InvalidOperationException();
-
-        if (y == 0)
-            throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(y)));
-
-        return x % new Rational(y, 1, false);
+        return x % new Rational(y, 1u, CtorFlag.Internal);
     }
 
     public static (long Quotient, Rational Remainder) DivRem(Rational x, Rational y)
@@ -492,7 +433,11 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
 
         var (quotient, remainder) = Math.DivRem(a, b);
 
-        return (quotient, new Rational(remainder, b, true));
+        var r = MathEx.Reduce(remainder, b);
+        r = NormalizeSign(r);
+        var p = GuardRange(r);
+
+        return (quotient, new Rational(p.numerator, p.denominator, CtorFlag.Internal));
     }
 
     #endregion
@@ -515,6 +460,41 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         if (this.numerator == 0)
             throw new DivideByZeroException(ResourceProvider.ArgMustNotBeZero(nameof(this.Numerator)));
 
-        return new Rational(this.denominator, this.numerator, false);
+        if (this.numerator < 0)
+        {
+            if (this.denominator == unchecked((uint)int.MinValue))
+                return new Rational(int.MinValue, (uint)(-this.numerator), CtorFlag.Internal);
+
+            if (this.denominator > int.MaxValue)
+                throw new OverflowException();
+
+            return new Rational(-(int)this.denominator, (uint)(-this.numerator), CtorFlag.Internal);
+        }
+        else
+        {
+            if (this.denominator > int.MaxValue)
+                throw new OverflowException();
+
+            return new Rational((int)this.denominator, (uint)this.numerator, CtorFlag.Internal);
+        }
+    }
+
+
+    private static (TNumerator numerator, TDenominator denominator) NormalizeSign<TNumerator, TDenominator>((TNumerator numerator, TDenominator denominator) arg)
+        where TNumerator : INumberBase<TNumerator>
+        where TDenominator : INumberBase<TDenominator>
+    {
+        if (TDenominator.IsNegative(arg.denominator))
+        {
+            return (-arg.numerator, -arg.denominator);
+        }
+        return arg;
+    }
+
+    private static (int numerator, uint denominator) GuardRange<TNumerator, TDenominator>((TNumerator numerator, TDenominator denominator) arg)
+        where TNumerator : INumberBase<TNumerator>
+        where TDenominator : INumberBase<TDenominator>
+    {
+        return (int.CreateChecked(arg.numerator), uint.CreateChecked(arg.denominator));
     }
 }
