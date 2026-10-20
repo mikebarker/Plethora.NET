@@ -54,6 +54,7 @@
   <Project Path="Plethora.fqi/Plethora.fqi.csproj" />
   <Project Path="Plethora.Logging.log4net/Plethora.Logging.log4net.csproj" />
   <Project Path="Plethora.Mvvm/Plethora.Mvvm.csproj" />
+  <Project Path="Plethora.Parser/Plethora.Parsing.csproj" Id="ee0f148a-62e1-4686-9709-f9672c14aea5" />
   <Project Path="Plethora.Workflow.SqlClient/Plethora.Workflow.SqlClient.csproj" />
   <Project Path="Plethora.Workflow/Plethora.Workflow.csproj" />
   <Project Path="Plethora.Xaml.Common/Plethora.Xaml.Common.csproj" />
