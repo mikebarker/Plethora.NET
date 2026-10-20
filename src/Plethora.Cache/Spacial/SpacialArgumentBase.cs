@@ -2,235 +2,216 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using JetBrains.Annotations;
-
 using Plethora.Linq;
 using Plethora.Spacial;
 
-namespace Plethora.Cache.Spacial
+namespace Plethora.Cache.Spacial;
+
+public abstract class SpacialArgumentBase<TData, TArg, T1> : IArgument<TData, TArg>
+    where TArg : SpacialArgumentBase<TData, TArg, T1>
 {
-    public abstract class SpacialArgumentBase<TData, TArg, T1> : IArgument<TData, TArg>
-        where TArg : SpacialArgumentBase<TData, TArg, T1>
+    protected SpacialArgumentBase(
+        Func<TData, Tuple<T1>> getPointFromData,
+        SpaceRegion<T1> region)
     {
-        protected SpacialArgumentBase(
-            [NotNull] Func<TData, Tuple<T1>> getPointFromData,
-            [NotNull] SpaceRegion<T1> region)
-        {
-            if (getPointFromData == null)
-                throw new ArgumentNullException(nameof(getPointFromData));
+        ArgumentNullException.ThrowIfNull(getPointFromData);
+        ArgumentNullException.ThrowIfNull(region);
 
-            if (region == null)
-                throw new ArgumentNullException(nameof(region));
-
-            this.GetPointFromData = getPointFromData;
-            this.Region = region;
-        }
-
-        [NotNull] public SpaceRegion<T1> Region { get; }
-        [NotNull] protected Func<TData, Tuple<T1>> GetPointFromData { get; }
-
-        public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
-        {
-            //Short-cut if B is empty
-            if (B.Region.IsEmpty)
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-            var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
-            if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-            notInB = A_minus_B
-                .Where(r => !r.IsEmpty)
-                .Select(r => this.CreateArgWithRegion(r))
-                .ToList();
-
-            return true;
-        }
-
-        public bool IsDataIncluded(TData data)
-        {
-            if (data == null)
-                throw new ArgumentNullException(nameof(data));
-
-            Tuple<T1> point = this.GetPointFromData(data);
-
-            return SpacialOperations.IsPointInRegion(point, this.Region);
-        }
-
-        [NotNull]
-        protected abstract TArg CreateArgWithRegion(SpaceRegion<T1> newRegion);
+        this.GetPointFromData = getPointFromData;
+        this.Region = region;
     }
 
-    public abstract class SpacialArgumentBase<TData, TArg, T1, T2> : IArgument<TData, TArg>
-        where TArg : SpacialArgumentBase<TData, TArg, T1, T2>
+    public SpaceRegion<T1> Region { get; }
+    protected Func<TData, Tuple<T1>> GetPointFromData { get; }
+
+    public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
     {
-        protected SpacialArgumentBase(
-            [NotNull] Func<TData, Tuple<T1, T2>> getPointFromData,
-            [NotNull] SpaceRegion<T1, T2> region)
+        //Short-cut if B is empty
+        if (B.Region.IsEmpty)
         {
-            if (getPointFromData == null)
-                throw new ArgumentNullException(nameof(getPointFromData));
-
-            if (region == null)
-                throw new ArgumentNullException(nameof(region));
-
-            this.GetPointFromData = getPointFromData;
-            this.Region = region;
+            notInB = ((TArg)this).Singularity();
+            return false;
         }
 
-        [NotNull] public SpaceRegion<T1, T2> Region { get; }
-        [NotNull] protected Func<TData, Tuple<T1, T2>> GetPointFromData { get; }
-
-        public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
+        var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
+        if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
         {
-            //Short-cut if B is empty
-            if (B.Region.IsEmpty)
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-            var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
-            if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-            notInB = A_minus_B
-                .Where(r => !r.IsEmpty)
-                .Select(r => this.CreateArgWithRegion(r))
-                .ToList();
-
-            return true;
+            notInB = ((TArg)this).Singularity();
+            return false;
         }
 
-        public bool IsDataIncluded(TData data)
-        {
-            Tuple<T1, T2> point = this.GetPointFromData(data);
+        notInB = A_minus_B
+            .Where(r => !r.IsEmpty)
+            .Select(r => this.CreateArgWithRegion(r))
+            .ToList();
 
-            return SpacialOperations.IsPointInRegion(point, this.Region);
-        }
-
-        [NotNull]
-        protected abstract TArg CreateArgWithRegion(SpaceRegion<T1, T2> newRegion);
+        return true;
     }
 
-    public abstract class SpacialArgumentBase<TData, TArg, T1, T2, T3> : IArgument<TData, TArg>
-        where TArg : SpacialArgumentBase<TData, TArg, T1, T2, T3>
+    public bool IsDataIncluded(TData data)
     {
-        protected SpacialArgumentBase(
-            [NotNull] Func<TData, Tuple<T1, T2, T3>> getPointFromData,
-            [NotNull] SpaceRegion<T1, T2, T3> region)
-        {
-            if (getPointFromData == null)
-                throw new ArgumentNullException(nameof(getPointFromData));
+        if (data == null)
+            throw new ArgumentNullException(nameof(data));
 
-            if (region == null)
-                throw new ArgumentNullException(nameof(region));
+        Tuple<T1> point = this.GetPointFromData(data);
 
-            this.GetPointFromData = getPointFromData;
-            this.Region = region;
-        }
-
-        [NotNull] public SpaceRegion<T1, T2, T3> Region { get; }
-        [NotNull] protected Func<TData, Tuple<T1, T2, T3>> GetPointFromData { get; }
-
-        public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
-        {
-            //Short-cut if B is empty
-            if (B.Region.IsEmpty)
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-
-            var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
-            if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-            notInB = A_minus_B
-                .Where(r => !r.IsEmpty)
-                .Select(r => this.CreateArgWithRegion(r))
-                .ToList();
-
-            return true;
-        }
-
-        public bool IsDataIncluded(TData data)
-        {
-            Tuple<T1, T2, T3> point = this.GetPointFromData(data);
-
-            return SpacialOperations.IsPointInRegion(point, this.Region);
-        }
-
-        [NotNull]
-        protected abstract TArg CreateArgWithRegion(SpaceRegion<T1, T2, T3> newRegion);
+        return SpacialOperations.IsPointInRegion(point, this.Region);
     }
 
-    public abstract class SpacialArgumentBase<TData, TArg, T1, T2, T3, T4> : IArgument<TData, TArg>
-        where TArg : SpacialArgumentBase<TData, TArg, T1, T2, T3, T4>
+    protected abstract TArg CreateArgWithRegion(SpaceRegion<T1> newRegion);
+}
+
+public abstract class SpacialArgumentBase<TData, TArg, T1, T2> : IArgument<TData, TArg>
+    where TArg : SpacialArgumentBase<TData, TArg, T1, T2>
+{
+    protected SpacialArgumentBase(
+        Func<TData, Tuple<T1, T2>> getPointFromData,
+        SpaceRegion<T1, T2> region)
     {
-        protected SpacialArgumentBase(
-            [NotNull] Func<TData, Tuple<T1, T2, T3, T4>> getPointFromData,
-            [NotNull] SpaceRegion<T1, T2, T3, T4> region)
-        {
-            if (getPointFromData == null)
-                throw new ArgumentNullException(nameof(getPointFromData));
+        ArgumentNullException.ThrowIfNull(getPointFromData);
+        ArgumentNullException.ThrowIfNull(region);
 
-            if (region == null)
-                throw new ArgumentNullException(nameof(region));
-
-            this.GetPointFromData = getPointFromData;
-            this.Region = region;
-        }
-
-        [NotNull] public SpaceRegion<T1, T2, T3, T4> Region { get; }
-        [NotNull] protected Func<TData, Tuple<T1, T2, T3, T4>> GetPointFromData { get; }
-
-        public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
-        {
-            //Short-cut if B is empty
-            if (B.Region.IsEmpty)
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-
-            var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
-            if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
-            {
-                notInB = ((TArg)this).Singularity();
-                return false;
-            }
-
-            notInB = A_minus_B
-                .Where(r => !r.IsEmpty)
-                .Select(r => this.CreateArgWithRegion(r))
-                .ToList();
-
-            return true;
-        }
-
-        public bool IsDataIncluded(TData data)
-        {
-            Tuple<T1, T2, T3, T4> point = this.GetPointFromData(data);
-
-            return SpacialOperations.IsPointInRegion(point, this.Region);
-        }
-
-        [NotNull]
-        protected abstract TArg CreateArgWithRegion(SpaceRegion<T1, T2, T3, T4> newRegion);
+        this.GetPointFromData = getPointFromData;
+        this.Region = region;
     }
+
+    public SpaceRegion<T1, T2> Region { get; }
+    protected Func<TData, Tuple<T1, T2>> GetPointFromData { get; }
+
+    public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
+    {
+        //Short-cut if B is empty
+        if (B.Region.IsEmpty)
+        {
+            notInB = ((TArg)this).Singularity();
+            return false;
+        }
+
+        var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
+        if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
+        {
+            notInB = ((TArg)this).Singularity();
+            return false;
+        }
+
+        notInB = A_minus_B
+            .Where(r => !r.IsEmpty)
+            .Select(r => this.CreateArgWithRegion(r))
+            .ToList();
+
+        return true;
+    }
+
+    public bool IsDataIncluded(TData data)
+    {
+        Tuple<T1, T2> point = this.GetPointFromData(data);
+
+        return SpacialOperations.IsPointInRegion(point, this.Region);
+    }
+
+    protected abstract TArg CreateArgWithRegion(SpaceRegion<T1, T2> newRegion);
+}
+
+public abstract class SpacialArgumentBase<TData, TArg, T1, T2, T3> : IArgument<TData, TArg>
+    where TArg : SpacialArgumentBase<TData, TArg, T1, T2, T3>
+{
+    protected SpacialArgumentBase(
+        Func<TData, Tuple<T1, T2, T3>> getPointFromData,
+        SpaceRegion<T1, T2, T3> region)
+    {
+        ArgumentNullException.ThrowIfNull(getPointFromData);
+        ArgumentNullException.ThrowIfNull(region);
+
+        this.GetPointFromData = getPointFromData;
+        this.Region = region;
+    }
+
+    public SpaceRegion<T1, T2, T3> Region { get; }
+    protected Func<TData, Tuple<T1, T2, T3>> GetPointFromData { get; }
+
+    public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
+    {
+        //Short-cut if B is empty
+        if (B.Region.IsEmpty)
+        {
+            notInB = ((TArg)this).Singularity();
+            return false;
+        }
+
+
+        var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
+        if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
+        {
+            notInB = ((TArg)this).Singularity();
+            return false;
+        }
+
+        notInB = A_minus_B
+            .Where(r => !r.IsEmpty)
+            .Select(r => this.CreateArgWithRegion(r))
+            .ToList();
+
+        return true;
+    }
+
+    public bool IsDataIncluded(TData data)
+    {
+        Tuple<T1, T2, T3> point = this.GetPointFromData(data);
+
+        return SpacialOperations.IsPointInRegion(point, this.Region);
+    }
+
+    protected abstract TArg CreateArgWithRegion(SpaceRegion<T1, T2, T3> newRegion);
+}
+
+public abstract class SpacialArgumentBase<TData, TArg, T1, T2, T3, T4> : IArgument<TData, TArg>
+    where TArg : SpacialArgumentBase<TData, TArg, T1, T2, T3, T4>
+{
+    protected SpacialArgumentBase(
+        Func<TData, Tuple<T1, T2, T3, T4>> getPointFromData,
+        SpaceRegion<T1, T2, T3, T4> region)
+    {
+        ArgumentNullException.ThrowIfNull(getPointFromData);
+        ArgumentNullException.ThrowIfNull(region);
+
+        this.GetPointFromData = getPointFromData;
+        this.Region = region;
+    }
+
+    public SpaceRegion<T1, T2, T3, T4> Region { get; }
+    protected Func<TData, Tuple<T1, T2, T3, T4>> GetPointFromData { get; }
+
+    public bool IsOverlapped(TArg B, out IEnumerable<TArg> notInB)
+    {
+        //Short-cut if B is empty
+        if (B.Region.IsEmpty)
+        {
+            notInB = ((TArg)this).Singularity();
+            return false;
+        }
+
+
+        var A_minus_B = SpacialOperations.Subtract(this.Region, B.Region).ToListIfRequired();
+        if ((A_minus_B.Count == 1) && (A_minus_B[0].Equals(this.Region)))
+        {
+            notInB = ((TArg)this).Singularity();
+            return false;
+        }
+
+        notInB = A_minus_B
+            .Where(r => !r.IsEmpty)
+            .Select(r => this.CreateArgWithRegion(r))
+            .ToList();
+
+        return true;
+    }
+
+    public bool IsDataIncluded(TData data)
+    {
+        Tuple<T1, T2, T3, T4> point = this.GetPointFromData(data);
+
+        return SpacialOperations.IsPointInRegion(point, this.Region);
+    }
+
+    protected abstract TArg CreateArgWithRegion(SpaceRegion<T1, T2, T3, T4> newRegion);
 }

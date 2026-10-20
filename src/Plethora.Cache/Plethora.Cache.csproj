@@ -2,11 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Plethora.Common\Plethora.Common.csproj" />
