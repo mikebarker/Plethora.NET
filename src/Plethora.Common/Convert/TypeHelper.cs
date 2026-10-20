@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plethora.Convert;
 
@@ -17,6 +18,7 @@ public static class TypeHelper
     /// The value of <paramref name="value"/> as type <paramref name="returnType"/>.
     /// </returns>
     /// <see cref="AsType(Type, object)"/>
+    [return: NotNullIfNotNull(nameof(value))]
     public static T? As<T>(this object? value)
     {
         return (T?)AsType(value, typeof(T));
@@ -41,6 +43,7 @@ public static class TypeHelper
     /// <exception cref="OverflowException">
     ///     <paramref name="value"/> represents a number that is out of the range of <paramref name="returnType"/>.
     /// </exception>
+    [return: NotNullIfNotNull(nameof(value))]
     public static object? AsType(this object? value, Type returnType)
     {
         ArgumentNullException.ThrowIfNull(returnType);
@@ -56,7 +59,7 @@ public static class TypeHelper
                 if (value is null)
                     return null;
 
-                return value.ToString();
+                return value.ToString()!;
             }
 
             if (returnType.IsEnum)
