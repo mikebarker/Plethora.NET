@@ -399,7 +399,7 @@ public static class NumericHelper
         try
         {
             //Create an instance of the same type as value, which represents zero (if possible)
-            object zero = Convert.ChangeType(0, value.GetType());
+            object zero = System.Convert.ChangeType(0, value.GetType());
             result = Comparer.Default.Compare(value, zero);
             return true;
         }

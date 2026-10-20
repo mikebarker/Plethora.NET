@@ -122,13 +122,13 @@ public static class EnumHelper
     {
         Type enumType = value.GetType();
 
-        long lngValue = Convert.ToInt64(value, CultureInfo.CurrentCulture);
+        long lngValue = System.Convert.ToInt64(value, CultureInfo.CurrentCulture);
 
         Array flagValues = Enum.GetValues(enumType);
         List<string> rtnList = new(flagValues.Length);
         foreach (Enum flagValue in flagValues)
         {
-            long lngFlagValue = Convert.ToInt64(flagValue, CultureInfo.CurrentCulture);
+            long lngFlagValue = System.Convert.ToInt64(flagValue, CultureInfo.CurrentCulture);
 
             //Elements with exactly match will not be broken down to individual flags
             if (lngValue == lngFlagValue)

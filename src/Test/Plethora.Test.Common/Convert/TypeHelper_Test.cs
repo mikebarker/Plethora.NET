@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Plethora.Convert;
 using System;
 
-namespace Plethora.Test;
+namespace Plethora.Test.Convert;
 
 [TestClass]
 public class TypeHelper_Test

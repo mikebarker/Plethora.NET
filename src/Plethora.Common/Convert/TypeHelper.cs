@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Plethora;
+namespace Plethora.Convert;
 
 /// <summary>
 /// Helper class which contains various methods for working with types, and data-type conversions.
@@ -91,7 +91,7 @@ public static class TypeHelper
                 return underlyingValue;
             }
 
-            object? convertedValue = Convert.ChangeType(value, returnType);
+            object? convertedValue = System.Convert.ChangeType(value, returnType);
             return convertedValue;
         }
         catch (ArgumentException ex)

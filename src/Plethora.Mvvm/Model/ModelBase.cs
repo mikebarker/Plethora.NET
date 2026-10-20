@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 
 using Plethora.Collections;
+using Plethora.Convert;
 
 namespace Plethora.Mvvm.Model
 {
