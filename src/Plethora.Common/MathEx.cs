@@ -53,6 +53,9 @@ public static class MathEx
     public static T GreatestCommonDivisor<T>(T a, T b)
         where T : IBinaryInteger<T>
     {
+        a = T.Abs(a);
+        b = T.Abs(b);
+
         if (a == b)
             return a;
 
@@ -64,12 +67,6 @@ public static class MathEx
 
         if (b == T.Zero)
             return a;
-
-        if (T.IsNegative(a))
-            a = -a;
-
-        if (T.IsNegative(b))
-            b = -b;
 
         // This implementation uses the binary variant of the Euclidean algorithm.
         //   https://en.wikipedia.org/wiki/Binary_GCD_algorithm

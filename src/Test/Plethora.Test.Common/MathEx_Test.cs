@@ -127,6 +127,56 @@ public class MathEx_Test
         Assert.AreEqual(4, gcd);
     }
 
+    [TestMethod]
+    public void GreatestCommonDivisor_EqualNegativeInputs()
+    {
+        // Action
+        int gcd = MathEx.GreatestCommonDivisor(-4, -4);
+
+        // Assert
+        Assert.AreEqual(4, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_ZeroAndNegative()
+    {
+        // Action
+        int gcd = MathEx.GreatestCommonDivisor(0, -4);
+
+        // Assert
+        Assert.AreEqual(4, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_NegativeAndZero()
+    {
+        // Action
+        int gcd = MathEx.GreatestCommonDivisor(-4, 0);
+
+        // Assert
+        Assert.AreEqual(4, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_NegativeOneAndOne()
+    {
+        // Action
+        int gcd = MathEx.GreatestCommonDivisor(-1, 1);
+
+        // Assert
+        Assert.AreEqual(1, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_OneAndNegativeOne()
+    {
+        // Action
+        int gcd = MathEx.GreatestCommonDivisor(1, -1);
+
+        // Assert
+        Assert.AreEqual(1, gcd);
+    }
+
     #endregion
 
     #region Reduce
