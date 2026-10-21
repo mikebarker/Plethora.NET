@@ -5,170 +5,159 @@ using System.Globalization;
 using Plethora.Logging;
 using Plethora.Workflow.DAL;
 
-namespace Plethora.Workflow
+namespace Plethora.Workflow;
+
+internal sealed class WorkItemAccessorInterface : IWorkItemAccessorInterface
 {
-    internal sealed class WorkItemAccessorInterface : IWorkItemAccessorInterface
+    private static readonly ILogger log = Logger.GetLogger(System.Reflection.MethodBase.GetCurrentMethod()!.DeclaringType!);
+
+    private readonly Guid systemId;
+    private readonly IWorkAccessor workAccessor;
+
+    public WorkItemAccessorInterface(IWorkAccessor workAccessor, Guid systemId)
     {
-        private static readonly ILogger log = Logger.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+        // Validation
+        ArgumentNullException.ThrowIfNull(workAccessor);
 
-        private readonly Guid systemId;
-        private readonly IWorkAccessor workAccessor;
+        this.workAccessor = workAccessor;
+        this.systemId = systemId;
+    }
 
-        public WorkItemAccessorInterface(IWorkAccessor workAccessor, Guid systemId)
+    public bool TryGetLock(WorkItem workItem)
+    {
+        //Validation
+        ArgumentNullException.ThrowIfNull(workItem);
+
+        if (workItem.IsLockAcquired)
+            throw new InvalidOperationException(ResourceProvider.LockAlreadyAcquired());
+
+
+        DateTime lockAcquiredUtc = DateTime.UtcNow;
+
+        DateTime lockTimeoutUtc;
+        try
         {
-            // Validation
-            if (workAccessor == null)
-                throw new ArgumentNullException(nameof(workAccessor));
-
-
-            this.workAccessor = workAccessor;
-            this.systemId = systemId;
+            if (!this.workAccessor.TryGetWorkItemLock(this.systemId, workItem.WorkItemId, out lockTimeoutUtc))
+                return false;
+        }
+        catch (Exception ex)
+        {
+            log.Error(ex, "An unhandled error was thrown whilst trying to get a lock on WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
+                workItem.WorkItemId,
+                workItem.State,
+                this.workAccessor);
+            throw;
         }
 
-        public bool TryGetLock(WorkItem workItem)
+        workItem.RefreshLockTimes(
+            lockAcquiredUtc,
+            lockTimeoutUtc);
+
+        return true;
+    }
+
+    public bool TryRefreshLock(WorkItem workItem)
+    {
+        //Validation
+        ArgumentNullException.ThrowIfNull(workItem);
+
+        if (!workItem.IsLockAcquired)
+            throw new InvalidOperationException(ResourceProvider.LockNotHeld());
+
+
+        DateTime lockAcquiredUtc = DateTime.UtcNow;
+
+        DateTime lockTimeoutUtc;
+        try
         {
-            //Validation
-            if (workItem == null)
-                throw new ArgumentNullException(nameof(workItem));
-
-            if (workItem.IsLockAcquired)
-                throw new InvalidOperationException(ResourceProvider.LockAlreadyAcquired());
-
-
-            DateTime lockAcquiredUtc = DateTime.UtcNow;
-
-            DateTime lockTimeoutUtc;
-            try
-            {
-                if (!this.workAccessor.TryGetWorkItemLock(this.systemId, workItem.WorkItemId, out lockTimeoutUtc))
-                    return false;
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex, "An unhandled error was thrown whilst trying to get a lock on WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
-                    workItem.WorkItemId,
-                    workItem.State,
-                    this.workAccessor);
-                throw;
-            }
-
-            workItem.RefreshLockTimes(
-                lockAcquiredUtc,
-                lockTimeoutUtc);
-
-            return true;
+            if (!this.workAccessor.TryRefreshWorkItemLock(this.systemId, workItem.WorkItemId, out lockTimeoutUtc))
+                return false;
+        }
+        catch (Exception ex)
+        {
+            log.Error(ex, "An unhandled error was thrown whilst trying to refresh the lock on WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
+                workItem.WorkItemId,
+                workItem.State,
+                this.workAccessor);
+            throw;
         }
 
-        public bool TryRefreshLock(WorkItem workItem)
+        workItem.RefreshLockTimes(
+            lockAcquiredUtc,
+            lockTimeoutUtc);
+
+        return true;
+    }
+
+    public void MarkAsComplete(WorkItem workItem, string finalState, int startSequenceAt)
+    {
+        //Validation
+        ArgumentNullException.ThrowIfNull(workItem);
+
+        try
         {
-            //Validation
-            if (workItem == null)
-                throw new ArgumentNullException(nameof(workItem));
+            this.workAccessor.CompleteWorkItem(this.systemId, workItem.WorkItemId, finalState, startSequenceAt);
+        }
+        catch (Exception ex)
+        {
+            log.Error(ex, "An unhandled error was thrown whilst trying to complete the WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
+                workItem.WorkItemId,
+                workItem.State,
+                this.workAccessor);
+            throw;
+        }
+    }
 
-            if (!workItem.IsLockAcquired)
-                throw new InvalidOperationException(ResourceProvider.LockNotHeld());
+    public void MarkAsFailed(WorkItem workItem)
+    {
+        //Validation
+        ArgumentNullException.ThrowIfNull(workItem);
 
+        try
+        {
+            this.workAccessor.FailWorkItem(this.systemId, workItem.WorkItemId);
+        }
+        catch (Exception ex)
+        {
+            log.Error(ex, "An unhandled error was thrown whilst trying to fail the WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
+                workItem.WorkItemId,
+                workItem.State,
+                this.workAccessor);
+            throw;
+        }
+    }
 
-            DateTime lockAcquiredUtc = DateTime.UtcNow;
+    public void CreateNewWorkItems(WorkItem workItem, IEnumerable<StateDataPair> stateDataPairs)
+    {
+        //Validation
+        ArgumentNullException.ThrowIfNull(workItem);
 
-            DateTime lockTimeoutUtc;
-            try
-            {
-                if (!this.workAccessor.TryRefreshWorkItemLock(this.systemId, workItem.WorkItemId, out lockTimeoutUtc))
-                    return false;
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex, "An unhandled error was thrown whilst trying to refresh the lock on WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
-                    workItem.WorkItemId,
-                    workItem.State,
-                    this.workAccessor);
-                throw;
-            }
+        List<WorkItemLite> list = new();
 
-            workItem.RefreshLockTimes(
-                lockAcquiredUtc,
-                lockTimeoutUtc);
+        int sequenceCount = 1;
+        foreach (StateDataPair stateDataPair in stateDataPairs)
+        {
+            string sequence = workItem.Sequence + "-" + sequenceCount.ToString(CultureInfo.InvariantCulture);
+            sequenceCount += 1;
 
-            return true;
+            WorkItemLite workItemLite = new(
+                workItem.WorkflowId,
+                sequence,
+                stateDataPair.State,
+                stateDataPair.Data);
+
+            list.Add(workItemLite);
         }
 
-        public void MarkAsComplete(WorkItem workItem, string finalState, int startSequenceAt)
+        try
         {
-            //Validation
-            if (workItem == null)
-                throw new ArgumentNullException(nameof(workItem));
-
-
-            try
-            {
-                this.workAccessor.CompleteWorkItem(this.systemId, workItem.WorkItemId, finalState, startSequenceAt);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex, "An unhandled error was thrown whilst trying to complete the WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
-                    workItem.WorkItemId,
-                    workItem.State,
-                    this.workAccessor);
-                throw;
-            }
+            this.workAccessor.CreateWorkItems(this.systemId, list);
         }
-
-        public void MarkAsFailed(WorkItem workItem)
+        catch (Exception ex)
         {
-            //Validation
-            if (workItem == null)
-                throw new ArgumentNullException(nameof(workItem));
-
-
-            try
-            {
-                this.workAccessor.FailWorkItem(this.systemId, workItem.WorkItemId);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex, "An unhandled error was thrown whilst trying to fail the WorkItem [ID= {0:D}, State= {1}] by the accessor {2}",
-                    workItem.WorkItemId,
-                    workItem.State,
-                    this.workAccessor);
-                throw;
-            }
-        }
-
-        public void CreateNewWorkItems(WorkItem workItem, IEnumerable<StateDataPair> stateDataPairs)
-        {
-            //Validation
-            if (workItem == null)
-                throw new ArgumentNullException(nameof(workItem));
-
-
-            List<WorkItemLite> list = new List<WorkItemLite>();
-
-            int sequenceCount = 1;
-            foreach (StateDataPair stateDataPair in stateDataPairs)
-            {
-                string sequence = workItem.Sequence + "-" + sequenceCount.ToString(CultureInfo.InvariantCulture);
-                sequenceCount += 1;
-
-                WorkItemLite workItemLite = new WorkItemLite(
-                    workItem.WorkflowId,
-                    sequence,
-                    stateDataPair.State,
-                    stateDataPair.Data);
-
-                list.Add(workItemLite);
-            }
-
-            try
-            {
-                this.workAccessor.CreateWorkItems(this.systemId, list);
-            }
-            catch (Exception ex)
-            {
-                log.Error(ex, "An unhandled error was thrown whilst trying to create work items by the accessor {0}",
-                    this.workAccessor);
-                throw;
-            }
+            log.Error(ex, "An unhandled error was thrown whilst trying to create work items by the accessor {0}",
+                this.workAccessor);
+            throw;
         }
     }
 }

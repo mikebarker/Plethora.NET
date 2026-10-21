@@ -6,7 +6,7 @@ namespace Plethora.Data;
 
 public static class DataRecordHelper
 {
-    public static T? GetAs<T>(this IDataRecord dataRecord, int index)
+    public static T GetAs<T>(this IDataRecord dataRecord, int index)
     {
         ArgumentNullException.ThrowIfNull(dataRecord);
 
@@ -14,7 +14,7 @@ public static class DataRecordHelper
         if (dataRecord.IsDBNull(index))
         {
             if (typeof(T).IsClass || typeof(T).IsNullable())
-                return default;
+                return default!;
             else
                 throw new InvalidCastException(ResourceProvider.InvalidCast());
         }

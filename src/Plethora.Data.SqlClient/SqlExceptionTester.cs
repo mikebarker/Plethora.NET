@@ -5,14 +5,13 @@ namespace Plethora.Data.SqlClient;
 
 public class SqlExceptionTester : IExceptionTester
 {
-    public static Random random = new Random();
+    public static readonly Random random = new();
 
     public bool TestForRetry(Exception exception, out TimeSpan waitTime)
     {
         waitTime = TimeSpan.Zero;
 
-        SqlException sqlException = exception as SqlException;
-        if (sqlException == null)
+        if (exception is not SqlException sqlException)
             return false;
 
         switch (sqlException.Number)

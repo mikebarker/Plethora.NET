@@ -1,12 +1,11 @@
 ﻿using System;
 
-namespace Plethora.Finance.Bond
+namespace Plethora.Finance.Bond;
+
+public interface IBondInterestCalculator
 {
-    public interface IBondInterestCalculator
-    {
-        Rational CalculateDayCountFraction(
-            DateTime accrualStartDate,
-            DateTime accrualEndDate,
-            bool isPaysEndOfMonth);
-    }
+    Rational CalculateDayCountFraction(
+        DateTime accrualStartDate,
+        DateTime accrualEndDate,
+        bool isPaysEndOfMonth);
 }

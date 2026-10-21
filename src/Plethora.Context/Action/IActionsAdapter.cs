@@ -1,12 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using JetBrains.Annotations;
+namespace Plethora.Context.Action;
 
-namespace Plethora.Context.Action
+public interface IActionsAdapter
 {
-    public interface IActionsAdapter
-    {
-        [NotNull]
-        IEnumerable<IAction> Convert([NotNull] IEnumerable<IAction> actions);
-    }
+    IEnumerable<IAction> Convert(IEnumerable<IAction> actions);
 }

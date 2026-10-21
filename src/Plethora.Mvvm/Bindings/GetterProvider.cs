@@ -1,45 +1,44 @@
 ﻿using Plethora.Collections;
 using System;
 
-namespace Plethora.Mvvm.Bindings
+namespace Plethora.Mvvm.Bindings;
+
+public interface IGetterProvider
 {
-    public interface IGetterProvider
+    Func<object, object> AcquireGetter(Type observedType, BindingElementDefinition bindingElementDefinition);
+}
+
+public class CachedGetterProvider : IGetterProvider
+{
+    private readonly MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>> gettersMap = new(maxEntries: 1024);
+    private readonly IGetterProvider innerProvider;
+
+    public CachedGetterProvider(
+        IGetterProvider innerProvider)
     {
-        Func<object, object> AcquireGetter(Type observedType, BindingElementDefinition bindingElementDefinition);
+        this.innerProvider = innerProvider;
     }
 
-    public class CachedGetterProvider : IGetterProvider
+    public Func<object, object> AcquireGetter(Type observedType, BindingElementDefinition bindingElementDefinition)
     {
-        private readonly MruDictionary<Tuple<Type, BindingElementDefinition>, Func<object, object>> gettersMap = new(maxEntries: 1024);
-        private readonly IGetterProvider innerProvider;
+        var key = Tuple.Create(observedType, bindingElementDefinition);
 
-        public CachedGetterProvider(
-            IGetterProvider innerProvider)
+        if (!gettersMap.TryGetValue(key, out var getter))
         {
-            this.innerProvider = innerProvider;
+            getter = innerProvider.AcquireGetter(observedType, bindingElementDefinition);
+            gettersMap.Add(key, getter);
         }
 
-        public Func<object, object> AcquireGetter(Type observedType, BindingElementDefinition bindingElementDefinition)
-        {
-            var key = Tuple.Create(observedType, bindingElementDefinition);
-
-            if (!gettersMap.TryGetValue(key, out var getter))
-            {
-                getter = innerProvider.AcquireGetter(observedType, bindingElementDefinition);
-                gettersMap.Add(key, getter);
-            }
-
-            return getter;
-        }
+        return getter;
     }
+}
 
-    public class GetterProvider : IGetterProvider
+public class GetterProvider : IGetterProvider
+{
+    public Func<object, object> AcquireGetter(Type observedType, BindingElementDefinition bindingElementDefinition)
     {
-        public Func<object, object> AcquireGetter(Type observedType, BindingElementDefinition bindingElementDefinition)
-        {
-            Func<object, object> getter = bindingElementDefinition.CreateGetter(observedType);
+        Func<object, object> getter = bindingElementDefinition.CreateGetter(observedType);
 
-            return getter;
-        }
+        return getter;
     }
 }

@@ -1,75 +1,67 @@
 ﻿using System;
 
-using JetBrains.Annotations;
-
 using Plethora.Context.Help.Factory;
 
-namespace Plethora.Context.Help.HelpDocuments
+namespace Plethora.Context.Help.HelpDocuments;
+
+/// <summary>
+/// An creator for <see cref="RtfHelpDocument"/>.
+/// </summary>
+public class RtfHelpDocumentCreator<TKey> : HelpDocumentCreatorBase<RtfHelpDocument, TKey, string?>
+    where TKey : notnull
 {
-    /// <summary>
-    /// An creator for <see cref="RtfHelpDocument"/>.
-    /// </summary>
-    public class RtfHelpDocumentCreator<TKey> : HelpDocumentCreatorBase<RtfHelpDocument, TKey, string>
+    public override RtfHelpDocument CreateDocument(TKey key, IHelpAccessor<TKey, string?> accessor)
     {
-        public override RtfHelpDocument CreateDocument(TKey key, IHelpAccessor<TKey, string> accessor)
-        {
-            return new RtfHelpDocument<TKey>(key, accessor);
-        }
+        return new RtfHelpDocument<TKey>(key, accessor);
+    }
+}
+
+/// <summary>
+/// An implementation of <see cref="IHelpDocument"/> representing RTF documents.
+/// </summary>
+public abstract class RtfHelpDocument : IHelpDocument<string?>
+{
+    private bool dataReceived = false;
+    private string? data;
+
+    object? IHelpDocument.Data
+    {
+        get { return this.Data; }
     }
 
-    /// <summary>
-    /// An implementation of <see cref="IHelpDocument"/> representing RTF documents.
-    /// </summary>
-    public abstract class RtfHelpDocument : IHelpDocument<string>
+    public string? Data
     {
-        private bool dataReceived = false;
-        private string data;
-
-        object IHelpDocument.Data
+        get
         {
-            get { return this.Data; }
-        }
-
-        [CanBeNull]
-        public string Data
-        {
-            get
+            if (!this.dataReceived)
             {
-                if (!this.dataReceived)
-                {
-                    this.data = this.GetData();
-                    this.dataReceived = true;
-                }
-                return this.data;
+                this.data = this.GetData();
+                this.dataReceived = true;
             }
+            return this.data;
         }
-
-        [CanBeNull]
-        protected abstract string GetData();
     }
 
-    internal class RtfHelpDocument<TKey> : RtfHelpDocument
+    protected abstract string? GetData();
+}
+
+internal class RtfHelpDocument<TKey> : RtfHelpDocument
+    where TKey : notnull
+{
+    private readonly TKey key;
+    private readonly IHelpAccessor<TKey, string?> accessor;
+
+    public RtfHelpDocument(TKey key, IHelpAccessor<TKey, string?> accessor)
     {
-        private readonly TKey key;
-        private readonly IHelpAccessor<TKey, string> accessor;
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(accessor);
 
-        public RtfHelpDocument([NotNull] TKey key, [NotNull] IHelpAccessor<TKey, string> accessor)
-        {
-            if (key == null)
-                throw new ArgumentNullException(nameof(key));
+        this.key = key;
+        this.accessor = accessor;
+    }
 
-            if (accessor == null)
-                throw new ArgumentNullException(nameof(accessor));
-
-
-            this.key = key;
-            this.accessor = accessor;
-        }
-
-        [CanBeNull]
-        protected override string GetData()
-        {
-            return this.accessor.GetData(this.key);
-        }
+    protected override string? GetData()
+    {
+        return this.accessor.GetData(this.key);
     }
 }

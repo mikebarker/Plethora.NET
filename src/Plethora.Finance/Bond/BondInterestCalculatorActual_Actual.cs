@@ -1,59 +1,58 @@
 ﻿using System;
 
-namespace Plethora.Finance.Bond
+namespace Plethora.Finance.Bond;
+
+public class BondInterestCalculatorActual_Actual : IBondInterestCalculator
 {
-    public class BondInterestCalculatorActual_Actual : IBondInterestCalculator
+    Rational IBondInterestCalculator.CalculateDayCountFraction(
+        DateTime accrualStartDate,
+        DateTime accrualEndDate,
+        bool isPaysEndOfMonth)
     {
-        Rational IBondInterestCalculator.CalculateDayCountFraction(
-            DateTime accrualStartDate,
-            DateTime accrualEndDate,
-            bool isPaysEndOfMonth)
+        if (accrualEndDate <= accrualStartDate)
+            throw new ArgumentException(ResourceProvider.ArgMustBeLessThan(nameof(accrualStartDate), nameof(accrualEndDate)));
+
+
+        return CalculateDayCountFraction(accrualStartDate, accrualEndDate);
+    }
+
+    public static Rational CalculateDayCountFraction(
+        DateTime accrualStartDate,
+        DateTime accrualEndDate)
+    {
+        if (accrualEndDate <= accrualStartDate)
+            throw new ArgumentException(ResourceProvider.ArgMustBeLessThan(nameof(accrualStartDate), nameof(accrualEndDate)));
+
+
+        if (accrualStartDate.Year == accrualEndDate.Year)
         {
-            if (accrualEndDate <= accrualStartDate)
-                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan(nameof(accrualStartDate), nameof(accrualEndDate)));
+            int daysInYear = (accrualEndDate - accrualStartDate).Days;
 
+            Rational dayCountFraction = new(
+                daysInYear,
+                DateTime.IsLeapYear(accrualStartDate.Year) ? 366 : 365);
 
-            return this.CalculateDayCountFraction(accrualStartDate, accrualEndDate);
+            return dayCountFraction;
         }
-
-        public Rational CalculateDayCountFraction(
-            DateTime accrualStartDate,
-            DateTime accrualEndDate)
+        else
         {
-            if (accrualEndDate <= accrualStartDate)
-                throw new ArgumentException(ResourceProvider.ArgMustBeLessThan(nameof(accrualStartDate), nameof(accrualEndDate)));
+            int daysInStartYear = (new DateTime(accrualStartDate.Year + 1, 01, 01) - accrualStartDate).Days;
+            int daysInEndYear = (accrualEndDate - new DateTime(accrualEndDate.Year, 01, 01)).Days;
 
+            Rational startYearFraction = new(
+                daysInStartYear,
+                DateTime.IsLeapYear(accrualStartDate.Year) ? 366 : 365);
 
-            if (accrualStartDate.Year == accrualEndDate.Year)
-            {
-                int daysInYear = (accrualEndDate - accrualStartDate).Days;
+            Rational endYearFraction = new(
+                daysInEndYear,
+                DateTime.IsLeapYear(accrualEndDate.Year) ? 366 : 365);
 
-                Rational dayCountFraction = new Rational(
-                    daysInYear,
-                    DateTime.IsLeapYear(accrualStartDate.Year) ? 366 : 365);
+            Rational midYearFractions = new(
+                (accrualEndDate.Year - accrualStartDate.Year - 1),
+                1);
 
-                return dayCountFraction;
-            }
-            else
-            {
-                int daysInStartYear = (new DateTime(accrualStartDate.Year + 1, 01, 01) - accrualStartDate).Days;
-                int daysInEndYear = (accrualEndDate - new DateTime(accrualEndDate.Year, 01, 01)).Days;
-
-                Rational startYearFraction = new Rational(
-                    daysInStartYear,
-                    DateTime.IsLeapYear(accrualStartDate.Year) ? 366 : 365);
-
-                Rational endYearFraction = new Rational(
-                    daysInEndYear,
-                    DateTime.IsLeapYear(accrualEndDate.Year) ? 366 : 365);
-
-                Rational midYearFractions = new Rational(
-                    (accrualEndDate.Year - accrualStartDate.Year - 1),
-                    1);
-
-                Rational dayCountFraction = startYearFraction + midYearFractions + endYearFraction;
-                return dayCountFraction;
-            }
+            Rational dayCountFraction = startYearFraction + midYearFractions + endYearFraction;
+            return dayCountFraction;
         }
     }
 }

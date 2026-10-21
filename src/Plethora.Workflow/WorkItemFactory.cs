@@ -1,60 +1,59 @@
 ﻿using System;
-
 using Plethora.Workflow.DAL;
 
-namespace Plethora.Workflow
+namespace Plethora.Workflow;
+
+internal sealed class WorkItemFactory
 {
-    internal sealed class WorkItemFactory
+    private readonly WorkItemAccessorInterface accessorInterface;
+
+    public WorkItemFactory(IWorkAccessor workAccessor, Guid systemId)
     {
-        private readonly WorkItemAccessorInterface accessorInterface;
+        // Validation
+        ArgumentNullException.ThrowIfNull(workAccessor);
 
-        public WorkItemFactory(IWorkAccessor workAccessor, Guid systemId)
-        {
-            // Validation
-            if (workAccessor == null)
-                throw new ArgumentNullException(nameof(workAccessor));
+        this.accessorInterface = new WorkItemAccessorInterface(workAccessor, systemId);
+    }
 
+    public WorkItem CreateWorkItem(WorkItemLite workItemLite)
+    {
+        WorkItem workItem = (workItemLite.LockTimeoutUtc != null)
+            ? this.CreateWorkItemLocked(workItemLite)
+            : this.CreateWorkItemUnlocked(workItemLite);
 
-            this.accessorInterface = new WorkItemAccessorInterface(workAccessor, systemId);
-        }
+        return workItem;
+    }
 
-        public WorkItem CreateWorkItem(WorkItemLite workItemLite)
-        {
-            WorkItem workItem = (workItemLite.LockTimeoutUtc != null)
-                ? this.CreateWorkItemLocked(workItemLite)
-                : this.CreateWorkItemUnlocked(workItemLite);
+    private WorkItem CreateWorkItemLocked(WorkItemLite workItemLite)
+    {
+        if (workItemLite.LockAcquiredUtc == null || workItemLite.LockTimeoutUtc == null)
+            throw new ArgumentException(ResourceProvider.LockNotHeld(), nameof(workItemLite));
 
-            return workItem;
-        }
+        WorkItem workItem = new(
+            workItemLite.WorkflowId,
+            workItemLite.WorkItemId,
+            workItemLite.Sequence,
+            workItemLite.State,
+            workItemLite.Data,
+            workItemLite.LockAcquiredUtc.Value,
+            workItemLite.LockTimeoutUtc.Value,
 
-        private WorkItem CreateWorkItemLocked(WorkItemLite workItemLite)
-        {
-            WorkItem workItem = new WorkItem(
-                workItemLite.WorkflowId,
-                workItemLite.WorkItemId,
-                workItemLite.Sequence,
-                workItemLite.State,
-                workItemLite.Data,
-                workItemLite.LockAcquiredUtc.Value,
-                workItemLite.LockTimeoutUtc.Value,
+            this.accessorInterface);
 
-                this.accessorInterface);
+        return workItem;
+    }
 
-            return workItem;
-        }
+    private WorkItem CreateWorkItemUnlocked(WorkItemLite workItemLite)
+    {
+        WorkItem workItem = new(
+            workItemLite.WorkflowId,
+            workItemLite.WorkItemId,
+            workItemLite.Sequence,
+            workItemLite.State,
+            workItemLite.Data,
 
-        private WorkItem CreateWorkItemUnlocked(WorkItemLite workItemLite)
-        {
-            WorkItem workItem = new WorkItem(
-                workItemLite.WorkflowId,
-                workItemLite.WorkItemId,
-                workItemLite.Sequence,
-                workItemLite.State,
-                workItemLite.Data,
+            this.accessorInterface);
 
-                this.accessorInterface);
-
-            return workItem;
-        }
+        return workItem;
     }
 }

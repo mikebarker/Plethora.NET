@@ -1,7 +1,6 @@
-﻿namespace Plethora.Xaml.Converters
+﻿namespace Plethora.Xaml.Converters;
+
+public interface IUnsetValueProvider
 {
-    public interface IUnsetValueProvider
-    {
-        object UnsetValue { get; }
-    }
+    object UnsetValue { get; }
 }

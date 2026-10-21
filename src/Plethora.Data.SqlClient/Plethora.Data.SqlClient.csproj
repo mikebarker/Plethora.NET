@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
 
     <!-- Included to avoid vulerability in transitive dependency of Microsoft.Data.SqlClient 7.1.1 -->

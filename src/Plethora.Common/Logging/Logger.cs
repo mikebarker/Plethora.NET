@@ -90,7 +90,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Verbose, null, () => message);
     }
 
-    public virtual void Verbose(string format, params object[] args)
+    public virtual void Verbose(string format, params object?[] args)
     {
         this.Log(LogLevel.Verbose, null, () => string.Format(format, args));
     }
@@ -100,7 +100,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Verbose, exception, () => message);
     }
 
-    public virtual void Verbose(Exception exception, string format, params object[] args)
+    public virtual void Verbose(Exception exception, string format, params object?[] args)
     {
         this.Log(LogLevel.Verbose, exception, () => string.Format(format, args));
     }
@@ -113,7 +113,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Debug, null, () => message);
     }
 
-    public virtual void Debug(string format, params object[] args)
+    public virtual void Debug(string format, params object?[] args)
     {
         this.Log(LogLevel.Debug, null, () => string.Format(format, args));
     }
@@ -123,7 +123,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Debug, exception, () => message);
     }
 
-    public virtual void Debug(Exception exception, string format, params object[] args)
+    public virtual void Debug(Exception exception, string format, params object?[] args)
     {
         this.Log(LogLevel.Debug, exception, () => string.Format(format, args));
     }
@@ -136,7 +136,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Info, null, () => message);
     }
 
-    public virtual void Info(string format, params object[] args)
+    public virtual void Info(string format, params object?[] args)
     {
         this.Log(LogLevel.Info, null, () => string.Format(format, args));
     }
@@ -146,7 +146,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Info, exception, () => message);
     }
 
-    public virtual void Info(Exception exception, string format, params object[] args)
+    public virtual void Info(Exception exception, string format, params object?[] args)
     {
         this.Log(LogLevel.Info, exception, () => string.Format(format, args));
     }
@@ -159,7 +159,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Warn, null, () => message);
     }
 
-    public virtual void Warn(string format, params object[] args)
+    public virtual void Warn(string format, params object?[] args)
     {
         this.Log(LogLevel.Warn, null, () => string.Format(format, args));
     }
@@ -169,7 +169,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Warn, exception, () => message);
     }
 
-    public virtual void Warn(Exception exception, string format, params object[] args)
+    public virtual void Warn(Exception exception, string format, params object?[] args)
     {
         this.Log(LogLevel.Warn, exception, () => string.Format(format, args));
     }
@@ -182,7 +182,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Error, null, () => message);
     }
 
-    public virtual void Error(string format, params object[] args)
+    public virtual void Error(string format, params object?[] args)
     {
         this.Log(LogLevel.Error, null, () => string.Format(format, args));
     }
@@ -192,7 +192,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Error, exception, () => message);
     }
 
-    public virtual void Error(Exception exception, string format, params object[] args)
+    public virtual void Error(Exception exception, string format, params object?[] args)
     {
         this.Log(LogLevel.Error, exception, () => string.Format(format, args));
     }
@@ -205,7 +205,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Fatal, null, () => message);
     }
 
-    public virtual void Fatal(string format, params object[] args)
+    public virtual void Fatal(string format, params object?[] args)
     {
         this.Log(LogLevel.Fatal, null, () => string.Format(format, args));
     }
@@ -215,7 +215,7 @@ public abstract class Logger : ILogger
         this.Log(LogLevel.Fatal, exception, () => message);
     }
 
-    public virtual void Fatal(Exception exception, string format, params object[] args)
+    public virtual void Fatal(Exception exception, string format, params object?[] args)
     {
         this.Log(LogLevel.Fatal, exception, () => string.Format(format, args));
     }

@@ -2,50 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using JetBrains.Annotations;
+namespace Plethora.Context.Help.Factory;
 
-namespace Plethora.Context.Help.Factory
+public class HelpFactory<TKey, TData> : IHelpFactory
+    where TKey : notnull
 {
-    public class HelpFactory<TKey, TData> : IHelpFactory
+    private readonly IHelpKeyer<TKey> keyer;
+    private readonly IHelpAccessor<TKey, TData> accessor;
+    private readonly IHelpDocumentCreator<TKey, TData> creator;
+
+    public HelpFactory(IHelpKeyer<TKey> keyer, IHelpAccessor<TKey, TData> accessor, IHelpDocumentCreator<TKey, TData> creator)
     {
-        private readonly IHelpKeyer<TKey> keyer;
-        private readonly IHelpAccessor<TKey, TData> accessor;
-        private readonly IHelpDocumentCreator<TKey, TData> creator;
+        ArgumentNullException.ThrowIfNull(keyer);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(creator);
 
-        public HelpFactory([NotNull] IHelpKeyer<TKey> keyer, [NotNull] IHelpAccessor<TKey, TData> accessor, [NotNull] IHelpDocumentCreator<TKey, TData> creator)
-        {
-            if (keyer == null)
-                throw new ArgumentNullException(nameof(keyer));
+        this.keyer = keyer;
+        this.accessor = accessor;
+        this.creator = creator;
+    }
 
-            if (accessor == null)
-                throw new ArgumentNullException(nameof(accessor));
+    public IEnumerable<IHelpDocument>? GetHelpDocuments(IEnumerable<ContextInfo?>? contexts)
+    {
+        if (contexts == null)
+            return null;
 
-            if (creator == null)
-                throw new ArgumentNullException(nameof(creator));
+#pragma warning disable CS8619 // Nullability of reference types in value doesn't match target type.
+        IEnumerable<TKey> keys = contexts
+            .Where(context => context is not null)
+            .Select(context => this.keyer.GetHelpKey(context!))
+            .Where(key => key != null)
+            .Distinct();
 
+        IEnumerable<IHelpDocument<TData>> documents = keys
+            .Select(key => this.creator.CreateDocument(key, this.accessor))
+            .Where(document => document != null);
 
-            this.keyer = keyer;
-            this.accessor = accessor;
-            this.creator = creator;
-        }
-
-        [CanBeNull]
-        public IEnumerable<IHelpDocument> GetHelpDocuments(IEnumerable<ContextInfo> contexts)
-        {
-            if (contexts == null)
-                return null;
-
-            IEnumerable<TKey> keys = contexts
-                .Where(context => context != null)
-                .Select(context => this.keyer.GetHelpKey(context))
-                .Where(key => key != null)
-                .Distinct();
-
-            IEnumerable<IHelpDocument<TData>> documents = keys
-                .Select(key => this.creator.CreateDocument(key, this.accessor))
-                .Where(document => document != null);
-
-            return documents;
-        }
+        return documents;
+#pragma warning restore CS8619
     }
 }

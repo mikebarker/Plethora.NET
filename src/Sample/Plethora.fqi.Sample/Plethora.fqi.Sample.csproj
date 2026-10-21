@@ -12,10 +12,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Plethora.fqi\Plethora.fqi.csproj" />
   </ItemGroup>
 

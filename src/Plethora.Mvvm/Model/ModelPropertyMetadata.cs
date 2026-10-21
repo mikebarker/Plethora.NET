@@ -1,55 +1,54 @@
 ﻿using System;
 
-namespace Plethora.Mvvm.Model
+namespace Plethora.Mvvm.Model;
+
+/// <summary>
+/// Non-generic interface used for storing <see cref="ModelPropertyMetadata{T}"/>.
+/// </summary>
+internal interface IModelPropertyMetadata
 {
-    /// <summary>
-    /// Non-generic interface used for storing <see cref="ModelPropertyMetadata{T}"/>.
-    /// </summary>
-    internal interface IModelPropertyMetadata
+    string Name { get; }
+}
+
+/// <summary>
+/// Generic implementation of <see cref="IModelPropertyMetadata"/>
+/// </summary>
+/// <typeparam name="T">
+/// The data type of the property of this meta-data.
+/// </typeparam>
+internal sealed class ModelPropertyMetadata<T> : IModelPropertyMetadata
+{
+    private readonly string name;
+    private readonly T? defaultValue;
+
+    public ModelPropertyMetadata(
+        string name,
+        T? defaultValue)
     {
-        string Name { get; }
+        ArgumentNullException.ThrowIfNull(name);
+
+        this.name = name;
+        this.defaultValue = defaultValue;
     }
 
-    /// <summary>
-    /// Generic implementation of <see cref="IModelPropertyMetadata"/>
-    /// </summary>
-    /// <typeparam name="T">
-    /// The data type of the property of this meta-data.
-    /// </typeparam>
-    internal sealed class ModelPropertyMetadata<T> : IModelPropertyMetadata
+    public string Name
     {
-        private readonly string name;
-        private readonly T? defaultValue;
-
-        public ModelPropertyMetadata(
-            string name,
-            T? defaultValue)
-        {
-            ArgumentNullException.ThrowIfNull(name);
-
-            this.name = name;
-            this.defaultValue = defaultValue;
-        }
-
-        public string Name
-        {
-            get { return this.name; }
-        }
-
-        public T? DefaultValue
-        {
-            get { return this.defaultValue; }
-        }
+        get { return this.name; }
     }
 
-    internal static class ModelPropertyMetadataHelper
+    public T? DefaultValue
     {
-        public static T? GetDefaultValueSafe<T>(this ModelPropertyMetadata<T>? propertyMetadata)
-        {
-            if (propertyMetadata == null)
-                return default;
+        get { return this.defaultValue; }
+    }
+}
 
-            return propertyMetadata.DefaultValue;
-        }
+internal static class ModelPropertyMetadataHelper
+{
+    public static T? GetDefaultValueSafe<T>(this ModelPropertyMetadata<T>? propertyMetadata)
+    {
+        if (propertyMetadata == null)
+            return default;
+
+        return propertyMetadata.DefaultValue;
     }
 }

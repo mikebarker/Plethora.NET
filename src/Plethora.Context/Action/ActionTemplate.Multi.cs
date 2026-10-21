@@ -1,47 +1,40 @@
 ﻿using System;
 
-using JetBrains.Annotations;
+namespace Plethora.Context.Action;
 
-namespace Plethora.Context.Action
+public abstract class MultiActionTemplate : IMultiActionTemplate
 {
-    public abstract class MultiActionTemplate : IMultiActionTemplate
+    private readonly string contextName;
+
+    protected MultiActionTemplate(string contextName)
     {
-        private readonly string contextName;
+        //Validation
+        ArgumentNullException.ThrowIfNull(contextName);
 
-        protected MultiActionTemplate(
-            [NotNull] string contextName)
-        {
-            //Validation
-            if (contextName == null)
-                throw new ArgumentNullException(nameof(contextName));
+        this.contextName = contextName;
+    }
 
+    public string ContextName
+    {
+        get { return this.contextName; }
+    }
 
-            this.contextName = contextName;
-        }
+    public abstract string GetActionName(ContextInfo[] context);
 
-        public string ContextName
-        {
-            get { return this.contextName; }
-        }
+    public abstract bool CanExecute(ContextInfo[] context);
 
-        public abstract string GetActionName(ContextInfo[] context);
+    public abstract void Execute(ContextInfo[] context);
 
-        public abstract bool CanExecute(ContextInfo[] context);
+    public virtual IAction? CreateAction(ContextInfo[] contexts)
+    {
+        if (contexts.Length < 2)
+            return null;
 
-        public abstract void Execute(ContextInfo[] context);
+        string actionName = this.GetActionName(contexts);
+        bool canExecute = this.CanExecute(contexts);
+        void execute() => this.Execute(contexts);
 
-        [CanBeNull]
-        public virtual IAction CreateAction([NotNull, ItemNotNull] ContextInfo[] contexts)
-        {
-            if (contexts.Length < 2)
-                return null;
-
-            string actionName = this.GetActionName(contexts);
-            bool canExecute = this.CanExecute(contexts);
-            System.Action execute = () => this.Execute(contexts);
-
-            IAction action = new ContextAction(actionName, canExecute, execute);
-            return action;
-        }
+        IAction action = new ContextAction(actionName, canExecute, execute);
+        return action;
     }
 }

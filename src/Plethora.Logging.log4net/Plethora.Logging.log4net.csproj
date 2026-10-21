@@ -11,10 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\JetBrains.Annotations.cs" Link="JetBrains.Annotations.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="log4net" Version="3.5.0" />
   </ItemGroup>
 

@@ -8,7 +8,6 @@
   </Configurations>
   <Folder Name="/Common/">
     <File Path="../license.md" />
-    <File Path="JetBrains.Annotations.cs" />
   </Folder>
   <Folder Name="/Sample/">
     <Project Path="Sample/Plethora.Cache.Sample/Plethora.Cache.Sample.csproj" />

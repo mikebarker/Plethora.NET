@@ -1,7 +1,6 @@
-﻿namespace Plethora.Workflow
+﻿namespace Plethora.Workflow;
+
+public interface IWorkProcessor
 {
-    public interface IWorkProcessor
-    {
-        void Process(WorkItem workItem);
-    }
+    void Process(WorkItem workItem);
 }
