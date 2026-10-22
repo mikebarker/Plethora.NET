@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test;
 
@@ -366,6 +367,68 @@ public class MathEx_Test
         // Assert
         Assert.AreEqual(1073741823, numerator);
         Assert.AreEqual(1, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Decimal_CommonFactor()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(1.5m, 2.5m);
+
+        // Assert
+        Assert.AreEqual(3m, numerator);
+        Assert.AreEqual(5m, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Decimal_DifferentScales()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(0.15m, 0.25m);
+
+        // Assert
+        Assert.AreEqual(3m, numerator);
+        Assert.AreEqual(5m, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Decimal_NegativeNumerator()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(-1.5m, 2.5m);
+
+        // Assert
+        Assert.AreEqual(-3m, numerator);
+        Assert.AreEqual(5m, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Decimal_NegativeDenominator()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(1.5m, -2.5m);
+
+        // Assert
+        Assert.AreEqual(-3m, numerator);
+        Assert.AreEqual(5m, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Decimal_NumeratorZero()
+    {
+        // Action
+        var (numerator, denominator) = MathEx.Reduce(0m, 0.5m);
+
+        // Assert
+        Assert.AreEqual(0m, numerator);
+        Assert.AreEqual(1m, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_Decimal_ZeroDenominatorThrows()
+    {
+        // Assert
+        Assert.Throws<DivideByZeroException>(() => MathEx.Reduce(1.25m, 0m));
     }
 
     #endregion
