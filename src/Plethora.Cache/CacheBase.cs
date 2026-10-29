@@ -113,6 +113,7 @@ public abstract class CacheBase<TData, TArgument>
         //Load the data in another thread.
         if (required.Count != 0)
         {
+            // TODO: Exceptions are unobserved.
             _ = this.CacheDataForRequestsAsync(required, generation, CancellationToken.None);
         }
 
