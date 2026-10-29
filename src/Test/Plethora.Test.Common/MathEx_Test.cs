@@ -475,6 +475,24 @@ public class MathEx_Test
     }
 
     [TestMethod]
+    public void Reduce_UnsignedInt_OneOverMaxValue()
+    {
+        var (numerator, denominator) = MathEx.Reduce(1u, uint.MaxValue);
+
+        Assert.AreEqual(1u, numerator);
+        Assert.AreEqual(uint.MaxValue, denominator);
+    }
+
+    [TestMethod]
+    public void Reduce_UnsignedLong_OneOverMaxValue()
+    {
+        var (numerator, denominator) = MathEx.Reduce(1UL, ulong.MaxValue);
+
+        Assert.AreEqual(1UL, numerator);
+        Assert.AreEqual(ulong.MaxValue, denominator);
+    }
+
+    [TestMethod]
     public void Reduce_LargeValues()
     {
         // Action

@@ -106,9 +106,6 @@ public static class MathEx
         if (a == b)
             return (T.One, T.One);
 
-        if (a == -b)
-            return (-T.One, T.One);
-
         // Special case reduce by common multiples of 2
         T countT = T.TrailingZeroCount(a | b);
         int count = int.CreateTruncating(countT);

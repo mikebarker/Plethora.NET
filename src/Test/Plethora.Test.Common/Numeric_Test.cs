@@ -77,6 +77,26 @@ public class NumericTest
     }
 
     [TestMethod]
+    public void Compare_FractionalRightValue_LeftIsGreater()
+    {
+        int result = Numeric.Compare(2, 1.5);
+        int reversedResult = Numeric.Compare(1.5, 2);
+
+        Assert.IsTrue(result > 0);
+        Assert.IsTrue(reversedResult < 0);
+    }
+
+    [TestMethod]
+    public void Compare_NegativeFractionalRightValue_LeftIsSmaller()
+    {
+        int result = Numeric.Compare(-2, -1.5);
+        int reversedResult = Numeric.Compare(-1.5, -2);
+
+        Assert.IsTrue(result < 0);
+        Assert.IsTrue(reversedResult > 0);
+    }
+
+    [TestMethod]
     public void Compare_RightValueAboveLeftTypeRange()
     {
         // Action

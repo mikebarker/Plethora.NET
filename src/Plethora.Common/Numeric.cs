@@ -69,25 +69,24 @@ public static partial class Numeric
     ///   </item>
     /// </list>
     /// </returns>
-    /// <remarks>
-    /// This method assumes that <c>TRight.IsNegative(a) != TRight.IsNegative(a)</c> for all
-    /// non-zero values of a. Where this identity is not valid the method does not guarantee a correct result,
-    /// should <paramref name="right"/> fall outside the representable range of <c>TLeft</c>.
-    /// </remarks>
     public static int Compare<TLeft, TRight>(TLeft left, TRight right)
         where TLeft : INumberBase<TLeft>, IComparable<TLeft>
-        where TRight : INumberBase<TRight>
+        where TRight : INumberBase<TRight>, IComparable<TRight>
     {
         // If 'right' is representable in TLeft, so compare directly
-        if (TryCreate<TRight, TLeft>(right, out var r))
+        if (TryCreate(right, out TLeft r))
         {
             return left.CompareTo(r);
         }
+        else
+        {
+            if (TryCreate(left, out TRight l))
+            {
+                return l.CompareTo(right);
+            }
+        }
 
-        // 'right' is outside TLeft's range:
-        //   right > TLeft.MaxValue (right > 0) -> any TLeft value is smaller
-        //   right < TLeft.MinValue (right < 0) -> any TLeft value is larger
-        return TRight.IsNegative(right) ? 1 : -1;
+        throw new NotSupportedException();
     }
 
     /// <summary>
