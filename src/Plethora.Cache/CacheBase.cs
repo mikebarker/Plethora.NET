@@ -21,7 +21,7 @@ public abstract class CacheBase<TData, TArgument>
         private readonly TaskCompletionSource<object?> taskCompletionSource;
 
         #endregion
-        
+
         #region Constructors
 
         public Request(TArgument argument)
@@ -90,6 +90,11 @@ public abstract class CacheBase<TData, TArgument>
     /// </returns>
     protected async Task<IEnumerable<TData>> GetDataAsync(IEnumerable<TArgument> arguments, CancellationToken cancellationToken = default)
     {
+        if (TryGetNonEnumeratedCount(arguments, out var count) && (count == 0))
+        {
+            return Enumerable.Empty<TData>();
+        }
+
         List<Request> submitted;
         List<Request> required;
         long generation;
@@ -120,8 +125,7 @@ public abstract class CacheBase<TData, TArgument>
         else if (submitted.Count != 0)
             requests = submitted;
         else
-            //This should not occur
-            throw new InvalidOperationException("Neither submitted nor required returned any results.");
+            requests = Enumerable.Empty<Request>(); // Can occur if the arguments are empty.
 
         foreach (var request in requests)
         {
@@ -393,7 +397,7 @@ public abstract class CacheBase<TData, TArgument>
 
         return dataForRequests;
     }
-    
+
     private void GetRequests(
         IEnumerable<TArgument> newArguments,
         out List<Request> submitted,
@@ -405,11 +409,15 @@ public abstract class CacheBase<TData, TArgument>
 
         //Attempt to estimate the capacity required
         int nextCapacity = 4; // Default
-        if (argumentList is ICollection<TArgument> argumentCollection)
+        if (TryGetNonEnumeratedCount(argumentList, out var count))
         {
-            //Get the estimated capacity
-            int count = argumentCollection.Count;
-            nextCapacity = count + (count >> 2); // add 25% to the capcacity
+            if (count == 0)
+            {
+                required = new();
+                return;
+            }
+
+            nextCapacity = count + (count >> 2); // add 25% to the capacity
         }
 
         // requestsLock is already held.
@@ -432,7 +440,7 @@ public abstract class CacheBase<TData, TArgument>
                 }
             }
 
-            int count = nextArgumentList.Count;
+            count = nextArgumentList.Count;
             nextCapacity = count + (count >> 2); // add 25% to the capacity
 
             argumentList = nextArgumentList;
@@ -448,6 +456,18 @@ public abstract class CacheBase<TData, TArgument>
     {
         return dataSet
             .Where(dataItem => filterArguments.Any(filter => filter.IsDataIncluded(dataItem)));
+    }
+
+    private static bool TryGetNonEnumeratedCount(IEnumerable<TArgument> enumerable, out int count)
+    {
+        // LINQ's Enumerable.TryGetNonEnumeratedCount doesn't consider readonly collections.
+        if (enumerable is IReadOnlyCollection<TArgument> readOnlyCollection)
+        {
+            count = readOnlyCollection.Count;
+            return true;
+        }
+
+        return enumerable.TryGetNonEnumeratedCount(out count);
     }
 
     #endregion
