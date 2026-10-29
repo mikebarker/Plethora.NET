@@ -114,7 +114,7 @@ public class LockRegister
         var token = cts.Token;
         _ = Task.Run(async () =>
         {
-            await Task.Delay(this.longWaitDetectionTimeout).ConfigureAwait(false);
+            await Task.Delay(this.longWaitDetectionTimeout, token).ConfigureAwait(false);
 
             if (!token.IsCancellationRequested)
             {
