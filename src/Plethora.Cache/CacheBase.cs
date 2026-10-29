@@ -181,17 +181,24 @@ public abstract class CacheBase<TData, TArgument>
                         // It must also complete before the dataLock is taken for
                         // data removal, otherwise a race condition develops where the 
                         // retrieved data for the request may only be inserted after
-                        // the delete has occurred. Which would result in data existing
+                        // the delete has occurred. This would result in data existing
                         // in the cache without a corresponding request.
-                        // Therefore WaitOne() can not be called inside the
+                        // Therefore the await can not be called inside the
                         // "if (remainingArgs != null)" block
-                        Exception? originalRequestException = null;
+                        Exception? originalRequestException;
                         try
                         {
                             await originalRequest.Task.ConfigureAwait(false);
+                            originalRequestException = null;
                         }
                         catch (Exception ex)
                         {
+                            // Do not copy recoverable failures into remainder requests, allow those regions to be reloaded.
+                            if (this.IsExceptionRecoverable(ex))
+                            {
+                                continue;
+                            }
+
                             originalRequestException = ex;
                         }
 

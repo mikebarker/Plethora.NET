@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Plethora.Cache;
+using Plethora.Cache.Spacial;
+using Plethora.Collections.Sets;
+using Plethora.Spacial;
 
 namespace Plethora.Test.Cache
 {
@@ -400,6 +403,48 @@ namespace Plethora.Test.Cache
         }
 
         [TestMethod]
+        [DataRow(true)]
+        [DataRow(false)]
+        public async Task DropData_PartialInFlightFailure_RemainderHonorsRecoverability(bool recoverable)
+        {
+            var sourceResult = new TaskCompletionSource<IEnumerable<Data>>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Exception exception = recoverable ? new TimeoutException() : new CacheException();
+            int sourceCalls = 0;
+            SetCache cache = new(() => ++sourceCalls == 1
+                ? sourceResult.Task
+                : Task.FromResult<IEnumerable<Data>>([GetDataOrNull(2)]));
+
+            var loading = cache.GetDataAsync(1, 2);
+            var dropping = cache.DropDataAsync(1);
+            Assert.IsFalse(dropping.IsCompleted);
+
+            sourceResult.SetException(exception);
+            var caughtException = await Assert.ThrowsAsync<Exception>(
+                () => loading.WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+            Assert.AreSame(exception, caughtException);
+            await dropping.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+
+            if (recoverable)
+            {
+                var result = await cache.GetDataAsync(2)
+                    .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+                Assert.AreEqual(2, result.Single().Id);
+
+                var cachedResult = await cache.GetDataAsync(2)
+                    .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+                Assert.AreEqual(2, cachedResult.Single().Id);
+                Assert.AreEqual(2, sourceCalls);
+            }
+            else
+            {
+                var remainderException = await Assert.ThrowsAsync<CacheException>(
+                    () => cache.GetDataAsync(2).WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+                Assert.AreSame(exception, remainderException);
+                Assert.AreEqual(1, sourceCalls);
+            }
+        }
+
+        [TestMethod]
         public async Task GetData_DuringDrop_WaitsAsynchronouslyAndReloadsDroppedData()
         {
             var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -610,6 +655,40 @@ namespace Plethora.Test.Cache
             }
 
             #endregion
+        }
+
+        class SetCache : CacheBase<Data, SpacialArgument<Data, long>>
+        {
+            private readonly Func<Task<IEnumerable<Data>>> getDataFromSourceAsync;
+
+            public SetCache(Func<Task<IEnumerable<Data>>> getDataFromSourceAsync)
+            {
+                this.getDataFromSourceAsync = getDataFromSourceAsync;
+            }
+
+            public Task<IEnumerable<Data>> GetDataAsync(params long[] ids)
+            {
+                return base.GetDataAsync([CreateArgument(ids)]);
+            }
+
+            public Task DropDataAsync(params long[] ids)
+            {
+                return base.DropDataAsync([CreateArgument(ids)]);
+            }
+
+            protected override Task<IEnumerable<Data>> GetDataFromSourceAsync(
+                IEnumerable<SpacialArgument<Data, long>> arguments,
+                CancellationToken cancellationToken)
+            {
+                return this.getDataFromSourceAsync();
+            }
+
+            private static SpacialArgument<Data, long> CreateArgument(long[] ids)
+            {
+                return new(
+                    data => Tuple.Create(data.Id),
+                    new SpaceRegion<long>(new InclusiveSet<long>(ids)));
+            }
         }
 
         public class Data
