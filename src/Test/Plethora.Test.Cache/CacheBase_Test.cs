@@ -343,6 +343,89 @@ namespace Plethora.Test.Cache
             dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
         }
 
+        [TestMethod]
+        public async Task Clear_InFlightRequest_DoesNotRepopulateCacheWithStaleData()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var staleData = new Data(3, "stale");
+            var freshData = new Data(3, "fresh");
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .SetupSequence(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task)
+                .ReturnsAsync(freshData);
+            Cache cache = new(dataSourceMock.Object);
+
+            var loading = cache.GetDataAsync(3);
+            Assert.IsFalse(loading.IsCompleted);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
+
+            cache.ClearCache();
+            var freshResult = await cache.GetDataAsync(3)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreSame(freshData, freshResult.Single());
+
+            sourceResult.SetResult(staleData);
+            var originalResult = await loading.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreSame(freshData, originalResult.Single());
+
+            var result = (await cache.GetDataAsync(3)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false)).ToArray();
+
+            Assert.AreEqual(1, result.Length, "The pre-clear load must not reinsert stale data.");
+            Assert.AreSame(freshData, result[0]);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public async Task Clear_InFlightRequest_ReloadsDataForWaitingCallers()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            var freshData = new Data(3, "fresh");
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .SetupSequence(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task)
+                .ReturnsAsync(freshData);
+            Cache cache = new(dataSourceMock.Object);
+
+            var loading = cache.GetDataAsync(3);
+            var joining = cache.GetDataAsync(3);
+            Assert.IsFalse(loading.IsCompleted);
+            Assert.IsFalse(joining.IsCompleted);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
+
+            cache.ClearCache();
+            sourceResult.SetResult(new Data(3, "stale"));
+
+            var results = await Task.WhenAll(loading, joining)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+
+            foreach (var result in results)
+            {
+                Assert.AreSame(freshData, result.Single());
+            }
+            var cachedResult = await cache.GetDataAsync(3)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreSame(freshData, cachedResult.Single());
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public async Task Clear_PreviouslyReturnedData_RemainsAvailable()
+        {
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .Setup(m => m.GetDataAsync(3))
+                .ReturnsAsync(GetDataOrNull(3));
+            Cache cache = new(dataSourceMock.Object);
+
+            var result = await cache.GetDataAsync(3).ConfigureAwait(false);
+            cache.ClearCache();
+
+            Assert.AreEqual(3, result.Single().Id);
+        }
+
         #region Private Members
 
         class CacheException: Exception

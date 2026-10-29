@@ -69,6 +69,10 @@ public abstract class CacheBase<TData, TArgument>
 
     private readonly ReaderWriterLockSlim dataLock = new(LockRecursionPolicy.NoRecursion);
     private readonly List<TData> data = new();
+
+    // Readers must hold either requestsLock or dataLock; writers must hold both locks.
+    private long generation;
+
     #endregion
 
     #region Entry Methods
@@ -88,9 +92,11 @@ public abstract class CacheBase<TData, TArgument>
     {
         List<Request> submitted;
         List<Request> required;
+        long generation;
 
         using (await this.requestsLock.LockAsync().ConfigureAwait(false))
         {
+            generation = this.generation;
             this.GetRequests(arguments, out submitted, out required);
 
             if (required.Count != 0)
@@ -102,7 +108,8 @@ public abstract class CacheBase<TData, TArgument>
         //Load the data in another thread.
         if (required.Count != 0)
         {
-            _ = this.CacheDataForRequestsAsync(required, cancellationToken);
+            // TODO: do not use the caller's cancellation token. Allow other threads to continue to load the data, even if the caller has cancelled their request.
+            _ = this.CacheDataForRequestsAsync(required, generation, cancellationToken);
         }
 
         IEnumerable<Request> requests;
@@ -121,22 +128,25 @@ public abstract class CacheBase<TData, TArgument>
             await request.Task;
         }
 
-        //The data should now have been cached filter the cache to find the requested data.
-        IEnumerable<TData> requiredData;
+        // The data should now have been cached filter the cache to find the requested data.
         this.dataLock.EnterReadLock();
         try
         {
-            requiredData = FilterDataSetByArgument(
+            if (generation != this.generation)
+            {
+                // The generation has changed since the data was loaded.
+                // This means that the data loaded may not be valid for the current generation, and therefore should not be returned.
+                return Enumerable.Empty<TData>();
+            }
+
+            return FilterDataSetByArgument(
                 this.data,
-                arguments);
+                arguments).ToArray();
         }
         finally
         {
             this.dataLock.ExitReadLock();
         }
-
-        //Use the .CacheResult() linq method to ensure complex filtering is only evaluated once.
-        return requiredData.CacheResult();
     }
 
     protected async Task DropDataAsync(IEnumerable<TArgument> arguments)
@@ -234,6 +244,7 @@ public abstract class CacheBase<TData, TArgument>
             this.dataLock.EnterWriteLock();
             try
             {
+                this.generation++;
                 this.data.Clear();
             }
             finally
@@ -296,7 +307,7 @@ public abstract class CacheBase<TData, TArgument>
 
     #region Private Methods
 
-    private async Task CacheDataForRequestsAsync(IEnumerable<Request> requests, CancellationToken cancellationToken)
+    private async Task CacheDataForRequestsAsync(IEnumerable<Request> requests, long generation, CancellationToken cancellationToken)
     {
         // Load the data for the 'required' requests.
         IReadOnlyCollection<TData> loadedData;
@@ -335,10 +346,13 @@ public abstract class CacheBase<TData, TArgument>
         this.dataLock.EnterWriteLock();
         try
         {
-            int size = this.data.Count + loadedData.Count;
-            if (this.data.Capacity < size)
-                this.data.Capacity = size;
-            this.data.AddRange(loadedData);
+            if (generation == this.generation)
+            {
+                int size = this.data.Count + loadedData.Count;
+                if (this.data.Capacity < size)
+                    this.data.Capacity = size;
+                this.data.AddRange(loadedData);
+            }
         }
         finally
         {
@@ -346,6 +360,7 @@ public abstract class CacheBase<TData, TArgument>
         }
 
         // Mark the requests as successful
+        // In the event of discarded requests (when generation changes) complete discarded requests too, so their callers can retry in the new generation.
         foreach (var request in requests)
         {
             request.Success();
