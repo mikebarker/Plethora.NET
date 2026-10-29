@@ -6,6 +6,8 @@ namespace Plethora;
 
 public static class MathEx
 {
+    #region Reduce
+
     /// <summary>
     /// Reduces a fraction to its simplest form by dividing both the numerator and denominator by their greatest common divisor (GCD).
     /// </summary>
@@ -14,12 +16,13 @@ public static class MathEx
     /// <param name="b">The denominator of the fraction.</param>
     /// <returns>A tuple containing the reduced numerator and denominator.</returns>
     /// <remarks>
-    /// A decimal is reduced by first reducing the scale of the numerator and denominator equally,
+    /// decimals are reduced by first reducing the scale of the numerator and denominator equally,
     /// then reducing the mantissa of the numerator and denominator by their GCD.
     /// 
     /// This can lead some potentially unexpected results, for example:
-    /// 0.05m / 0.1m reduces to 0.5m / 1m (as opposed to the 1m /2m could may have been expected).
+    /// 0.05m / 0.1m reduces to 0.5m / 1m (not 1m /2m which may have been expected).
     /// </remarks>
+    /// <exception cref="DivideByZeroException">Thrown when the denominator is zero.</exception>
     public static (decimal numerator, decimal denominator) Reduce(decimal a, decimal b)
     {
         if (b == 0m)
@@ -89,6 +92,7 @@ public static class MathEx
     /// <param name="a">The numerator of the fraction.</param>
     /// <param name="b">The denominator of the fraction.</param>
     /// <returns>A tuple containing the reduced numerator and denominator.</returns>
+    /// <exception cref="DivideByZeroException">Thrown when the denominator is zero.</exception>
     public static (T numerator, T denominator) Reduce<T>(T a, T b)
         where T : IBinaryInteger<T>
     {
@@ -121,59 +125,179 @@ public static class MathEx
         return (a, b);
     }
 
+    #endregion
+
+    #region GreatestCommonDivisor
+
     /// <summary>
     /// Returns the greatest common divisor of two numbers.
     /// </summary>
     /// <param name="a">The first number.</param>
     /// <param name="b">The second number.</param>
     /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static int GreatestCommonDivisor(int left, int right)
+    {
+        return (int)GreatestCommonDivisor((uint)Math.Abs(left), (uint)Math.Abs(right));
+    }
+
+    /// <summary>
+    /// Returns the greatest common divisor of two numbers.
+    /// </summary>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static long GreatestCommonDivisor(long left, long right)
+    {
+        return (long)GreatestCommonDivisor((ulong)Math.Abs(left), (ulong)Math.Abs(right));
+    }
+
+    /// <summary>
+    /// Returns the greatest common divisor of two numbers.
+    /// </summary>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static Int128 GreatestCommonDivisor(Int128 left, Int128 right)
+    {
+        return (Int128)GreatestCommonDivisor((UInt128)Int128.Abs(left), (UInt128)Int128.Abs(right));
+    }
+
+    /// <summary>
+    /// Returns the greatest common divisor of two numbers.
+    /// </summary>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    private static uint GreatestCommonDivisor(uint left, uint right)
+    {
+        while (right != 0)
+        {
+            var temp = left % right;
+            left = right;
+            right = temp;
+        }
+
+        return left;
+    }
+
+    /// <summary>
+    /// Returns the greatest common divisor of two numbers.
+    /// </summary>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static ulong GreatestCommonDivisor(ulong left, ulong right)
+    {
+        while (right > 0xFFFFFFFF) // uint.MaxValue
+        {
+            var temp = left % right;
+            left = right;
+            right = temp;
+        }
+
+        if (right != 0)
+        {
+            return GreatestCommonDivisor((uint)right, (uint)(left % right));
+        }
+
+        return left;
+    }
+
+    /// <summary>
+    /// Returns the greatest common divisor of two numbers.
+    /// </summary>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    public static UInt128 GreatestCommonDivisor(UInt128 left, UInt128 right)
+    {
+        while (right > 0xFFFFFFFF_FFFFFFFF) // ulong.MaxValue
+        {
+            var temp = left % right;
+            left = right;
+            right = temp;
+        }
+
+        if (right != 0)
+        {
+            return GreatestCommonDivisor((ulong)right, (ulong)(left % right));
+        }
+
+        return left;
+    }
+
+    /// <summary>
+    /// Returns the greatest common divisor of two numbers.
+    /// </summary>
+    /// <typeparam name="T">The numeric type.</typeparam>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The greatest common divisor of <paramref name="a"/> and <paramref name="b"/>.</returns>
+    /// <remarks>
+    /// This method may give unexpected results if either, or both, of the values provided are not integers.
+    /// </remarks>
     public static T GreatestCommonDivisor<T>(T a, T b)
-        where T : IBinaryInteger<T>
+        where T : INumberBase<T>, IModulusOperators<T, T, T>
     {
         a = T.Abs(a);
         b = T.Abs(b);
 
-        if (a == b)
-            return a;
-
-        if ((a == T.One) || (b == T.One))
-            return T.One;
-
-        if (a == T.Zero)
-            return b;
-
-        if (b == T.Zero)
-            return a;
-
-        // This implementation uses the binary variant of the Euclidean algorithm.
-        //   https://en.wikipedia.org/wiki/Binary_GCD_algorithm
-
-        // Calculate the common trailing zeroes of a and b
-        T dT = T.TrailingZeroCount(a | b);
-        int d = int.CreateTruncating(dT);
-
-        a = DivBy2UntilOdd(a);
+        if (a.TryCreate(out uint aUint) && b.TryCreate(out uint bUint))
+        {
+            var gcd = GreatestCommonDivisor(aUint, bUint);
+            return T.CreateSaturating(gcd);
+        }
+        else if (a.TryCreate(out ulong aUlong) && b.TryCreate(out ulong bUlong))
+        {
+            var gcd = GreatestCommonDivisor(aUlong, bUlong);
+            return T.CreateSaturating(gcd);
+        }
+        else if (a.TryCreate(out UInt128 aUint128) && b.TryCreate(out UInt128 bUint128))
+        {
+            var gcd = GreatestCommonDivisor(aUint128, bUint128);
+            return T.CreateSaturating(gcd);
+        }
+        else if (a.TryCreate(out BigInteger aBigInteger) && b.TryCreate(out BigInteger bBigInteger))
+        {
+            var gcd = BigInteger.GreatestCommonDivisor(aBigInteger, bBigInteger);
+            return T.CreateSaturating(gcd);
+        }
 
         while (b != T.Zero)
         {
-            b = DivBy2UntilOdd(b);
-
-            var min = (a < b) ? a : b;
-            var max = (a > b) ? a : b;
-            a = min;
-            b = max - min;
+            var temp = a % b;
+            a = b;
+            b = temp;
         }
 
-        return a << d;
+        return a;
     }
 
-    private static T DivBy2UntilOdd<T>(T value)
-        where T : IBinaryInteger<T>
+    #endregion
+
+    #region LeastCommonMultiple
+
+    /// <summary>
+    /// Computes the least common multiple of two numbers.
+    /// </summary>
+    /// <typeparam name="T">The numeric type.</typeparam>
+    /// <param name="a">The first number.</param>
+    /// <param name="b">The second number.</param>
+    /// <returns>The least common multiple of the two values, or zero if either value is zero.</returns>
+    /// <remarks>
+    /// This method may give unexpected results if either, or both, of the values provided are not integers.
+    /// </remarks>
+    public static T LeastCommonMultiple<T>(T a, T b)
+        where T : INumberBase<T>, IModulusOperators<T, T, T>
     {
-        T countT = T.TrailingZeroCount(value);
-        int count = int.CreateTruncating(countT);
-        return value >> count;
+        if (a == T.Zero || b == T.Zero)
+            return T.Zero;
+
+        var gcd = GreatestCommonDivisor(a, b);
+        return (T.Abs(a) / gcd) * T.Abs(b);
     }
+
+    #endregion
 
     [StructLayout(LayoutKind.Explicit)]
     private readonly struct DecimalEx

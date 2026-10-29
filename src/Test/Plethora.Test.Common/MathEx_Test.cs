@@ -9,6 +9,16 @@ public class MathEx_Test
     #region GreatestCommonDivisor
 
     [TestMethod]
+    public void GreatestCommonDivisor_Zero()
+    {
+        // Action
+        int gcd = MathEx.GreatestCommonDivisor(0, 0);
+
+        // Assert
+        Assert.AreEqual(0, gcd);
+    }
+
+    [TestMethod]
     public void GreatestCommonDivisor_CommonElement()
     {
         // Action
@@ -176,6 +186,112 @@ public class MathEx_Test
 
         // Assert
         Assert.AreEqual(1, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_Long()
+    {
+        // Action
+        long gcd = MathEx.GreatestCommonDivisor(45L, 20L);
+
+        // Assert
+        Assert.AreEqual(5L, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_Int128()
+    {
+        // Action
+        Int128 gcd = MathEx.GreatestCommonDivisor((Int128)45, (Int128)20);
+
+        // Assert
+        Assert.AreEqual((Int128)5, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_Ulong()
+    {
+        // Action
+        ulong gcd = MathEx.GreatestCommonDivisor(12_000_000_000UL, 18_000_000_000UL);
+
+        // Assert
+        Assert.AreEqual(6_000_000_000UL, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_UInt128()
+    {
+        UInt128 largeValue = (UInt128)1 << 100;
+
+        // Action
+        UInt128 gcd = MathEx.GreatestCommonDivisor(largeValue * 3, largeValue * 5);
+
+        // Assert
+        Assert.AreEqual(largeValue, gcd);
+    }
+
+    [TestMethod]
+    public void GreatestCommonDivisor_Generic()
+    {
+        // Action
+        decimal gcd = MathEx.GreatestCommonDivisor<decimal>(45m, 20m);
+
+        // Assert
+        Assert.AreEqual(5m, gcd);
+    }
+
+    #endregion
+
+    #region LeastCommonMultiple
+
+    [TestMethod]
+    public void LeastCommonMultiple_CommonFactors()
+    {
+        // Action
+        int lcm = MathEx.LeastCommonMultiple(4, 6);
+
+        // Assert
+        Assert.AreEqual(12, lcm);
+    }
+
+    [TestMethod]
+    public void LeastCommonMultiple_Zero()
+    {
+        // Action
+        int lcm = MathEx.LeastCommonMultiple(0, 6);
+
+        // Assert
+        Assert.AreEqual(0, lcm);
+    }
+
+    [TestMethod]
+    public void LeastCommonMultiple_NegativeInputs()
+    {
+        // Action
+        int lcm = MathEx.LeastCommonMultiple(-4, 6);
+
+        // Assert
+        Assert.AreEqual(12, lcm);
+    }
+
+    [TestMethod]
+    public void LeastCommonMultiple_LargeUnsignedInputs()
+    {
+        // Action
+        ulong lcm = MathEx.LeastCommonMultiple(6_000_000_000UL, 10_000_000_000UL);
+
+        // Assert
+        Assert.AreEqual(30_000_000_000UL, lcm);
+    }
+
+    [TestMethod]
+    public void LeastCommonMultiple_DecimalInputs()
+    {
+        // Action
+        decimal lcm = MathEx.LeastCommonMultiple(45m, 20m);
+
+        // Assert
+        Assert.AreEqual(180m, lcm);
     }
 
     #endregion
