@@ -148,10 +148,9 @@ public static class StringHelper
 
         IList valuesList = ArrayList.FixedSize(values);
 
-        char[] chrArr = str.ToCharArray();
         for (int i = startIndex; i < startIndex + count; i++)
         {
-            if (!valuesList.Contains(chrArr[i]))
+            if (!valuesList.Contains(str[i]))
                 return i;
         }
         return -1;
@@ -243,11 +242,10 @@ public static class StringHelper
 
         IList valuesList = ArrayList.FixedSize(values);
 
-        char[] chrArr = str.ToCharArray();
         int stopIndex = (startIndex - count);
         for (int i = startIndex; i > stopIndex; i--)
         {
-            if (!valuesList.Contains(chrArr[i]))
+            if (!valuesList.Contains(str[i]))
                 return i;
         }
         return -1;
