@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using Plethora.Linq;
+using Plethora.Threading;
 
 namespace Plethora.Cache;
 
@@ -27,7 +28,7 @@ public abstract class CacheBase<TData, TArgument>
         {
             ArgumentNullException.ThrowIfNull(argument);
 
-            this.taskCompletionSource = new();
+            this.taskCompletionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
             this.argument = argument;
         }
         #endregion
@@ -63,7 +64,7 @@ public abstract class CacheBase<TData, TArgument>
 
     #region Fields
 
-    private readonly ReaderWriterLockSlim requestsLock = new(LockRecursionPolicy.NoRecursion);
+    private readonly AsyncLock requestsLock = new();
     private List<Request> submittedRequests = new();
 
     private readonly ReaderWriterLockSlim dataLock = new(LockRecursionPolicy.NoRecursion);
@@ -88,27 +89,14 @@ public abstract class CacheBase<TData, TArgument>
         List<Request> submitted;
         List<Request> required;
 
-        this.requestsLock.EnterUpgradeableReadLock();
-        try
+        using (await this.requestsLock.LockAsync().ConfigureAwait(false))
         {
             this.GetRequests(arguments, out submitted, out required);
 
             if (required.Count != 0)
             {
-                this.requestsLock.EnterWriteLock();
-                try
-                {
-                    this.submittedRequests.AddRange(required);
-                }
-                finally
-                {
-                    this.requestsLock.ExitWriteLock();
-                }
+                this.submittedRequests.AddRange(required);
             }
-        }
-        finally
-        {
-            this.requestsLock.ExitUpgradeableReadLock();
         }
 
         //Load the data in another thread.
@@ -153,8 +141,7 @@ public abstract class CacheBase<TData, TArgument>
 
     protected async Task DropDataAsync(IEnumerable<TArgument> arguments)
     {
-        this.requestsLock.EnterWriteLock();
-        try
+        using (await this.requestsLock.LockAsync().ConfigureAwait(false))
         {
             List<Request> remainingRequests;
             List<Request> nextRemainingRequests = this.submittedRequests;
@@ -185,7 +172,7 @@ public abstract class CacheBase<TData, TArgument>
                         Exception? originalRequestException = null;
                         try
                         {
-                            await originalRequest.Task;
+                            await originalRequest.Task.ConfigureAwait(false);
                         }
                         catch (Exception ex)
                         {
@@ -238,16 +225,11 @@ public abstract class CacheBase<TData, TArgument>
                 this.dataLock.ExitWriteLock();
             }
         }
-        finally
-        {
-            this.requestsLock.ExitWriteLock();
-        }
     }
 
     protected void Clear()
     {
-        this.requestsLock.EnterWriteLock();
-        try
+        using (this.requestsLock.Lock())
         {
             this.dataLock.EnterWriteLock();
             try
@@ -261,11 +243,6 @@ public abstract class CacheBase<TData, TArgument>
 
             this.submittedRequests.Clear();
         }
-        finally
-        {
-            this.requestsLock.ExitWriteLock();
-        }
-
     }
 
     #endregion
@@ -342,17 +319,12 @@ public abstract class CacheBase<TData, TArgument>
             // reload the data.
             if (this.IsExceptionRecoverable(ex))
             {
-                this.requestsLock.EnterWriteLock();
-                try
+                using (await this.requestsLock.LockAsync().ConfigureAwait(false))
                 {
                     foreach (var request in requests)
                     {
                         this.submittedRequests.Remove(request);
                     }
-                }
-                finally
-                {
-                    this.requestsLock.ExitWriteLock();
                 }
             }
 
@@ -425,7 +397,7 @@ public abstract class CacheBase<TData, TArgument>
             nextCapacity = count + (count >> 2); // add 25% to the capcacity
         }
 
-        //UpgradableReadLock already taken on requestsLock
+        // requestsLock is already held.
         foreach (var submittedRequest in this.submittedRequests)
         {
             var nextArgumentList = new List<TArgument>(nextCapacity);

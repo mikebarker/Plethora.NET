@@ -219,6 +219,104 @@ namespace Plethora.Test.Cache
         }
 
         [TestMethod]
+        [DataRow(false)]
+        [DataRow(true)]
+        public async Task DropData_InFlightRequest_CompletesOnAnotherThreadAndAllowsReload(bool sourceFails)
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .SetupSequence(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task)
+                .ReturnsAsync(GetDataOrNull(3));
+            Cache cache = new(dataSourceMock.Object);
+
+            var loading = cache.GetDataAsync(3);
+            var dropStarted = new TaskCompletionSource<Task>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Thread dropThread = new(() => dropStarted.SetResult(cache.DropDataAsync(3)))
+            {
+                IsBackground = true
+            };
+            dropThread.Start();
+            var dropping = await dropStarted.Task.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.IsFalse(dropping.IsCompleted);
+
+            if (sourceFails)
+            {
+                var exception = new TimeoutException();
+                sourceResult.SetException(exception);
+                var caughtException = await Assert.ThrowsAsync<TimeoutException>(
+                    () => loading.WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+                Assert.AreSame(exception, caughtException);
+            }
+            else
+            {
+                sourceResult.SetResult(GetDataOrNull(3));
+                await loading.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            }
+
+            await dropping.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            var result = await cache.GetDataAsync(3).WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+
+            Assert.AreEqual(3, result.Single().Id);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public async Task GetData_DuringDrop_WaitsAsynchronouslyAndReloadsDroppedData()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .SetupSequence(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task)
+                .ReturnsAsync(GetDataOrNull(3));
+            Cache cache = new(dataSourceMock.Object);
+
+            var loading = cache.GetDataAsync(3);
+            var dropping = cache.DropDataAsync(3);
+            var reloading = cache.GetDataAsync(3);
+
+            Assert.IsFalse(dropping.IsCompleted);
+            Assert.IsFalse(reloading.IsCompleted);
+
+            sourceResult.SetResult(GetDataOrNull(3));
+            await Task.WhenAll(loading, dropping, reloading)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+
+            Assert.AreEqual(3, (await reloading.ConfigureAwait(false)).Single().Id);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Exactly(2));
+        }
+
+        [TestMethod]
+        public async Task DropData_RequestContinuationClearsCache_DoesNotBlockCompletion()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .SetupSequence(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task)
+                .ReturnsAsync(GetDataOrNull(3));
+            Cache cache = new(dataSourceMock.Object);
+
+            var loading = cache.GetDataAsync(3);
+            var clearing = loading.ContinueWith(
+                _ => cache.ClearCache(),
+                CancellationToken.None,
+                TaskContinuationOptions.ExecuteSynchronously,
+                TaskScheduler.Default);
+            var dropping = cache.DropDataAsync(3);
+
+            sourceResult.SetResult(GetDataOrNull(3));
+            await Task.WhenAll(loading, dropping, clearing)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+
+            var result = await cache.GetDataAsync(3).WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreEqual(3, result.Single().Id);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Exactly(2));
+        }
+
+        [TestMethod]
         public async Task Clear()
         {
             // Arrange
