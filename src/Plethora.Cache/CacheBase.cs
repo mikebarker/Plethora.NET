@@ -82,14 +82,14 @@ public abstract class CacheBase<TData, TArgument>
     /// retrieved from the source and cached.
     /// </summary>
     /// <param name="arguments">The <typeparamref name="TArgument"/>s representing the data required.</param>
-    /// <param name="cancellationToken">
-    /// The token to monitor for cancellation requests.
-    /// </param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/> token to observe.</param>
     /// <returns>
     /// The data requested, as described by <paramref name="arguments"/>.
     /// </returns>
     protected async Task<IEnumerable<TData>> GetDataAsync(IEnumerable<TArgument> arguments, CancellationToken cancellationToken = default)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (TryGetNonEnumeratedCount(arguments, out var count) && (count == 0))
         {
             return Enumerable.Empty<TData>();
@@ -99,7 +99,7 @@ public abstract class CacheBase<TData, TArgument>
         List<Request> required;
         long generation;
 
-        using (await this.requestsLock.LockAsync().ConfigureAwait(false))
+        using (await this.requestsLock.LockAsync(cancellationToken).ConfigureAwait(false))
         {
             generation = this.generation;
             this.GetRequests(arguments, out submitted, out required);
@@ -113,8 +113,7 @@ public abstract class CacheBase<TData, TArgument>
         //Load the data in another thread.
         if (required.Count != 0)
         {
-            // TODO: do not use the caller's cancellation token. Allow other threads to continue to load the data, even if the caller has cancelled their request.
-            _ = this.CacheDataForRequestsAsync(required, generation, cancellationToken);
+            _ = this.CacheDataForRequestsAsync(required, generation, CancellationToken.None);
         }
 
         IEnumerable<Request> requests;
@@ -129,8 +128,10 @@ public abstract class CacheBase<TData, TArgument>
 
         foreach (var request in requests)
         {
-            await request.Task;
+            await request.Task.WaitAsync(cancellationToken).ConfigureAwait(false);
         }
+
+        cancellationToken.ThrowIfCancellationRequested();
 
         // The data should now have been cached filter the cache to find the requested data.
         this.dataLock.EnterReadLock();

@@ -149,6 +149,122 @@ namespace Plethora.Test.Cache
         }
 
         [TestMethod]
+        public async Task GetData_InitiatingCallerCancels_SharedLoadContinues()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .Setup(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task);
+            Cache cache = new(dataSourceMock.Object);
+            using var cancellation = new CancellationTokenSource();
+
+            var loading = cache.GetDataAsync([3], cancellation.Token);
+            var joining = cache.GetDataAsync(3);
+
+            cancellation.Cancel();
+            sourceResult.SetResult(GetDataOrNull(3));
+
+            var result = await joining.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreEqual(3, result.Single().Id);
+            var exception = await Assert.ThrowsAsync<OperationCanceledException>(
+                () => loading.WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+            Assert.AreEqual(cancellation.Token, exception.CancellationToken);
+            Assert.IsTrue(loading.IsCanceled);
+
+            var cachedResult = await cache.GetDataAsync(3)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreEqual(3, cachedResult.Single().Id);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetData_JoiningCallerCancels_StopsWaitingWithoutCancellingSharedLoad()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .Setup(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task);
+            Cache cache = new(dataSourceMock.Object);
+            using var cancellation = new CancellationTokenSource();
+
+            var loading = cache.GetDataAsync(3);
+            var joining = cache.GetDataAsync([3], cancellation.Token);
+
+            cancellation.Cancel();
+            try
+            {
+                var exception = await Assert.ThrowsAsync<OperationCanceledException>(
+                    () => joining.WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+                Assert.AreEqual(cancellation.Token, exception.CancellationToken);
+                Assert.IsTrue(joining.IsCanceled);
+                Assert.IsFalse(loading.IsCompleted);
+            }
+            finally
+            {
+                sourceResult.SetResult(GetDataOrNull(3));
+            }
+
+            var result = await loading.WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            Assert.AreEqual(3, result.Single().Id);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetData_CallerCancelsDuringDrop_StopsWaitingForRequestLock()
+        {
+            var sourceResult = new TaskCompletionSource<Data>(TaskCreationOptions.RunContinuationsAsynchronously);
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .Setup(m => m.GetDataAsync(3))
+                .Returns(sourceResult.Task);
+            Cache cache = new(dataSourceMock.Object);
+            using var cancellation = new CancellationTokenSource();
+
+            var loading = cache.GetDataAsync(3);
+            var dropping = cache.DropDataAsync(3);
+            var waiting = cache.GetDataAsync([3], cancellation.Token);
+
+            cancellation.Cancel();
+            try
+            {
+                await Assert.ThrowsAsync<OperationCanceledException>(
+                    () => waiting.WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+                Assert.IsTrue(waiting.IsCanceled);
+                Assert.IsFalse(dropping.IsCompleted);
+            }
+            finally
+            {
+                sourceResult.SetResult(GetDataOrNull(3));
+            }
+
+            await Task.WhenAll(loading, dropping)
+                .WaitAsync(TimeSpan.FromSeconds(5)).ConfigureAwait(false);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetData_AlreadyCancelled_DoesNotRequestDataFromSource()
+        {
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .Setup(m => m.GetDataAsync(3))
+                .ReturnsAsync(GetDataOrNull(3));
+            Cache cache = new(dataSourceMock.Object);
+            using var cancellation = new CancellationTokenSource();
+            cancellation.Cancel();
+
+            var loading = cache.GetDataAsync([3], cancellation.Token);
+            var exception = await Assert.ThrowsAsync<OperationCanceledException>(
+                () => loading.WaitAsync(TimeSpan.FromSeconds(5))).ConfigureAwait(false);
+
+            Assert.AreEqual(cancellation.Token, exception.CancellationToken);
+            Assert.IsTrue(loading.IsCanceled);
+            dataSourceMock.Verify(m => m.GetDataAsync(It.IsAny<long>()), Times.Never);
+        }
+
+        [TestMethod]
         public async Task GetData_Exception_Rethrown()
         {
             // Arrange
@@ -451,10 +567,15 @@ namespace Plethora.Test.Cache
                 this.dataSource = dataSource;
             }
 
-            public async Task<IEnumerable<Data>> GetDataAsync(params long[] ids)
+            public Task<IEnumerable<Data>> GetDataAsync(params long[] ids)
+            {
+                return this.GetDataAsync(ids, CancellationToken.None);
+            }
+
+            public async Task<IEnumerable<Data>> GetDataAsync(long[] ids, CancellationToken cancellationToken = default)
             {
                 var args = ids.Select(id => new IdArg(id));
-                var pairs = await base.GetDataAsync(args).ConfigureAwait(false);
+                var pairs = await base.GetDataAsync(args, cancellationToken).ConfigureAwait(false);
                 return pairs;
             }
 
