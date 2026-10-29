@@ -977,6 +977,17 @@ public class Rational_Test
     }
 
     [TestMethod]
+    public void Op_Addition_Rationals_IntermediateNumeratorExceedsInt64()
+    {
+        Rational x = new(int.MaxValue, 4_294_967_292u);
+
+        Rational result = x + x;
+
+        Assert.AreEqual(int.MaxValue, result.Numerator);
+        Assert.AreEqual(2_147_483_646u, result.Denominator);
+    }
+
+    [TestMethod]
     public void Op_Addition_Rationals_ThrowsWhenResultCannotBeRepresented()
     {
         Rational x = new Rational(int.MaxValue, 1);

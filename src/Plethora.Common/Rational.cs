@@ -278,14 +278,14 @@ public readonly struct Rational : IComparable, IComparable<Rational>, IEquatable
         if (y.IsDefault)
             throw new InvalidOperationException();
 
-        long numerator =
-            ((long)x.numerator * y.denominator) +
-            ((long)y.numerator * x.denominator);
+        Int128 numerator =
+            ((Int128)x.numerator * y.denominator) +
+            ((Int128)y.numerator * x.denominator);
 
         ulong denominator =
             (ulong)x.denominator * y.denominator;
 
-        var r = MathEx.Reduce((Int128)numerator, (Int128)denominator);
+        var r = MathEx.Reduce(numerator, (Int128)denominator);
         r = NormalizeSign(r);
         var p = GuardRange(r);
 
