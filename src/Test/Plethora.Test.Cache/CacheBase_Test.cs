@@ -111,6 +111,51 @@ namespace Plethora.Test.Cache
         }
 
         [TestMethod]
+        public async Task GetData_OverlappingArguments_DataLoadedAndReturnedOnce()
+        {
+            Mock<IDataSource> dataSourceMock = new();
+            dataSourceMock
+                .Setup(m => m.GetDataAsync(3))
+                .ReturnsAsync(GetDataOrNull(3));
+            Cache cache = new(dataSourceMock.Object);
+
+            var result = (await cache.GetDataAsync(3, 3).ConfigureAwait(false)).ToArray();
+
+            Assert.AreEqual(1, result.Length);
+            Assert.AreEqual(3, result[0].Id);
+            dataSourceMock.Verify(m => m.GetDataAsync(3), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task GetData_PartiallyOverlappingArguments_DataLoadedAndReturnedOnce()
+        {
+            List<long> requestedIds = new();
+            SetCache cache = new(arguments =>
+            {
+                var data = arguments
+                    .SelectMany(argument => knownPairs.Keys
+                        .Select(GetDataOrNull)
+                        .Where(argument.IsDataIncluded))
+                    .ToArray();
+                requestedIds.AddRange(data.Select(item => item.Id));
+                return Task.FromResult<IEnumerable<Data>>(data);
+            });
+
+            var result = await cache.GetDataAsync(new[]
+            {
+                SetCache.CreateArgument([1, 2]),
+                SetCache.CreateArgument([2, 3])
+            }).ConfigureAwait(false);
+
+            CollectionAssert.AreEquivalent(new long[] { 1, 2, 3 }, result.Select(item => item.Id).ToArray());
+            CollectionAssert.AreEquivalent(new long[] { 1, 2, 3 }, requestedIds.ToArray());
+
+            var cachedResult = await cache.GetDataAsync(1, 2, 3).ConfigureAwait(false);
+            CollectionAssert.AreEquivalent(new long[] { 1, 2, 3 }, cachedResult.Select(item => item.Id).ToArray());
+            Assert.AreEqual(3, requestedIds.Count);
+        }
+
+        [TestMethod]
         public async Task GetData_ConcurrentRequests_DataRequestedFromSource()
         {
             // Arrange
@@ -659,11 +704,21 @@ namespace Plethora.Test.Cache
 
         class SetCache : CacheBase<Data, SpacialArgument<Data, long>>
         {
-            private readonly Func<Task<IEnumerable<Data>>> getDataFromSourceAsync;
+            private readonly Func<IEnumerable<SpacialArgument<Data, long>>, Task<IEnumerable<Data>>> getDataFromSourceAsync;
 
             public SetCache(Func<Task<IEnumerable<Data>>> getDataFromSourceAsync)
+                : this(_ => getDataFromSourceAsync())
+            {
+            }
+
+            public SetCache(Func<IEnumerable<SpacialArgument<Data, long>>, Task<IEnumerable<Data>>> getDataFromSourceAsync)
             {
                 this.getDataFromSourceAsync = getDataFromSourceAsync;
+            }
+
+            public Task<IEnumerable<Data>> GetDataAsync(IEnumerable<SpacialArgument<Data, long>> arguments)
+            {
+                return base.GetDataAsync(arguments);
             }
 
             public Task<IEnumerable<Data>> GetDataAsync(params long[] ids)
@@ -680,10 +735,10 @@ namespace Plethora.Test.Cache
                 IEnumerable<SpacialArgument<Data, long>> arguments,
                 CancellationToken cancellationToken)
             {
-                return this.getDataFromSourceAsync();
+                return this.getDataFromSourceAsync(arguments);
             }
 
-            private static SpacialArgument<Data, long> CreateArgument(long[] ids)
+            public static SpacialArgument<Data, long> CreateArgument(long[] ids)
             {
                 return new(
                     data => Tuple.Create(data.Id),

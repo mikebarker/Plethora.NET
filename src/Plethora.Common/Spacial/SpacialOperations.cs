@@ -1,6 +1,8 @@
 ﻿using Plethora.Collections.Sets;
+using Plethora.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Plethora.Spacial;
 
@@ -18,6 +20,7 @@ public static class SpacialOperations
 
         var remainingDimensions = (ISetCore[])regionA.Dimensions.Clone();
 
+        bool doesRegionBIntersectRegionA = true;
         for (int i = 0; i< regionA.Dimensions.Length; i++)
         {
             if (i > 0)
@@ -27,16 +30,29 @@ public static class SpacialOperations
             }
 
             var remainingDimensionSets = regionA.Dimensions[i].SubtractMulti(regionB.Dimensions[i]);
-            foreach (var remainingDim in remainingDimensionSets)
+            if ((remainingDimensionSets.Count == 1) && remainingDimensionSets.First().Equals(regionA.Dimensions[i]))
             {
-                if (remainingDim.IsEmpty != true)
+                doesRegionBIntersectRegionA = false;
+                break;
+            }
+            else
+            {
+                foreach (var remainingDim in remainingDimensionSets)
                 {
-                    remainingDimensions[i] = remainingDim;
-                    var remainingRegion = ctorFunc(remainingDimensions);
-                    if (!remainingRegion.IsEmpty)
-                        list.Add(remainingRegion);
+                    if (remainingDim.IsEmpty != true)
+                    {
+                        remainingDimensions[i] = remainingDim;
+                        var remainingRegion = ctorFunc(remainingDimensions);
+                        if (!remainingRegion.IsEmpty)
+                            list.Add(remainingRegion);
+                    }
                 }
             }
+        }
+
+        if (!doesRegionBIntersectRegionA)
+        {
+            return new[] { regionA };
         }
 
         return list;

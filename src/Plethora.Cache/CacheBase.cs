@@ -95,6 +95,8 @@ public abstract class CacheBase<TData, TArgument>
             return Enumerable.Empty<TData>();
         }
 
+        arguments = UniqueArgs(arguments);
+
         List<Request> submitted;
         List<Request> required;
         long generation;
@@ -102,7 +104,7 @@ public abstract class CacheBase<TData, TArgument>
         using (await this.requestsLock.LockAsync(cancellationToken).ConfigureAwait(false))
         {
             generation = this.generation;
-            this.GetRequests(arguments, out submitted, out required);
+            (submitted, required) = this.GetRequests(arguments);
 
             if (required.Count != 0)
             {
@@ -407,13 +409,9 @@ public abstract class CacheBase<TData, TArgument>
         return dataForRequests;
     }
 
-    private void GetRequests(
-        IEnumerable<TArgument> newArguments,
-        out List<Request> submitted,
-        out List<Request> required)
+    private (List<Request> submitted, List<Request> required) GetRequests(
+        IEnumerable<TArgument> newArguments)
     {
-        submitted = new();
-
         IEnumerable<TArgument> argumentList = newArguments;
 
         //Attempt to estimate the capacity required
@@ -422,14 +420,14 @@ public abstract class CacheBase<TData, TArgument>
         {
             if (count == 0)
             {
-                required = new();
-                return;
+                return (new(), new());
             }
 
             nextCapacity = count + (count >> 2); // add 25% to the capacity
         }
 
         // requestsLock is already held.
+        List<Request> submitted = new();
         foreach (var submittedRequest in this.submittedRequests)
         {
             var nextArgumentList = new List<TArgument>(nextCapacity);
@@ -455,9 +453,48 @@ public abstract class CacheBase<TData, TArgument>
             argumentList = nextArgumentList;
         }
 
-        required = argumentList.Select(arg => new Request(arg)).ToList();
+        List<Request> required = argumentList.Select(arg => new Request(arg)).ToList();
+        return (submitted, required);
     }
 
+
+    private IEnumerable<TArgument> UniqueArgs(IEnumerable<TArgument> arguments)
+    {
+        List<TArgument> uniqueArgs = new();
+        while (true)
+        {
+            List<TArgument> nextArgs = new();
+            foreach (var argument in arguments)
+            {
+                bool isArgumentHandled = false;
+                foreach (var uniqueArg in uniqueArgs)
+                {
+                    if (argument.IsOverlapped(uniqueArg, out var notInUnique))
+                    {
+                        if (notInUnique is not null)
+                        {
+                            nextArgs.AddRange(notInUnique);
+                        }
+
+                        isArgumentHandled = true;
+                        break;
+                    }
+                }
+
+                if (!isArgumentHandled)
+                {
+                    uniqueArgs.Add(argument);
+                }
+            }
+
+            if (nextArgs.Count == 0)
+                break;
+
+            arguments = nextArgs;
+        }
+
+        return uniqueArgs;
+    }
 
     private static IEnumerable<TData> FilterDataSetByArgument(
         IEnumerable<TData> dataSet,
