@@ -23,6 +23,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
     private bool isDisposed = false;
     private bool isSourceEnumeratorDisposed = false;
     private Task<bool>? moveNextTask;
+    private readonly CancellationTokenSource disposeCts = new();
 
     public ReplayableAsyncEnumerable(
         IAsyncEnumerable<T> source)
@@ -30,12 +31,14 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         ArgumentNullException.ThrowIfNull(source);
 
         this.source = source;
-        this.sourceEnumerator = this.source.GetAsyncEnumerator();
+        this.sourceEnumerator = this.source.GetAsyncEnumerator(this.disposeCts.Token);
     }
 
     /// <inheritdoc/>
     public IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
     {
+        ObjectDisposedException.ThrowIf(this.isDisposed, this);
+
         return new Enumerator(this, cancellationToken);
     }
 
@@ -55,10 +58,20 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
             this.asyncLock.Release();
         }
 
+        disposeCts.Cancel();
+
         try
         {
             if (moveNextTaskCopy is not null)
-                await moveNextTaskCopy.ConfigureAwait(false);
+            {
+                try
+                {
+                    await moveNextTaskCopy.ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                }
+            }
         }
         finally
         {
@@ -178,6 +191,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
     private class Enumerator : IAsyncEnumerator<T>
     {
         private readonly ReplayableAsyncEnumerable<T> enumerable;
+        private readonly CancellationTokenSource cancellationTokenSource;
         private readonly CancellationToken cancellationToken;
         private int currentIndex;
 
@@ -186,7 +200,10 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
             CancellationToken cancellationToken)
         {
             this.enumerable = enumerable;
-            this.cancellationToken = cancellationToken;
+            this.cancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(
+                enumerable.disposeCts.Token,
+                cancellationToken);
+            this.cancellationToken = this.cancellationTokenSource.Token;
 
             this.currentIndex = -1;
         }
@@ -210,6 +227,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         /// <inheritdoc/>
         public ValueTask DisposeAsync()
         {
+            this.cancellationTokenSource.Dispose();
             return ValueTask.CompletedTask;
         }
 
