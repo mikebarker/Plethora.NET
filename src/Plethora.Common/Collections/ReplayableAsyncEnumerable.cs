@@ -27,6 +27,8 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
     public ReplayableAsyncEnumerable(
         IAsyncEnumerable<T> source)
     {
+        ArgumentNullException.ThrowIfNull(source);
+
         this.source = source;
         this.sourceEnumerator = this.source.GetAsyncEnumerator();
     }
