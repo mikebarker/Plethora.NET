@@ -60,6 +60,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
 
         disposeCts.Cancel();
 
+        Exception? sourceFailure = null;
         try
         {
             if (moveNextTaskCopy is not null)
@@ -68,14 +69,20 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
                 {
                     await moveNextTaskCopy.ConfigureAwait(false);
                 }
-                catch (OperationCanceledException)
+                catch (OperationCanceledException ex)
                 {
+                    sourceFailure = ex;
                 }
             }
         }
+        catch (Exception ex)
+        {
+            sourceFailure = ex;
+            throw;
+        }
         finally
         {
-            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
+            await this.DisposeSourceEnumeratorAsync(sourceFailure).ConfigureAwait(false);
         }
     }
 
@@ -140,9 +147,9 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
                 this.sourceLock.Release();
             }
         }
-        catch
+        catch (Exception ex)
         {
-            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
+            await this.DisposeSourceEnumeratorAsync(ex).ConfigureAwait(false);
             throw;
         }
 
@@ -171,7 +178,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         return result;
     }
 
-    private async ValueTask DisposeSourceEnumeratorAsync()
+    private async ValueTask DisposeSourceEnumeratorAsync(Exception? sourceFailure = null)
     {
         await this.sourceLock.WaitAsync().ConfigureAwait(false);
         try
@@ -180,7 +187,14 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
                 return;
 
             this.isSourceEnumeratorDisposed = true;
-            await this.sourceEnumerator.DisposeAsync().ConfigureAwait(false);
+            try
+            {
+                await this.sourceEnumerator.DisposeAsync().ConfigureAwait(false);
+            }
+            catch (Exception cleanupFailure) when (sourceFailure is not null)
+            {
+                throw new AggregateException(sourceFailure, cleanupFailure);
+            }
         }
         finally
         {

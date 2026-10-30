@@ -253,6 +253,57 @@ public class ReplayableAsyncEnumerable_Test
     }
 
     [TestMethod]
+    public async Task MoveNextAsync_SourceAndCleanupThrow_PreservesBothFailuresForReplayAndDisposal()
+    {
+        var sourceFailure = new InvalidOperationException("Source failed.");
+        var cleanupFailure = new InvalidOperationException("Cleanup failed.");
+        var source = new SourceAndCleanupFailingSource(sourceFailure, cleanupFailure);
+        var enumerable = new ReplayableAsyncEnumerable<int>(source);
+        await using var first = enumerable.GetAsyncEnumerator();
+
+        var moveFailure = await Assert.ThrowsAsync<AggregateException>(
+            () => first.MoveNextAsync().AsTask());
+        Assert.AreEqual(2, moveFailure.InnerExceptions.Count);
+        Assert.AreSame(sourceFailure, moveFailure.InnerExceptions[0]);
+        Assert.AreSame(cleanupFailure, moveFailure.InnerExceptions[1]);
+
+        await using var replay = enumerable.GetAsyncEnumerator();
+        var replayFailure = await Assert.ThrowsAsync<AggregateException>(
+            () => replay.MoveNextAsync().AsTask());
+        Assert.AreSame(moveFailure, replayFailure);
+
+        var disposeFailure = await Assert.ThrowsAsync<AggregateException>(
+            () => enumerable.DisposeAsync().AsTask());
+        Assert.AreSame(moveFailure, disposeFailure);
+        Assert.AreEqual(1, source.DisposeCount);
+    }
+
+    [TestMethod]
+    [DataRow(false)]
+    [DataRow(true)]
+    public async Task DisposeAsync_SourceCurrentAndCleanupThrow_PreservesBothFailures(bool sourceCancelled)
+    {
+        Exception sourceFailure = sourceCancelled
+            ? new OperationCanceledException(new CancellationToken(canceled: true))
+            : new InvalidOperationException("Source Current failed.");
+        var cleanupFailure = new InvalidOperationException("Cleanup failed.");
+        var source = new SourceAndCleanupFailingSource(sourceFailure, cleanupFailure, failOnCurrent: true);
+        var enumerable = new ReplayableAsyncEnumerable<int>(source);
+        await using var enumerator = enumerable.GetAsyncEnumerator();
+
+        var moveFailure = await Assert.ThrowsAsync<Exception>(
+            () => enumerator.MoveNextAsync().AsTask());
+        Assert.AreSame(sourceFailure, moveFailure);
+
+        var disposeFailure = await Assert.ThrowsAsync<AggregateException>(
+            () => enumerable.DisposeAsync().AsTask());
+        Assert.AreEqual(2, disposeFailure.InnerExceptions.Count);
+        Assert.AreSame(sourceFailure, disposeFailure.InnerExceptions[0]);
+        Assert.AreSame(cleanupFailure, disposeFailure.InnerExceptions[1]);
+        Assert.AreEqual(1, source.DisposeCount);
+    }
+
+    [TestMethod]
     public async Task DisposeAsync_SourceCancelledIndependently_PreservesCancellation()
     {
         var failure = new OperationCanceledException(new CancellationToken(canceled: true));
@@ -280,12 +331,51 @@ public class ReplayableAsyncEnumerable_Test
         try
         {
             await sourceStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
-            await enumerable.DisposeAsync();
-            await Assert.ThrowsAsync<OperationCanceledException>(() => move);
+            var disposeFailure = await Assert.ThrowsAsync<AggregateException>(
+                () => enumerable.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
+            Assert.AreEqual(2, disposeFailure.InnerExceptions.Count);
+            Assert.IsInstanceOfType<OperationCanceledException>(disposeFailure.InnerExceptions[0]);
+            Assert.IsInstanceOfType<OperationCanceledException>(disposeFailure.InnerExceptions[1]);
+            Assert.AreEqual("Cleanup failed.", disposeFailure.InnerExceptions[1].Message);
+
+            var moveFailure = await Assert.ThrowsAsync<Exception>(
+                () => move.WaitAsync(TimeSpan.FromSeconds(5)));
+            if (moveFailure is AggregateException)
+                Assert.AreSame(disposeFailure, moveFailure);
+            else
+                Assert.IsInstanceOfType<OperationCanceledException>(moveFailure);
         }
         finally
         {
             releaseSource.TrySetResult();
+        }
+    }
+
+    private sealed class SourceAndCleanupFailingSource(
+        Exception sourceFailure,
+        Exception cleanupFailure,
+        bool failOnCurrent = false) : IAsyncEnumerable<int>, IAsyncEnumerator<int>
+    {
+        public int DisposeCount { get; private set; }
+
+        public int Current => throw sourceFailure;
+
+        public IAsyncEnumerator<int> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            return this;
+        }
+
+        public ValueTask<bool> MoveNextAsync()
+        {
+            return failOnCurrent
+                ? ValueTask.FromResult(true)
+                : ValueTask.FromException<bool>(sourceFailure);
+        }
+
+        public ValueTask DisposeAsync()
+        {
+            this.DisposeCount++;
+            return ValueTask.FromException(cleanupFailure);
         }
     }
 
