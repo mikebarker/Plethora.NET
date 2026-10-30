@@ -203,7 +203,8 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         {
             this.cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await this.enumerable.MoveToAsync(++this.currentIndex);
+            this.currentIndex = Math.Min(this.currentIndex + 1, this.enumerable.bufferedResults.Count);
+            var result = await this.enumerable.MoveToAsync(this.currentIndex);
             return result;
         }
     }
