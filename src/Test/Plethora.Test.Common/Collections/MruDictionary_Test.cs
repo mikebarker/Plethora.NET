@@ -46,6 +46,20 @@ public class MruDictionary_Test
     }
 
     [TestMethod]
+    public void Add_DuplicateKeyAtCapacity_ThrowsWithoutChangingEntries()
+    {
+        MruDictionary<int, string> mruDictionary = new(maxEntries: 2, watermark: 1);
+        mruDictionary.Add(1, "one");
+        mruDictionary.Add(2, "two");
+
+        Assert.Throws<ArgumentException>(() => mruDictionary.Add(1, "replacement"));
+
+        Assert.AreEqual(2, mruDictionary.Count);
+        Assert.AreEqual("one", mruDictionary[1]);
+        Assert.AreEqual("two", mruDictionary[2]);
+    }
+
+    [TestMethod]
     public void IndexerAssignmentOverMaxEntries()
     {
         // Arrange

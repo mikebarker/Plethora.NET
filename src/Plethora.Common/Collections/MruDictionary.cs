@@ -150,6 +150,9 @@ public class MruDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     {
         ArgumentNullException.ThrowIfNull(key);
 
+        if (this.innerDictionary.ContainsKey(key))
+            throw new ArgumentException(ResourceProvider.ArgAddingDuplicate(), nameof(key));
+
         this.ReclaimLeastUsedEntries(1);
         this.innerDictionary.Add(key, new MruEntry<TValue>(value));
     }
