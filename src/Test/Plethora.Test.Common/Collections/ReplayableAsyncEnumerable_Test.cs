@@ -37,6 +37,23 @@ public class ReplayableAsyncEnumerable_Test
     }
 
     [TestMethod]
+    public async Task Current_AfterEnd_ThrowsInvalidOperationException()
+    {
+        // Arrange
+        await using var enumerable = new ReplayableAsyncEnumerable<int>(GetValues(() => { }));
+        await using var enumerator = enumerable.GetAsyncEnumerator();
+
+        bool result;
+        do
+        {
+            result = await enumerator.MoveNextAsync();
+        } while (result);
+
+        // Act & Assert
+        Assert.Throws<InvalidOperationException>(() => { var current = enumerator.Current; });
+    }
+
+    [TestMethod]
     public async Task MoveNextAsync_AfterEnd_ContinuesReturningFalse()
     {
         // Arrange

@@ -190,7 +190,20 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         }
 
         /// <inheritdoc/>
-        public T Current => this.enumerable.bufferedResults[this.currentIndex];
+        public T Current
+        {
+            get
+            {
+                try
+                {
+                    return this.enumerable.bufferedResults[this.currentIndex];
+                }
+                catch (ArgumentOutOfRangeException)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
 
         /// <inheritdoc/>
         public ValueTask DisposeAsync()
