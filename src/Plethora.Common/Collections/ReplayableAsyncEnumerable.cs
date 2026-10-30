@@ -64,11 +64,11 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         }
     }
 
-    private async Task<bool> MoveToAsync(int index)
+    private async Task<bool> MoveToAsync(int index, CancellationToken cancellationToken)
     {
         Task<bool> moveNextTaskCopy;
 
-        await this.asyncLock.WaitAsync();
+        await this.asyncLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
             ObjectDisposedException.ThrowIf(this.isDisposed, this);
@@ -104,7 +104,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         }
 
         // Await completion outside the lock
-        return await moveNextTaskCopy;
+        return await moveNextTaskCopy.WaitAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<bool> MoveNextAsync()
@@ -204,7 +204,7 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
             this.cancellationToken.ThrowIfCancellationRequested();
 
             this.currentIndex = Math.Min(this.currentIndex + 1, this.enumerable.bufferedResults.Count);
-            var result = await this.enumerable.MoveToAsync(this.currentIndex);
+            var result = await this.enumerable.MoveToAsync(this.currentIndex, this.cancellationToken).ConfigureAwait(false);
             return result;
         }
     }
