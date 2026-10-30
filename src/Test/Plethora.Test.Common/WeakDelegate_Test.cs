@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Plethora.Test
@@ -55,12 +56,155 @@ namespace Plethora.Test
         }
 
         [TestMethod]
+        public void TargetKeptAlive_MulticastAction_InvokesAllHandlers()
+        {
+            // Arrange
+            int firstCallbackCount = 0;
+            int secondCallbackCount = 0;
+            bool targetCollected = false;
+            Subscriber first = new(() => firstCallbackCount++);
+            Subscriber second = new(() => secondCallbackCount++);
+            EventHandler callbacks = first.Callback;
+            callbacks += second.Callback;
+
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
+                callbacks,
+                handler => { targetCollected = true; });
+
+            // Action
+            weakDelegate(null, EventArgs.Empty);
+
+            GC.KeepAlive(first);
+            GC.KeepAlive(second);
+
+            // Assert
+            Assert.AreEqual(1, firstCallbackCount);
+            Assert.AreEqual(1, secondCallbackCount);
+            Assert.IsFalse(targetCollected);
+        }
+
+        [TestMethod]
+        public void TargetKeptAlive_MulticastFunc_PreservesOrderAndLastResult()
+        {
+            // Arrange
+            List<int> calls = new();
+            FuncSubscriber first = new(() => { calls.Add(1); return 10L; });
+            FuncSubscriber second = new(() => { calls.Add(2); return 20L; });
+            FuncEventHandler callbacks = first.Callback;
+            callbacks += second.Callback;
+
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<FuncEventHandler, long>(
+                callbacks,
+                _ => { Assert.Fail("Both targets should remain alive."); return -1L; });
+
+            // Action
+            long result = weakDelegate(null, EventArgs.Empty);
+
+            GC.KeepAlive(first);
+            GC.KeepAlive(second);
+
+            // Assert
+            CollectionAssert.AreEqual(new[] { 1, 2 }, calls);
+            Assert.AreEqual(20L, result);
+        }
+
+        [TestMethod]
+        public void TargetCollected_MulticastWithStaticLast_RemovesOnlyCollectedHandler()
+        {
+            // Arrange
+            Publisher publisher = new();
+            int instanceCallbackCount = 0;
+            int staticCallbackCount = 0;
+            int targetCollectedCount = 0;
+            StaticSubscriber.Action = () => staticCallbackCount++;
+
+            Action setup = () =>
+            {
+                Subscriber subscriber = new(() => instanceCallbackCount++);
+                EventHandler callbacks = subscriber.Callback;
+                callbacks += StaticSubscriber.Callback;
+                publisher.Event += WeakDelegate.CreateWeakDelegate<EventHandler>(
+                    callbacks,
+                    handler =>
+                    {
+                        targetCollectedCount++;
+                        publisher.Event -= handler;
+                    });
+                GC.KeepAlive(subscriber);
+            };
+            setup();
+            GC.Collect(2);
+
+            // Action
+            publisher.TriggerEvent();
+            publisher.TriggerEvent();
+
+            // Assert
+            Assert.AreEqual(0, instanceCallbackCount);
+            Assert.AreEqual(2, staticCallbackCount);
+            Assert.AreEqual(1, targetCollectedCount);
+            Assert.IsFalse(publisher.EventIsEmpty);
+        }
+
+        [TestMethod]
+        public void Helper_IsTargetAlive_Multicast_RemovesCollectedHandlerAndKeepsLiveHandler()
+        {
+            // Arrange
+            int callbackCount = 0;
+            int targetCollectedCount = 0;
+            Subscriber liveSubscriber = new(() => callbackCount++);
+            EventHandler weakDelegate = null;
+            Action setup = () =>
+            {
+                Subscriber collectedSubscriber = new(() => Assert.Fail("Target should have been collected."));
+                EventHandler callbacks = liveSubscriber.Callback;
+                callbacks += collectedSubscriber.Callback;
+                weakDelegate = WeakDelegate.CreateWeakDelegate<EventHandler>(
+                    callbacks,
+                    _ => targetCollectedCount++);
+                GC.KeepAlive(collectedSubscriber);
+            };
+            setup();
+            GC.Collect(2);
+
+            // Action
+            bool isTargetAlive = weakDelegate.IsTargetAlive();
+            weakDelegate(null, EventArgs.Empty);
+
+            GC.KeepAlive(liveSubscriber);
+
+            // Assert
+            Assert.IsTrue(isTargetAlive);
+            Assert.AreEqual(1, callbackCount);
+            Assert.AreEqual(1, targetCollectedCount);
+        }
+
+        [TestMethod]
         public void CanCreate_CovariantFunc()
         {
             // Arrange
             ReturningSubscriber subscriber = new();
             Func<string> stringCallback = subscriber.Callback;
             Func<object> callback = stringCallback;
+
+            // Action
+            var weakDelegate = WeakDelegate.CreateWeakDelegate<Func<object>, object>(
+                callback,
+                _ => "collected");
+
+            // Assert
+            Assert.AreEqual("value", weakDelegate());
+            GC.KeepAlive(subscriber);
+        }
+
+        [TestMethod]
+        public void CanCreate_CovariantMulticastFuncWithStaticHandler()
+        {
+            // Arrange
+            ReturningSubscriber subscriber = new();
+            Func<string> callbacks = static () => "static";
+            callbacks += subscriber.Callback;
+            Func<object> callback = callbacks;
 
             // Action
             var weakDelegate = WeakDelegate.CreateWeakDelegate<Func<object>, object>(

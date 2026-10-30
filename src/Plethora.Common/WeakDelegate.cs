@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -45,42 +46,46 @@ public static class WeakDelegate
 
         ArgumentNullException.ThrowIfNull(onTargetCollected);
 
-        var del = (Delegate)(object)@delegate;
 
-        //For static method calls, return the delegate without wrapping
-        if (del.Target is null)
-            return @delegate;
+        return InternalCreateWithMulticast(@delegate, d =>
+        {
+            var del = (Delegate)(object)d;
 
-        if (del.Method.ReturnType != typeof(void))
-            throw new ArgumentException(string.Format("The return type of {0} is not 'void'. Use CreateWeakDelegate<{0}, TResult>({0}, Func<{0}, TResult>)",
-                typeof(TDelegate).Name));
+            //For static method calls, return the delegate without wrapping
+            if (del.Target is null)
+                return d;
+
+            if (del.Method.ReturnType != typeof(void))
+                throw new ArgumentException(string.Format("The return type of {0} is not 'void'. Use CreateWeakDelegate<{0}, TResult>({0}, Func<{0}, TResult>)",
+                    typeof(TDelegate).Name));
 
 
-        /* ****************************
-         * Encoding as an expression:
-         * ****************************
-         * 
-         *   var target = weakReference.Target;
-         *   if (target is not null)
-         *       method.Invoke(target, parameters);
-         *   else
-         *       onTargetCollected(delegateReference._delegate);
-         * 
-         * */
+            /* ****************************
+             * Encoding as an expression:
+             * ****************************
+             * 
+             *   var target = weakReference.Target;
+             *   if (target is not null)
+             *       method.Invoke(target, parameters);
+             *   else
+             *       onTargetCollected(delegateReference._delegate);
+             * 
+             * */
 
-        var weakDelegate = InternalCreateWeakDelegate(
-            @delegate,
-            new DelegateReference_Action<TDelegate>(onTargetCollected),
-            delegate(BinaryExpression targetIsNotNullExp, MethodCallExpression callExp, MethodCallExpression onTargetNull)
-            {
-                var ifNotNullExp = Expression.IfThenElse(targetIsNotNullExp,
-                    callExp,
-                    onTargetNull);
+            var weakDelegate = InternalCreateWeakDelegate(
+                d,
+                new DelegateReference_Action<TDelegate>(onTargetCollected),
+                delegate (BinaryExpression targetIsNotNullExp, MethodCallExpression callExp, MethodCallExpression onTargetNull)
+                {
+                    var ifNotNullExp = Expression.IfThenElse(targetIsNotNullExp,
+                        callExp,
+                        onTargetNull);
 
-                return ifNotNullExp;
-            });
+                    return ifNotNullExp;
+                });
 
-        return weakDelegate;
+            return weakDelegate;
+        });
     }
 
     /// <summary>
@@ -115,56 +120,94 @@ public static class WeakDelegate
 
         ArgumentNullException.ThrowIfNull(onTargetCollected);
 
-        var del = (Delegate)(object)@delegate;
 
-        //For static method calls, return the delegate without wrapping
-        if (del.Target is null)
-            return @delegate;
+        return InternalCreateWithMulticast(@delegate, d =>
+        {
+            var del = (Delegate)(object)d;
 
-        if (del.Method.ReturnType == typeof(void))
-            throw new ArgumentException(string.Format("The return type of {0} is 'void'. Use CreateWeakDelegate<{0}>({0}, Action<{0}>)",
-                typeof(TDelegate).Name));
+            //For static method calls, return the delegate without wrapping
+            if (del.Target is null)
+                return d;
 
-        if (!typeof(TResult).IsAssignableFrom(del.Method.ReturnType))
-            throw new ArgumentException($"The return type of the {typeof(TDelegate).Name} is {del.Method.ReturnType.Name}, but this is not assignable to the type of TResult specified, {typeof(TResult).Name}.");
+            if (del.Method.ReturnType == typeof(void))
+                throw new ArgumentException(string.Format("The return type of {0} is 'void'. Use CreateWeakDelegate<{0}>({0}, Action<{0}>)",
+                    typeof(TDelegate).Name));
+
+            if (!typeof(TResult).IsAssignableFrom(del.Method.ReturnType))
+                throw new ArgumentException($"The return type of the {typeof(TDelegate).Name} is {del.Method.ReturnType.Name}, but this is not assignable to the type of TResult specified, {typeof(TResult).Name}.");
 
 
-        /* ****************************
-         * Encoding as an expression:
-         * ****************************
-         * 
-         *   var target = weakReference.Target;
-         *   TResult result;
-         *   if (target is not null)
-         *       result = (TResult)method.Invoke(target, parameters);
-         *   else
-         *       result = onTargetCollected(delegateReference._delegate);
-         * 
-         *   return result;
-         * */
+            /* ****************************
+             * Encoding as an expression:
+             * ****************************
+             * 
+             *   var target = weakReference.Target;
+             *   TResult result;
+             *   if (target is not null)
+             *       result = (TResult)method.Invoke(target, parameters);
+             *   else
+             *       result = onTargetCollected(delegateReference._delegate);
+             * 
+             *   return result;
+             * */
 
-        var weakDelegate = InternalCreateWeakDelegate(
-            @delegate,
-            new DelegateReference_Func<TDelegate, TResult>(onTargetCollected),
-            delegate(BinaryExpression targetIsNotNullExp, MethodCallExpression callExp, MethodCallExpression onTargetNull)
-            {
-                var resultExp = Expression.Variable(typeof(TResult), "result");
+            var weakDelegate = InternalCreateWeakDelegate(
+                d,
+                new DelegateReference_Func<TDelegate, TResult>(onTargetCollected),
+                delegate (BinaryExpression targetIsNotNullExp, MethodCallExpression callExp, MethodCallExpression onTargetNull)
+                {
+                    var resultExp = Expression.Variable(typeof(TResult), "result");
 
-                var ifNotNullExp = Expression.IfThenElse(targetIsNotNullExp,
-                    Expression.Assign(resultExp, callExp),
-                    Expression.Assign(resultExp, onTargetNull));
+                    var ifNotNullExp = Expression.IfThenElse(targetIsNotNullExp,
+                        Expression.Assign(resultExp, callExp),
+                        Expression.Assign(resultExp, onTargetNull));
 
-                var body = Expression.Block(new[] { resultExp }, ifNotNullExp, resultExp);
+                    var body = Expression.Block(new[] { resultExp }, ifNotNullExp, resultExp);
 
-                return body;
-            });
+                    return body;
+                });
 
-        return weakDelegate;
+            return weakDelegate;
+        });
     }
 
     #endregion
 
     #region Private Methods
+
+    private static TDelegate InternalCreateWithMulticast<TDelegate>(
+        TDelegate @delegate,
+        Func<TDelegate, TDelegate> create)
+        where TDelegate : notnull
+    {
+        var del = (Delegate)(object)@delegate;
+
+        var invocationList = del.GetInvocationList();
+        if (invocationList.Length == 1)
+        {
+            return create(@delegate);
+        }
+        else
+        {
+            var weakDelegates = invocationList
+                .Select(d => {
+                    Delegate weakDelegate = (Delegate)(object)create((TDelegate)(object)d);
+
+                    // Delegate.Combine requires that the runtime type of the delegates match exactly, covariance is not sufficient.
+                    // So we need to ensure that the weakDelegate is of the same type as TDelegate.
+                    // In the case where weakDelegate is a covariant, we need to wrap it as a TDelegate.
+                    if (weakDelegate.GetType() != typeof(TDelegate))
+                    {
+                        weakDelegate = Delegate.CreateDelegate(typeof(TDelegate), weakDelegate.Target, weakDelegate.Method);
+                    }
+
+                    return weakDelegate;
+                }).ToArray();
+
+            TDelegate combinedWeakDelegate = (TDelegate)(object)Delegate.Combine(weakDelegates)!;
+            return combinedWeakDelegate;
+        }
+    }
 
     private static TDelegate InternalCreateWeakDelegate<TDelegate>(
         TDelegate @delegate,
@@ -325,7 +368,21 @@ public static class WeakDelegateHelper
     private const string ClosureTypeName = "System.Runtime.CompilerServices.Closure";
     private const string ConstantsFieldName = "Constants";
 
+    /// <summary>
+    /// Checks every invocation target and returns whether any remains alive.
+    /// </summary>
     public static bool IsTargetAlive(this Delegate @delegate)
+    {
+        foreach (var handler in @delegate.GetInvocationList())
+        {
+            if (IsSingleTargetAlive(handler))
+                return true;
+        }
+
+        return false;
+    }
+
+    private static bool IsSingleTargetAlive(Delegate @delegate)
     {
         object? target = @delegate.Target;
         if (target is not null)
