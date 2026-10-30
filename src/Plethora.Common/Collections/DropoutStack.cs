@@ -113,16 +113,12 @@ public class DropoutStack<T> : IEnumerable<T>, IReadOnlyCollection<T>
     /// </summary>
     public void Clear()
     {
-        if (this.Count > 0)
+        int index = this.firstIndex;
+        for (int i = 0; i < this.count; i++)
         {
-            int index = this.firstIndex;
-            do
-            {
-                this.items[index--] = default;
-                if (index < 0)
-                    index += this.Capacity;
-            }
-            while (index != this.LastIndex);
+            this.items[index--] = default;
+            if (index < 0)
+                index += this.Capacity;
         }
 
         this.firstIndex = -1;

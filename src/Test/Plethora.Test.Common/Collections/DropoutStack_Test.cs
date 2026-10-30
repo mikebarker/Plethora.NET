@@ -2,6 +2,7 @@
 using Plethora.Collections;
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace Plethora.Test.Collections;
 
@@ -268,6 +269,46 @@ public class DropoutStack_Test
     }
 
     [TestMethod]
+    public void Clear_BelowCapacity_ReleasesAllReferences()
+    {
+        var stack = new DropoutStack<object>(3);
+        WeakReference[] references = [PushTrackedObject(stack), PushTrackedObject(stack)];
+
+        stack.Clear();
+        GC.Collect();
+        GC.KeepAlive(stack);
+
+        Assert.AreEqual(0, stack.Count);
+        foreach (var reference in references)
+            Assert.IsFalse(reference.IsAlive);
+    }
+
+    [TestMethod]
+    public void Clear_AfterWrapping_ReleasesAllReferencesAndAllowsReuse()
+    {
+        var stack = new DropoutStack<object>(3);
+        WeakReference[] references = [
+            PushTrackedObject(stack),
+            PushTrackedObject(stack),
+            PushTrackedObject(stack),
+            PushTrackedObject(stack)
+        ];
+
+        stack.Clear();
+        GC.Collect();
+        GC.KeepAlive(stack);
+
+        Assert.AreEqual(0, stack.Count);
+        foreach (var reference in references)
+            Assert.IsFalse(reference.IsAlive);
+
+        object newItem = new();
+        stack.Push(newItem);
+        Assert.AreSame(newItem, stack.Pop());
+        Assert.AreEqual(0, stack.Count);
+    }
+
+    [TestMethod]
     public void CopyTo()
     {
         // Arrange
@@ -290,5 +331,13 @@ public class DropoutStack_Test
         Assert.AreEqual("four", array[2]);
         Assert.AreEqual("three", array[3]);
         Assert.AreEqual("two", array[4]);
+    }
+
+    [MethodImpl(MethodImplOptions.NoInlining)]
+    private static WeakReference PushTrackedObject(DropoutStack<object> stack)
+    {
+        object item = new();
+        stack.Push(item);
+        return new WeakReference(item);
     }
 }
