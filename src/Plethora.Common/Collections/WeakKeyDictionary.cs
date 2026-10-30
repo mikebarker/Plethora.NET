@@ -253,13 +253,7 @@ public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     /// </remarks>
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
-        return this.innerDictionary
-            .Select(pair =>
-            {
-                pair.Key.TryGetTarget(out var target);
-                return new { Key = target, pair.Value };
-            })
-            .Where(x => x.Key is not null)
+        return this.GetLiveEnumerable()
             .Select(x => new KeyValuePair<TKey, TValue>(x.Key!, x.Value))
             .GetEnumerator();
     }
@@ -295,7 +289,7 @@ public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 
     public int Count
     {
-        get { return this.Keys.Count; }
+        get { return this.GetLiveEnumerable().Count(); }
     }
 
     bool ICollection<KeyValuePair<TKey,TValue>>.IsReadOnly
@@ -360,12 +354,12 @@ public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
 
     public ICollection<TKey> Keys
     {
-        get { return this.Select(pair => pair.Key).ToList(); }
+        get { return this.GetLiveEnumerable().Select(pair => pair.Key).ToList(); }
     }
 
     public ICollection<TValue> Values
     {
-        get { return this.Select(pair => pair.Value).ToList(); }
+        get { return this.GetLiveEnumerable().Select(pair => pair.Value).ToList(); }
     }
     #endregion
 
@@ -375,7 +369,7 @@ public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     /// Gets a fast estimate of the value of <see cref="Count"/>.
     /// </summary>
     /// <remarks>
-    /// This will always return an estimate greater then or equal to the exact count.
+    /// This will always return an estimate greater than or equal to the exact count.
     /// </remarks>
     public int EstimateCount
     {
@@ -410,66 +404,23 @@ public class WeakKeyDictionary<TKey, TValue> : IDictionary<TKey, TValue>
     }
     #endregion
 
-    #region PrivateMethods
+    #region Private Methods
+
+    private IEnumerable<(TKey Key, TValue Value)> GetLiveEnumerable()
+    {
+        return this.innerDictionary
+            .Select(pair =>
+            {
+                pair.Key.TryGetTarget(out var target);
+                return (Key: target!, Value: pair.Value);
+            })
+            .Where(x => x.Key is not null);
+    }
 
     private WeakKey GetWeakKey(TKey key)
     {
         return new WeakKey(key, this.weakKeyComparer.InnerComparer);
     }
+
     #endregion
-
-
-/*
-    private class AutoCleanup
-    {
-        #region Fields
-
-        private const int LOW_ACTIVITY_TIMER = 5 * 60 * 1000; // 5 min
-        private const int HIGH_ACTIVITY_TIMER = 2 * 1000;     // 2 sec
-
-        private readonly Timer cleanupTimer;
-        private readonly WeakKeyDictionary<TKey, TValue> dictionary;
-        private int inCleanUp = 0;
-        #endregion
-
-        #region Constructors
-
-        public AutoCleanup(WeakKeyDictionary<TKey, TValue> dictionary)
-        {
-            //validation
-            ArgumentNullException.ThrowIfNull(dictionary);
-
-            this.dictionary = dictionary;
-            this.cleanupTimer = new Timer(Cleanup, null, LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
-        }
-        #endregion
-
-        #region Private Methods
-
-        private void Cleanup(object state)
-        {
-            if (Interlocked.CompareExchange(ref inCleanUp, 1, 0) != 0)
-                return;
-
-            try
-            {
-                bool anyCleanup;
-                lock(dictionary)
-                {
-                    anyCleanup = dictionary.TrimExcess();
-                }
-
-                if (anyCleanup)
-                    cleanupTimer.Change(HIGH_ACTIVITY_TIMER, HIGH_ACTIVITY_TIMER);
-                else
-                    cleanupTimer.Change(LOW_ACTIVITY_TIMER, LOW_ACTIVITY_TIMER);
-            }
-            finally
-            {
-                inCleanUp = 0;
-            }
-        }
-        #endregion
-    }
-*/
 }
