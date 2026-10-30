@@ -286,13 +286,16 @@ public class WorkQueue : IDisposable
         if (this.IsAborted)
             throw new InvalidOperationException("The work queue has been aborted.");
 
-        WorkItem workItem = new(method, args);
         lock (this.workQueue)
         {
+            if (this.IsAborted)
+                throw new InvalidOperationException("The work queue has been aborted.");
+
+            WorkItem workItem = new(method, args);
             this.workQueue.Enqueue(workItem);
             this.workWaitHandle.Set();
+            return workItem;
         }
-        return workItem;
     }
 
     /// <summary>
@@ -371,7 +374,7 @@ public class WorkQueue : IDisposable
 
     #region Private Methods
 
-    private bool IsAborted =>  Interlocked.CompareExchange(ref this.isAborted, NOT_ABORTED, NOT_ABORTED) == ABORTED;
+    private bool IsAborted => Interlocked.CompareExchange(ref this.isAborted, NOT_ABORTED, NOT_ABORTED) == ABORTED;
 
     private void DoLoop()
     {
