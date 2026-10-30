@@ -146,6 +146,9 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
             throw;
         }
 
+        if (!result)
+            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
+
         await this.asyncLock.WaitAsync().ConfigureAwait(false);
         try
         {
@@ -164,9 +167,6 @@ public class ReplayableAsyncEnumerable<T> : IAsyncEnumerable<T>, IAsyncDisposabl
         {
             this.asyncLock.Release();
         }
-
-        if (!result)
-            await this.DisposeSourceEnumeratorAsync().ConfigureAwait(false);
 
         return result;
     }

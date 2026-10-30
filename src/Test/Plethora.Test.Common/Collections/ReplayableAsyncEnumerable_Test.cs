@@ -191,6 +191,52 @@ public class ReplayableAsyncEnumerable_Test
     }
 
     [TestMethod]
+    public async Task MoveNextAsync_TerminalCleanupThrows_AllReadersObserveSameFailure()
+    {
+        var failure = new InvalidOperationException("Terminal cleanup failed.");
+        var disposalStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var releaseDisposal = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var enumerable = new ReplayableAsyncEnumerable<int>(
+            new TerminalCleanupFailingSource(disposalStarted, releaseDisposal.Task, failure));
+        await using var first = enumerable.GetAsyncEnumerator();
+        await using var second = enumerable.GetAsyncEnumerator();
+
+        Task<bool> firstMove = first.MoveNextAsync().AsTask();
+        try
+        {
+            await disposalStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            Task<bool> secondMove = second.MoveNextAsync().AsTask();
+            Assert.IsFalse(secondMove.IsCompleted, "Readers should wait until terminal cleanup completes.");
+            releaseDisposal.SetResult();
+
+            var firstFailure = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => firstMove.WaitAsync(TimeSpan.FromSeconds(5)));
+            Assert.AreSame(failure, firstFailure);
+
+            var secondFailure = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => secondMove.WaitAsync(TimeSpan.FromSeconds(5)));
+            Assert.AreSame(failure, secondFailure);
+
+            await using var replay = enumerable.GetAsyncEnumerator();
+            var replayFailure = await Assert.ThrowsAsync<InvalidOperationException>(
+                () => replay.MoveNextAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
+            Assert.AreSame(failure, replayFailure);
+        }
+        finally
+        {
+            releaseDisposal.TrySetResult();
+            try
+            {
+                await enumerable.DisposeAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            catch (InvalidOperationException ex)
+            {
+                Assert.AreSame(failure, ex);
+            }
+        }
+    }
+
+    [TestMethod]
     public async Task DisposeAsync_SourceFails_PreservesFailure()
     {
         var failure = new InvalidOperationException("Source failed.");
@@ -240,6 +286,31 @@ public class ReplayableAsyncEnumerable_Test
         finally
         {
             releaseSource.TrySetResult();
+        }
+    }
+
+    private sealed class TerminalCleanupFailingSource(
+        TaskCompletionSource disposalStarted,
+        Task releaseDisposal,
+        Exception failure) : IAsyncEnumerable<int>, IAsyncEnumerator<int>
+    {
+        public int Current => throw new InvalidOperationException();
+
+        public IAsyncEnumerator<int> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            return this;
+        }
+
+        public ValueTask<bool> MoveNextAsync()
+        {
+            return ValueTask.FromResult(false);
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            disposalStarted.SetResult();
+            await releaseDisposal.ConfigureAwait(false);
+            throw failure;
         }
     }
 
