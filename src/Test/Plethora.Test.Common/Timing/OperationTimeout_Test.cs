@@ -11,15 +11,7 @@ public class OperationTimeout_Test
     [TestMethod]
     public void RemainingTimeMilliseconds_ctor_Fail_NegativeTimeout()
     {
-        try
-        {
-            var timeout = new OperationTimeout(TimeSpan.FromMilliseconds(-7));
-
-            Assert.Fail();
-        }
-        catch (ArgumentOutOfRangeException)
-        {
-        }
+        Assert.Throws<ArgumentOutOfRangeException>(() => new OperationTimeout(TimeSpan.FromMilliseconds(-7)));
     }
 
     [TestMethod]

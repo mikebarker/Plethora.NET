@@ -68,6 +68,6 @@ public static class SortedByKeyListHelper
         if (count == 0)
             return Enumerable.Empty<T>();
 
-        return new ListIndexIterator<T>(list, startIndex, count);
+        return new SubList<T>(list, startIndex, count);
     }
 }

@@ -105,19 +105,11 @@ public class MonthlyCalendarProperties_Test
     {
         // Arrange
         ICalendarProperties calendarProperties = new MonthlyCalendarProperties(1, [31]);
+        IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, [], []);
 
         // Action
-        try
-        {
-            // Attempting to generate "31 February" should fail
-            IEnumerable<DateTime> calendar = calendarProperties.GenerateCalendar(Dates.Jan01, [], []);
-            DateTime[] calendarArray = calendar.Take(2).ToArray();
-
-            Assert.Fail();
-        }
-        catch (ArgumentException)
-        {
-        }
+        // Attempting to generate "31 February" must fail
+        Assert.Throws<ArgumentException>(() => calendar.Take(2).ToArray());
     }
 
     [TestMethod]

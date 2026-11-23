@@ -168,7 +168,7 @@ public static class ListHelper
 
     #region SubList
 
-    public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index)
+    public static SubList<TSource> SubList<TSource>(this IList<TSource> source, int index)
     {
         //Validation
         ArgumentNullException.ThrowIfNull(source);
@@ -178,37 +178,11 @@ public static class ListHelper
         return SubList(source, index, count);
     }
 
-    public static IEnumerable<TSource> SubList<TSource>(this IList<TSource> source, int index, int count)
+    public static SubList<TSource> SubList<TSource>(this IList<TSource> source, int index, int count)
     {
-        return new ListIndexIterator<TSource>(source, index, count);
+        return new SubList<TSource>(source, index, count);
     }
 
-
-    public static IEnumerable<TSource> SubListOrEmpty<TSource>(this IList<TSource> source, int index)
-    {
-        //Validation
-        ArgumentNullException.ThrowIfNull(source);
-
-        
-        var count = source.Count - index;
-        return SubListOrEmpty(source, index, count);
-    }
-
-    public static IEnumerable<TSource> SubListOrEmpty<TSource>(this IList<TSource> source, int index, int count)
-    {
-        //Validation
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentOutOfRangeException.ThrowIfLessThan(index, 0);
-
-
-        if (index > source.Count - 1)
-            return Enumerable.Empty<TSource>();
-
-        var maxCount = source.Count - index;
-        count = Math.Min(count, maxCount);
-
-        return new ListIndexIterator<TSource>(source, index, count);
-    }
     #endregion
 
     #region IndexOfType

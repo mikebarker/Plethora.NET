@@ -77,17 +77,7 @@ public class AsyncLock_Test
         // Action
         asyncLock.Dispose();
 
-        try
-        {
-            await tryLockTask.ConfigureAwait(false);
-
-            // Assert
-            Assert.Fail("OperationCanceledException was not thrown.");
-        }
-        catch (OperationCanceledException)
-        {
-            // If the exception is caught the test has succeeded, there is no further asserts required.
-        }
+        await Assert.ThrowsAsync<OperationCanceledException>(() => tryLockTask).ConfigureAwait(false);
 
         GC.KeepAlive(lockObject);
     }

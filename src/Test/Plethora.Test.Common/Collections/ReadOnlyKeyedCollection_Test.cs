@@ -47,16 +47,7 @@ public class ReadOnlyKeyedCollection_Test
     [TestMethod]
     public void ctor_Fail_Null()
     {
-        try
-        {
-            // Action
-            readonlyKeyedCollection = new ReadOnlyKeyedCollection<long, Person>(null);
-
-            Assert.Fail();
-        }
-        catch (ArgumentNullException)
-        {
-        }
+        Assert.Throws<ArgumentNullException>(() => new ReadOnlyKeyedCollection<long, Person>(null));
     }
     #endregion
 
@@ -85,16 +76,7 @@ public class ReadOnlyKeyedCollection_Test
     [TestMethod]
     public void Contains_Fail_Null()
     {
-        try
-        {
-            // Action
-            readonlyKeyedCollection.Contains(null);
-
-            Assert.Fail();
-        }
-        catch (ArgumentNullException)
-        {
-        }
+        Assert.Throws<ArgumentNullException>(() => readonlyKeyedCollection.Contains(null));
     }
     #endregion
 
@@ -299,16 +281,9 @@ public class ReadOnlyKeyedCollection_Test
     {
         // Arrange
         long jill_ID = Person.Jill_Dorrman.ID;
-        try
-        {
-            // Action
-            Person person = readonlyKeyedCollection[jill_ID];
 
-            Assert.Fail();
-        }
-        catch (KeyNotFoundException)
-        {
-        }
+        // Action & Assert
+        Assert.Throws<KeyNotFoundException>(() => { var person = readonlyKeyedCollection[jill_ID]; });
     }
 
     #endregion

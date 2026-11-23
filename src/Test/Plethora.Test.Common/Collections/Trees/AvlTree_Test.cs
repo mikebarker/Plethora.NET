@@ -98,16 +98,8 @@ public class AvlTree_Test
 
         tree.Add(key, value);
 
-        // Action
-        try
-        {
-            tree.Add(key, value + 1);
-
-            Assert.Fail();
-        }
-        catch(ArgumentException)
-        {
-        }
+        // Action & Assert
+        Assert.Throws<ArgumentException>(() => tree.Add(key, value + 1));
     }
 
     [TestMethod]
