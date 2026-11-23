@@ -34,6 +34,7 @@
     <Project Path="Test/Plethora.Test.Data/Plethora.Test.Data.csproj" />
     <Project Path="Test/Plethora.Test.Finance/Plethora.Test.Finance.csproj" />
     <Project Path="Test/Plethora.Test.fqi/Plethora.Test.fqi.csproj" />
+    <Project Path="Test/Plethora.Test.Maths/Plethora.Test.Maths.csproj" />
     <Project Path="Test/Plethora.Test.Mvvm/Plethora.Test.Mvvm.csproj" />
     <Project Path="Test/Plethora.Test.Xaml.Wpf/Plethora.Test.Xaml.Wpf.csproj" />
   </Folder>
@@ -52,6 +53,7 @@
   <Project Path="Plethora.Finance/Plethora.Finance.csproj" />
   <Project Path="Plethora.fqi/Plethora.fqi.csproj" />
   <Project Path="Plethora.Logging.log4net/Plethora.Logging.log4net.csproj" />
+  <Project Path="Plethora.Maths/Plethora.Maths.csproj" Id="181f7dbe-06e1-4f38-9fa2-3420ab36ec4b" />
   <Project Path="Plethora.Mvvm/Plethora.Mvvm.csproj" />
   <Project Path="Plethora.Parser/Plethora.Parsing.csproj" Id="ee0f148a-62e1-4686-9709-f9672c14aea5" />
   <Project Path="Plethora.Workflow.SqlClient/Plethora.Workflow.SqlClient.csproj" />
