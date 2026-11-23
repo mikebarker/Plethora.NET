@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Plethora.Collections;
 
-public class ListIndexIterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<T>
+public class ListIndexIterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<T>, IReadOnlyCollection<T>
 {
     #region Fields
 
@@ -111,6 +111,15 @@ public class ListIndexIterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<
 
     #endregion
 
+    #region Implementation of IReadOnlyCollection<T>
+
+    public int Count
+    {
+        get { return this.endIndex - this.startIndex + 1; }
+    }
+
+    #endregion
+
     #region Implementation of ICollection<T>
 
     void ICollection<T>.Add(T item)
@@ -150,11 +159,6 @@ public class ListIndexIterator<T> : IEnumerator<T>, IEnumerable<T>, ICollection<
                 array[arrayIndex++] = this.list[i];
             }
         }
-    }
-
-    public int Count
-    {
-        get { return this.endIndex - this.startIndex + 1; }
     }
 
     bool ICollection<T>.IsReadOnly
