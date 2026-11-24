@@ -2,19 +2,41 @@
 
 namespace Plethora.Finance.Bond;
 
-public class BondInterestCalculator1 : IBondInterestCalculator
+public class BondInterestCalculator1 : IBondInterestCalculator, IBondInterestCalculatorEOM, IBondInterestCalculatorICMA, IBondInterestCalculatorFull
 {
-    Rational IBondInterestCalculator.CalculateDayCountFraction(
+    private static readonly Rational dayCountFraction = new(1, 1);
+
+    public Rational CalculateDayCountFraction(
+        DateTime accrualStartDate,
+        DateTime accrualEndDate)
+    {
+        return dayCountFraction;
+    }
+
+    Rational IBondInterestCalculatorEOM.CalculateDayCountFraction(
         DateTime accrualStartDate,
         DateTime accrualEndDate,
         bool isPaysEndOfMonth)
     {
-        return CalculateDayCountFraction();
+        return CalculateDayCountFraction(accrualStartDate, accrualEndDate);
     }
 
-    public static Rational CalculateDayCountFraction()
+    Rational IBondInterestCalculatorICMA.CalculateDayCountFraction(
+        DateTime accrualStartDate,
+        DateTime accrualEndDate,
+        DateTime nextPaymentDate,
+        int frequency)
     {
-        Rational dayCountFraction = new(1, 1);
-        return dayCountFraction;
+        return CalculateDayCountFraction(accrualStartDate, accrualEndDate);
+    }
+
+    Rational IBondInterestCalculatorFull.CalculateDayCountFraction(
+        DateTime accrualStartDate,
+        DateTime accrualEndDate,
+        DateTime nextPaymentDate,
+        int frequency,
+        bool isPaysEndOfMonth)
+    {
+        return CalculateDayCountFraction(accrualStartDate, accrualEndDate);
     }
 }

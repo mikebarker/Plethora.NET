@@ -14,7 +14,7 @@ public enum BondAccrualType
     _30E_360,
     _30E_360_ISDA,
     Actual_Actual,
-    // Actual_Actual_ICMA,
+    Actual_Actual_ICMA,
     Actual_365F,
     Actual_360,
 }
